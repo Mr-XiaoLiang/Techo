@@ -1,0 +1,6 @@
+include ':base'
+include ':gallery'
+include ':palette'
+include ':guide'
+include ':app'
+rootProject.name = "Techo"
