@@ -9,9 +9,15 @@ import com.lollipop.base.provider.BackPressProvider
  * 返回事件提供者的辅助工具
  * 它主要负责通用的事件分发逻辑
  */
-class BackPressProviderHelper: BackPressProvider, BackPressListener {
+class BackPressProviderHelper(
+        firstListener: BackPressListener? = null
+) : BackPressProvider, BackPressListener {
 
-    private val listenerList = ArrayList<BackPressListener>()
+    private val listenerList = ArrayList<BackPressListener>().apply {
+        if (firstListener != null) {
+            add(firstListener)
+        }
+    }
 
     override fun addBackPressListener(listener: BackPressListener) {
         listenerList.add(listener)
