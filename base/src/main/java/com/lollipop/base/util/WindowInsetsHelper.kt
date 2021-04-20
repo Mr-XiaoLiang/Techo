@@ -14,18 +14,52 @@ class WindowInsetsHelper {
 
     private var targetView = WeakReference<View>(null)
 
+    /**
+     * 绑定Target目标View
+     * @param target 需要绑定的目标View
+     */
     fun bind(target: View) {
         targetView = WeakReference<View>(target)
     }
 
+    /**
+     * 解除绑定，释放View
+     */
+    fun unbind() {
+        targetView = WeakReference<View>(null)
+    }
+
+    /**
+     * 更新padding信息，可能会覆盖现有的内容，会在快照基础上叠加
+     * @param rootView 根结点的View
+     * @param left 左侧缩进
+     * @param top 顶部缩进
+     * @param right 右侧缩进
+     * @param bottom 底部缩进
+     */
     fun updateByPadding(rootView: View, left: Int, top: Int, right: Int, bottom: Int) {
         updateByType(OptionType.Padding, rootView, left, top, right, bottom)
     }
 
+    /**
+     * 更新margin信息，可能会覆盖现有的内容，会在快照基础上叠加
+     * @param rootView 根结点的View
+     * @param left 左侧缩进
+     * @param top 顶部缩进
+     * @param right 右侧缩进
+     * @param bottom 底部缩进
+     */
     fun updateByMargin(rootView: View, left: Int, top: Int, right: Int, bottom: Int) {
         updateByType(OptionType.Margin, rootView, left, top, right, bottom)
     }
 
+    /**
+     * 直接为目标对象设置Margin
+     * @param left 左侧缩进
+     * @param top 顶部缩进
+     * @param right 右侧缩进
+     * @param bottom 底部缩进
+     */
     fun setMargin(left: Int, top: Int, right: Int, bottom: Int) {
         targetView.get()?.let { target ->
             target.layoutParams?.let { layoutParams ->
@@ -37,6 +71,13 @@ class WindowInsetsHelper {
         }
     }
 
+    /**
+     * 直接为目标对象设置Padding
+     * @param left 左侧缩进
+     * @param top 顶部缩进
+     * @param right 右侧缩进
+     * @param bottom 底部缩进
+     */
     fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
         targetView.get()?.setPadding(left, top, right, bottom)
     }
