@@ -89,8 +89,13 @@ class WindowInsetsHelper {
             top: Int,
             right: Int,
             bottom: Int) {
-        val target = targetView.get()?:return
+        val target = targetView.get() ?: return
         if (!target.isAttachedToWindow) {
+            postOption(Option(
+                    type,
+                    WeakReference(rootView),
+                    Rect(left, top, right, bottom)
+            ))
             return
         }
 
