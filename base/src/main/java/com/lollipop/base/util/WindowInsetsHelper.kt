@@ -119,8 +119,19 @@ class WindowInsetsHelper {
             val insets: Rect,
     )
 
+    /**
+     * 操作类型
+     */
     private enum class OptionType {
-        Padding, Margin
+        /**
+         * 以Padding的形式设置参数
+         */
+        Padding,
+
+        /**
+         * 以Margin的形式设置参数
+         */
+        Margin
     }
 
 }
