@@ -17,6 +17,12 @@ class WindowInsetsHelper {
     private var pendingTask: Option? = null
 
     /**
+     * targetView位于ViewPager中，
+     * 计算时，会判定是否真的位于ViewPager，并且计算偏移量
+     */
+    var targetInViewPager = false
+
+    /**
      * 绑定Target目标View
      * @param target 需要绑定的目标View
      */
