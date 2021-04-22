@@ -14,6 +14,8 @@ class WindowInsetsHelper {
 
     private var targetView = WeakReference<View>(null)
 
+    private var pendingTask: Option? = null
+
     /**
      * 绑定Target目标View
      * @param target 需要绑定的目标View
@@ -103,7 +105,7 @@ class WindowInsetsHelper {
     }
 
     private fun postOption(option: Option) {
-        // TODO
+        pendingTask = option
     }
 
     /**
