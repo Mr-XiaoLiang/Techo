@@ -14,7 +14,7 @@ import kotlin.math.max
  * @date 4/19/21 22:40
  * Window缩进的辅助工具
  */
-class WindowInsetsHelper {
+class WindowInsetsHelper : View.OnLayoutChangeListener {
 
     private var targetView = WeakReference<View>(null)
 
@@ -50,12 +50,14 @@ class WindowInsetsHelper {
      */
     fun bind(target: View) {
         targetView = WeakReference<View>(target)
+        target.addOnLayoutChangeListener(this)
     }
 
     /**
      * 解除绑定，释放View
      */
     fun unbind() {
+        targetView.get()?.removeOnLayoutChangeListener(this)
         targetView = WeakReference<View>(null)
     }
 
@@ -250,7 +252,7 @@ class WindowInsetsHelper {
         }
     }
 
-    private inline fun <reified T: View> findParent(
+    private inline fun <reified T : View> findParent(
             target: View, callback: (parent: T, child: View) -> Unit) {
         var self = target
         var parent = self.parent
@@ -315,6 +317,25 @@ class WindowInsetsHelper {
          * 以Margin的形式设置参数
          */
         Margin
+    }
+
+    override fun onLayoutChange(
+            v: View?,
+            left: Int, top: Int, right: Int, bottom: Int,
+            oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+
+        val pendingOption = pendingTask ?: return
+        pendingTask = null
+        pendingOption.rootGroup.get()?.let { rootGroup ->
+            updateByType(
+                    pendingOption.type,
+                    rootGroup,
+                    pendingOption.insets.left,
+                    pendingOption.insets.top,
+                    pendingOption.insets.right,
+                    pendingOption.insets.bottom)
+        }
+
     }
 
 }
