@@ -4,6 +4,8 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import java.lang.ref.WeakReference
 import kotlin.math.max
 
@@ -107,6 +109,36 @@ class WindowInsetsHelper {
         }
     }
 
+    /**
+     * 以快照的形式记录当前Margin值，并且以此为基础
+     */
+    fun snapshotMargin() {
+        targetView.get()?.layoutParams?.let { layoutParams ->
+            if (layoutParams is ViewGroup.MarginLayoutParams) {
+                baseMargin.set(
+                        layoutParams.leftMargin,
+                        layoutParams.topMargin,
+                        layoutParams.rightMargin,
+                        layoutParams.bottomMargin
+                )
+            }
+        }
+    }
+
+    /**
+     * 以快照的形式记录当前Padding值，并且以此为基础
+     */
+    fun snapshotPadding() {
+        targetView.get()?.let { target ->
+            basePadding.set(
+                    target.paddingLeft,
+                    target.paddingTop,
+                    target.paddingRight,
+                    target.paddingBottom
+            )
+        }
+    }
+
     private fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
         target.layoutParams?.let { layoutParams ->
             if (layoutParams is ViewGroup.MarginLayoutParams) {
@@ -143,25 +175,33 @@ class WindowInsetsHelper {
         val offsetByRoot = findOffsetByRoot(rootView, target)
         when (type) {
             OptionType.Padding -> {
-                getDiff(offsetByRoot, basePadding) { l, t, r, b ->
+                getDiff(left, top, right, bottom,
+                        offsetByRoot, basePadding) { l, t, r, b ->
                     setPadding(target, l, t, r, b)
                 }
             }
             OptionType.Margin -> {
-                getDiff(offsetByRoot, baseMargin) { l, t, r, b ->
+                getDiff(left, top, right, bottom,
+                        offsetByRoot, baseMargin) { l, t, r, b ->
                     setMargin(target, l, t, r, b)
                 }
             }
         }
     }
 
-    private fun getDiff(targetInsets: Rect, minInsets: Rect,
-                        callback: (l: Int, t: Int, r: Int, b: Int) -> Unit) {
+    private fun getDiff(
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            offsetRect: Rect,
+            minInsets: Rect,
+            callback: (l: Int, t: Int, r: Int, b: Int) -> Unit) {
         callback(
-                max(targetInsets.left, minInsets.left),
-                max(targetInsets.top, minInsets.top),
-                max(targetInsets.right, minInsets.right),
-                max(targetInsets.bottom, minInsets.bottom)
+                max(max(0, left - offsetRect.left), minInsets.left),
+                max(max(0, top - offsetRect.top), minInsets.top),
+                max(max(0, right - offsetRect.right), minInsets.right),
+                max(max(0, bottom - offsetRect.bottom), minInsets.bottom)
         )
     }
 
@@ -173,7 +213,59 @@ class WindowInsetsHelper {
         val offsetRight = rootLocation[0] + rootView.width - targetLocation[0] - target.width
         val offsetBottom = rootLocation[1] + rootView.height - targetLocation[1] - target.height
         tempRectByLocation.set(offsetLeft, offsetTop, offsetRight, offsetBottom)
+        if (targetInViewPager) {
+            findParentPager(target) { pager, current, self ->
+                val pagerOffset = (current - self) * pager.width
+                tempRectByLocation.offset(pagerOffset, 0)
+            }
+            findParentPager2(target) { pager, current, self ->
+                val pagerOffsetX: Int
+                val pagerOffsetY: Int
+                if (pager.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
+                    pagerOffsetX = (current - self) * pager.width
+                    pagerOffsetY = 0
+                } else {
+                    pagerOffsetX = 0
+                    pagerOffsetY = (current - self) * pager.height
+                }
+                tempRectByLocation.offset(pagerOffsetX, pagerOffsetY)
+            }
+        }
         return tempRectByLocation
+    }
+
+    private fun findParentPager(
+            target: View,
+            callback: (pager: ViewPager, current: Int, self: Int) -> Unit) {
+        findParent<ViewPager>(target) { parent, child ->
+            callback(parent, parent.currentItem, parent.indexOfChild(child))
+        }
+    }
+
+    private fun findParentPager2(
+            target: View,
+            callback: (pager: ViewPager2, current: Int, self: Int) -> Unit) {
+        findParent<ViewPager2>(target) { parent, child ->
+            callback(parent, parent.currentItem, parent.indexOfChild(child))
+        }
+    }
+
+    private inline fun <reified T: View> findParent(
+            target: View, callback: (parent: T, child: View) -> Unit) {
+        var self = target
+        var parent = self.parent
+        while (parent != null) {
+            if (parent is T) {
+                callback(parent, self)
+                return
+            }
+            if (parent is View) {
+                self = parent
+                parent = self.parent
+            } else {
+                return
+            }
+        }
     }
 
     private fun View.getLocationInWindow(): IntArray {
