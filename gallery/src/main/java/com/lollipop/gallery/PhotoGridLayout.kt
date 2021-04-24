@@ -1,6 +1,8 @@
 package com.lollipop.gallery
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.cardview.widget.CardView
 
@@ -12,12 +14,12 @@ import androidx.cardview.widget.CardView
 class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         CardView(context, attrs, defStyleAttr) {
 
-    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, 0)
-    constructor(context: Context): this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context) : this(context, null)
 
     companion object {
         private const val SPAN_COUNT_SPARSE = 3
-        private const val SPAN_COUNT_DENSE = 5
+        private const val SPAN_COUNT_DENSE = 4
     }
 
     /**
@@ -29,6 +31,16 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
      * 间隔宽度
      */
     var spaceWidth = 0
+
+    init {
+        attrs?.let { attributeSet ->
+            val typedValue = context.obtainStyledAttributes(attributeSet, R.styleable.PhotoGridLayout)
+            spaceWidth = typedValue.getDimensionPixelSize(R.styleable.PhotoGridLayout_spaceWidth, 0)
+            val styleValue = typedValue.getInt(R.styleable.PhotoGridLayout_layoutStyle, Style.Playbill.ordinal)
+            layoutStyle = Style.values()[styleValue % Style.values().size]
+            typedValue.recycle()
+        }
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (childCount == 0 || MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
@@ -48,9 +60,9 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             return
         }
         when (layoutStyle) {
-            Style.Playbill -> layoutByPlaybill(changed, left, top, right, bottom)
-            Style.Dense -> layoutByDense(changed, left, top, right, bottom)
-            Style.Sparse -> layoutBySparse(changed, left, top, right, bottom)
+            Style.Playbill -> layoutByPlaybill(left, top, right, bottom)
+            Style.Dense -> layoutByDense(left, top, right, bottom)
+            Style.Sparse -> layoutBySparse(left, top, right, bottom)
         }
     }
 
@@ -64,16 +76,74 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
     }
 
     private fun measureByPlaybill(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (childCount > 9) {
-            measureBySparse(widthMeasureSpec, heightMeasureSpec)
-            return
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val space = spaceWidth
+        when (val count = childCount) {
+            1 -> {
+                measureByGrid(1, widthMeasureSpec, heightMeasureSpec)
+            }
+            2, 4 -> {
+                measureByGrid(2, widthMeasureSpec, heightMeasureSpec)
+            }
+            3, 6 -> {
+                val childWidthSmall = getChildWidthWithSpace(widthSize, space, 3)
+                val childWidthBig = childWidthSmall * 2 + space
+                for (index in 0 until count) {
+                    val childWidth = if (index == 0) {
+                        childWidthBig
+                    } else {
+                        childWidthSmall
+                    }
+                    val childWidthSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY)
+                    getChildAt(index)?.measure(childWidthSpec, childWidthSpec)
+                }
+                val heightSize = if (count == 3) {
+                    childWidthBig
+                } else {
+                    childWidthBig + childWidthSmall + space
+                }
+                setMeasuredDimension(
+                        widthSize + paddingLeft + paddingRight,
+                        heightSize + paddingTop + paddingBottom
+                )
+            }
+            5, 7 -> {
+                measureByTrapezoid(count / 2, widthMeasureSpec, heightMeasureSpec)
+            }
+            8 -> {
+                val childWidthSmall = getChildWidthWithSpace(widthSize, space, 3)
+                val childWidthMedium = getChildWidthWithSpace(widthSize, space, 2)
+                val childWidthBig = childWidthSmall * 2 + space
+                for (index in 0 until count) {
+                    val childWidth = when {
+                        index < 2 -> {
+                            childWidthMedium
+                        }
+                        index == 2 -> {
+                            childWidthBig
+                        }
+                        else -> {
+                            childWidthSmall
+                        }
+                    }
+                    val childWidthSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY)
+                    getChildAt(index)?.measure(childWidthSpec, childWidthSpec)
+                }
+                val heightSize = childWidthSmall + childWidthMedium + childWidthBig + (space * 2)
+                setMeasuredDimension(
+                        widthSize + paddingLeft + paddingRight,
+                        heightSize + paddingTop + paddingBottom
+                )
+            }
+            else -> {
+                measureBySparse(widthMeasureSpec, heightMeasureSpec)
+            }
         }
-        // TODO
     }
 
     private fun measureByGrid(spanCount: Int, widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
-        val childWidth = (widthSize - (spaceWidth * (spanCount - 1))) / spanCount
+        val childWidth = getChildWidthWithSpace(widthSize, spaceWidth, spanCount)
         val count = childCount
         val rowCount = if (count % spanCount != 0) {
             count / spanCount + 1
@@ -91,36 +161,187 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
         )
     }
 
-
-    private fun layoutByDense(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        layoutByGrid(SPAN_COUNT_DENSE, changed, left, top, right, bottom)
-    }
-
-    private fun layoutBySparse(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        layoutByGrid(SPAN_COUNT_SPARSE, changed, left, top, right, bottom)
-    }
-
-    private fun layoutByPlaybill(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if (childCount > 9) {
-            layoutBySparse(changed, left, top, right, bottom)
-            return
+    private fun measureByTrapezoid(spanCount: Int, widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val space = spaceWidth
+        val count = childCount
+        val childWidthBig = getChildWidthWithSpace(widthSize, space, spanCount)
+        val childWidthSmall = getChildWidthWithSpace(widthSize, space, spanCount + 1)
+        for (index in 0 until count) {
+            val childWidth = if (index < spanCount) {
+                childWidthBig
+            } else {
+                childWidthSmall
+            }
+            val childWidthSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY)
+            getChildAt(index)?.measure(childWidthSpec, childWidthSpec)
         }
-        // TODO
+        val smallChildCount = count - spanCount
+        var smallRowCount = 0
+        if (smallChildCount > 0) {
+            smallRowCount = smallChildCount / spanCount
+            if (smallChildCount % spanCount != 0) {
+                smallRowCount += 1
+            }
+        }
+        val heightSize = childWidthBig + (smallRowCount * (childWidthSmall + space))
+        setMeasuredDimension(
+                widthSize + paddingLeft + paddingRight,
+                heightSize + paddingTop + paddingBottom
+        )
     }
 
-    private fun layoutByGrid(
-            spanCount: Int,
-            changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    private fun layoutByDense(left: Int, top: Int, right: Int, bottom: Int) {
+        layoutByGrid(SPAN_COUNT_DENSE, right - left)
+    }
+
+    private fun layoutBySparse(left: Int, top: Int, right: Int, bottom: Int) {
+        layoutByGrid(SPAN_COUNT_SPARSE, right - left)
+    }
+
+    private fun layoutByPlaybill(left: Int, top: Int, right: Int, bottom: Int) {
+        val width = right - left
         val widthSize = width - paddingLeft - paddingRight
-        val childWidth = (widthSize - (spaceWidth * (spanCount - 1))) / spanCount
+        val space = spaceWidth
+        when (val count = childCount) {
+            1 -> {
+                layoutByGrid(1, width)
+            }
+            2, 4 -> {
+                layoutByGrid(2, width)
+            }
+            3, 6 -> {
+                val childWidthSmall = getChildWidthWithSpace(widthSize, space, 3)
+                val childWidthBig = childWidthSmall * 2 + space
+                for (index in 0 until count) {
+                    var childLeft: Int
+                    var childTop: Int
+                    val childWidth: Int
+                    when (index) {
+                        0 -> {
+                            childLeft = 0
+                            childTop = 0
+                            childWidth = childWidthBig
+                        }
+                        1, 2 -> {
+                            childLeft = childWidthBig + space
+                            childTop = (index - 1) * (childWidthSmall + space)
+                            childWidth = childWidthSmall
+                        }
+                        else -> {
+                            childLeft = (index - 3) % 3 * (childWidthSmall + space)
+                            childTop = (index - 3) / 3 * (childWidthSmall + space) + childWidthBig + space
+                            childWidth = childWidthSmall
+                        }
+                    }
+                    childLeft += paddingLeft
+                    childTop += paddingTop
+                    getChildAt(index)?.layout(
+                            childLeft,
+                            childTop,
+                            childLeft + childWidth,
+                            childTop + childWidth
+                    )
+                }
+            }
+            5, 7 -> {
+                layoutByTrapezoid(count / 2, width)
+            }
+            8 -> {
+                val childWidthSmall = getChildWidthWithSpace(widthSize, space, 3)
+                val childWidthMedium = getChildWidthWithSpace(widthSize, space, 2)
+                val childWidthBig = childWidthSmall * 2 + space
+                for (index in 0 until count) {
+                    val childWidth: Int
+                    var childLeft: Int
+                    var childTop: Int
+                    when {
+                        index < 2 -> {
+                            childWidth = childWidthMedium
+                            childLeft = index % 2 * (childWidth + space)
+                            childTop = 0
+                        }
+                        index == 2 -> {
+                            childWidth = childWidthBig
+                            childLeft = 0
+                            childTop = childWidthMedium + space
+                        }
+                        index < 5 -> {
+                            childWidth = childWidthSmall
+                            childLeft = childWidthBig + space
+                            childTop = (index - 3) * (childWidth + space) + childWidthMedium + space
+                        }
+                        else -> {
+                            val smallIndex = index - 5
+                            childWidth = childWidthSmall
+                            childLeft = smallIndex % 3 * (childWidth + space)
+                            childTop = (smallIndex / 3 * (childWidth + space)
+                                    + childWidthMedium + childWidthBig + (space * 2))
+                        }
+                    }
+                    childLeft += paddingLeft
+                    childTop += paddingTop
+                    getChildAt(index)?.layout(
+                            childLeft,
+                            childTop,
+                            childLeft + childWidth,
+                            childTop + childWidth
+                    )
+                }
+            }
+            else -> {
+                layoutBySparse(left, top, right, bottom)
+            }
+        }
+    }
+
+    private fun layoutByGrid(spanCount: Int, width: Int) {
+        val widthSize = width - paddingLeft - paddingRight
+        val childWidth = getChildWidthWithSpace(widthSize, spaceWidth, spanCount)
         val count = childCount
         val space = spaceWidth
         for (index in 0 until count) {
-            val childLeft = index % spanCount * (childWidth + space)
-            val childTop = index / spanCount * (childWidth + space)
+            val childLeft = index % spanCount * (childWidth + space) + paddingLeft
+            val childTop = index / spanCount * (childWidth + space) + paddingTop
             getChildAt(index)?.layout(
                     childLeft, childTop, childLeft + childWidth, childTop + childWidth)
         }
+    }
+
+    private fun layoutByTrapezoid(spanCount: Int, width: Int) {
+        val widthSize = width - paddingLeft - paddingRight
+        val space = spaceWidth
+        val count = childCount
+        val smallSpanCount = spanCount + 1
+        val childWidthBig = getChildWidthWithSpace(widthSize, space, spanCount)
+        val childWidthSmall = getChildWidthWithSpace(widthSize, space, smallSpanCount)
+        for (index in 0 until count) {
+            val childWidth: Int
+            var childLeft: Int
+            var childTop: Int
+            if (index < spanCount) {
+                childWidth = childWidthBig
+                childLeft = index % spanCount * (childWidth + space)
+                childTop = index / spanCount * (childWidth + space)
+            } else {
+                childWidth = childWidthSmall
+                val childIndex = index - spanCount
+                childLeft = childIndex % smallSpanCount * (childWidth + space)
+                childTop = childIndex / smallSpanCount * (childWidth + space) + childWidthBig + space
+            }
+            childLeft += paddingLeft
+            childTop += paddingTop
+            getChildAt(index)?.layout(
+                    childLeft,
+                    childTop,
+                    childLeft + childWidth,
+                    childTop + childWidth
+            )
+        }
+    }
+
+    private fun getChildWidthWithSpace(widthSize: Int, space: Int, spanCount: Int): Int {
+        return (widthSize - (space * (spanCount - 1))) / spanCount
     }
 
     enum class Style {

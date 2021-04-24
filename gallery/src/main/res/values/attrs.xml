@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PhotoGridLayout">
+        <attr name="spaceWidth" format="dimension"/>
+        <attr name="layoutStyle" format="enum">
+            <enum name="sparse" value="0"/>
+            <enum name="dense" value="1"/>
+            <enum name="playbill" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>
