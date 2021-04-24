@@ -6,72 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.lollipop.gallery.PhotoGridLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:spaceWidth="3dp"
-        app:layoutStyle="playbill"
         android:layout_margin="10dp"
         app:cardElevation="7dp"
         app:cardCornerRadius="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <com.lollipop.gallery.PhotoGridLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            app:spaceWidth="3dp"
+            app:layoutStyle="playbill">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F00"
-            android:textColor="@android:color/white"
-            android:text="@string/app_name"
-            android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
 
-    </com.lollipop.gallery.PhotoGridLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F00"
+                android:textColor="@android:color/white"
+                android:text="@string/app_name"
+                android:gravity="center"/>
+
+        </com.lollipop.gallery.PhotoGridLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

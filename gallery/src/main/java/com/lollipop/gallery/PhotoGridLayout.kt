@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.widget.FrameLayout
 import androidx.cardview.widget.CardView
 
 /**
@@ -12,7 +13,7 @@ import androidx.cardview.widget.CardView
  * 照片的宫格排列Layout
  */
 class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-        CardView(context, attrs, defStyleAttr) {
+        FrameLayout(context, attrs, defStyleAttr) {
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context) : this(context, null)
