@@ -14,7 +14,6 @@
         app:layoutStyle="playbill"
         android:layout_margin="10dp"
         app:cardElevation="7dp"
-        android:padding="10dp"
         app:cardCornerRadius="10dp">
 
         <TextView
