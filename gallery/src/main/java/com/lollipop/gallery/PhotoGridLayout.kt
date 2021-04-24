@@ -64,6 +64,10 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
     }
 
     private fun measureByPlaybill(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (childCount > 9) {
+            measureBySparse(widthMeasureSpec, heightMeasureSpec)
+            return
+        }
         // TODO
     }
 
@@ -97,6 +101,10 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
     }
 
     private fun layoutByPlaybill(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        if (childCount > 9) {
+            layoutBySparse(changed, left, top, right, bottom)
+            return
+        }
         // TODO
     }
 
