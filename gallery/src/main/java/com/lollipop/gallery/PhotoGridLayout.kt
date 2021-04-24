@@ -177,10 +177,11 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             getChildAt(index)?.measure(childWidthSpec, childWidthSpec)
         }
         val smallChildCount = count - spanCount
+        val smallSpanCount = spanCount + 1
         var smallRowCount = 0
         if (smallChildCount > 0) {
-            smallRowCount = smallChildCount / spanCount
-            if (smallChildCount % spanCount != 0) {
+            smallRowCount = smallChildCount / smallSpanCount
+            if (smallChildCount % smallSpanCount != 0) {
                 smallRowCount += 1
             }
         }
