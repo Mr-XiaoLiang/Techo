@@ -1,12 +1,20 @@
 package com.lollipop.techo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : HeaderActivity() {
+
+    private val viewBinding: ActivityMainBinding by lazyBind()
+
+    override val contentView: View
+        get() = viewBinding.root
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
     }
+
 }
