@@ -1,10 +1,8 @@
 package com.lollipop.base.ui
 
 import android.content.Context
-import android.view.View
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.listener.OnInsetsChangeListener
 import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.util.BackPressProviderHelper
 
@@ -14,7 +12,7 @@ import com.lollipop.base.util.BackPressProviderHelper
  * 基础的Fragment
  * 提供基础的实现和能力
  */
-open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, OnInsetsChangeListener {
+open class BaseFragment: Fragment(), BackPressListener, BackPressProvider {
 
     private val backPressProviderHelper = BackPressProviderHelper(getSelf())
 
@@ -75,10 +73,6 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, OnIns
             return true
         }
         return false
-    }
-
-    override fun onInsetsChanged(root: View, left: Int, top: Int, right: Int, bottom: Int) {
-
     }
 
 }

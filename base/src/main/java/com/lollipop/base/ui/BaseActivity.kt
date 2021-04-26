@@ -4,9 +4,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.listener.OnInsetsChangeListener
 import com.lollipop.base.provider.BackPressProvider
-import com.lollipop.base.provider.WindowInsetsProvider
 import com.lollipop.base.util.BackPressProviderHelper
 import com.lollipop.base.util.WindowInsetsProviderHelper
 
@@ -16,10 +14,7 @@ import com.lollipop.base.util.WindowInsetsProviderHelper
  * 基础的Activity
  * 提供基础的实现和能力
  */
-open class BaseActivity : AppCompatActivity(),
-        BackPressProvider,
-        WindowInsetsProvider,
-        OnInsetsChangeListener {
+open class BaseActivity : AppCompatActivity(), BackPressProvider{
 
     private val backPressProviderHelper = BackPressProviderHelper()
 
@@ -41,14 +36,6 @@ open class BaseActivity : AppCompatActivity(),
         return super.onKeyUp(keyCode, event)
     }
 
-    protected fun bindRootViewWithInsets(root: View) {
-        root.fitsSystemWindows = true
-        root.setOnApplyWindowInsetsListener { v, insets ->
-            // TODO
-            insets
-        }
-    }
-
     private fun dispatchInsets(root: View, left: Int, top: Int, right: Int, bottom: Int) {
         windowInsetsProviderHelper.onInsetsChanged(root, left, top, right, bottom)
     }
@@ -68,17 +55,6 @@ open class BaseActivity : AppCompatActivity(),
     override fun onDestroy() {
         super.onDestroy()
         backPressProviderHelper.destroy()
-    }
-
-    override fun addInsetsChangeListener(listener: OnInsetsChangeListener) {
-        windowInsetsProviderHelper.addInsetsChangeListener(listener)
-    }
-
-    override fun removeInsetsChangeListener(listener: OnInsetsChangeListener) {
-        windowInsetsProviderHelper.removeInsetsChangeListener(listener)
-    }
-
-    override fun onInsetsChanged(root: View, left: Int, top: Int, right: Int, bottom: Int) {
     }
 
 }
