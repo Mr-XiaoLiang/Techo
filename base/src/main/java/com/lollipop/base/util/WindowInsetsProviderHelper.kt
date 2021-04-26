@@ -10,9 +10,15 @@ import java.lang.ref.WeakReference
  * @author lollipop
  * @date 4/18/21 20:02
  */
-class WindowInsetsProviderHelper : WindowInsetsProvider, OnInsetsChangeListener {
+class WindowInsetsProviderHelper(
+        firstListener: OnInsetsChangeListener? = null
+) : WindowInsetsProvider, OnInsetsChangeListener {
 
-    private val listenerList = ArrayList<OnInsetsChangeListener>()
+    private val listenerList = ArrayList<OnInsetsChangeListener>().apply {
+        if (firstListener != null) {
+            add(firstListener)
+        }
+    }
 
     private val windowInsets = Rect()
 
