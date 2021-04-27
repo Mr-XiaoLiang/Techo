@@ -1,12 +1,10 @@
 package com.lollipop.base.ui
 
 import android.view.KeyEvent
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.util.BackPressProviderHelper
-import com.lollipop.base.util.WindowInsetsProviderHelper
 
 /**
  * @author lollipop
@@ -17,8 +15,6 @@ import com.lollipop.base.util.WindowInsetsProviderHelper
 open class BaseActivity : AppCompatActivity(), BackPressProvider{
 
     private val backPressProviderHelper = BackPressProviderHelper()
-
-    private val windowInsetsProviderHelper = WindowInsetsProviderHelper(getSelf())
 
     private fun getSelf(): BaseActivity {
         return this
@@ -34,10 +30,6 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider{
             }
         }
         return super.onKeyUp(keyCode, event)
-    }
-
-    private fun dispatchInsets(root: View, left: Int, top: Int, right: Int, bottom: Int) {
-        windowInsetsProviderHelper.onInsetsChanged(root, left, top, right, bottom)
     }
 
     private fun dispatchBackEvent(): Boolean {
