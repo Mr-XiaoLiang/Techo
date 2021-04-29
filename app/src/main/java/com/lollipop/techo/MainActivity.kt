@@ -3,6 +3,7 @@ package com.lollipop.techo
 import android.os.Bundle
 import android.view.View
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.data.TechoInfo
 import com.lollipop.techo.databinding.ActivityMainBinding
 
 class MainActivity : HeaderActivity() {
@@ -14,7 +15,8 @@ class MainActivity : HeaderActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val techoInfo = TechoInfo()
+        techoInfo.color
     }
 
 }
