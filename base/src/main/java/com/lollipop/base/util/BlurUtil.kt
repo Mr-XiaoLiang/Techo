@@ -6,6 +6,7 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
+import androidx.annotation.FloatRange
 
 /**
  * @author lollipop
@@ -14,7 +15,13 @@ import android.renderscript.ScriptIntrinsicBlur
  */
 class BlurUtil {
 
-    fun blurBitmap(context: Context, src: Bitmap, out: Bitmap, radius: Float = 25F) {
+    fun blurBitmap(
+            context: Context,
+            src: Bitmap,
+            out: Bitmap,
+            @FloatRange(from = 1.0, to = 25.0)
+            radius: Float = 25F
+    ) {
         // 创建RenderScript内核对象
         val rs = RenderScript.create(context)
         // 创建一个模糊效果的RenderScript的工具对象
