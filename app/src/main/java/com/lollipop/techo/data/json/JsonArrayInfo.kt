@@ -11,7 +11,7 @@ import org.json.JSONTokener
  * @date 2020/5/26 23:44
  * 基础的信息类
  */
-open class JsonArrayInfo {
+open class JsonArrayInfo: Convertible {
 
     var infoArray: JSONArray = JSONArray()
         private set
@@ -147,6 +147,14 @@ open class JsonArrayInfo {
         get() {
             return infoArray.length()
         }
+
+    override fun parse(any: Any) {
+        copy(if (any is String) {
+            any
+        } else {
+            any.toString()
+        })
+    }
 
     override fun toString(): String {
         return infoArray.toString()

@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
  * @date 2020/5/26 23:44
  * 基础的信息类
  */
-open class JsonObjectInfo: Convertible {
+open class JsonObjectInfo : Convertible {
 
     var infoObject: JSONObject = JSONObject()
         private set
@@ -132,14 +132,18 @@ open class JsonObjectInfo: Convertible {
         }
 
     override fun parse(any: Any) {
-        copy(any.toString())
+        copy(if (any is String) {
+            any
+        } else {
+            any.toString()
+        })
     }
 
     override fun toString(): String {
         return infoObject.toString()
     }
 
-    protected interface AnyDelegate<A: JsonObjectInfo, T: Any> {
+    protected interface AnyDelegate<A : JsonObjectInfo, T : Any> {
         operator fun getValue(thisRef: A, property: KProperty<*>): T
 
         operator fun setValue(thisRef: A, property: KProperty<*>, value: T) {
@@ -147,7 +151,7 @@ open class JsonObjectInfo: Convertible {
         }
     }
 
-    protected inline fun <reified T: Any> withThis(def: T): AnyDelegate<JsonObjectInfo, T> {
+    protected inline fun <reified T : Any> withThis(def: T): AnyDelegate<JsonObjectInfo, T> {
         return object : AnyDelegate<JsonObjectInfo, T> {
             override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
                 return thisRef.get(property.name, def)
