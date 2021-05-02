@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.data.HeaderImageInfo
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 
 /**
@@ -30,6 +31,10 @@ abstract class HeaderActivity : BaseActivity() {
             viewBinding.floatingRoot.addView(it,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
+
+        val headerImageInfo = HeaderImageInfo()
+        val value = headerImageInfo.images
+        val get: HeaderImageInfo.ImageInfo? = value?.get(0)
     }
 
 }

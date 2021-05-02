@@ -16,7 +16,7 @@ open class JsonArrayInfo<T: Any>: Convertible {
     var infoArray: JSONArray = JSONArray()
         private set
 
-    protected val cache = SparseArray<Any>()
+    val cache = SparseArray<Any?>()
 
     inline fun <reified A : JsonArrayInfo<T>> clone(): A {
         val newInfo = A::class.java.getConstructor().newInstance()
@@ -48,17 +48,17 @@ open class JsonArrayInfo<T: Any>: Convertible {
         }
     }
 
-    protected fun opt(key: Int): Any? {
+    fun opt(key: Int): Any? {
         return infoArray.opt(key)
     }
 
-    protected inline operator fun <reified A : T> get(key: Int, def: A): A {
+    inline fun <reified A : T> get(key: Int, def: A? = null): A? {
         val valueOnly = getOnly(key, def)
         set(key, valueOnly)
         return valueOnly
     }
 
-    protected inline fun <reified A : T> getOnly(key: Int, def: A): A {
+    inline fun <reified A : T> getOnly(key: Int, def: A?): A? {
         val cacheValue = cache[key]
         if (cacheValue is A) {
             return cacheValue
@@ -107,7 +107,7 @@ open class JsonArrayInfo<T: Any>: Convertible {
         return def
     }
 
-    protected operator fun set(key: Int, value: Any) {
+    operator fun set(key: Int, value: Any?) {
         when (value) {
             is JsonArrayInfo<*> -> {
                 infoArray.put(key, value.infoArray)

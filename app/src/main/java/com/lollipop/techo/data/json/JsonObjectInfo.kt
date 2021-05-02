@@ -15,7 +15,7 @@ open class JsonObjectInfo : Convertible {
     var infoObject: JSONObject = JSONObject()
         private set
 
-    protected val cache = HashMap<String, Any>()
+    protected val cache = HashMap<String, Any?>()
 
     inline fun <reified T : JsonObjectInfo> clone(): T {
         val newInfo = T::class.java.getConstructor().newInstance()
@@ -55,18 +55,18 @@ open class JsonObjectInfo : Convertible {
         return infoObject.opt(key)
     }
 
-    protected inline operator fun <reified T : Any> get(key: String, def: T): T {
-        val valueOnly = getOnly(key, def)
+    protected inline operator fun <reified T : Any> get(key: String): T? {
+        val valueOnly = getOnly<T>(key)
         set(key, valueOnly)
         return valueOnly
     }
 
-    protected inline fun <reified T : Any> getOnly(key: String, def: T): T {
+    protected inline fun <reified T : Any> getOnly(key: String): T? {
         val cacheValue = cache[key]
         if (cacheValue is T) {
             return cacheValue
         }
-        val opt = opt(key) ?: return def
+        val opt = opt(key) ?: return null
         if (opt is T) {
             return opt
         }
@@ -75,44 +75,44 @@ open class JsonObjectInfo : Convertible {
             (newInstance as Convertible).parse(opt)
             return newInstance
         }
-        when (def) {
-            is String -> {
+        when (T::class.java) {
+            String::class.java -> {
                 return infoObject.optString(key) as T
             }
-            is Boolean -> {
+            Boolean::class.java -> {
                 return infoObject.optBoolean(key) as T
             }
-            is Int -> {
+            Int::class.java -> {
                 return infoObject.optInt(key) as T
             }
-            is Long -> {
+            Long::class.java -> {
                 return infoObject.optLong(key) as T
             }
-            is Float -> {
-                return infoObject.optDouble(key).let {
-                    if (it.isNaN()) {
-                        def
+            Float::class.java -> {
+                infoObject.optDouble(key).let {
+                    return if (it.isNaN()) {
+                        null
                     } else {
-                        it.toFloat()
+                        it.toFloat() as T
                     }
-                } as T
+                }
             }
-            is Double -> {
-                return infoObject.optDouble(key).let {
-                    if (it.isNaN()) {
-                        def
+            Double::class.java -> {
+                infoObject.optDouble(key).let {
+                    return if (it.isNaN()) {
+                        null
                     } else {
-                        it
+                        it as T
                     }
-                } as T
+                }
             }
         }
-        return def
+        return null
     }
 
-    protected operator fun set(key: String, value: Any) {
+    protected operator fun set(key: String, value: Any?) {
         when (value) {
-            is JsonArrayInfo -> {
+            is JsonArrayInfo<*> -> {
                 infoObject.put(key, value.infoArray)
             }
             is JsonObjectInfo -> {
@@ -144,19 +144,37 @@ open class JsonObjectInfo : Convertible {
     }
 
     protected interface AnyDelegate<A : JsonObjectInfo, T : Any> {
-        operator fun getValue(thisRef: A, property: KProperty<*>): T
+        operator fun getValue(thisRef: A, property: KProperty<*>): T?
 
-        operator fun setValue(thisRef: A, property: KProperty<*>, value: T) {
+        operator fun setValue(thisRef: A, property: KProperty<*>, value: T?) {
             thisRef[property.name] = value
         }
     }
 
-    protected inline fun <reified T : Any> withThis(def: T): AnyDelegate<JsonObjectInfo, T> {
+    protected interface AnyDelegateNoNull<A : JsonObjectInfo, T : Any> {
+        operator fun getValue(thisRef: A, property: KProperty<*>): T
+
+        operator fun setValue(thisRef: A, property: KProperty<*>, value: T?) {
+            thisRef[property.name] = value
+        }
+    }
+
+    protected inline fun <reified T : Any> withThis(): AnyDelegate<JsonObjectInfo, T> {
         return object : AnyDelegate<JsonObjectInfo, T> {
-            override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
-                return thisRef.get(property.name, def)
+            override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T? {
+                return thisRef[property.name]
             }
         }
     }
+
+    protected inline fun <reified T : Any> withThis(def: T): AnyDelegateNoNull<JsonObjectInfo, T> {
+        return object : AnyDelegateNoNull<JsonObjectInfo, T> {
+            override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
+                return thisRef[property.name]?:def
+            }
+        }
+    }
+
+    protected inline fun <reified T : Any> arrayWithThis() = withThis<JsonArrayInfo<T>>()
 
 }

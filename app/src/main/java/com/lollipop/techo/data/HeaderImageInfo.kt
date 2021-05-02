@@ -1,6 +1,5 @@
 package com.lollipop.techo.data
 
-import com.lollipop.techo.data.json.JsonArrayInfo
 import com.lollipop.techo.data.json.JsonObjectInfo
 
 /**
@@ -10,9 +9,11 @@ import com.lollipop.techo.data.json.JsonObjectInfo
  */
 class HeaderImageInfo: JsonObjectInfo() {
 
-    val images: JsonArrayInfo<ImageInfo> by withThis(JsonArrayInfo())
+    val images by arrayWithThis<ImageInfo>()
 
     class ImageInfo: JsonObjectInfo() {
+
+        val url by withThis("")
 
     }
 
