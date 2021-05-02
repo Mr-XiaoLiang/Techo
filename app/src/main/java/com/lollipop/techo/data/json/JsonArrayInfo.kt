@@ -11,20 +11,20 @@ import org.json.JSONTokener
  * @date 2020/5/26 23:44
  * 基础的信息类
  */
-open class JsonArrayInfo: Convertible {
+open class JsonArrayInfo<T: Any>: Convertible {
 
     var infoArray: JSONArray = JSONArray()
         private set
 
     protected val cache = SparseArray<Any>()
 
-    inline fun <reified T : JsonArrayInfo> clone(): T {
-        val newInfo = T::class.java.getConstructor().newInstance()
+    inline fun <reified A : JsonArrayInfo<T>> clone(): A {
+        val newInfo = A::class.java.getConstructor().newInstance()
         newInfo.copy(this)
         return newInfo
     }
 
-    fun copy(info: JsonArrayInfo) {
+    fun copy(info: JsonArrayInfo<T>) {
         copy(info.toString())
     }
 
@@ -52,38 +52,38 @@ open class JsonArrayInfo: Convertible {
         return infoArray.opt(key)
     }
 
-    protected inline operator fun <reified T : Any> get(key: Int, def: T): T {
+    protected inline operator fun <reified A : T> get(key: Int, def: A): A {
         val valueOnly = getOnly(key, def)
         set(key, valueOnly)
         return valueOnly
     }
 
-    protected inline fun <reified T : Any> getOnly(key: Int, def: T): T {
+    protected inline fun <reified A : T> getOnly(key: Int, def: A): A {
         val cacheValue = cache[key]
-        if (cacheValue is T) {
+        if (cacheValue is A) {
             return cacheValue
         }
         val opt = opt(key) ?: return def
-        if (opt is T) {
+        if (opt is A) {
             return opt
         }
-        if (Convertible::class.java.isAssignableFrom(T::class.java)) {
-            val newInstance = (T::class.java).getConstructor().newInstance()
+        if (Convertible::class.java.isAssignableFrom(A::class.java)) {
+            val newInstance = (A::class.java).getConstructor().newInstance()
             (newInstance as Convertible).parse(opt)
             return newInstance
         }
         when (def) {
             is String -> {
-                return infoArray.optString(key) as T
+                return infoArray.optString(key) as A
             }
             is Boolean -> {
-                return infoArray.optBoolean(key) as T
+                return infoArray.optBoolean(key) as A
             }
             is Int -> {
-                return infoArray.optInt(key) as T
+                return infoArray.optInt(key) as A
             }
             is Long -> {
-                return infoArray.optLong(key) as T
+                return infoArray.optLong(key) as A
             }
             is Float -> {
                 return infoArray.optDouble(key).let {
@@ -92,7 +92,7 @@ open class JsonArrayInfo: Convertible {
                     } else {
                         it.toFloat()
                     }
-                } as T
+                } as A
             }
             is Double -> {
                 return infoArray.optDouble(key).let {
@@ -101,7 +101,7 @@ open class JsonArrayInfo: Convertible {
                     } else {
                         it
                     }
-                } as T
+                } as A
             }
         }
         return def
@@ -109,7 +109,7 @@ open class JsonArrayInfo: Convertible {
 
     protected operator fun set(key: Int, value: Any) {
         when (value) {
-            is JsonArrayInfo -> {
+            is JsonArrayInfo<*> -> {
                 infoArray.put(key, value.infoArray)
             }
             is JsonObjectInfo -> {
@@ -123,10 +123,10 @@ open class JsonArrayInfo: Convertible {
         cache[key] = value
     }
 
-    fun put(value: Any) {
+    fun put(value: T) {
         if (checkPut(value)) {
             when (value) {
-                is JsonArrayInfo -> {
+                is JsonArrayInfo<*> -> {
                     infoArray.put(value.infoArray)
                 }
                 is JsonObjectInfo -> {
