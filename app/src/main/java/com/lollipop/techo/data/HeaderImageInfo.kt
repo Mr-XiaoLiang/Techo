@@ -13,7 +13,19 @@ class HeaderImageInfo: JsonObjectInfo() {
 
     class ImageInfo: JsonObjectInfo() {
 
+        /**
+         * 完整的Url链接地址
+         * （包含图片裁剪尺寸
+         */
         val url by withThis("")
+
+        /**
+         * 基础的URL
+         * （不包含图片剪裁尺寸
+         */
+        val urlBase by withThisByRename("urlbase", "")
+
+        val copyright by withThis("")
 
     }
 

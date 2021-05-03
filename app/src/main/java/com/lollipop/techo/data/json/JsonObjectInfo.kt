@@ -175,6 +175,14 @@ open class JsonObjectInfo : Convertible {
         }
     }
 
+    protected inline fun <reified T : Any> withThisByRename(name: String, def: T): AnyDelegateNoNull<JsonObjectInfo, T> {
+        return object : AnyDelegateNoNull<JsonObjectInfo, T> {
+            override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
+                return thisRef[name]?:def
+            }
+        }
+    }
+
     protected inline fun <reified T : Any> arrayWithThis() = withThis<JsonArrayInfo<T>>()
 
 }
