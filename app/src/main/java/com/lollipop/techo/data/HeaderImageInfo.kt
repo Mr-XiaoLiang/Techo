@@ -25,7 +25,18 @@ class HeaderImageInfo: JsonObjectInfo() {
          */
         val urlBase by withThisByRename("urlbase", "")
 
+        /**
+         * 版权的描述信息
+         */
         val copyright by withThis("")
+
+        /**
+         * 获取完整的URL链接地址
+         */
+        val fullUrl by lazy {
+            RequestService.formatFullImageUrl(url)
+        }
+
 
     }
 
