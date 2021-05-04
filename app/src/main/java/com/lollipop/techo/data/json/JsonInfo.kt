@@ -12,7 +12,7 @@ inline fun <reified T : JsonObjectInfo> String.toJsonObjectInfo(): T {
     return newInstance
 }
 
-inline fun <reified T : JsonArrayInfo> String.toJsonArrayInfo(): T {
+inline fun <reified A: Any, reified T : JsonArrayInfo<A>> String.toJsonArrayInfo(): T {
     val newInstance = T::class.java.getConstructor().newInstance()
     newInstance.parse(this)
     return newInstance
