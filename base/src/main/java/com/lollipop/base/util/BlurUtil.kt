@@ -13,7 +13,7 @@ import androidx.annotation.FloatRange
  * @date 4/29/21 21:33
  * 模糊图像的工具类
  */
-class BlurUtil {
+object BlurUtil {
 
     fun blurBitmap(
             context: Context,
@@ -23,7 +23,16 @@ class BlurUtil {
             radius: Float = 25F
     ) {
         // 创建RenderScript内核对象
-        val rs = RenderScript.create(context)
+        blurBitmap(RenderScript.create(context), src, out, radius)
+    }
+
+    fun blurBitmap(
+        rs: RenderScript,
+        src: Bitmap,
+        out: Bitmap,
+        @FloatRange(from = 1.0, to = 25.0)
+        radius: Float = 25F
+    ) {
         // 创建一个模糊效果的RenderScript的工具对象
         val blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
         // 由于RenderScript并没有使用VM来分配内存,所以需要使用Allocation类来创建和分配内存空间
