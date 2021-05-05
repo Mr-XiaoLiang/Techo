@@ -31,10 +31,8 @@ abstract class HeaderActivity : BaseActivity() {
             viewBinding.floatingRoot.addView(it,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
-
-        val headerImageInfo = HeaderImageInfo()
-        val value = headerImageInfo.images
-        val get: HeaderImageInfo.ImageInfo? = value?.get(0)
     }
+
+
 
 }

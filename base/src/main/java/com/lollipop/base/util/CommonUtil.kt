@@ -16,6 +16,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import java.io.*
 import java.util.concurrent.Executor
@@ -649,3 +651,29 @@ fun View.findRootGroup(filter: (ViewGroup) -> Boolean): ViewGroup? {
     } while (parent != null)
     return group
 }
+
+/**
+ * 是否已经被销毁
+ */
+fun LifecycleOwner.isDestroyed() = lifecycle.currentState.isAtLeast(Lifecycle.State.DESTROYED)
+
+/**
+ * 是否已经被创建
+ */
+fun LifecycleOwner.isCreated() = lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)
+
+/**
+ * 是否已经被初始化
+ */
+fun LifecycleOwner.isInitialized() = lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED)
+
+/**
+ * 是否已经开始运行
+ */
+fun LifecycleOwner.isStarted() = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+
+/**
+ * 是否已经可见
+ */
+fun LifecycleOwner.isResumed() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
