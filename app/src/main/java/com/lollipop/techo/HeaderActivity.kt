@@ -57,8 +57,7 @@ abstract class HeaderActivity : BaseActivity() {
                                         RequestOptions().transform(
                                             BlurTransformation.create(this@HeaderActivity)
                                         )
-                                    )
-                                    .into(viewBinding.headerBackground)
+                                    ).into(viewBinding.headerBackground)
                             }
                         }
                     }
