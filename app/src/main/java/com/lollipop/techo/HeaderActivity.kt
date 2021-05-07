@@ -8,6 +8,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onUI
 import com.lollipop.techo.data.HeaderImageInfo
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
@@ -50,12 +51,14 @@ abstract class HeaderActivity : BaseActivity() {
                     if (images.size > 0) {
                         images.get<HeaderImageInfo.ImageInfo>(0)?.let { imageInfo ->
                             if (imageInfo.url.isNotEmpty()) {
-                                Glide.with(viewBinding.headerBackground)
-                                    .load(imageInfo.fullUrl)
-                                    .apply(
-                                        RequestOptions().transform(
-                                            BlurTransformation.create(this@HeaderActivity)))
-                                    .into(viewBinding.headerBackground)
+                                onUI {
+                                    Glide.with(viewBinding.headerBackground)
+                                        .load(imageInfo.fullUrl)
+                                        .apply(
+                                            RequestOptions().transform(
+                                                BlurTransformation.create(this@HeaderActivity)))
+                                        .into(viewBinding.headerBackground)
+                                }
                             }
                         }
                     }
