@@ -15,8 +15,7 @@ class MainActivity : HeaderActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val techoInfo = TechoInfo()
-        techoInfo.color
+
     }
 
 }
