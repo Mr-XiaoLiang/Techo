@@ -9,7 +9,7 @@ import com.lollipop.techo.data.json.JsonObjectInfo
  */
 class HeaderImageInfo: JsonObjectInfo() {
 
-    val images by arrayWithThis<ImageInfo>()
+    val images by arrayWithThis()
 
     class ImageInfo: JsonObjectInfo() {
 

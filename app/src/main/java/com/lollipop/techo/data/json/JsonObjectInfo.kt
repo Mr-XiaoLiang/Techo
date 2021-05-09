@@ -112,7 +112,7 @@ open class JsonObjectInfo : Convertible {
 
     protected operator fun set(key: String, value: Any?) {
         when (value) {
-            is JsonArrayInfo<*> -> {
+            is JsonArrayInfo -> {
                 infoObject.put(key, value.infoArray)
             }
             is JsonObjectInfo -> {
@@ -183,6 +183,6 @@ open class JsonObjectInfo : Convertible {
         }
     }
 
-    protected inline fun <reified T : Any> arrayWithThis() = withThis<JsonArrayInfo<T>>()
+    protected fun arrayWithThis() = withThis<JsonArrayInfo>()
 
 }

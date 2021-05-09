@@ -11,20 +11,20 @@ import org.json.JSONTokener
  * @date 2020/5/26 23:44
  * 基础的信息类
  */
-open class JsonArrayInfo<T: Any>: Convertible {
+open class JsonArrayInfo: Convertible {
 
     var infoArray: JSONArray = JSONArray()
         private set
 
     val cache = SparseArray<Any?>()
 
-    inline fun <reified A : JsonArrayInfo<T>> clone(): A {
+    inline fun <reified A : JsonArrayInfo> clone(): A {
         val newInfo = A::class.java.getConstructor().newInstance()
         newInfo.copy(this)
         return newInfo
     }
 
-    fun copy(info: JsonArrayInfo<T>) {
+    fun copy(info: JsonArrayInfo) {
         copy(info.toString())
     }
 
@@ -52,13 +52,13 @@ open class JsonArrayInfo<T: Any>: Convertible {
         return infoArray.opt(key)
     }
 
-    inline fun <reified A : T> get(key: Int, def: A? = null): A? {
+    inline fun <reified A : Any> get(key: Int, def: A? = null): A? {
         val valueOnly = getOnly(key, def)
         set(key, valueOnly)
         return valueOnly
     }
 
-    inline fun <reified A : T> getOnly(key: Int, def: A?): A? {
+    inline fun <reified A : Any> getOnly(key: Int, def: A?): A? {
         val cacheValue = cache[key]
         if (cacheValue is A) {
             return cacheValue
@@ -109,7 +109,7 @@ open class JsonArrayInfo<T: Any>: Convertible {
 
     operator fun set(key: Int, value: Any?) {
         when (value) {
-            is JsonArrayInfo<*> -> {
+            is JsonArrayInfo -> {
                 infoArray.put(key, value.infoArray)
             }
             is JsonObjectInfo -> {
@@ -123,10 +123,10 @@ open class JsonArrayInfo<T: Any>: Convertible {
         cache[key] = value
     }
 
-    fun put(value: T) {
+    fun put(value: Any) {
         if (checkPut(value)) {
             when (value) {
-                is JsonArrayInfo<*> -> {
+                is JsonArrayInfo -> {
                     infoArray.put(value.infoArray)
                 }
                 is JsonObjectInfo -> {
