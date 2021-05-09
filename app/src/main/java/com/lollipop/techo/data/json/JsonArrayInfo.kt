@@ -52,13 +52,13 @@ open class JsonArrayInfo: Convertible {
         return infoArray.opt(key)
     }
 
-    inline fun <reified A : Any> get(key: Int, def: A? = null): A? {
-        val valueOnly = getOnly(key, def)
+    inline fun <reified A : Any> getValue(key: Int, def: A? = null): A? {
+        val valueOnly = getValueOnly(key, def)
         set(key, valueOnly)
         return valueOnly
     }
 
-    inline fun <reified A : Any> getOnly(key: Int, def: A?): A? {
+    inline fun <reified A : Any> getValueOnly(key: Int, def: A?): A? {
         val cacheValue = cache[key]
         if (cacheValue is A) {
             return cacheValue

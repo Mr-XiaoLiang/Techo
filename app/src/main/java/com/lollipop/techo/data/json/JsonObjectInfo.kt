@@ -132,11 +132,13 @@ open class JsonObjectInfo : Convertible {
         }
 
     override fun parse(any: Any) {
-        copy(if (any is String) {
-            any
-        } else {
-            any.toString()
-        })
+        copy(
+            if (any is String) {
+                any
+            } else {
+                any.toString()
+            }
+        )
     }
 
     override fun toString(): String {
@@ -170,19 +172,29 @@ open class JsonObjectInfo : Convertible {
     protected inline fun <reified T : Any> withThis(def: T): AnyDelegateNoNull<JsonObjectInfo, T> {
         return object : AnyDelegateNoNull<JsonObjectInfo, T> {
             override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
-                return thisRef[property.name]?:def
+                return thisRef[property.name] ?: def
             }
         }
     }
 
-    protected inline fun <reified T : Any> withThisByRename(name: String, def: T): AnyDelegateNoNull<JsonObjectInfo, T> {
+    protected inline fun <reified T : Any> withThisByRename(
+        name: String,
+        def: T
+    ): AnyDelegateNoNull<JsonObjectInfo, T> {
         return object : AnyDelegateNoNull<JsonObjectInfo, T> {
             override fun getValue(thisRef: JsonObjectInfo, property: KProperty<*>): T {
-                return thisRef[name]?:def
+                return thisRef[name] ?: def
             }
         }
     }
 
-    protected fun arrayWithThis() = withThis<JsonArrayInfo>()
+    protected inline fun <reified T : Any> arrayWithThis(): AnyDelegateNoNull<JsonObjectInfo, TypedJsonArrayInfo<T>> {
+        return withThis(
+            object : TypedJsonArrayInfo<T>() {
+                override fun get(key: Int): T? {
+                    return getValue(key, null)
+                }
+            })
+    }
 
 }
