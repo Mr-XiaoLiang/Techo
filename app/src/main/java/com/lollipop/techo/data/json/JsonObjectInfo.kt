@@ -188,13 +188,4 @@ open class JsonObjectInfo : Convertible {
         }
     }
 
-    protected inline fun <reified T : Any> arrayWithThis(): AnyDelegateNoNull<JsonObjectInfo, TypedJsonArrayInfo<T>> {
-        return withThis(
-            object : TypedJsonArrayInfo<T>() {
-                override fun get(key: Int): T? {
-                    return getValue(key, null)
-                }
-            })
-    }
-
 }

@@ -46,19 +46,21 @@ abstract class HeaderActivity : BaseActivity() {
 
     private fun loadHeader() {
         doAsync {
-            RequestService.getHeaderImageInfo().images[0]?.let { imageInfo ->
-                if (imageInfo.url.isNotEmpty()) {
-                    onUI {
-                        Glide.with(viewBinding.headerBackground)
-                            .load(imageInfo.fullUrl)
-                            .apply(
-                                RequestOptions().transform(
-                                    BlurTransformation.create(this@HeaderActivity)
-                                )
-                            ).into(viewBinding.headerBackground)
+            RequestService.getHeaderImageInfo().images
+                ?.getValue<HeaderImageInfo.ImageInfo>(0)
+                ?.let { imageInfo ->
+                    if (imageInfo.url.isNotEmpty()) {
+                        onUI {
+                            Glide.with(viewBinding.headerBackground)
+                                .load(imageInfo.fullUrl)
+                                .apply(
+                                    RequestOptions().transform(
+                                        BlurTransformation.create(this@HeaderActivity)
+                                    )
+                                ).into(viewBinding.headerBackground)
+                        }
                     }
                 }
-            }
         }
     }
 
