@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
  * @author lollipop
  * @date 2021/5/11 23:32
  */
-class RequestHelper private constructor(private val requestOwner: RequestOwner): RequestLauncher {
+class RequestHelper private constructor(private val requestOwner: RequestOwner) {
 
     companion object {
         private const val DEFAULT_REQUEST_ID = 233
@@ -51,11 +51,11 @@ class RequestHelper private constructor(private val requestOwner: RequestOwner):
         }
     }
 
-    override fun requestActivity(intent: Intent, callback: RequestCallback) {
+    fun requestActivity(intent: Intent, callback: RequestCallback) {
         requestOwner.startActivityForResult(intent, pendingCallback(callback))
     }
 
-    override fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
+    fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
         requestOwner.requestPermissions(permission, pendingCallback(callback))
     }
 

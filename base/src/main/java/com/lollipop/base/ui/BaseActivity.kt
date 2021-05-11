@@ -21,7 +21,7 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
 
     private val backPressProviderHelper = BackPressProviderHelper()
 
-    private val requestHelper: RequestHelper by lazy {
+    override val requestHelper: RequestHelper by lazy {
         RequestHelper.with(this)
     }
 
@@ -70,14 +70,6 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         requestHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun requestActivity(intent: Intent, callback: RequestCallback) {
-        requestHelper.requestActivity(intent, callback)
-    }
-
-    override fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
-        requestHelper.requestPermission(permission, callback)
     }
 
 }

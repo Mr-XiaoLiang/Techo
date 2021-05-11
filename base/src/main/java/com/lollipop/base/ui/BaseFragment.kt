@@ -21,7 +21,7 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
 
     private val backPressProviderHelper = BackPressProviderHelper(getSelf())
 
-    private val requestHelper: RequestHelper by lazy {
+    override val requestHelper: RequestHelper by lazy {
         RequestHelper.with(this)
     }
 
@@ -96,14 +96,6 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         requestHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun requestActivity(intent: Intent, callback: RequestCallback) {
-        requestHelper.requestActivity(intent, callback)
-    }
-
-    override fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
-        requestHelper.requestPermission(permission, callback)
     }
 
 }

@@ -10,14 +10,23 @@ import android.content.Intent
 interface RequestLauncher {
 
     /**
+     * 请求辅助器的实现类
+     */
+    val requestHelper: RequestHelper
+
+    /**
      * 发起intent请求
      * 主要用于startActivity
      */
-    fun requestActivity(intent: Intent, callback: RequestCallback)
+    fun requestActivity(intent: Intent, callback: RequestCallback) {
+        requestHelper.requestActivity(intent, callback)
+    }
 
     /**
      * 请求权限
      */
-    fun requestPermission(permission: Array<String>, callback: PermissionCallback)
+    fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
+        requestHelper.requestPermission(permission, callback)
+    }
 
 }
