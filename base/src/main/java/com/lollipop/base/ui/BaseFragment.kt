@@ -1,9 +1,14 @@
 package com.lollipop.base.ui
 
 import android.content.Context
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.provider.BackPressProvider
+import com.lollipop.base.request.PermissionCallback
+import com.lollipop.base.request.RequestCallback
+import com.lollipop.base.request.RequestHelper
+import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.util.BackPressProviderHelper
 
 /**
@@ -12,9 +17,13 @@ import com.lollipop.base.util.BackPressProviderHelper
  * 基础的Fragment
  * 提供基础的实现和能力
  */
-open class BaseFragment: Fragment(), BackPressListener, BackPressProvider {
+open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, RequestLauncher {
 
     private val backPressProviderHelper = BackPressProviderHelper(getSelf())
+
+    private val requestHelper: RequestHelper by lazy {
+        RequestHelper.with(this)
+    }
 
     private var parentProvider: BackPressProvider? = null
 
@@ -73,6 +82,28 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider {
             return true
         }
         return false
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        requestHelper.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        requestHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun requestActivity(intent: Intent, callback: RequestCallback) {
+        requestHelper.requestActivity(intent, callback)
+    }
+
+    override fun requestPermission(permission: Array<String>, callback: PermissionCallback) {
+        requestHelper.requestPermission(permission, callback)
     }
 
 }
