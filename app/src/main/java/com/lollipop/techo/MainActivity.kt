@@ -22,6 +22,11 @@ class MainActivity : HeaderActivity() {
         if (photoManager.checkPermission(this)) {
             Toast.makeText(this, "已经授权了", Toast.LENGTH_SHORT).show()
         } else {
+            requestPermission(arrayOf(PhotoManager.READ_PERMISSION)) {
+                if (it.isGranted(PhotoManager.READ_PERMISSION)) {
+                    photoManager.refresh(this)
+                }
+            }
             Toast.makeText(this, "没有授权", Toast.LENGTH_SHORT).show()
         }
         doAsync {

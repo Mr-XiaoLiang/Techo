@@ -25,7 +25,7 @@ import java.io.FileOutputStream
 class PhotoManager {
 
     companion object {
-        private const val READ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
+        const val READ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
 
         private const val PHOTO_DIR = "my_photo"
     }
