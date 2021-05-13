@@ -1,31 +1,31 @@
 package com.lollipop.base.request
 
 import android.app.Activity
-import android.util.ArraySet
+import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.ui.BaseFragment
-import java.util.HashSet
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author lollipop
  * @date 2021/5/12 22:08
  */
-class PermissionFlow(private val activity: Activity, private val requestLauncher: RequestLauncher) {
+class PermissionFlow(private val activity: Activity, private val requestLauncher: RequestLauncher) :
+    PermissionCallback {
 
     companion object {
-        fun with(activity: BaseActivity): PermissionFlow {
-            return PermissionFlow(activity, activity)
-        }
-
-        fun with(fragment: BaseFragment): PermissionFlow {
-            return PermissionFlow(fragment.activity!!, fragment)
-        }
+        var globalRationaleCallback: RationaleCallback? = null
     }
 
-    private var rationaleCallback: RationaleCallback? = null
+    private var rationaleCallback: RationaleCallback? = globalRationaleCallback
+    private var permissionCallback: PermissionCallback? = null
 
     private var permissionsList = HashSet<String>()
+
+    private val shouldShowRationale = LinkedList<String>()
+    private val pendingRequestPermissions = ArrayList<String>()
+    private val grantedPermissions = ArrayList<String>()
 
     fun onNeedRationale(callback: RationaleCallback): PermissionFlow {
         this.rationaleCallback = callback
@@ -38,32 +38,45 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
     }
 
     fun request(permissionCallback: PermissionCallback) {
-        val shouldShowRationale = ArrayList<String>()
+        this.permissionCallback = permissionCallback
+
         val permissionsArray = permissionsList.toTypedArray()
         permissionsArray.forEach {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, it)) {
-                shouldShowRationale.add(it)
+            if (ActivityCompat.checkSelfPermission(
+                    activity,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                grantedPermissions.add(it)
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, it)) {
+                    shouldShowRationale.add(it)
+                } else {
+                    pendingRequestPermissions.add(it)
+                }
             }
         }
-        val rationaleDialog = rationaleCallback
-        if (rationaleDialog != null && shouldShowRationale.isNotEmpty()) {
-            shouldShowRationale.forEach {
-//                rationaleDialog.showRationale(it, )
-            }
-        } else {
-
-        }
-//        requestLauncher.requestPermission(, permissionCallback)
+        checkNext()
     }
 
-    private class RequestTask(
-        private val permission: String,
-        private val requestLauncher: RequestLauncher,
-        private val callback: PermissionCallback
-    ) {
-        fun run() {
-            requestLauncher.requestPermission(arrayOf(permission), callback)
+    private fun checkNext() {
+        val rationaleDialog = rationaleCallback
+        if (shouldShowRationale.isNotEmpty()) {
+            // 如果可以显示用户提醒，那么等待用户响应
+            if (rationaleDialog != null) {
+                val permissions = shouldShowRationale.removeFirst()
+                rationaleDialog.showRationale(activity, permissions) {
+                    if (it) {
+                        pendingRequestPermissions.add(permissions)
+                    }
+                    checkNext()
+                }
+                return
+            }
+            pendingRequestPermissions.addAll(shouldShowRationale)
+            shouldShowRationale.clear()
         }
+        requestLauncher.requestPermission(pendingRequestPermissions.toTypedArray(), this)
     }
 
     fun interface PermissionFeedback {
@@ -71,7 +84,34 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
     }
 
     fun interface RationaleCallback {
-        fun showRationale(permissions: String, feedback: PermissionFeedback)
+        fun showRationale(activity: Activity, permissions: String, feedback: PermissionFeedback)
     }
 
+    override fun onPermissionsResult(result: PermissionResult) {
+        val allPermissionList = ArrayList<String>()
+        val allResult = ArrayList<Int>()
+        allPermissionList.addAll(result.permissions)
+        result.grantResults.forEach {
+            allResult.add(it)
+        }
+        grantedPermissions.forEach {
+            allPermissionList.add(it)
+            allResult.add(PermissionResult.GRANTED)
+        }
+        permissionCallback?.onPermissionsResult(
+            PermissionResult(
+                allPermissionList.toTypedArray(),
+                allResult.toIntArray()
+            )
+        )
+    }
+
+}
+
+fun BaseFragment.startPermissionFlow(requestLauncher: RequestLauncher? = null): PermissionFlow {
+    return PermissionFlow(this.requireActivity(), requestLauncher ?: (this as RequestLauncher))
+}
+
+fun Activity.startPermissionFlow(requestLauncher: RequestLauncher? = null): PermissionFlow {
+    return PermissionFlow(this, requestLauncher ?: (this as RequestLauncher))
 }

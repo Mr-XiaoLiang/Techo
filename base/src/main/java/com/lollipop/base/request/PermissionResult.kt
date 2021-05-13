@@ -12,12 +12,17 @@ class PermissionResult(
     val grantResults: IntArray
 ) {
 
+    companion object {
+        const val GRANTED = PackageManager.PERMISSION_GRANTED
+        const val DENIED = PackageManager.PERMISSION_DENIED
+    }
+
     fun isGranted(permission: String): Boolean {
         val index = permissions.indexOf(permission)
         if (index < 0) {
             return false
         }
-        return grantResults[index] == PackageManager.PERMISSION_GRANTED
+        return grantResults[index] == GRANTED
     }
 
 }

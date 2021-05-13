@@ -3,6 +3,7 @@ package com.lollipop.techo
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.lazyBind
 import com.lollipop.gallery.PhotoManager
@@ -19,6 +20,7 @@ class MainActivity : HeaderActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startPermissionFlow()
         if (photoManager.checkPermission(this)) {
             Toast.makeText(this, "已经授权了", Toast.LENGTH_SHORT).show()
         } else {

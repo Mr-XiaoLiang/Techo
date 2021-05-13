@@ -1,11 +1,8 @@
 package com.lollipop.gallery
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import androidx.cardview.widget.CardView
 
 /**
  * @author lollipop
