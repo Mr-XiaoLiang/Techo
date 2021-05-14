@@ -3,7 +3,9 @@ package com.lollipop.base.request
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import com.lollipop.base.ui.BaseFragment
+import java.lang.RuntimeException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -11,8 +13,10 @@ import kotlin.collections.ArrayList
  * @author lollipop
  * @date 2021/5/12 22:08
  */
-class PermissionFlow(private val activity: Activity, private val requestLauncher: RequestLauncher) :
-    PermissionCallback {
+class PermissionFlow(
+    private val activity: Activity,
+    private val requestLauncher: RequestLauncher
+) {
 
     companion object {
         var globalRationaleCallback: RationaleCallback? = null
@@ -26,6 +30,25 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
     private val shouldShowRationale = LinkedList<String>()
     private val pendingRequestPermissions = ArrayList<String>()
     private val grantedPermissions = ArrayList<String>()
+
+    private val selfPermissionCallback = PermissionCallback { result ->
+        val allPermissionList = ArrayList<String>()
+        val allResult = ArrayList<Int>()
+        allPermissionList.addAll(result.permissions)
+        result.grantResults.forEach {
+            allResult.add(it)
+        }
+        grantedPermissions.forEach {
+            allPermissionList.add(it)
+            allResult.add(PermissionResult.GRANTED)
+        }
+        permissionCallback?.onPermissionsResult(
+            PermissionResult(
+                allPermissionList.toTypedArray(),
+                allResult.toIntArray()
+            )
+        )
+    }
 
     fun onNeedRationale(callback: RationaleCallback): PermissionFlow {
         this.rationaleCallback = callback
@@ -77,10 +100,10 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
             shouldShowRationale.clear()
         }
         if (pendingRequestPermissions.isEmpty()) {
-            onPermissionsResult(PermissionResult(arrayOf(), intArrayOf()))
+            selfPermissionCallback.onPermissionsResult(PermissionResult(arrayOf(), intArrayOf()))
             return
         }
-        requestLauncher.requestPermission(pendingRequestPermissions.toTypedArray(), this)
+        requestLauncher.requestPermission(pendingRequestPermissions.toTypedArray(), selfPermissionCallback)
     }
 
     fun interface PermissionFeedback {
@@ -91,29 +114,17 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
         fun showRationale(activity: Activity, permissions: String, feedback: PermissionFeedback)
     }
 
-    override fun onPermissionsResult(result: PermissionResult) {
-        val allPermissionList = ArrayList<String>()
-        val allResult = ArrayList<Int>()
-        allPermissionList.addAll(result.permissions)
-        result.grantResults.forEach {
-            allResult.add(it)
-        }
-        grantedPermissions.forEach {
-            allPermissionList.add(it)
-            allResult.add(PermissionResult.GRANTED)
-        }
-        permissionCallback?.onPermissionsResult(
-            PermissionResult(
-                allPermissionList.toTypedArray(),
-                allResult.toIntArray()
-            )
-        )
-    }
-
 }
 
-fun BaseFragment.startPermissionFlow(requestLauncher: RequestLauncher? = null): PermissionFlow {
-    return PermissionFlow(this.requireActivity(), requestLauncher ?: (this as RequestLauncher))
+fun Fragment.startPermissionFlow(requestLauncher: RequestLauncher? = null): PermissionFlow {
+    val activity = this.requireActivity()
+    val launcher: RequestLauncher = when {
+        requestLauncher != null -> requestLauncher
+        this is RequestLauncher -> this
+        activity is RequestLauncher -> activity
+        else -> throw RuntimeException("RequestLauncher not found")
+    }
+    return PermissionFlow(activity, launcher)
 }
 
 fun Activity.startPermissionFlow(requestLauncher: RequestLauncher? = null): PermissionFlow {
