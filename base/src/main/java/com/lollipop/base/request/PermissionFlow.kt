@@ -76,6 +76,10 @@ class PermissionFlow(private val activity: Activity, private val requestLauncher
             pendingRequestPermissions.addAll(shouldShowRationale)
             shouldShowRationale.clear()
         }
+        if (pendingRequestPermissions.isEmpty()) {
+            onPermissionsResult(PermissionResult(arrayOf(), intArrayOf()))
+            return
+        }
         requestLauncher.requestPermission(pendingRequestPermissions.toTypedArray(), this)
     }
 
