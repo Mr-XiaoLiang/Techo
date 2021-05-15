@@ -45,7 +45,7 @@ object RequestService {
      * @return 返回结果为字符串的形式
      */
     fun getString(url: String): String {
-        return OkHttpClient().newCall(Builder().url(url).build()).execute().body()?.string() ?: ""
+        return OkHttpClient().newCall(Builder().url(url).build()).execute().body?.string() ?: ""
     }
 
 }
