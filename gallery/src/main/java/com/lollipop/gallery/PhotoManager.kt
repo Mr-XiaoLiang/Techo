@@ -28,15 +28,72 @@ class PhotoManager {
         const val READ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
 
         private const val PHOTO_DIR = "my_photo"
+
+        private fun getLocalPhotoDir(context: Context): File {
+            return File(context.filesDir, PHOTO_DIR).apply {
+                if (!isDirectory) {
+                    this.delete()
+                }
+                if (!this.exists()) {
+                    this.mkdirs()
+                }
+            }
+        }
+
+        /**
+         * 本地读取一张照片
+         * 如果这张照片是空的，那么返回为null
+         */
+        fun readLocal(context: Context, name: String): File? {
+            val photoFile = getPhotoFile(context, name)
+            if (!photoFile.exists() || photoFile.isDirectory) {
+                return null
+            }
+            return photoFile
+        }
+
+        private fun getPhotoFile(context: Context, name: String): File {
+            return File(getLocalPhotoDir(context), name)
+        }
+
+        /**
+         * 保存一张照片到本地
+         */
+        fun save(context: Context, photo: Photo): File? {
+            context.contentResolver
+                .openFileDescriptor(photo.uri, "r")
+                ?.use { descriptor ->
+                    val fileDescriptor = descriptor.fileDescriptor
+                    val fileInputStream = FileInputStream(fileDescriptor)
+                    val photoFile = getPhotoFile(context, photo.title)
+                    if (photoFile.isDirectory || photoFile.exists()) {
+                        photoFile.delete()
+                    }
+                    photoFile.createNewFile()
+                    val fileOutputStream = FileOutputStream(photoFile)
+                    val buffer = ByteArray(1024 * 2)
+                    do {
+                        val length = fileInputStream.read(buffer)
+                        if (length >= 0) {
+                            fileOutputStream.write(buffer, 0, length)
+                        }
+                    } while (length >= 0)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                    fileInputStream.close()
+                    return photoFile
+                }
+            return null
+        }
+
+        fun checkPermission(context: Context): Boolean {
+            return ContextCompat.checkSelfPermission(
+                context, READ_PERMISSION
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     private val dataList = ArrayList<Photo>()
-
-    fun checkPermission(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context, READ_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
 
     fun shouldShowPermissionRationale(activity: AppCompatActivity): Boolean {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_PERMISSION)
@@ -87,63 +144,6 @@ class PhotoManager {
 
     operator fun get(index: Int): Photo {
         return dataList[index]
-    }
-
-    /**
-     * 保存一张照片到本地
-     */
-    fun save(context: Context, photo: Photo): File? {
-        context.contentResolver
-            .openFileDescriptor(photo.uri, "r")
-            ?.use { descriptor ->
-                val fileDescriptor = descriptor.fileDescriptor
-                val fileInputStream = FileInputStream(fileDescriptor)
-                val photoFile = getPhotoFile(context, photo.title)
-                if (photoFile.isDirectory || photoFile.exists()) {
-                    photoFile.delete()
-                }
-                photoFile.createNewFile()
-                val fileOutputStream = FileOutputStream(photoFile)
-                val buffer = ByteArray(1024 * 2)
-                do {
-                    val length = fileInputStream.read(buffer)
-                    if (length >= 0) {
-                        fileOutputStream.write(buffer, 0, length)
-                    }
-                } while (length >= 0)
-                fileOutputStream.flush()
-                fileOutputStream.close()
-                fileInputStream.close()
-                return photoFile
-            }
-        return null
-    }
-
-    private fun getLocalPhotoDir(context: Context): File {
-        return File(context.filesDir, PHOTO_DIR).apply {
-            if (!isDirectory) {
-                this.delete()
-            }
-            if (!this.exists()) {
-                this.mkdirs()
-            }
-        }
-    }
-
-    private fun getPhotoFile(context: Context, name: String): File {
-        return File(getLocalPhotoDir(context), name)
-    }
-
-    /**
-     * 本地读取一张照片
-     * 如果这张照片是空的，那么返回为null
-     */
-    fun readLocal(context: Context, name: String): File? {
-        val photoFile = getPhotoFile(context, name)
-        if (!photoFile.exists() || photoFile.isDirectory) {
-            return null
-        }
-        return photoFile
     }
 
 }
