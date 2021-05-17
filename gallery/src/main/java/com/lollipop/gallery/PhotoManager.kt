@@ -99,6 +99,10 @@ class PhotoManager {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_PERMISSION)
     }
 
+    fun indexOf(photo: Photo): Int {
+        return dataList.indexOf(photo)
+    }
+
     /**
      * 刷新相册集合数据
      */
