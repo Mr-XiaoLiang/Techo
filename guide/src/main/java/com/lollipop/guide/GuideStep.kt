@@ -9,4 +9,4 @@ import android.view.View
 open class GuideStep(
     val target: View,
     val info: String
-    )
+)
