@@ -64,4 +64,10 @@ class GuideHelper(private val rootGroup: ViewGroup) {
 
     }
 
+    class Builder() {
+        fun addStep(step: GuideStep) {
+
+        }
+    }
+
 }
