@@ -14,26 +14,36 @@ import androidx.fragment.app.Fragment
  * @date 2021/5/18 23:18
  * 蒙层引导的工具类
  */
-class GuideHelper(private val rootGroup: ViewGroup) {
+class GuideHelper(private val option: Option) {
 
     companion object {
-        fun with(activity: Activity): GuideHelper {
+
+        private val globalGuideProviderList = ArrayList<Class<out GuideProvider>>()
+
+        fun addGlobalGuideProvider(clazz: Class<out GuideProvider>) {
+            if (globalGuideProviderList.contains(clazz)) {
+                return
+            }
+            globalGuideProviderList.add(clazz)
+        }
+
+        fun with(activity: Activity): Builder {
             return with(activity.window.decorView as ViewGroup, false)
         }
 
-        fun with(fragment: Fragment): GuideHelper {
+        fun with(fragment: Fragment): Builder {
             return with(findRootGroup(fragment.view!!), true)
         }
 
-        fun with(viewGroup: ViewGroup, isFindRoot: Boolean): GuideHelper {
+        fun with(viewGroup: ViewGroup, isFindRoot: Boolean): Builder {
             return if (isFindRoot) {
-                GuideHelper(findRootGroup(viewGroup))
+                Builder(findRootGroup(viewGroup))
             } else {
-                GuideHelper(viewGroup)
+                Builder(viewGroup)
             }
         }
 
-        fun with(view: View): GuideHelper {
+        fun with(view: View): Builder {
             return with(findRootGroup(view), false)
         }
 
@@ -64,10 +74,39 @@ class GuideHelper(private val rootGroup: ViewGroup) {
 
     }
 
-    class Builder() {
-        fun addStep(step: GuideStep) {
+    fun show() {
 
+    }
+
+    class Option(
+        val rootGroup: ViewGroup,
+        val stepList: List<GuideStep>,
+        val providerLis: List<GuideProvider>,
+    ) {
+
+
+    }
+
+    class Builder(private val rootGroup: ViewGroup) {
+
+        private val stepList = ArrayList<GuideStep>()
+
+        private val providerList = ArrayList<GuideProvider>()
+
+        fun addStep(step: GuideStep): Builder {
+            stepList.add(step)
+            return this
         }
+
+        fun addProvider(provider: GuideProvider): Builder {
+            providerList.add(provider)
+            return this
+        }
+
+        fun show() {
+            GuideHelper(Option(rootGroup, stepList, providerList)).show()
+        }
+
     }
 
 }
