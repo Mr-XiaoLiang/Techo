@@ -18,13 +18,13 @@ class GuideHelper(private val option: Option) {
 
     companion object {
 
-        private val globalGuideProviderList = ArrayList<Class<out GuideProvider>>()
+        private val globalProviderList = ArrayList<Class<out GuideProvider>>()
 
         fun addGlobalGuideProvider(clazz: Class<out GuideProvider>) {
-            if (globalGuideProviderList.contains(clazz)) {
+            if (globalProviderList.contains(clazz)) {
                 return
             }
-            globalGuideProviderList.add(clazz)
+            globalProviderList.add(clazz)
         }
 
         fun with(activity: Activity): Builder {
@@ -74,18 +74,40 @@ class GuideHelper(private val option: Option) {
 
     }
 
+    private val defaultProviderList = ArrayList<GuideProvider>()
+
     fun show() {
 
+    }
+
+    private fun findProvider(step: GuideStep): GuideProvider? {
+        option.providerLis.forEach {
+            if (it.support(step)) {
+                return it
+            }
+        }
+        for (index in 0 until globalProviderList.size) {
+            if (defaultProviderList.size > index) {
+                val provider = defaultProviderList[index]
+                if (provider.support(step)) {
+                    return provider
+                }
+            } else {
+                val provider = globalProviderList[index].newInstance()
+                defaultProviderList.add(provider)
+                if (provider.support(step)) {
+                    return provider
+                }
+            }
+        }
+        return null
     }
 
     class Option(
         val rootGroup: ViewGroup,
         val stepList: List<GuideStep>,
         val providerLis: List<GuideProvider>,
-    ) {
-
-
-    }
+    )
 
     class Builder(private val rootGroup: ViewGroup) {
 
