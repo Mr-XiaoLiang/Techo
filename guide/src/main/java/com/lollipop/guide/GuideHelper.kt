@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
  * @date 2021/5/18 23:18
  * 蒙层引导的工具类
  */
-class GuideHelper(private val option: Option) {
+class GuideHelper(private val option: Option): GuideManager {
 
     companion object {
 
@@ -77,6 +77,10 @@ class GuideHelper(private val option: Option) {
     private val defaultProviderList = ArrayList<GuideProvider>()
 
     fun show() {
+
+    }
+
+    override fun nextStep() {
 
     }
 
