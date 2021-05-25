@@ -1,6 +1,8 @@
 package com.lollipop.guide
 
+import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -76,7 +78,24 @@ class GuideHelper(private val option: Option): GuideManager {
 
     private val defaultProviderList = ArrayList<GuideProvider>()
 
+    private val context: Context
+        get() {
+            return option.rootGroup.context
+        }
+
+    private val guideRoot = FrameLayout(context)
+
+    private val currentProvider: GuideProvider? = null
+
+    private val animator: ValueAnimator by lazy {
+        ValueAnimator()
+    }
+
     fun show() {
+
+    }
+
+    fun dismiss() {
 
     }
 
