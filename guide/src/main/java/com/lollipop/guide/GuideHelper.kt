@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewManager
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +17,7 @@ import androidx.fragment.app.Fragment
  * @date 2021/5/18 23:18
  * 蒙层引导的工具类
  */
-class GuideHelper(private val option: Option): GuideManager {
+class GuideHelper(private val option: Option) : GuideManager {
 
     companion object {
 
@@ -85,14 +86,33 @@ class GuideHelper(private val option: Option): GuideManager {
 
     private val guideRoot = FrameLayout(context)
 
-    private val currentProvider: GuideProvider? = null
+    private var currentProvider: GuideProvider? = null
+
+    private var currentStep: GuideStep? = null
 
     private val animator: ValueAnimator by lazy {
         ValueAnimator()
     }
 
     fun show() {
-
+        val rootGroup = option.rootGroup
+        if (guideRoot.parent != rootGroup
+            || rootGroup.indexOfChild(guideRoot) != rootGroup.childCount - 1
+        ) {
+            guideRoot.parent?.let { parent ->
+                if (parent is ViewManager) {
+                    parent.removeView(guideRoot)
+                }
+            }
+            rootGroup.addView(
+                guideRoot,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        guideRoot.post {
+            nextStep()
+        }
     }
 
     fun dismiss() {
