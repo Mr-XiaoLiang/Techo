@@ -3,6 +3,7 @@ package com.lollipop.guide
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
@@ -94,6 +95,10 @@ class GuideHelper(private val option: Option) : GuideManager {
         ValueAnimator()
     }
 
+    private val guideBounds = Rect()
+
+    private val targetBounds = Rect()
+
     fun show() {
         val rootGroup = option.rootGroup
         if (guideRoot.parent != rootGroup
@@ -144,6 +149,69 @@ class GuideHelper(private val option: Option) : GuideManager {
             }
         }
         return null
+    }
+
+    private fun checkGuideBounds(): Boolean {
+        val rootLocation = IntArray(2)
+        val guideLocation = IntArray(2)
+        option.rootGroup.getLocationInWindow(rootLocation)
+        guideRoot.getLocationInWindow(guideLocation)
+
+        val snapshot = BoundsSnapshot.create(guideBounds)
+
+        guideBounds.set(0, 0, guideRoot.width, guideRoot.height)
+
+        guideBounds.offset(
+            guideLocation[0] - rootLocation[0],
+            guideLocation[1] - rootLocation[1]
+        )
+
+        return snapshot.isInconsistent(guideBounds)
+    }
+
+    private fun checkTargetBounds(): Boolean {
+        val step = currentStep
+        if (step == null) {
+            targetBounds.set(0, 0, 0, 0)
+            return true
+        }
+        val groupLocation = IntArray(2)
+        val targetLocation = IntArray(2)
+
+        guideRoot.getLocationInWindow(groupLocation)
+        step.target.getLocationInWindow(targetLocation)
+
+        val snapshot = BoundsSnapshot.create(targetBounds)
+
+        targetBounds.set(0, 0, step.target.width, step.target.height)
+        targetBounds.offset(
+            targetLocation[0] - groupLocation[0],
+            targetLocation[1] - groupLocation[1]
+        )
+
+        return snapshot.isInconsistent(targetBounds)
+    }
+
+    class BoundsSnapshot(
+        private val left: Int,
+        private val top: Int,
+        private val right: Int,
+        private val bottom: Int
+    ) {
+
+        companion object {
+            fun create(rect: Rect): BoundsSnapshot {
+                return BoundsSnapshot(rect.left, rect.top, rect.right, rect.bottom)
+            }
+        }
+
+        fun isInconsistent(rect: Rect): Boolean {
+            return (rect.left != left
+                    || rect.top != top
+                    || rect.right != right
+                    || rect.bottom != bottom)
+        }
+
     }
 
     class Option(
