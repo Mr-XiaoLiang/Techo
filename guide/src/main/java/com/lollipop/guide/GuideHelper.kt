@@ -91,6 +91,10 @@ class GuideHelper(private val option: Option) : GuideManager {
 
     private var currentStep: GuideStep? = null
 
+    private var stepIndex = 0
+
+    private var isFirstStep = true
+
     private val animator: ValueAnimator by lazy {
         ValueAnimator()
     }
@@ -124,8 +128,51 @@ class GuideHelper(private val option: Option) : GuideManager {
 
     }
 
-    override fun nextStep() {
+    fun destroy() {
 
+    }
+
+    override fun nextStep() {
+        if (currentStep != null) {
+            dismiss()
+            return
+        }
+        val oldProvider = currentProvider
+        do {
+            val step = option.stepList[stepIndex]
+            currentStep = step
+            if (currentProvider?.support(step) == true) {
+                break
+            }
+            currentProvider = findProvider(step)
+            if (currentProvider == null) {
+                stepIndex++
+            }
+        } while (stepIndex < option.stepList.size && currentProvider == null)
+        val provider = currentProvider ?: return destroy()
+        val step = currentStep ?: return destroy()
+        var needUpdateBounds = checkGuideBounds()
+        var needAnimation = isFirstStep
+        isFirstStep = false
+        if (oldProvider != provider) {
+            needUpdateBounds = true
+        }
+        if (needUpdateBounds) {
+            provider.onBoundsChange(
+                guideBounds.left,
+                guideBounds.top,
+                guideBounds.right,
+                guideBounds.bottom
+            )
+        }
+        checkTargetBounds()
+        provider.onTargetChange(
+            step,
+            targetBounds.left,
+            targetBounds.top,
+            targetBounds.right,
+            targetBounds.bottom
+        )
     }
 
     private fun findProvider(step: GuideStep): GuideProvider? {
