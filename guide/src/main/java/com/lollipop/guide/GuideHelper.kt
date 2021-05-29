@@ -1,5 +1,6 @@
 package com.lollipop.guide
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
@@ -12,17 +13,24 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import kotlin.math.abs
 
 /**
  * @author lollipop
  * @date 2021/5/18 23:18
  * 蒙层引导的工具类
  */
-class GuideHelper(private val option: Option) : GuideManager {
+class GuideHelper(private val option: Option) : GuideManager,
+    ValueAnimator.AnimatorUpdateListener,
+    Animator.AnimatorListener {
 
     companion object {
 
         private val globalProviderList = ArrayList<Class<out GuideProvider>>()
+
+        private const val ANIMATION_MAX = 1F
+        private const val ANIMATION_MIN = 0F
+        private const val ANIMATION_DURATION = 300L
 
         fun addGlobalGuideProvider(clazz: Class<out GuideProvider>) {
             if (globalProviderList.contains(clazz)) {
@@ -96,12 +104,19 @@ class GuideHelper(private val option: Option) : GuideManager {
     private var isFirstStep = true
 
     private val animator: ValueAnimator by lazy {
-        ValueAnimator()
+        ValueAnimator().apply {
+            addUpdateListener(this@GuideHelper)
+            addListener(this@GuideHelper)
+        }
     }
 
     private val guideBounds = Rect()
 
     private val targetBounds = Rect()
+
+    private var animationForStart = true
+
+    private var animationProgress = 0F
 
     fun show() {
         val rootGroup = option.rootGroup
@@ -125,11 +140,21 @@ class GuideHelper(private val option: Option) : GuideManager {
     }
 
     fun dismiss() {
-
+        // TODO
+        if (currentStep != null) {
+            doAnimation(false)
+            return
+        }
+        stepIndex++
+        if (stepIndex >= option.stepList.size) {
+            destroy()
+            return
+        }
+        nextStep()
     }
 
     fun destroy() {
-
+        // TODO
     }
 
     override fun nextStep() {
@@ -152,7 +177,6 @@ class GuideHelper(private val option: Option) : GuideManager {
         val provider = currentProvider ?: return destroy()
         val step = currentStep ?: return destroy()
         var needUpdateBounds = checkGuideBounds()
-        var needAnimation = isFirstStep
         isFirstStep = false
         if (oldProvider != provider) {
             needUpdateBounds = true
@@ -173,6 +197,30 @@ class GuideHelper(private val option: Option) : GuideManager {
             targetBounds.right,
             targetBounds.bottom
         )
+        doAnimation(true)
+    }
+
+    private fun onAnimationEnd() {
+        if (!animationForStart) {
+            currentStep = null
+            dismiss()
+        }
+    }
+
+    private fun doAnimation(isStart: Boolean) {
+        animationForStart = isStart
+        val endValue = if (isStart) {
+            ANIMATION_MAX
+        } else {
+            ANIMATION_MIN
+        }
+        val duration = ((abs(animationProgress - endValue)
+                    / (ANIMATION_MAX - ANIMATION_MIN))
+                    * ANIMATION_DURATION).toLong()
+        animator.cancel()
+        animator.setFloatValues(animationProgress, endValue)
+        animator.duration = duration
+        animator.start()
     }
 
     private fun findProvider(step: GuideStep): GuideProvider? {
@@ -287,6 +335,26 @@ class GuideHelper(private val option: Option) : GuideManager {
             GuideHelper(Option(rootGroup, stepList, providerList)).show()
         }
 
+    }
+
+    override fun onAnimationStart(animation: Animator?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAnimationEnd(animation: Animator?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAnimationCancel(animation: Animator?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAnimationRepeat(animation: Animator?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAnimationUpdate(animation: ValueAnimator?) {
+        TODO("Not yet implemented")
     }
 
 }
