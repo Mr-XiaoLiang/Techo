@@ -140,7 +140,6 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     fun dismiss() {
-        // TODO
         if (currentStep != null) {
             doAnimation(false)
             return
@@ -154,7 +153,12 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     fun destroy() {
-        // TODO
+        animator.cancel()
+        guideRoot.parent?.let {
+            if (it is ViewManager) {
+                it.removeView(guideRoot)
+            }
+        }
     }
 
     override fun nextStep() {
@@ -215,8 +219,8 @@ class GuideHelper(private val option: Option) : GuideManager,
             ANIMATION_MIN
         }
         val duration = ((abs(animationProgress - endValue)
-                    / (ANIMATION_MAX - ANIMATION_MIN))
-                    * ANIMATION_DURATION).toLong()
+                / (ANIMATION_MAX - ANIMATION_MIN))
+                * ANIMATION_DURATION).toLong()
         animator.cancel()
         animator.setFloatValues(animationProgress, endValue)
         animator.duration = duration
@@ -338,23 +342,25 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     override fun onAnimationStart(animation: Animator?) {
-        TODO("Not yet implemented")
     }
 
     override fun onAnimationEnd(animation: Animator?) {
-        TODO("Not yet implemented")
+        if (animation == animator) {
+            onAnimationEnd()
+        }
     }
 
     override fun onAnimationCancel(animation: Animator?) {
-        TODO("Not yet implemented")
     }
 
     override fun onAnimationRepeat(animation: Animator?) {
-        TODO("Not yet implemented")
     }
 
     override fun onAnimationUpdate(animation: ValueAnimator?) {
-        TODO("Not yet implemented")
+        if (animation == animator) {
+            animationProgress = animation.animatedValue as Float
+            currentProvider?.onAnimation(animationProgress)
+        }
     }
 
 }
