@@ -1,18 +1,40 @@
 package com.lollipop.guide
 
+import android.graphics.Rect
+
 /**
  * @author lollipop
  * @date 2021/5/22 19:10
  * 蒙层呈现器
  */
-interface GuideProvider {
+abstract class GuideProvider {
 
-    fun support(step: GuideStep): Boolean
+    protected val guideBounds = Rect()
 
-    fun onBoundsChange(left: Int, top: Int, right: Int, bottom: Int)
+    protected val targetBounds = Rect()
 
-    fun onTargetChange(step: GuideStep, left: Int, top: Int, right: Int, bottom: Int)
+    protected var targetStep: GuideStep? = null
 
-    fun onAnimation(progress: Float)
+    abstract fun support(step: GuideStep): Boolean
+
+    fun setGuideBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        guideBounds.set(left, top, right, bottom)
+        onGuideBoundsChanged(left, top, right, bottom)
+    }
+
+    abstract fun onGuideBoundsChanged(left: Int, top: Int, right: Int, bottom: Int)
+
+    fun setTargetBounds(left: Int, top: Int, right: Int, bottom: Int) {
+        targetBounds.set(left, top, right, bottom)
+    }
+
+    fun updateGuideStep(step: GuideStep) {
+        targetStep = step
+        onTargetChange(step)
+    }
+
+    abstract fun onTargetChange(step: GuideStep)
+
+    open fun onAnimation(progress: Float) {}
 
 }

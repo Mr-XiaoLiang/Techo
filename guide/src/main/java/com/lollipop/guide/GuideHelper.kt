@@ -186,7 +186,7 @@ class GuideHelper(private val option: Option) : GuideManager,
             needUpdateBounds = true
         }
         if (needUpdateBounds) {
-            provider.onBoundsChange(
+            provider.setGuideBounds(
                 guideBounds.left,
                 guideBounds.top,
                 guideBounds.right,
@@ -194,13 +194,13 @@ class GuideHelper(private val option: Option) : GuideManager,
             )
         }
         checkTargetBounds()
-        provider.onTargetChange(
-            step,
+        provider.setTargetBounds(
             targetBounds.left,
             targetBounds.top,
             targetBounds.right,
             targetBounds.bottom
         )
+        provider.updateGuideStep(step)
         doAnimation(true)
     }
 
