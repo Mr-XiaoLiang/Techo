@@ -1,6 +1,8 @@
 package com.lollipop.guide
 
 import android.graphics.Rect
+import android.view.View
+import android.view.ViewGroup
 
 /**
  * @author lollipop
@@ -16,6 +18,36 @@ abstract class GuideProvider {
     protected var targetStep: GuideStep? = null
 
     abstract fun support(step: GuideStep): Boolean
+
+    var view: View? = null
+        private set
+
+    fun getView(group: ViewGroup): View {
+        val providerView = view
+        if (providerView == null) {
+            val newView = onCreateView(group)
+            view = newView
+            onViewCreated(newView)
+            return newView
+        }
+        return providerView
+    }
+
+    protected open fun onCreateView(group: ViewGroup): View {
+        throw RuntimeException("no view")
+    }
+
+    protected open fun onViewCreated(view: View) {
+
+    }
+
+    fun destroy() {
+        onDestroy()
+    }
+
+    protected open fun onDestroy() {
+
+    }
 
     fun setGuideBounds(left: Int, top: Int, right: Int, bottom: Int) {
         guideBounds.set(left, top, right, bottom)

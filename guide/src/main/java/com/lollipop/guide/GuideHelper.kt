@@ -13,6 +13,7 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.lollipop.guide.impl.DefaultGuideProvider
 import kotlin.math.abs
 
 /**
@@ -26,7 +27,9 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     companion object {
 
-        private val globalProviderList = ArrayList<Class<out GuideProvider>>()
+        private val globalProviderList = ArrayList<Class<out GuideProvider>>().apply {
+            add(DefaultGuideProvider::class.java)
+        }
 
         private const val ANIMATION_MAX = 1F
         private const val ANIMATION_MIN = 0F
@@ -184,6 +187,18 @@ class GuideHelper(private val option: Option) : GuideManager,
         isFirstStep = false
         if (oldProvider != provider) {
             needUpdateBounds = true
+
+            oldProvider?.destroy()
+            oldProvider?.view?.let {
+                guideRoot.removeView(it)
+            }
+
+            val view = provider.getView(guideRoot)
+            guideRoot.addView(
+                view,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
         }
         if (needUpdateBounds) {
             provider.setGuideBounds(
