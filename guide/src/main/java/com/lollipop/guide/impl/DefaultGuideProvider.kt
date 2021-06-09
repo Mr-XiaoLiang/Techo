@@ -1,5 +1,7 @@
 package com.lollipop.guide.impl
 
+import android.content.Context
+import android.view.ViewGroup
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
 
@@ -20,6 +22,12 @@ class DefaultGuideProvider: GuideProvider() {
 
     override fun onTargetChange(step: GuideStep) {
         TODO("Not yet implemented")
+    }
+
+    private class GuideView(context: Context): ViewGroup(context) {
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+            TODO("Not yet implemented")
+        }
     }
 
 }
