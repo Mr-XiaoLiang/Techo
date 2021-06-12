@@ -60,6 +60,8 @@ abstract class GuideProvider {
         targetBounds.set(left, top, right, bottom)
     }
 
+    abstract fun onTargetBoundsChange(left: Int, top: Int, right: Int, bottom: Int)
+
     fun updateGuideStep(step: GuideStep) {
         targetStep = step
         onTargetChange(step)
