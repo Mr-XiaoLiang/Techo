@@ -1,15 +1,21 @@
 package com.lollipop.guide.impl
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
+import java.lang.reflect.Type
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author lollipop
@@ -29,29 +35,92 @@ class DefaultGuideProvider : GuideProvider() {
             paddingVerticalDp = 10,
             paddingHorizontalDp = 10,
             spaceToTargetDp = 10,
-            textSizeSp = 16F
+            textSizeSp = 16,
+            clipIsOval = false
         )
 
-        var guideStyle = DEFAULT_GUIDE_STYLE
+        fun create(style: GuideStyle): DefaultGuideProvider {
+            return DefaultGuideProvider().apply {
+                guideStyle = style
+            }
+        }
+
     }
+
+    private var guideStyle = DEFAULT_GUIDE_STYLE
+
+    private var guideView: GuideView? = null
 
     override fun support(step: GuideStep): Boolean {
         return true
     }
 
+    override fun onCreateView(group: ViewGroup): View {
+        val view = guideView
+        if (view == null) {
+            val newView = GuideView(group.context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            }
+            guideView = newView
+            return newView
+        }
+        return view
+    }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        guideView?.let { guide ->
+            if (view == guide) {
+                guide.guideClipCorner = guideStyle.cornerDp.dp2px()
+                guide.guideBackgroundColor = guideStyle.backgroundColor
+                guide.guideClipIsOval = guideStyle.clipIsOval
+                guide.guidePopColor = guideStyle.popColor
+                guide.guidePopTextColor = guideStyle.popTextColor
+                guide.guidePopTextSize = guideStyle.textSizeSp.sp2px()
+                guide.popSpace = guideStyle.spaceToTargetDp.dp2px().toInt()
+                val paddingVertical = guideStyle.paddingVerticalDp.dp2px().toInt()
+                val paddingHorizontal = guideStyle.paddingHorizontalDp.dp2px().toInt()
+                guide.setPopPadding(
+                    paddingHorizontal,
+                    paddingVertical,
+                    paddingHorizontal,
+                    paddingVertical
+                )
+                val marginVertical = guideStyle.marginVerticalDp.dp2px().toInt()
+                val marginHorizontal = guideStyle.marginHorizontalDp.dp2px().toInt()
+                guide.setPopMargin(
+                    marginHorizontal,
+                    marginVertical,
+                    marginHorizontal,
+                    marginVertical
+                )
+            }
+        }
+    }
+
     override fun onGuideBoundsChanged(left: Int, top: Int, right: Int, bottom: Int) {
-        TODO("Not yet implemented")
+        val marginVertical = guideStyle.marginVerticalDp.dp2px().toInt()
+        val marginHorizontal = guideStyle.marginHorizontalDp.dp2px().toInt()
+        guideView?.setPopMargin(
+            left + marginHorizontal,
+            top + marginVertical,
+            right + marginHorizontal,
+            bottom + marginVertical
+        )
     }
 
     override fun onTargetBoundsChange(left: Int, top: Int, right: Int, bottom: Int) {
-        TODO("Not yet implemented")
+        guideView?.changeTargetBounds(left, top, right, bottom)
     }
 
     override fun onTargetChange(step: GuideStep) {
-        TODO("Not yet implemented")
+        guideView?.onStepChanged(step.info)
     }
 
-    private class GuideView(context: Context) : FrameLayout(context) {
+    private class GuideView(context: Context) : ViewGroup(context) {
 
         private val clipOutDrawable = ClipOutDrawable()
         private val popBackground = PopDrawable()
@@ -109,17 +178,16 @@ class DefaultGuideProvider : GuideProvider() {
                 return popTextView.textSize
             }
 
-        fun setPopPadding(left: Int, top: Int, right: Int, bottom: Int) {
-            popTextView.setPadding(left, top, right, bottom)
-        }
+        var popSpace = 0
+
+        private val clipBounds: RectF
+            get() {
+                return clipOutDrawable.targetBounds
+            }
 
         init {
             background = clipOutDrawable
-            addView(popTextView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        }
-
-        fun changeTargetBounds(left: Int, top: Int, right: Int, bottom: Int) {
-            clipOutDrawable.changeTargetBounds(left, top, right, bottom)
+            addView(popTextView)
         }
 
         fun onStepChanged(info: CharSequence) {
@@ -127,8 +195,73 @@ class DefaultGuideProvider : GuideProvider() {
             requestLayout()
         }
 
+        fun setPopPadding(left: Int, top: Int, right: Int, bottom: Int) {
+            popTextView.setPadding(left, top, right, bottom)
+        }
+
+        fun setPopMargin(left: Int, top: Int, right: Int, bottom: Int) {
+            setPadding(left, top, right, bottom)
+        }
+
+        fun changeTargetBounds(left: Int, top: Int, right: Int, bottom: Int) {
+            clipOutDrawable.changeTargetBounds(left, top, right, bottom)
+        }
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+            val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+            val maxChildHeight = max(
+                clipBounds.top - paddingTop,
+                heightSize - paddingBottom - clipBounds.bottom
+            ).toInt() - popSpace
+            val maxChildWidth = widthSize - paddingLeft - paddingRight
+
+            val childWidthMeasureSpec =
+                MeasureSpec.makeMeasureSpec(maxChildWidth, MeasureSpec.AT_MOST)
+            val childHeightMeasureSpec =
+                MeasureSpec.makeMeasureSpec(maxChildHeight, MeasureSpec.AT_MOST)
+
+            for (index in 0 until childCount) {
+                getChildAt(index).measure(childWidthMeasureSpec, childHeightMeasureSpec)
+            }
+            setMeasuredDimension(widthSize, heightSize)
+        }
+
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            TODO("Not yet implemented")
+
+            val target = clipBounds
+            val topSpace = target.top - paddingTop
+
+            val maxChildHeight = max(
+                topSpace,
+                height - paddingBottom - target.bottom
+            ).toInt() - popSpace
+            val maxChildWidth = width - paddingLeft - paddingRight
+
+            val minLeft = paddingLeft
+            // 虽然理论上只会有一个child，但是为了软件健壮性，遍历所有child进行排列
+            for (index in 0 until childCount) {
+                val child = getChildAt(index)
+                // 宽度不能超过最大宽度
+                val childWidth = min(child.measuredWidth, maxChildWidth)
+                // 高度不能超过最大高度
+                val childHeight = min(child.measuredHeight, maxChildHeight)
+                // child的顶部，如果上方空间够，那么优先放在上部
+                val childTop = if (childHeight <= topSpace) {
+                    target.top - popSpace - childHeight
+                } else {
+                    target.bottom + popSpace
+                }.toInt()
+                // 最大的左侧间隙（避免右侧超出屏幕
+                val maxLeft = width - paddingRight - childWidth
+                // child的左侧，需要在左侧边缘到右侧边缘的空间内
+                val childLeft = min(
+                    maxLeft,
+                    max(minLeft, target.centerX().toInt() - (childWidth / 2))
+                )
+                // 对它进行排列
+                child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight)
+            }
         }
     }
 
@@ -146,7 +279,7 @@ class DefaultGuideProvider : GuideProvider() {
                 needUpdatePath = true
             }
 
-        private val targetBounds = RectF()
+        val targetBounds = RectF()
 
         private val clipPath = Path()
 
@@ -250,8 +383,15 @@ class DefaultGuideProvider : GuideProvider() {
                 paint.color = value
             }
 
+        private val drawBounds = RectF()
+
+        override fun onBoundsChange(bounds: Rect) {
+            super.onBoundsChange(bounds)
+            drawBounds.set(bounds)
+        }
+
         override fun draw(canvas: Canvas) {
-            canvas.drawRect(bounds, paint)
+            canvas.drawRoundRect(drawBounds, corner, corner, paint)
         }
 
         override fun setAlpha(alpha: Int) {
@@ -278,7 +418,24 @@ class DefaultGuideProvider : GuideProvider() {
         val paddingVerticalDp: Int,
         val paddingHorizontalDp: Int,
         val spaceToTargetDp: Int,
-        val textSizeSp: Float
+        val textSizeSp: Int,
+        val clipIsOval: Boolean
     )
+
+    private fun Int.dp2px(): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        )
+    }
+
+    private fun Int.sp2px(): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        )
+    }
 
 }
