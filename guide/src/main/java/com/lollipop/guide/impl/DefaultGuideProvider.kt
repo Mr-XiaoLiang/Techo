@@ -9,11 +9,9 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TextView
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
-import java.lang.reflect.Type
 import kotlin.math.max
 import kotlin.math.min
 
