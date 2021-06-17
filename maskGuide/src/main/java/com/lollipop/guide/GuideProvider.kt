@@ -17,6 +17,8 @@ abstract class GuideProvider {
 
     protected var targetStep: GuideStep? = null
 
+    private var guideManager: GuideManager? = null
+
     abstract fun support(step: GuideStep): Boolean
 
     var view: View? = null
@@ -49,15 +51,20 @@ abstract class GuideProvider {
 
     }
 
-    fun setGuideBounds(left: Int, top: Int, right: Int, bottom: Int) {
-        guideBounds.set(left, top, right, bottom)
-        onGuideBoundsChanged(left, top, right, bottom)
+    internal fun bindGuideManager(guideManager: GuideManager?) {
+        this.guideManager = guideManager
     }
 
-    abstract fun onGuideBoundsChanged(left: Int, top: Int, right: Int, bottom: Int)
+    fun setGuideBounds(width: Int, height: Int, left: Int, top: Int, right: Int, bottom: Int) {
+        guideBounds.set(left, top, right, bottom)
+        onGuideBoundsChanged(width, height, left, top, right, bottom)
+    }
+
+    abstract fun onGuideBoundsChanged(width: Int, height: Int, left: Int, top: Int, right: Int, bottom: Int)
 
     fun setTargetBounds(left: Int, top: Int, right: Int, bottom: Int) {
         targetBounds.set(left, top, right, bottom)
+        onTargetBoundsChange(left, top, right, bottom)
     }
 
     abstract fun onTargetBoundsChange(left: Int, top: Int, right: Int, bottom: Int)
@@ -70,5 +77,9 @@ abstract class GuideProvider {
     abstract fun onTargetChange(step: GuideStep)
 
     open fun onAnimation(progress: Float) {}
+
+    protected fun callNextStep() {
+        guideManager?.nextStep()
+    }
 
 }

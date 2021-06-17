@@ -113,7 +113,7 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
     }
 
-    private val guideBounds = Rect()
+    private val guidePaddings = Rect()
 
     private val targetBounds = Rect()
 
@@ -177,7 +177,7 @@ class GuideHelper(private val option: Option) : GuideManager,
                 break
             }
             currentProvider = findProvider(step)
-            if (currentProvider == null) {
+            if (currentProvider == null || !targetInBounds(step.target)) {
                 stepIndex++
             }
         } while (stepIndex < option.stepList.size && currentProvider == null)
@@ -187,7 +187,7 @@ class GuideHelper(private val option: Option) : GuideManager,
         isFirstStep = false
         if (oldProvider != provider) {
             needUpdateBounds = true
-
+            oldProvider?.bindGuideManager(null)
             oldProvider?.destroy()
             oldProvider?.view?.let {
                 guideRoot.removeView(it)
@@ -200,12 +200,15 @@ class GuideHelper(private val option: Option) : GuideManager,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
+        provider.bindGuideManager(this)
         if (needUpdateBounds) {
             provider.setGuideBounds(
-                guideBounds.left,
-                guideBounds.top,
-                guideBounds.right,
-                guideBounds.bottom
+                guideRoot.width,
+                guideRoot.height,
+                guidePaddings.left,
+                guidePaddings.top,
+                guidePaddings.right,
+                guidePaddings.bottom
             )
         }
         checkTargetBounds()
@@ -266,21 +269,52 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     private fun checkGuideBounds(): Boolean {
-        val rootLocation = IntArray(2)
-        val guideLocation = IntArray(2)
-        option.rootGroup.getLocationInWindow(rootLocation)
-        guideRoot.getLocationInWindow(guideLocation)
+//        val rootLocation = IntArray(2)
+//        val guideLocation = IntArray(2)
+//        option.rootGroup.getLocationInWindow(rootLocation)
+//        guideRoot.getLocationInWindow(guideLocation)
 
-        val snapshot = BoundsSnapshot.create(guideBounds)
+        val snapshot = BoundsSnapshot.create(guidePaddings)
 
-        guideBounds.set(0, 0, guideRoot.width, guideRoot.height)
+//        guidePaddings.set(0, 0, guideRoot.width, guideRoot.height)
+//
+//        guidePaddings.offset(
+//            guideLocation[0] - rootLocation[0],
+//            guideLocation[1] - rootLocation[1]
+//        )
+        guidePaddings.set(0, 0, 0, 0)
 
-        guideBounds.offset(
-            guideLocation[0] - rootLocation[0],
-            guideLocation[1] - rootLocation[1]
-        )
+        return snapshot.isInconsistent(guidePaddings)
+    }
 
-        return snapshot.isInconsistent(guideBounds)
+    private fun targetInBounds(target: View): Boolean {
+        val groupLocation = IntArray(2)
+        val targetLocation = IntArray(2)
+        guideRoot.getLocationInWindow(groupLocation)
+        target.getLocationInWindow(targetLocation)
+
+        val targetBounds = Rect(0, 0, target.width, target.height)
+        targetBounds.offset(targetLocation[0], targetLocation[1])
+
+        val guideRangeHorizontal = groupLocation[0] .. (groupLocation[0] + guideRoot.width)
+        val guideRangeVertical = groupLocation[1] .. (groupLocation[1] + guideRoot.height)
+        if (targetBounds.top in guideRangeVertical) {
+            if (targetBounds.left in guideRangeHorizontal) {
+                return true
+            }
+            if (targetBounds.right in guideRangeHorizontal) {
+                return true
+            }
+        }
+        if (targetBounds.bottom in guideRangeVertical) {
+            if (targetBounds.left in guideRangeHorizontal) {
+                return true
+            }
+            if (targetBounds.right in guideRangeHorizontal) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun checkTargetBounds(): Boolean {

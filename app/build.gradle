@@ -46,6 +46,6 @@ dependencies {
     implementation lib.glide
     implementation project(path: ':palette')
     implementation project(path: ':gallery')
-    implementation project(path: ':guide')
+    implementation project(path: ':maskGuide')
     implementation project(path: ':base')
 }

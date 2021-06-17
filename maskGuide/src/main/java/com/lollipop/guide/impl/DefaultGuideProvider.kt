@@ -72,7 +72,9 @@ class DefaultGuideProvider : GuideProvider() {
         super.onViewCreated(view)
         guideView?.let { guide ->
             if (view == guide) {
-                guide.guideClipCorner = guideStyle.cornerDp.dp2px()
+                val corner = guideStyle.cornerDp.dp2px()
+                guide.guideClipCorner = corner
+                guide.guidePopCorner = corner
                 guide.guideBackgroundColor = guideStyle.backgroundColor
                 guide.guideClipIsOval = guideStyle.clipIsOval
                 guide.guidePopColor = guideStyle.popColor
@@ -95,11 +97,21 @@ class DefaultGuideProvider : GuideProvider() {
                     marginHorizontal,
                     marginVertical
                 )
+                guide.setOnClickListener {
+                    callNextStep()
+                }
             }
         }
     }
 
-    override fun onGuideBoundsChanged(left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onGuideBoundsChanged(
+        width: Int,
+        height: Int,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    ) {
         val marginVertical = guideStyle.marginVerticalDp.dp2px().toInt()
         val marginHorizontal = guideStyle.marginHorizontalDp.dp2px().toInt()
         guideView?.setPopMargin(
@@ -108,13 +120,26 @@ class DefaultGuideProvider : GuideProvider() {
             right + marginHorizontal,
             bottom + marginVertical
         )
+        guideView?.invalidate()
     }
 
     override fun onTargetBoundsChange(left: Int, top: Int, right: Int, bottom: Int) {
         guideView?.changeTargetBounds(left, top, right, bottom)
+        guideView?.invalidate()
     }
 
     override fun onTargetChange(step: GuideStep) {
+        when (step) {
+            is OvalGuideStep -> {
+                guideView?.guideClipIsOval = true
+            }
+            is RoundRectGuideStep -> {
+                guideView?.guideClipIsOval = false
+            }
+            else -> {
+                guideView?.guideClipIsOval = guideStyle.clipIsOval
+            }
+        }
         guideView?.onStepChanged(step.info)
     }
 
@@ -134,6 +159,14 @@ class DefaultGuideProvider : GuideProvider() {
             }
             get() {
                 return clipOutDrawable.corner
+            }
+
+        var guidePopCorner: Float
+            set(value) {
+                popBackground.corner = value
+            }
+            get() {
+                return popBackground.corner
             }
 
         var guideClipIsOval: Boolean
