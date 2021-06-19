@@ -6,9 +6,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.lollipop.base.ui.BaseActivity
-import com.lollipop.base.util.doAsync
-import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.onUI
+import com.lollipop.base.util.*
 import com.lollipop.techo.data.HeaderImageInfo
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
@@ -29,6 +27,7 @@ abstract class HeaderActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowInsetsHelper.initWindowFlag(this)
         setContentView(viewBinding.root)
         setSupportActionBar(viewBinding.toolbar)
         viewBinding.contentRoot.addView(
@@ -40,6 +39,17 @@ abstract class HeaderActivity : BaseActivity() {
                 it,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
+        }
+        viewBinding.appBar.fixInsetsByPadding { _, _, insets ->
+            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
+            WindowInsetsHelper.setMargin(
+                viewBinding.toolbar,
+                insetsValue.left,
+                insetsValue.top,
+                insetsValue.right,
+                0
+            )
+            insets
         }
         loadHeader()
     }

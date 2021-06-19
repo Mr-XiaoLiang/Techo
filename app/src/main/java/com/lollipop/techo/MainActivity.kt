@@ -2,12 +2,9 @@ package com.lollipop.techo
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import com.lollipop.base.request.PermissionCallback
-import com.lollipop.base.request.startPermissionFlow
-import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.onUI
 import com.lollipop.gallery.PhotoManager
 import com.lollipop.guide.GuideHelper
 import com.lollipop.guide.GuideStep
@@ -36,6 +33,8 @@ class MainActivity : HeaderActivity() {
 //                    }
 //                }
 //            }
+
+        contentView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
 
         viewBinding.fab1.setOnClickListener {
             GuideHelper.with(this)

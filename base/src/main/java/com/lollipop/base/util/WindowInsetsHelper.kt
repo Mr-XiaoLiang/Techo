@@ -1,10 +1,13 @@
 package com.lollipop.base.util
 
+import android.app.Activity
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.view.WindowManager
 
 /**
  * @author lollipop
@@ -12,21 +15,73 @@ import android.view.WindowInsets
  * Window缩进的辅助工具
  */
 class WindowInsetsHelper(
-        private val applyType: ApplyType,
-        private val insetsListener: OnWindowInsetsChangedListener? = null
+    val applyType: ApplyType,
+    val edge: Edge = Edge.ALL,
+    private val insetsListener: OnWindowInsetsChangedListener? = null
 ) : View.OnApplyWindowInsetsListener {
+
+    companion object {
+        fun getInsetsValue(insets: WindowInsets): InsetsValue {
+            return if (versionThen(Build.VERSION_CODES.R)) {
+                val value = insets.getInsets(
+                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
+                )
+                InsetsValue(value.left, value.top, value.right, value.bottom)
+            } else {
+                InsetsValue(
+                    insets.systemWindowInsetLeft,
+                    insets.systemWindowInsetTop,
+                    insets.systemWindowInsetRight,
+                    insets.systemWindowInsetBottom
+                )
+            }
+
+        }
+
+        fun initWindowFlag(activity: Activity) {
+            activity.window.apply {
+                statusBarColor = Color.TRANSPARENT
+                navigationBarColor = Color.TRANSPARENT
+            }
+            if (versionThen(Build.VERSION_CODES.R)) {
+                activity.window.setDecorFitsSystemWindows(false)
+            } else {
+                var viewFlag = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    viewFlag = (viewFlag or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+                }
+                activity.window.decorView.systemUiVisibility = viewFlag
+            }
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        }
+
+        fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
+            target.layoutParams?.let { layoutParams ->
+                if (layoutParams is ViewGroup.MarginLayoutParams) {
+                    layoutParams.setMargins(left, top, right, bottom)
+                }
+                target.layoutParams = layoutParams
+            }
+        }
+
+        fun setPadding(target: View, left: Int, top: Int, right: Int, bottom: Int) {
+            target.setPadding(left, top, right, bottom)
+        }
+    }
 
     /**
      * 基础的Margin值，它表示了最小的margin
      * 如果缩进尺寸小于此值，那么会保持在此值
      */
-    private val baseMargin = Rect()
+    val baseMargin = Rect()
 
     /**
      * 基础的padding值，它代表了最小的padding值
      * 如果缩进尺寸小于此值，那么将会保持在此值
      */
-    private val basePadding = Rect()
+    val basePadding = Rect()
 
     /**
      * 以快照的形式记录当前Margin值，并且以此为基础
@@ -35,10 +90,10 @@ class WindowInsetsHelper(
         target.layoutParams?.let { layoutParams ->
             if (layoutParams is ViewGroup.MarginLayoutParams) {
                 baseMargin.set(
-                        layoutParams.leftMargin,
-                        layoutParams.topMargin,
-                        layoutParams.rightMargin,
-                        layoutParams.bottomMargin
+                    layoutParams.leftMargin,
+                    layoutParams.topMargin,
+                    layoutParams.rightMargin,
+                    layoutParams.bottomMargin
                 )
             }
         }
@@ -49,84 +104,63 @@ class WindowInsetsHelper(
      */
     fun snapshotPadding(target: View) {
         basePadding.set(
-                target.paddingLeft,
-                target.paddingTop,
-                target.paddingRight,
-                target.paddingBottom
+            target.paddingLeft,
+            target.paddingTop,
+            target.paddingRight,
+            target.paddingBottom
         )
-    }
-
-    private fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
-        target.layoutParams?.let { layoutParams ->
-            if (layoutParams is ViewGroup.MarginLayoutParams) {
-                layoutParams.setMargins(left, top, right, bottom)
-            }
-            target.layoutParams = layoutParams
-        }
-    }
-
-    private fun setPadding(target: View, left: Int, top: Int, right: Int, bottom: Int) {
-        target.setPadding(left, top, right, bottom)
     }
 
     override fun onApplyWindowInsets(v: View, insets: WindowInsets): WindowInsets {
         val listener = insetsListener
         if (listener != null) {
-            return listener.onWindowInsetsChanged(v, applyType, insets)
+            return listener.onWindowInsetsChanged(v, this, insets)
         }
-        val insetsValue = if (versionThen(Build.VERSION_CODES.R)) {
-            val value = insets.getInsets(
-                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
-            InsetsValue(value.left, value.top, value.right, value.bottom)
-        } else {
-            InsetsValue(insets.systemWindowInsetLeft,
-                    insets.systemWindowInsetTop,
-                    insets.systemWindowInsetRight,
-                    insets.systemWindowInsetBottom)
-        }
+        val insetsValue = getInsetsValue(insets)
 
         when (applyType) {
             ApplyType.Margin -> {
-                insetsValue.max(baseMargin)
+                insetsValue.basePlus(baseMargin, edge)
                 setMargin(
-                        v,
-                        insetsValue.left,
-                        insetsValue.top,
-                        insetsValue.right,
-                        insetsValue.bottom)
+                    v,
+                    insetsValue.left,
+                    insetsValue.top,
+                    insetsValue.right,
+                    insetsValue.bottom
+                )
             }
             ApplyType.Padding -> {
-                insetsValue.max(basePadding)
+                insetsValue.basePlus(basePadding, edge)
                 setPadding(
-                        v,
-                        insetsValue.left,
-                        insetsValue.top,
-                        insetsValue.right,
-                        insetsValue.bottom)
+                    v,
+                    insetsValue.left,
+                    insetsValue.top,
+                    insetsValue.right,
+                    insetsValue.bottom
+                )
             }
         }
         return insets
     }
 
-    private class InsetsValue(
-            var left: Int,
-            var top: Int,
-            var right: Int,
-            var bottom: Int
+    class InsetsValue(
+        var left: Int,
+        var top: Int,
+        var right: Int,
+        var bottom: Int
     ) {
-
-        fun max(rect: Rect) {
-            if (left < rect.left) {
-                left = rect.left
+        fun basePlus(base: Rect, edge: Edge) {
+            if (left < base.left || !edge.left) {
+                left = base.left
             }
-            if (top < rect.top) {
-                top = rect.top
+            if (top < base.top || !edge.top) {
+                top = base.top
             }
-            if (right < rect.right) {
-                right = rect.right
+            if (right < base.right || !edge.right) {
+                right = base.right
             }
-            if (bottom < rect.bottom) {
-                bottom = rect.bottom
+            if (bottom < base.bottom || !edge.bottom) {
+                bottom = base.bottom
             }
         }
     }
@@ -136,25 +170,84 @@ class WindowInsetsHelper(
     }
 
     fun interface OnWindowInsetsChangedListener {
-        fun onWindowInsetsChanged(v: View, type: ApplyType, insets: WindowInsets): WindowInsets
+        fun onWindowInsetsChanged(
+            v: View,
+            helper: WindowInsetsHelper,
+            insets: WindowInsets
+        ): WindowInsets
+    }
+
+    class Edge(
+        var left: Boolean,
+        var top: Boolean,
+        var right: Boolean,
+        var bottom: Boolean
+    ) {
+        companion object {
+            val ALL = Edge(left = true, top = true, right = true, bottom = true)
+
+            val HEADER = Edge(left = true, top = true, right = true, bottom = false)
+
+            val CONTENT = Edge(left = true, top = false, right = true, bottom = true)
+        }
     }
 
 }
 
 fun View.fixInsetsByPadding(
-        listener: WindowInsetsHelper.OnWindowInsetsChangedListener? = null) {
-    setOnApplyWindowInsetsListener(
-            WindowInsetsHelper(WindowInsetsHelper.ApplyType.Padding, listener).apply {
-                snapshotPadding(this@fixInsetsByPadding)
-            }
-    )
+    edge: WindowInsetsHelper.Edge = WindowInsetsHelper.Edge.ALL,
+) {
+    setWindowInsetsHelper(
+        WindowInsetsHelper.ApplyType.Padding,
+        edge,
+        null
+    ).apply {
+        snapshotPadding(this@fixInsetsByPadding)
+    }
+}
+
+fun View.fixInsetsByPadding(
+    listener: WindowInsetsHelper.OnWindowInsetsChangedListener? = null
+) {
+    setWindowInsetsHelper(
+        WindowInsetsHelper.ApplyType.Padding,
+        WindowInsetsHelper.Edge.ALL,
+        listener
+    ).apply {
+        snapshotPadding(this@fixInsetsByPadding)
+    }
 }
 
 fun View.fixInsetsByMargin(
-        listener: WindowInsetsHelper.OnWindowInsetsChangedListener? = null) {
-    setOnApplyWindowInsetsListener(
-            WindowInsetsHelper(WindowInsetsHelper.ApplyType.Margin, listener).apply {
-                snapshotMargin(this@fixInsetsByMargin)
-            }
-    )
+    edge: WindowInsetsHelper.Edge = WindowInsetsHelper.Edge.ALL,
+) {
+    setWindowInsetsHelper(
+        WindowInsetsHelper.ApplyType.Margin,
+        edge,
+        null
+    ).apply {
+        snapshotMargin(this@fixInsetsByMargin)
+    }
+}
+
+fun View.fixInsetsByMargin(
+    listener: WindowInsetsHelper.OnWindowInsetsChangedListener? = null
+) {
+    setWindowInsetsHelper(
+        WindowInsetsHelper.ApplyType.Margin,
+        WindowInsetsHelper.Edge.ALL,
+        listener
+    ).apply {
+        snapshotMargin(this@fixInsetsByMargin)
+    }
+}
+
+private fun View.setWindowInsetsHelper(
+    type: WindowInsetsHelper.ApplyType,
+    edge: WindowInsetsHelper.Edge,
+    listener: WindowInsetsHelper.OnWindowInsetsChangedListener?
+): WindowInsetsHelper {
+    val windowInsetsHelper = WindowInsetsHelper(type, edge, listener)
+    setOnApplyWindowInsetsListener(windowInsetsHelper)
+    return windowInsetsHelper
 }

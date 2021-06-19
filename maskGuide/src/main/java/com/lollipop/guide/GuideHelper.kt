@@ -13,6 +13,8 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.guide.impl.DefaultGuideProvider
 import kotlin.math.abs
 
@@ -121,6 +123,8 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     private var animationProgress = 0F
 
+    private val windowInsetsSize = Rect()
+
     fun show() {
         val rootGroup = option.rootGroup
         if (guideRoot.parent != rootGroup
@@ -136,6 +140,16 @@ class GuideHelper(private val option: Option) : GuideManager,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
+        }
+        guideRoot.fixInsetsByPadding { _, _, insets ->
+            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
+            windowInsetsSize.set(
+                insetsValue.left,
+                insetsValue.top,
+                insetsValue.right,
+                insetsValue.bottom
+            )
+            insets
         }
         guideRoot.post {
             nextStep()
@@ -173,12 +187,17 @@ class GuideHelper(private val option: Option) : GuideManager,
         do {
             val step = option.stepList[stepIndex]
             currentStep = step
-            if (currentProvider?.support(step) == true) {
-                break
-            }
-            currentProvider = findProvider(step)
-            if (currentProvider == null || !targetInBounds(step.target)) {
+            if (!targetInBounds(step.target)) {
+                currentProvider = null
                 stepIndex++
+            } else {
+                if (currentProvider?.support(step) == true) {
+                    break
+                }
+                currentProvider = findProvider(step)
+                if (currentProvider == null) {
+                    stepIndex++
+                }
             }
         } while (stepIndex < option.stepList.size && currentProvider == null)
         val provider = currentProvider ?: return destroy()
@@ -269,21 +288,8 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     private fun checkGuideBounds(): Boolean {
-//        val rootLocation = IntArray(2)
-//        val guideLocation = IntArray(2)
-//        option.rootGroup.getLocationInWindow(rootLocation)
-//        guideRoot.getLocationInWindow(guideLocation)
-
         val snapshot = BoundsSnapshot.create(guidePaddings)
-
-//        guidePaddings.set(0, 0, guideRoot.width, guideRoot.height)
-//
-//        guidePaddings.offset(
-//            guideLocation[0] - rootLocation[0],
-//            guideLocation[1] - rootLocation[1]
-//        )
-        guidePaddings.set(0, 0, 0, 0)
-
+        guidePaddings.set(windowInsetsSize)
         return snapshot.isInconsistent(guidePaddings)
     }
 
@@ -296,8 +302,8 @@ class GuideHelper(private val option: Option) : GuideManager,
         val targetBounds = Rect(0, 0, target.width, target.height)
         targetBounds.offset(targetLocation[0], targetLocation[1])
 
-        val guideRangeHorizontal = groupLocation[0] .. (groupLocation[0] + guideRoot.width)
-        val guideRangeVertical = groupLocation[1] .. (groupLocation[1] + guideRoot.height)
+        val guideRangeHorizontal = groupLocation[0]..(groupLocation[0] + guideRoot.width)
+        val guideRangeVertical = groupLocation[1]..(groupLocation[1] + guideRoot.height)
         if (targetBounds.top in guideRangeVertical) {
             if (targetBounds.left in guideRangeHorizontal) {
                 return true
