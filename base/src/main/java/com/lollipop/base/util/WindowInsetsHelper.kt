@@ -249,5 +249,23 @@ private fun View.setWindowInsetsHelper(
 ): WindowInsetsHelper {
     val windowInsetsHelper = WindowInsetsHelper(type, edge, listener)
     setOnApplyWindowInsetsListener(windowInsetsHelper)
+
+    if (isAttachedToWindow) {
+        requestApplyInsets()
+    } else {
+        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                v.removeOnAttachStateChangeListener(this)
+                v.requestApplyInsets()
+            }
+
+            override fun onViewDetachedFromWindow(v: View) = Unit
+        })
+    }
+
     return windowInsetsHelper
+}
+
+fun View.cleanWindowInsetHelper() {
+    setOnApplyWindowInsetsListener(null)
 }

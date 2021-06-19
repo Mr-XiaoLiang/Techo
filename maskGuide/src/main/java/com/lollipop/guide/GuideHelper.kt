@@ -13,7 +13,10 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.lollipop.base.listener.BackPressListener
+import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.cleanWindowInsetHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.guide.impl.DefaultGuideProvider
 import kotlin.math.abs
@@ -25,7 +28,8 @@ import kotlin.math.abs
  */
 class GuideHelper(private val option: Option) : GuideManager,
     ValueAnimator.AnimatorUpdateListener,
-    Animator.AnimatorListener {
+    Animator.AnimatorListener,
+    BackPressListener {
 
     companion object {
 
@@ -45,23 +49,37 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
 
         fun with(activity: Activity): Builder {
-            return with(activity.window.decorView as ViewGroup, false)
+            val backPressProvider = if (activity is BackPressProvider) {
+                activity
+            } else {
+                null
+            }
+            return with(activity.window.decorView as ViewGroup, false, backPressProvider)
         }
 
         fun with(fragment: Fragment): Builder {
-            return with(findRootGroup(fragment.view!!), true)
+            val backPressProvider = if (fragment is BackPressProvider) {
+                fragment
+            } else {
+                null
+            }
+            return with(findRootGroup(fragment.view!!), true, backPressProvider)
         }
 
-        fun with(viewGroup: ViewGroup, isFindRoot: Boolean): Builder {
+        fun with(
+            viewGroup: ViewGroup,
+            isFindRoot: Boolean,
+            backPressProvider: BackPressProvider?
+        ): Builder {
             return if (isFindRoot) {
-                Builder(findRootGroup(viewGroup))
+                Builder(findRootGroup(viewGroup), backPressProvider)
             } else {
-                Builder(viewGroup)
+                Builder(viewGroup, backPressProvider)
             }
         }
 
-        fun with(view: View): Builder {
-            return with(findRootGroup(view), false)
+        fun with(view: View, backPressProvider: BackPressProvider?): Builder {
+            return with(findRootGroup(view), false, backPressProvider)
         }
 
         private fun findRootGroup(view: View): ViewGroup {
@@ -127,6 +145,10 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     fun show() {
         val rootGroup = option.rootGroup
+        option.backPressProvider?.let {
+            it.removeBackPressListener(this)
+            it.addBackPressListener(this)
+        }
         if (guideRoot.parent != rootGroup
             || rootGroup.indexOfChild(guideRoot) != rootGroup.childCount - 1
         ) {
@@ -135,21 +157,34 @@ class GuideHelper(private val option: Option) : GuideManager,
                     parent.removeView(guideRoot)
                 }
             }
+
+            guideRoot.fitsSystemWindows = true
+            guideRoot.fixInsetsByPadding { _, _, insets ->
+                val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
+                windowInsetsSize.set(
+                    insetsValue.left,
+                    insetsValue.top,
+                    insetsValue.right,
+                    insetsValue.bottom
+                )
+                if (checkGuideBounds()) {
+                    currentProvider?.setGuideBounds(
+                        guideRoot.width,
+                        guideRoot.height,
+                        guidePaddings.left,
+                        guidePaddings.top,
+                        guidePaddings.right,
+                        guidePaddings.bottom
+                    )
+                }
+                insets
+            }
+
             rootGroup.addView(
                 guideRoot,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-        }
-        guideRoot.fixInsetsByPadding { _, _, insets ->
-            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
-            windowInsetsSize.set(
-                insetsValue.left,
-                insetsValue.top,
-                insetsValue.right,
-                insetsValue.bottom
-            )
-            insets
         }
         guideRoot.post {
             nextStep()
@@ -171,6 +206,8 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     fun destroy() {
         animator.cancel()
+        guideRoot.cleanWindowInsetHelper()
+        option.backPressProvider?.removeBackPressListener(this)
         guideRoot.parent?.let {
             if (it is ViewManager) {
                 it.removeView(guideRoot)
@@ -372,9 +409,13 @@ class GuideHelper(private val option: Option) : GuideManager,
         val rootGroup: ViewGroup,
         val stepList: List<GuideStep>,
         val providerLis: List<GuideProvider>,
+        val backPressProvider: BackPressProvider?
     )
 
-    class Builder(private val rootGroup: ViewGroup) {
+    class Builder(
+        private val rootGroup: ViewGroup,
+        val backPressProvider: BackPressProvider?
+    ) {
 
         private val stepList = ArrayList<GuideStep>()
 
@@ -391,7 +432,7 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
 
         fun show() {
-            GuideHelper(Option(rootGroup, stepList, providerList)).show()
+            GuideHelper(Option(rootGroup, stepList, providerList, backPressProvider)).show()
         }
 
     }
@@ -416,6 +457,14 @@ class GuideHelper(private val option: Option) : GuideManager,
             animationProgress = animation.animatedValue as Float
             currentProvider?.onAnimation(animationProgress)
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (stepIndex < option.stepList.size) {
+            nextStep()
+            return true
+        }
+        return false
     }
 
 }

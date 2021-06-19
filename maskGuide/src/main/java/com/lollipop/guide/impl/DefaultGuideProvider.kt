@@ -149,7 +149,6 @@ class DefaultGuideProvider : GuideProvider() {
         private val popBackground = PopDrawable()
 
         private val popTextView = TextView(context).apply {
-            gravity = Gravity.CENTER
             background = popBackground
         }
 
