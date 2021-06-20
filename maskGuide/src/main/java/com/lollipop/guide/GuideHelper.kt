@@ -39,7 +39,7 @@ class GuideHelper(private val option: Option) : GuideManager,
 
         private const val ANIMATION_MAX = 1F
         private const val ANIMATION_MIN = 0F
-        private const val ANIMATION_DURATION = 500L
+        private const val ANIMATION_DURATION = 300L
 
         fun addGlobalGuideProvider(clazz: Class<out GuideProvider>) {
             if (globalProviderList.contains(clazz)) {
