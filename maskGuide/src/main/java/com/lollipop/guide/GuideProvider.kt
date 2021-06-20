@@ -13,9 +13,13 @@ abstract class GuideProvider {
 
     protected val guideBounds = Rect()
 
+    protected val guideInsets = Rect()
+
     protected val targetBounds = Rect()
 
     protected var targetStep: GuideStep? = null
+
+    open val supportAnimation = false
 
     private var guideManager: GuideManager? = null
 
@@ -56,11 +60,19 @@ abstract class GuideProvider {
     }
 
     fun setGuideBounds(width: Int, height: Int, left: Int, top: Int, right: Int, bottom: Int) {
-        guideBounds.set(left, top, right, bottom)
+        guideInsets.set(left, top, right, bottom)
+        guideBounds.set(left, top, left + width, top + height)
         onGuideBoundsChanged(width, height, left, top, right, bottom)
     }
 
-    abstract fun onGuideBoundsChanged(width: Int, height: Int, left: Int, top: Int, right: Int, bottom: Int)
+    abstract fun onGuideBoundsChanged(
+        width: Int,
+        height: Int,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    )
 
     fun setTargetBounds(left: Int, top: Int, right: Int, bottom: Int) {
         targetBounds.set(left, top, right, bottom)
@@ -76,7 +88,11 @@ abstract class GuideProvider {
 
     abstract fun onTargetChange(step: GuideStep)
 
-    open fun onAnimation(progress: Float) {}
+    open fun onAnimation(isPositive: Boolean, progress: Float) {}
+
+    open fun onAnimationStart(isPositive: Boolean) {}
+
+    open fun onAnimationEnd(isPositive: Boolean) {}
 
     protected fun callNextStep() {
         guideManager?.nextStep()

@@ -6,10 +6,12 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.lollipop.base.util.changeAlpha
+import com.lollipop.base.util.log
+import com.lollipop.base.util.visibleOrInvisible
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
 import kotlin.math.max
@@ -24,7 +26,7 @@ class DefaultGuideProvider : GuideProvider() {
 
     companion object {
         val DEFAULT_GUIDE_STYLE = GuideStyle(
-            backgroundColor = Color.BLACK and 0xFFFFFF or 0xAA000000.toInt(),
+            backgroundColor = Color.BLACK.changeAlpha(0xAA),
             popColor = Color.BLUE,
             popTextColor = Color.WHITE,
             cornerDp = 10,
@@ -45,9 +47,14 @@ class DefaultGuideProvider : GuideProvider() {
 
     }
 
+    override val supportAnimation: Boolean
+        get() = true
+
     private var guideStyle = DEFAULT_GUIDE_STYLE
 
     private var guideView: GuideView? = null
+
+    private var targetHorizontalDirection = HorizontalDirection.Left
 
     override fun support(step: GuideStep): Boolean {
         return true
@@ -123,8 +130,36 @@ class DefaultGuideProvider : GuideProvider() {
         guideView?.invalidate()
     }
 
+    override fun onAnimationStart(isPositive: Boolean) {
+        super.onAnimationStart(isPositive)
+        guideView?.visibleOrInvisible(true)
+    }
+
+    override fun onAnimationEnd(isPositive: Boolean) {
+        super.onAnimationEnd(isPositive)
+        if (!isPositive) {
+            guideView?.visibleOrInvisible(false)
+        }
+    }
+
+    override fun onAnimation(isPositive: Boolean, progress: Float) {
+        super.onAnimation(isPositive, progress)
+        guideView?.animationProgress(
+            isPositive,
+            progress,
+            guideStyle.backgroundColor,
+            targetHorizontalDirection
+        )
+    }
+
     override fun onTargetBoundsChange(left: Int, top: Int, right: Int, bottom: Int) {
+        targetHorizontalDirection = if ((left + right) / 2 < guideBounds.centerX()) {
+            HorizontalDirection.Left
+        } else {
+            HorizontalDirection.Right
+        }
         guideView?.changeTargetBounds(left, top, right, bottom)
+        guideView?.visibleOrInvisible(false)
         guideView?.invalidate()
     }
 
@@ -218,6 +253,26 @@ class DefaultGuideProvider : GuideProvider() {
         init {
             background = clipOutDrawable
             addView(popTextView)
+            clipToPadding = false
+        }
+
+        fun animationProgress(
+            isPositive: Boolean,
+            progress: Float,
+            backgroundColor: Int,
+            horizontalDirection: HorizontalDirection
+        ) {
+            log("animationProgress: $isPositive, $progress, $horizontalDirection")
+            guideBackgroundColor = backgroundColor.changeAlpha(progress)
+            when (horizontalDirection) {
+                HorizontalDirection.Left -> {
+                    popTextView.translationX = popTextView.right * -1 * (1 - progress)
+                }
+                HorizontalDirection.Right -> {
+                    popTextView.translationX = (width - popTextView.left) * (1 - progress)
+                }
+            }
+            invalidate()
         }
 
         fun onStepChanged(info: CharSequence) {
@@ -258,7 +313,6 @@ class DefaultGuideProvider : GuideProvider() {
         }
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-
             val target = clipBounds
             val topSpace = target.top - paddingTop
 
@@ -451,6 +505,10 @@ class DefaultGuideProvider : GuideProvider() {
         val textSizeSp: Int,
         val clipIsOval: Boolean
     )
+
+    enum class HorizontalDirection {
+        Left, Right
+    }
 
     private fun Int.dp2px(): Float {
         return TypedValue.applyDimension(

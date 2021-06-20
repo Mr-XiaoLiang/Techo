@@ -39,7 +39,7 @@ class GuideHelper(private val option: Option) : GuideManager,
 
         private const val ANIMATION_MAX = 1F
         private const val ANIMATION_MIN = 0F
-        private const val ANIMATION_DURATION = 300L
+        private const val ANIMATION_DURATION = 500L
 
         fun addGlobalGuideProvider(clazz: Class<out GuideProvider>) {
             if (globalProviderList.contains(clazz)) {
@@ -193,8 +193,11 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     fun dismiss() {
         if (currentStep != null) {
-            doAnimation(false)
-            return
+            val provider = currentProvider
+            if (provider != null && provider.supportAnimation) {
+                doAnimation(false)
+                return
+            }
         }
         stepIndex++
         if (stepIndex >= option.stepList.size) {
@@ -275,7 +278,11 @@ class GuideHelper(private val option: Option) : GuideManager,
             targetBounds.bottom
         )
         provider.updateGuideStep(step)
-        doAnimation(true)
+        if (provider.supportAnimation) {
+            provider.getView(guideRoot).post {
+                doAnimation(true)
+            }
+        }
     }
 
     private fun onAnimationEnd() {
@@ -438,10 +445,14 @@ class GuideHelper(private val option: Option) : GuideManager,
     }
 
     override fun onAnimationStart(animation: Animator?) {
+        if (animation == animator) {
+            currentProvider?.onAnimationStart(animationForStart)
+        }
     }
 
     override fun onAnimationEnd(animation: Animator?) {
         if (animation == animator) {
+            currentProvider?.onAnimationEnd(animationForStart)
             onAnimationEnd()
         }
     }
@@ -455,7 +466,7 @@ class GuideHelper(private val option: Option) : GuideManager,
     override fun onAnimationUpdate(animation: ValueAnimator?) {
         if (animation == animator) {
             animationProgress = animation.animatedValue as Float
-            currentProvider?.onAnimation(animationProgress)
+            currentProvider?.onAnimation(animationForStart, animationProgress)
         }
     }
 
