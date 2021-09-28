@@ -4,3 +4,4 @@ include ':palette'
 include ':maskGuide'
 include ':app'
 rootProject.name = "Techo"
+include ':app2'
