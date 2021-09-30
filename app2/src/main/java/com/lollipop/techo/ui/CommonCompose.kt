@@ -2,7 +2,9 @@ package com.lollipop.techo.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.async
 
 /**
  * @author lollipop
@@ -12,7 +14,11 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun NetworkImage(url: String, modifier: Modifier) {
+    val scope = rememberCoroutineScope()
     SideEffect {
+//        scope.async {
+//
+//        }
 //        url
     }
 }
