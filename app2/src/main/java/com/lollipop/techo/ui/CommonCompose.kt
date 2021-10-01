@@ -1,10 +1,9 @@
 package com.lollipop.techo.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import kotlinx.coroutines.async
+import androidx.compose.ui.graphics.painter.Painter
+import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.imageloading.ImageLoadState
 
 /**
  * @author lollipop
@@ -13,57 +12,11 @@ import kotlinx.coroutines.async
  */
 
 @Composable
-fun NetworkImage(url: String, modifier: Modifier) {
-    val scope = rememberCoroutineScope()
-    SideEffect {
-//        scope.async {
-//
-//        }
-//        url
-    }
+fun loadImage(
+    url: String,
+    loadState: ((ImageLoadState) -> Unit) = {}
+): Painter {
+    val printer = rememberCoilPainter(request = url)
+    loadState(printer.loadState)
+    return printer
 }
-
-//@Composable
-//fun NetworkImage(url: String?, modifier: Modifier) {
-//
-//    var image by remember { mutableStateOf<ImageAsset?>(null) }
-//    var drawable by remember { mutableStateOf<Drawable?>(null) }
-//
-//    onCommit(url) {
-//        val picasso = Picasso.get()
-//
-//        val target = object : Target {
-//            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-//                drawable = placeHolderDrawable
-//            }
-//
-//            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-//                drawable = errorDrawable
-//            }
-//
-//            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-//                image = bitmap?.asImageAsset()
-//            }
-//        }
-//
-//        picasso
-//            .load(imagePath)
-//            .placeHolder(R.drawable.placeholder).error(R.drawable.error)
-//            .into(target)
-//        onDispose {
-//            image = null
-//            drawable = null
-//            picasso.cancelRequest(target)
-//        }
-//    }
-//
-//    if (image != null) {
-//        Image(asset = image, modifier = modifier)
-//    } else if (theDrawable != null) {
-//        Canvas(modifier = modifier) {
-//            drawIntoCanvas { canvas ->
-//                drawable.draw(canvas.nativeCanvas)
-//            }
-//        }
-//    }
-//}
