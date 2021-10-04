@@ -33,8 +33,12 @@ abstract class HeaderActivity: BaseActivity() {
         }
     }
 
+    /**
+     * 初始化头部
+     */
     @Composable
     open fun CollapsingToolbarScope.initHeader() {
+        // 临时头部的代码
         Text(
             text = "Title",
             modifier = Modifier.road(
