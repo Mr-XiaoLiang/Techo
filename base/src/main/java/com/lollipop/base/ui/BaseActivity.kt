@@ -2,11 +2,10 @@ package com.lollipop.base.ui
 
 import android.content.Intent
 import android.view.KeyEvent
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.provider.BackPressProvider
-import com.lollipop.base.request.PermissionCallback
-import com.lollipop.base.request.RequestCallback
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.util.BackPressProviderHelper
@@ -39,6 +38,14 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun dispatchBackEvent(): Boolean {
