@@ -10,8 +10,14 @@ import com.lollipop.gallery.PhotoGridLayout
  */
 data class TechoInfo(
     var title: String = "",
-    var color: Int = Color.TRANSPARENT,
+    var flag: TechoFlag = TechoFlag(),
     val items: MutableList<BaseTechoItem> = mutableListOf()
+)
+
+data class TechoFlag(
+    var name: String = "",
+    var color: Int = Color.RED,
+    var id: Int = 0
 )
 
 enum class TechoItemType {
