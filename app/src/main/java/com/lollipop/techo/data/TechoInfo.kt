@@ -1,6 +1,7 @@
 package com.lollipop.techo.data
 
 import android.graphics.Color
+import android.net.Uri
 import com.lollipop.gallery.Photo
 import com.lollipop.gallery.PhotoGridLayout
 import com.lollipop.techo.data.TechoItemType.*
@@ -106,12 +107,13 @@ enum class TechoItemType {
     Split;
 
     companion object {
-        fun pauseFromOrdinal(ordinal: Int): TechoItemType {
-            val valueArray = values()
-            if (ordinal in valueArray.indices) {
-                return valueArray[ordinal]
+        fun opt(name: String): TechoItemType {
+            try {
+                return valueOf(name)
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
-            return valueArray[0]
+            return Empty
         }
     }
 }
@@ -150,7 +152,7 @@ abstract class BaseTechoItem {
         private const val KEY_ITEM_TYPE = "itemType"
 
         fun getType(json: JSONObject): TechoItemType {
-            return TechoItemType.pauseFromOrdinal(json.optInt(KEY_ITEM_TYPE))
+            return TechoItemType.opt(json.optString(KEY_ITEM_TYPE))
         }
 
     }
@@ -159,7 +161,7 @@ abstract class BaseTechoItem {
 
     open fun toJson(): JSONObject {
         return JSONObject().apply {
-            put(KEY_ITEM_TYPE, itemType.ordinal)
+            put(KEY_ITEM_TYPE, itemType.name)
         }
     }
 
@@ -239,13 +241,46 @@ open class TextSpan(
 open class NumberItem(
     var number: Int = 0
 ) : TextItem() {
+
+    companion object {
+        private const val KEY_NUMBER = "number"
+    }
+
     override val itemType: TechoItemType = Number
+
+    override fun toJson(): JSONObject {
+        return super.toJson().apply {
+            put(KEY_NUMBER, number)
+        }
+    }
+
+    override fun parse(json: JSONObject) {
+        super.parse(json)
+        number = json.optInt(KEY_NUMBER, 0)
+    }
+
 }
 
 open class CheckBoxItem(
     var isChecked: Boolean = false
 ) : TextItem() {
+
+    companion object {
+        private const val KEY_CHECKED = "checked"
+    }
+
     override val itemType: TechoItemType = CheckBox
+
+    override fun toJson(): JSONObject {
+        return super.toJson().apply {
+            put(KEY_CHECKED, isChecked)
+        }
+    }
+
+    override fun parse(json: JSONObject) {
+        super.parse(json)
+        isChecked = json.optBoolean(KEY_CHECKED, false)
+    }
 }
 
 class SplitItem : EmptyItem() {
@@ -254,7 +289,69 @@ class SplitItem : EmptyItem() {
 
 class PhotoItem(
     val values: MutableList<Photo> = mutableListOf(),
-    val style: PhotoGridLayout.Style = PhotoGridLayout.Style.Playbill
+    var style: PhotoGridLayout.Style = PhotoGridLayout.Style.Playbill
 ): BaseTechoItem() {
+
+    companion object {
+        private const val KEY_VALUES = "values"
+        private const val KEY_STYLE = "style"
+
+        private const val KEY_PHOTO_URL = "photoUrl"
+        private const val KEY_PHOTO_TITLE = "photoTitle"
+    }
+
     override val itemType: TechoItemType = Photo
+
+    override fun toJson(): JSONObject {
+        return super.toJson().apply {
+            put(KEY_STYLE, style.name)
+            put(KEY_VALUES, photoToJson())
+        }
+    }
+
+    override fun parse(json: JSONObject) {
+        super.parse(json)
+        style = optStyle(json.optString(KEY_STYLE))
+        json.optJSONArray(KEY_VALUES)?.let {
+            parseFromJson(it)
+        }
+    }
+
+    private fun optStyle(name: String): PhotoGridLayout.Style {
+        try {
+            return PhotoGridLayout.Style.valueOf(name)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return PhotoGridLayout.Style.Playbill
+    }
+
+    private fun photoToJson(): JSONArray {
+        return JSONArray().apply {
+            values.forEach {
+                put(toJson(it))
+            }
+        }
+    }
+
+    private fun toJson(photo: Photo): JSONObject {
+        return JSONObject().apply {
+            put(KEY_PHOTO_URL, photo.uri.toString())
+            put(KEY_PHOTO_TITLE, photo.title)
+        }
+    }
+
+    private fun parseFromJson(jsonArray: JSONArray) {
+        values.clear()
+        for (index in 0 until jsonArray.length()) {
+            val obj = jsonArray.optJSONObject(index) ?: continue
+            values.add(
+                Photo(
+                    uri = Uri.parse(obj.optString(KEY_PHOTO_URL)),
+                    title = obj.optString(KEY_PHOTO_TITLE)
+                )
+            )
+        }
+    }
+
 }
