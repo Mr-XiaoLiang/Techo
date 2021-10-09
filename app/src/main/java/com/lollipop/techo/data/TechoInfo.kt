@@ -72,17 +72,17 @@ data class TechoInfo(
         }
 
         private fun toJson(info: TechoInfo): JSONObject {
-            val jsonObject = JSONObject()
-            jsonObject.put(KEY_TITLE, info.title)
-            jsonObject.put(KEY_FLAG_ID, info.flag.id)
-            jsonObject.put(KEY_FLAG_NAME, info.flag.name)
-            jsonObject.put(KEY_FLAG_COLOR, info.flag.color)
-            val itemArray = JSONArray()
-            info.items.forEach {
-                itemArray.put(it.toJson())
+            return JSONObject().apply {
+                put(KEY_TITLE, info.title)
+                put(KEY_FLAG_ID, info.flag.id)
+                put(KEY_FLAG_NAME, info.flag.name)
+                put(KEY_FLAG_COLOR, info.flag.color)
+                val itemArray = JSONArray()
+                info.items.forEach {
+                    itemArray.put(it.toJson())
+                }
+                put(KEY_ITEMS, itemArray)
             }
-            jsonObject.put(KEY_ITEMS, itemArray)
-            return jsonObject
         }
     }
 
@@ -144,7 +144,7 @@ object FontStyle {
 
 }
 
-abstract class BaseTechoItem() {
+abstract class BaseTechoItem {
 
     companion object {
         private const val KEY_ITEM_TYPE = "itemType"
@@ -176,14 +176,65 @@ open class EmptyItem : BaseTechoItem() {
 open class TextItem(
     val values: MutableList<TextSpan> = mutableListOf()
 ) : BaseTechoItem() {
+
+    companion object {
+        private const val KEY_VALUES = "values"
+    }
+
     override val itemType: TechoItemType = Empty
+
+    override fun toJson(): JSONObject {
+        return super.toJson().apply {
+            val valueArray = JSONArray()
+            values.forEach {
+                valueArray.put(it.toJson())
+            }
+            put(KEY_VALUES, valueArray)
+        }
+    }
+
+    override fun parse(json: JSONObject) {
+        super.parse(json)
+        values.clear()
+        json.optJSONArray(KEY_VALUES)?.let { valueArray ->
+            for (index in 0 until valueArray.length()) {
+                val obj = valueArray.optJSONObject(index) ?: continue
+                values.add(TextSpan.fromJson(obj))
+            }
+        }
+    }
+
 }
 
 open class TextSpan(
     var text: String = "",
     var color: Int = Color.BLACK,
     var style: Int
-)
+) {
+
+    companion object {
+        private const val KEY_TEXT = "text"
+        private const val KEY_COLOR = "color"
+        private const val KEY_STYLE = "style"
+
+        fun fromJson(jsonObject: JSONObject): TextSpan {
+            return TextSpan(
+                text = jsonObject.optString(KEY_TEXT),
+                color = jsonObject.optInt(KEY_COLOR, Color.BLACK),
+                style = jsonObject.optInt(KEY_COLOR, FontStyle.NORMAL)
+            )
+        }
+    }
+
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put(KEY_TEXT, text)
+            put(KEY_COLOR, color)
+            put(KEY_STYLE, style)
+        }
+    }
+
+}
 
 open class NumberItem(
     var number: Int = 0
