@@ -140,6 +140,11 @@ object FontStyle {
      */
     const val STRIKETHROUGH = 1 shl 2
 
+    /**
+     * 下划线
+     */
+    const val UNDERLINE = 1 shl 3
+
     fun has(value: Int, flag: Int): Boolean {
         return value and flag != 0
     }
