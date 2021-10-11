@@ -118,36 +118,97 @@ enum class TechoItemType {
     }
 }
 
-object FontStyle {
-
-    /**
-     * 什么都没有
-     */
-    const val NORMAL = 0
-
+enum class FontStyle {
     /**
      * 加粗
      */
-    const val BOLD = 1
+    Bold,
 
     /**
      * 斜体
      */
-    const val ITALIC = 1 shl 1
+    Italic,
 
     /**
      * 删除线
      */
-    const val STRIKETHROUGH = 1 shl 2
+    Strikethrough,
 
     /**
      * 下划线
      */
-    const val UNDERLINE = 1 shl 3
+    Underline,
 
-    fun has(value: Int, flag: Int): Boolean {
-        return value and flag != 0
+    /**
+     * 字体大小
+     */
+    FontSize,
+
+    /**
+     * 颜色
+     */
+    Color,
+
+    /**
+     * 链接
+     */
+    Link,
+
+    /**
+     * 上标
+     */
+    Superscript,
+
+    /**
+     * 下标
+     */
+    Subscript,
+
+    /**
+     * 模糊
+     */
+    Blur;
+
+    companion object {
+
+        const val NORMAL = 0
+
+        fun has(value: Int, vararg flag: FontStyle): Boolean {
+            for (index in flag.indices) {
+                val style = flag[index]
+                val key = 1 shl style.flag
+                if (value and key != 0) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun hasAll(value: Int, vararg flag: FontStyle): Boolean {
+            for (index in flag.indices) {
+                val style = flag[index]
+                val key = 1 shl style.flag
+                if (value and key == 0) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        fun build(base: Int = 0, vararg flag: FontStyle): Int {
+            var value = base
+            flag.forEach {
+                value = value or it.flag
+            }
+            return value
+        }
+
     }
+
+    private val flag: Int
+        get() {
+            return 1 shl ordinal
+        }
 
 }
 
@@ -181,32 +242,36 @@ open class EmptyItem : BaseTechoItem() {
 }
 
 open class TextItem(
-    val values: MutableList<TextSpan> = mutableListOf()
+    var value: String = "",
+    val spans: MutableList<TextSpan> = mutableListOf()
 ) : BaseTechoItem() {
 
     companion object {
-        private const val KEY_VALUES = "values"
+        private const val KEY_VALUE = "value"
+        private const val KEY_SPANS = "SPANS"
     }
 
     override val itemType: TechoItemType = Empty
 
     override fun toJson(): JSONObject {
         return super.toJson().apply {
-            val valueArray = JSONArray()
-            values.forEach {
-                valueArray.put(it.toJson())
+            put(KEY_VALUE, value)
+            val spanArray = JSONArray()
+            spans.forEach {
+                spanArray.put(it.toJson())
             }
-            put(KEY_VALUES, valueArray)
+            put(KEY_SPANS, spanArray)
         }
     }
 
     override fun parse(json: JSONObject) {
         super.parse(json)
-        values.clear()
-        json.optJSONArray(KEY_VALUES)?.let { valueArray ->
+        value = json.optString(KEY_VALUE)
+        spans.clear()
+        json.optJSONArray(KEY_SPANS)?.let { valueArray ->
             for (index in 0 until valueArray.length()) {
                 val obj = valueArray.optJSONObject(index) ?: continue
-                values.add(TextSpan.fromJson(obj))
+                spans.add(TextSpan.fromJson(obj))
             }
         }
     }
@@ -214,31 +279,70 @@ open class TextItem(
 }
 
 open class TextSpan(
-    var text: String = "",
+    /**
+     * 开始位置
+     */
+    var start: Int = 0,
+    /**
+     * 结束位置
+     */
+    var end: Int = 0,
+    /**
+     * 颜色
+     */
     var color: Int = Color.BLACK,
-    var style: Int
+    /**
+     * 样式
+     */
+    var style: Int = 0,
+    /**
+     * 字体大小
+     */
+    var fontSize: Int = 16,
+    /**
+     * 链接
+     */
+    var link: String = "",
 ) {
 
     companion object {
-        private const val KEY_TEXT = "text"
+        private const val KEY_START = "start"
+        private const val KEY_END = "end"
         private const val KEY_COLOR = "color"
         private const val KEY_STYLE = "style"
+        private const val KEY_SIZE = "size"
+        private const val KEY_LINK = "link"
 
         fun fromJson(jsonObject: JSONObject): TextSpan {
             return TextSpan(
-                text = jsonObject.optString(KEY_TEXT),
+                start = jsonObject.optInt(KEY_START, 0),
+                end = jsonObject.optInt(KEY_END, 0),
                 color = jsonObject.optInt(KEY_COLOR, Color.BLACK),
-                style = jsonObject.optInt(KEY_COLOR, FontStyle.NORMAL)
+                style = jsonObject.optInt(KEY_COLOR, FontStyle.NORMAL),
+                fontSize = jsonObject.optInt(KEY_SIZE, 16),
+                link = jsonObject.optString(KEY_LINK, "")
             )
         }
     }
 
+    val length: Int
+        get() {
+            return end - start
+        }
+
     fun toJson(): JSONObject {
         return JSONObject().apply {
-            put(KEY_TEXT, text)
+            put(KEY_START, start)
+            put(KEY_END, end)
             put(KEY_COLOR, color)
             put(KEY_STYLE, style)
+            put(KEY_SIZE, fontSize)
+            put(KEY_LINK, link)
         }
+    }
+
+    fun hasStyle(flag: FontStyle): Boolean {
+        return FontStyle.has(style, flag)
     }
 
 }
@@ -295,7 +399,7 @@ class SplitItem : EmptyItem() {
 class PhotoItem(
     val values: MutableList<Photo> = mutableListOf(),
     var style: PhotoGridLayout.Style = PhotoGridLayout.Style.Playbill
-): BaseTechoItem() {
+) : BaseTechoItem() {
 
     companion object {
         private const val KEY_VALUES = "values"

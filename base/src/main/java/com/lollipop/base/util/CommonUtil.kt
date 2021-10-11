@@ -246,36 +246,40 @@ fun Int.changeAlpha(f: Float): Int {
 /**
  * 将一个浮点数，以dip为单位转换为对应的像素值
  */
-fun Float.dp2px(): Float {
-    return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, this,
-        Resources.getSystem().displayMetrics
-    )
-}
+val Float.dp2px: Float
+    get() {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, this,
+            Resources.getSystem().displayMetrics
+        )
+    }
 
 /**
  * 将一个浮点数，以sp为单位转换为对应的像素值
  */
-fun Float.sp2px(): Float {
-    return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_SP, this,
-        Resources.getSystem().displayMetrics
-    )
-}
+val Float.sp2px: Float
+    get() {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, this,
+            Resources.getSystem().displayMetrics
+        )
+    }
 
 /**
  * 将一个整数，以dip为单位转换为对应的像素值
  */
-fun Int.dp2px(): Float {
-    return this.toFloat().dp2px()
-}
+val Int.dp2px: Int
+    get() {
+        return this.toFloat().dp2px.toInt()
+    }
 
 /**
- * 将一个整数，以dip为单位转换为对应的像素值
+ * 将一个整数，以sp为单位转换为对应的像素值
  */
-fun Int.sp2px(): Float {
-    return this.toFloat().sp2px()
-}
+val Int.sp2px: Int
+    get() {
+        return this.toFloat().sp2px.toInt()
+    }
 
 /**
  * 将一个整数作为id来寻找对应的颜色值，
