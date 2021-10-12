@@ -13,6 +13,7 @@ import org.json.JSONObject
  * @date 4/29/21 22:04
  */
 data class TechoInfo(
+    var id: Int = 0,
     var title: String = "",
     var flag: TechoFlag = TechoFlag(),
     val items: MutableList<BaseTechoItem> = mutableListOf()
