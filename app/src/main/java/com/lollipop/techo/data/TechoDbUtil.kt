@@ -27,6 +27,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
         const val NAME = "Flag"
 
+        const val ID = "ID"
+
         enum class Column(val format: ColumnFormat) {
             NAME(ColumnFormat.TEXT),
             COLOR(ColumnFormat.INTEGER)
@@ -34,8 +36,16 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
         fun getCreateSql(): String {
             val sql = StringBuilder()
-            sql.append("")
-            TODO("Not yet implemented")
+            sql.append("CREATE TABLE $NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT ")
+
+            Column.values().forEach {
+                sql.append(", ")
+                sql.append(it.name)
+                sql.append(" ")
+                sql.append(it.format)
+            }
+
+            sql.append(" ) ")
             return sql.toString()
         }
 
@@ -45,6 +55,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
         const val NAME = "Techo"
 
+        const val ID = "ID"
+
         enum class Column(val format: ColumnFormat) {
             TITLE(ColumnFormat.TEXT),
             FLAG(ColumnFormat.INTEGER),
@@ -53,8 +65,16 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
         fun getCreateSql(): String {
             val sql = StringBuilder()
-            sql.append("")
-            TODO("Not yet implemented")
+            sql.append("CREATE TABLE $NAME ( $ID INTEGER PRIMARY KEY AUTOINCREMENT ")
+
+            Column.values().forEach {
+                sql.append(", ")
+                sql.append(it.name)
+                sql.append(" ")
+                sql.append(it.format)
+            }
+
+            sql.append(" ) ")
             return sql.toString()
         }
 
