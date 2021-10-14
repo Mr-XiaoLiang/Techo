@@ -97,7 +97,14 @@ data class TechoFlag(
     var name: String = "",
     var color: Int = Color.RED,
     var id: Int = 0
-)
+) {
+    fun copyTo(newFlag: TechoFlag = TechoFlag()): TechoFlag {
+        newFlag.id = id
+        newFlag.color = color
+        newFlag.name = name
+        return newFlag
+    }
+}
 
 enum class TechoItemType {
     Empty,
