@@ -94,7 +94,9 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
     }
 
     fun selectTecho(pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
-        TODO()
+        synchronized(TechoTable) {
+            return TechoTable.queryAll(readDb, pageIndex, pageSize)
+        }
     }
 
     fun insertFlag(flag: TechoFlag) {
@@ -238,10 +240,14 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
         const val ID = "ID"
 
+        private val COLUMNS: Array<String> by lazy {
+            Column.values().map { it.name }.toTypedArray()
+        }
+
         enum class Column(val format: ColumnFormat) {
             TITLE(ColumnFormat.TEXT),
             FLAG(ColumnFormat.INTEGER),
-            VALUES(ColumnFormat.TEXT)
+            CONTENT(ColumnFormat.TEXT)
         }
 
         fun getCreateSql(): String {
@@ -257,6 +263,41 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
 
             sql.append(" ) ")
             return sql.toString()
+        }
+
+        fun queryAll(db: SQLiteDatabase, pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
+            val list = ArrayList<TechoInfo>()
+            val cursor = db.rawQuery(
+                "SELECT t.$ID AS $ID, " +
+                        "${Column.TITLE}, " +
+                        "${Column.FLAG}, " +
+                        "${Column.CONTENT}, " +
+                        "${FlagTable.Column.NAME}, " +
+                        "${FlagTable.Column.COLOR} " +
+                        "FROM $NAME t LEFT JOIN ${FlagTable.NAME} f ON t.${Column.FLAG} = f.${FlagTable.ID} " +
+                        "ORDER BY t.$ID DESC " +
+                        "LIMIT ? OFFSET ?",
+                arrayOf(
+                    pageSize.toString(),
+                    (pageIndex * pageSize).toString()
+                )
+            )
+            while (cursor.moveToNext()) {
+                val content = cursor.getText(Column.CONTENT)
+                list.add(
+                    TechoInfo.fromJson(content).apply {
+                        flag = TechoFlag(
+                            name = cursor.getText(FlagTable.Column.NAME),
+                            color = cursor.getInt(FlagTable.Column.COLOR),
+                            id = cursor.getInt(FlagTable.ID),
+                        )
+                        id = cursor.getInt(ID)
+                        title = cursor.getText(Column.TITLE)
+                    }
+                )
+            }
+            cursor.close()
+            return list
         }
 
     }
