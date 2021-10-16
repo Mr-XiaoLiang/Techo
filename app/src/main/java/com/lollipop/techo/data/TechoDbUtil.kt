@@ -75,8 +75,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return writableDatabase
         }
 
-    fun selectTechoById(id: Int): TechoInfo {
-        TODO()
+    fun selectTechoById(id: Int): TechoInfo? {
+        return TechoTable.selectById(readDb, id)
     }
 
     fun selectAllFlag(cache: Boolean = true): List<TechoFlag> {
@@ -87,16 +87,14 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                 }
             }
             flagCache.clear()
-            val allFlag = FlagTable.queryAll(readDb)
+            val allFlag = FlagTable.selectAll(readDb)
             flagCache.addAll(allFlag)
             return allFlag
         }
     }
 
     fun selectTecho(pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
-        synchronized(TechoTable) {
-            return TechoTable.queryAll(readDb, pageIndex, pageSize)
-        }
+        return TechoTable.selectAll(readDb, pageIndex, pageSize)
     }
 
     fun insertFlag(flag: TechoFlag) {
@@ -107,7 +105,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
     }
 
     fun insertTecho(info: TechoInfo) {
-        TODO()
+        TechoTable.insert(writeDb, info)
     }
 
     fun updateFlag(flag: TechoFlag) {
@@ -122,7 +120,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
     }
 
     fun updateTecho(info: TechoInfo) {
-        TODO()
+        TechoTable.update(writeDb, info)
     }
 
     fun deleteFlag(id: Int) {
@@ -139,7 +137,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
     }
 
     fun deleteTecho(id: Int) {
-        TODO()
+        TechoTable.delete(writeDb, id)
     }
 
     private enum class ColumnFormat {
@@ -178,7 +176,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return sql.toString()
         }
 
-        fun queryAll(db: SQLiteDatabase): List<TechoFlag> {
+        fun selectAll(db: SQLiteDatabase): List<TechoFlag> {
             val list = ArrayList<TechoFlag>()
             val cursor = db.query(
                 NAME,
@@ -265,7 +263,33 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return sql.toString()
         }
 
-        fun queryAll(db: SQLiteDatabase, pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
+        fun selectById(db: SQLiteDatabase, id: Int): TechoInfo? {
+            val cursor = db.query(
+                NAME,
+                COLUMNS,
+                "$ID = ?",
+                arrayOf(id.toString()),
+                null,
+                null,
+                null
+            )
+            if (cursor.moveToNext()) {
+                val content = cursor.getText(Column.CONTENT)
+                return TechoInfo.fromJson(content).apply {
+                    this.flag = TechoFlag(
+                        name = cursor.getText(FlagTable.Column.NAME),
+                        color = cursor.getInt(FlagTable.Column.COLOR),
+                        id = cursor.getInt(FlagTable.ID),
+                    )
+                    this.id = cursor.getInt(ID)
+                    this.title = cursor.getText(Column.TITLE)
+                }
+            }
+            cursor.close()
+            return null
+        }
+
+        fun selectAll(db: SQLiteDatabase, pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
             val list = ArrayList<TechoInfo>()
             val cursor = db.rawQuery(
                 "SELECT t.$ID AS $ID, " +
@@ -300,6 +324,37 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return list
         }
 
+        fun insert(db: SQLiteDatabase, info: TechoInfo) {
+            db.insert(
+                NAME,
+                null,
+                ContentValues().apply {
+                    put(Column.TITLE, info.title)
+                    put(Column.FLAG, info.flag.id)
+                    put(Column.CONTENT, info.toJson().toString())
+                })
+        }
+
+        fun update(db: SQLiteDatabase, info: TechoInfo) {
+            db.update(
+                NAME,
+                ContentValues().apply {
+                    put(Column.TITLE, info.title)
+                    put(Column.FLAG, info.flag.id)
+                    put(Column.CONTENT, info.toJson().toString())
+                },
+                "$ID = ?",
+                arrayOf(info.id.toString())
+            )
+        }
+
+        fun delete(db: SQLiteDatabase, id: Int) {
+            db.delete(
+                NAME,
+                "$ID = ?",
+                arrayOf(id.toString())
+            )
+        }
     }
 
 }
