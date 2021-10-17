@@ -1,4 +1,4 @@
-package com.lollipop.techo
+package com.lollipop.techo.activity
 
 import android.os.Bundle
 import android.view.View
@@ -9,6 +9,7 @@ import com.lollipop.gallery.PhotoManager
 import com.lollipop.guide.GuideHelper
 import com.lollipop.guide.GuideStep
 import com.lollipop.guide.impl.OvalGuideStep
+import com.lollipop.techo.activity.HeaderActivity
 import com.lollipop.techo.databinding.ActivityMainBinding
 
 class MainActivity : HeaderActivity() {

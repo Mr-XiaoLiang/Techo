@@ -1,4 +1,4 @@
-package com.lollipop.techo
+package com.lollipop.techo.activity
 
 import android.os.Bundle
 import android.view.View
