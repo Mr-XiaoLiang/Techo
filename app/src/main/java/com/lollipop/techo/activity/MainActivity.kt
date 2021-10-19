@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.lollipop.base.util.WindowInsetsHelper
@@ -40,33 +41,11 @@ class MainActivity : HeaderActivity() {
         // 敷衍的更新
 
         viewBinding.fab1.setOnClickListener {
-            GuideHelper.with(this)
-                .addStep(
-                    OvalGuideStep(
-                        viewBinding.fab1,
-                        "第一个引导内容\n这是一个描述信息"
-                    )
-                ).addStep(
-                    GuideStep(
-                        viewBinding.fab2,
-                        "第二个引导内容"
-                    )
-                ).addStep(
-                    OvalGuideStep(
-                        viewBinding.fab3,
-                        "第三个引导内容\n这是一个描述信息\n这是一个描述信息\n这是一个描述信息"
-                    )
-                ).show()
+            startActivity(Intent(this, TechoEditActivity::class.java))
         }
 
         viewBinding.fab2.setOnClickListener {
-            GuideHelper.with(this)
-                .addStep(
-                    OvalGuideStep(
-                        viewBinding.fab1,
-                        "第一个引导内容\n这是一个描述信息"
-                    )
-                ).show()
+            startActivity(Intent(this, TechoDetailActivity::class.java))
         }
 
         viewBinding.fab3.setOnClickListener {

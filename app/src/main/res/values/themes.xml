@@ -20,4 +20,19 @@
     <style name="Theme.Techo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Techo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="FloatingButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="iconTint">@color/fabIcon</item>
+        <item name="backgroundTint">@color/fabBackground</item>
+        <item name="fabSize">normal</item>
+        <item name="elevation">6dp</item>
+    </style>
+
+    <style name="FloatingSubButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="iconTint">@color/fabIcon</item>
+        <item name="backgroundTint">@color/fabBackground</item>
+        <item name="fabSize">mini</item>
+        <item name="elevation">4dp</item>
+        <item name="tint">@color/fabIcon</item>
+    </style>
 </resources>
