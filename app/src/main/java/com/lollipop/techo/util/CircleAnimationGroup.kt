@@ -34,12 +34,21 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         }
     }
 
+    val isOpened: Boolean
+        get() {
+            return animationProgress >= OPENED
+        }
+
     fun addPlanet(vararg views: View) {
         planetViewList.addAll(views)
     }
 
     fun removePlanet(vararg views: View) {
         planetViewList.removeAll(views)
+    }
+
+    fun setCenterView(view: View) {
+        centerView = view
     }
 
     fun close() {
@@ -64,14 +73,14 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         valueAnimator.cancel()
         animationProgress = MIN
         update()
-        visibleChange(true)
+        visibleChange(false)
     }
 
     fun show() {
         valueAnimator.cancel()
         animationProgress = MAX
         update()
-        visibleChange(false)
+        visibleChange(true)
     }
 
     fun destroy() {
@@ -80,9 +89,9 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         centerView = null
     }
 
-    private fun visibleChange(invisible: Boolean) {
+    private fun visibleChange(visible: Boolean) {
         planetViewList.forEach {
-            it.isInvisible = invisible
+            it.isInvisible = !visible
         }
     }
 
@@ -99,8 +108,8 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     private fun updateView(planet: View, centerX: Int, centerY: Int, progress: Float) {
         val planetX = half(planet.left, planet.right)
         val planetY = half(planet.top, planet.bottom)
-        planet.translationX = (centerX - planetX) * progress
-        planet.translationY = (centerY - planetY) * progress
+        planet.translationX = (centerX - planetX) * (1 - progress)
+        planet.translationY = (centerY - planetY) * (1 - progress)
     }
 
     private fun half(value1: Int, value2: Int): Int {
@@ -109,13 +118,13 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
 
     override fun onAnimationStart(animation: Animator?) {
         if (animation == valueAnimator) {
-            visibleChange(false)
+            visibleChange(true)
         }
     }
 
     override fun onAnimationEnd(animation: Animator?) {
-        if (animation == valueAnimator && animationProgress >= CLOSED) {
-            visibleChange(true)
+        if (animation == valueAnimator && animationProgress <= CLOSED) {
+            visibleChange(false)
         }
     }
 
