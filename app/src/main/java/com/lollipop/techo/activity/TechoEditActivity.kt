@@ -31,7 +31,10 @@ class TechoEditActivity : HeaderActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
+        initMenuBtn()
+    }
 
+    private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
         circleAnimationGroup.addPlanet(
             floatingBinding.floatingTest1,
@@ -50,6 +53,9 @@ class TechoEditActivity : HeaderActivity() {
             floatingBinding.floatingTest14,
         )
         circleAnimationGroup.hide()
+        circleAnimationGroup.onProgressUpdate { progress ->
+            floatingBinding.floatingMenuBtn.rotation = progress * 135
+        }
         floatingBinding.floatingMenuBtn.setOnClickListener {
             if (circleAnimationGroup.isOpened) {
                 circleAnimationGroup.close()
@@ -57,6 +63,14 @@ class TechoEditActivity : HeaderActivity() {
                 circleAnimationGroup.open()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        if (circleAnimationGroup.isOpened) {
+            circleAnimationGroup.close()
+            return
+        }
+        super.onBackPressed()
     }
 
     override fun onDestroy() {

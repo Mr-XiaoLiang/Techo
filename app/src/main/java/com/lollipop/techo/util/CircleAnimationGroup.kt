@@ -24,6 +24,7 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
 
     private val planetViewList = ArrayList<View>()
     private var centerView: View? = null
+    private var onProgressUpdateListener: OnProgressUpdateListener? = null
 
     private var animationProgress = 0F
 
@@ -49,6 +50,10 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
 
     fun setCenterView(view: View) {
         centerView = view
+    }
+
+    fun onProgressUpdate(listener: OnProgressUpdateListener) {
+        onProgressUpdateListener = listener
     }
 
     fun close() {
@@ -84,9 +89,10 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     }
 
     fun destroy() {
-        valueAnimator.cancel()
+        onProgressUpdateListener = null
         planetViewList.clear()
         centerView = null
+        valueAnimator.cancel()
     }
 
     private fun visibleChange(visible: Boolean) {
@@ -103,6 +109,7 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         planetViewList.forEach {
             updateView(it, centerX, centerY, progress)
         }
+        onProgressUpdateListener?.onProgressUpdate(progress)
     }
 
     private fun updateView(planet: View, centerX: Int, centerY: Int, progress: Float) {
@@ -139,6 +146,10 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
             animationProgress = animation.animatedValue as Float
             update()
         }
+    }
+
+    fun interface OnProgressUpdateListener {
+        fun onProgressUpdate(progress: Float)
     }
 
 }
