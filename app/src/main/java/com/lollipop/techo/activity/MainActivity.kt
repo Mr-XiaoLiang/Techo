@@ -38,8 +38,6 @@ class MainActivity : HeaderActivity() {
 
         contentView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
 
-        // 敷衍的更新
-
         viewBinding.fab1.setOnClickListener {
             startActivity(Intent(this, TechoEditActivity::class.java))
         }
