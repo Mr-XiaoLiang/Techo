@@ -2,12 +2,14 @@ package com.lollipop.techo.activity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.util.CircleAnimationGroup
+import com.lollipop.techo.view.CheckableView
 
 /**
  * 编辑 & 添加页
@@ -32,6 +34,15 @@ class TechoEditActivity : HeaderActivity() {
         super.onCreate(savedInstanceState)
         floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
         initMenuBtn()
+
+        viewBinding.leftCheckBox.setStyle(CheckableView.CheckStyle.CIRCULAR)
+        viewBinding.leftCheckBox.onCheckedChange { _, isChecked ->
+            Toast.makeText(this, "left: $isChecked", Toast.LENGTH_SHORT).show()
+        }
+        viewBinding.rightCheckBox.setStyle(CheckableView.CheckStyle.SQUARE)
+        viewBinding.rightCheckBox.onCheckedChange { _, isChecked ->
+            Toast.makeText(this, "right: $isChecked", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initMenuBtn() {

@@ -1,10 +1,18 @@
 package com.lollipop.techo.view
 
+import android.animation.Animator
 import android.content.Context
-import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.ViewAnimationUtils
+import android.widget.Checkable
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.animation.addListener
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import com.lollipop.techo.R
 import kotlin.math.sqrt
 
 /**
@@ -13,107 +21,141 @@ import kotlin.math.sqrt
  */
 class CheckableView(
     context: Context, attributeSet: AttributeSet?, style: Int
-) : AppCompatImageView(context, attributeSet, style) {
+) : FrameLayout(context, attributeSet, style), Checkable {
 
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
     constructor(context: Context) : this(context, null)
 
-    private class RippleAnimationDrawableWrapper(
-        private val realDrawable: Drawable
-    ) : Drawable(), Drawable.Callback {
-
-        init {
-            this.callback = realDrawable.callback
-            realDrawable.callback = this
+    private val defaultStatusView by lazy {
+        AppCompatImageView(context).apply {
+            scaleType = ImageView.ScaleType.FIT_XY
         }
+    }
+    private val checkedStatusView by lazy {
+        AppCompatImageView(context).apply {
+            scaleType = ImageView.ScaleType.FIT_XY
+        }
+    }
 
-        private var radius = 0F
+    private var isCheckStatus = false
 
-        private val clipPath = Path()
+    private var lastAnimation: Animator? = null
 
-        private val clipBounds = RectF()
+    private var onCheckedChangeListener: OnCheckedChangeListener? = null
 
-        var rippleProgress = 1F
-            set(value) {
-                field = value
-                checkPath()
+    init {
+        addView(defaultStatusView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(checkedStatusView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        setOnClickListener {
+            onClick()
+        }
+        checkStatus()
+    }
+
+    fun setDefaultDrawable(drawable: Drawable?) {
+        defaultStatusView.setImageDrawable(drawable)
+    }
+
+    fun setCheckedDrawable(drawable: Drawable?) {
+        checkedStatusView.setImageDrawable(drawable)
+    }
+
+    fun setDefaultDrawable(resId: Int) {
+        defaultStatusView.setImageResource(resId)
+    }
+
+    fun setCheckedDrawable(resId: Int) {
+        checkedStatusView.setImageResource(resId)
+    }
+
+    fun onCheckedChange(listener: OnCheckedChangeListener) {
+        this.onCheckedChangeListener = listener
+    }
+
+    fun setStyle(style: CheckStyle) {
+        when (style) {
+            CheckStyle.CIRCULAR -> {
+                setDefaultDrawable(R.drawable.bg_checkbox_circular)
+                setCheckedDrawable(R.drawable.fg_checkbox_circular)
             }
-
-        override fun onBoundsChange(bounds: Rect) {
-            super.onBoundsChange(bounds)
-            val w = bounds.width() * 0.5
-            val h = bounds.height() * 0.5
-            radius = sqrt(w * w + h * h).toFloat()
-        }
-
-        private fun checkPath() {
-            if (bounds.isEmpty) {
-                return
+            CheckStyle.SQUARE -> {
+                setDefaultDrawable(R.drawable.bg_checkbox_square)
+                setCheckedDrawable(R.drawable.fg_checkbox_square)
             }
-            val fl = radius * rippleProgress
-            val exactCenterX = bounds.exactCenterX()
-            val exactCenterY = bounds.exactCenterY()
-            clipBounds.set(
-                exactCenterX - fl,
-                exactCenterY - fl,
-                exactCenterX + fl,
-                exactCenterY + fl
-            )
-            clipPath.reset()
-            clipPath.addOval(clipBounds, Path.Direction.CW)
-            invalidateSelf()
         }
+    }
 
-        override fun setChangingConfigurations(configs: Int) {
-            super.setChangingConfigurations(configs)
-            realDrawable.changingConfigurations = configs
+    override fun setChecked(checked: Boolean) {
+        isCheckStatus = checked
+        checkStatus()
+        onCheckedCheng()
+    }
+
+    override fun isChecked(): Boolean {
+        return isCheckStatus
+    }
+
+    override fun toggle() {
+        isChecked = !isCheckStatus
+        onCheckedCheng()
+    }
+
+    private fun onClick() {
+        isCheckStatus = !isCheckStatus
+        checkStatus(true)
+        onCheckedCheng()
+    }
+
+    private fun checkStatus(animation: Boolean = false) {
+        lastAnimation?.cancel()
+        lastAnimation = null
+        if (!animation) {
+            checkedStatusView.isInvisible = !isChecked
+            return
         }
-
-        override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
-            super.setBounds(left, top, right, bottom)
-            realDrawable.setBounds(left, top, right, bottom)
-        }
-
-        override fun draw(canvas: Canvas) {
-            if (bounds.isEmpty) {
-                return
+        val w = width * 0.5
+        val h = height * 0.5
+        val radius = sqrt(w * w + h * h).toFloat()
+        val newAnimator = ViewAnimationUtils.createCircularReveal(
+            checkedStatusView,
+            w.toInt(),
+            h.toInt(),
+            if (isChecked) {
+                0F
+            } else {
+                radius
+            },
+            if (isChecked) {
+                radius
+            } else {
+                0F
             }
-            when {
-                rippleProgress > 1 -> {
-                    realDrawable.draw(canvas)
+        )
+        lastAnimation = newAnimator
+        newAnimator.addListener(
+            onStart = {
+                checkedStatusView.isInvisible = false
+            },
+            onEnd = {
+                if (!isChecked) {
+                    checkedStatusView.isInvisible = true
                 }
-                rippleProgress > 0 -> {
-                    val saveCount = canvas.save()
-                    canvas.clipPath(clipPath)
-                    realDrawable.draw(canvas)
-                    canvas.restoreToCount(saveCount)
-                }
             }
-        }
+        )
+        newAnimator.start()
+    }
 
-        override fun setAlpha(alpha: Int) {
-            realDrawable.alpha = alpha
-        }
+    private fun onCheckedCheng() {
+        this.onCheckedChangeListener?.onCheckedChange(this, isChecked)
+    }
 
-        override fun setColorFilter(colorFilter: ColorFilter?) {
-            realDrawable.colorFilter = colorFilter
-        }
+    enum class CheckStyle {
+        CIRCULAR,
+        SQUARE
+    }
 
-        override fun getOpacity(): Int {
-            return realDrawable.opacity
-        }
-
-        override fun invalidateDrawable(who: Drawable) {
-            this.callback?.invalidateDrawable(this)
-        }
-
-        override fun scheduleDrawable(who: Drawable, what: Runnable, whenTime: Long) {
-            this.callback?.scheduleDrawable(this, what, whenTime)
-        }
-
-        override fun unscheduleDrawable(who: Drawable, what: Runnable) {
-            this.callback?.unscheduleDrawable(this, what)
-        }
+    fun interface OnCheckedChangeListener {
+        fun onCheckedChange(view: CheckableView, isChecked: Boolean)
     }
 
 }

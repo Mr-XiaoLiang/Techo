@@ -7,6 +7,23 @@
     android:layout_height="match_parent"
     tools:context=".activity.TechoEditActivity">
 
+    <com.lollipop.techo.view.CheckableView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/leftCheckBox"/>
 
+
+    <com.lollipop.techo.view.CheckableView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="100dp"
+        android:id="@+id/rightCheckBox"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
