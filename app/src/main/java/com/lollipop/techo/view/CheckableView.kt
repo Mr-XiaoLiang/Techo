@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewAnimationUtils
+import android.view.animation.AccelerateInterpolator
 import android.widget.Checkable
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -142,6 +143,8 @@ class CheckableView(
                 }
             }
         )
+        newAnimator.duration = 150L
+        newAnimator.interpolator = AccelerateInterpolator()
         newAnimator.start()
     }
 

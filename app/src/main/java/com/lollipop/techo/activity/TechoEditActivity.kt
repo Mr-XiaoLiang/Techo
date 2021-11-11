@@ -36,13 +36,7 @@ class TechoEditActivity : HeaderActivity() {
         initMenuBtn()
 
         viewBinding.leftCheckBox.setStyle(CheckableView.CheckStyle.CIRCULAR)
-        viewBinding.leftCheckBox.onCheckedChange { _, isChecked ->
-            Toast.makeText(this, "left: $isChecked", Toast.LENGTH_SHORT).show()
-        }
         viewBinding.rightCheckBox.setStyle(CheckableView.CheckStyle.SQUARE)
-        viewBinding.rightCheckBox.onCheckedChange { _, isChecked ->
-            Toast.makeText(this, "right: $isChecked", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun initMenuBtn() {
