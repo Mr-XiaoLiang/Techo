@@ -12,7 +12,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.addListener
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import com.lollipop.techo.R
 import kotlin.math.sqrt
 
@@ -51,6 +50,7 @@ class CheckableView(
             onClick()
         }
         checkStatus()
+        setStyle(CheckStyle.SQUARE)
     }
 
     fun setDefaultDrawable(drawable: Drawable?) {
@@ -114,13 +114,13 @@ class CheckableView(
             checkedStatusView.isInvisible = !isChecked
             return
         }
-        val w = width * 0.5
-        val h = height * 0.5
+        val w = (width - paddingLeft - paddingRight) * 0.5
+        val h = (height - paddingTop - paddingBottom) * 0.5
         val radius = sqrt(w * w + h * h).toFloat()
         val newAnimator = ViewAnimationUtils.createCircularReveal(
             checkedStatusView,
-            w.toInt(),
-            h.toInt(),
+            w.toInt() + paddingLeft,
+            h.toInt() + paddingTop,
             if (isChecked) {
                 0F
             } else {
