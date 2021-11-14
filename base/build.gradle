@@ -38,4 +38,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation lib.core
     implementation lib.appcompat
+    implementation lib.material
 }
