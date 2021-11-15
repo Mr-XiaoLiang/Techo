@@ -6,6 +6,10 @@ import androidx.recyclerview.widget.*
  * @author lollipop
  * @date 2021/11/14 22:49
  */
+
+/**
+ * 手势的Holder接口
+ */
 interface TouchableHolder {
 
     val canDrag: Boolean
@@ -14,14 +18,22 @@ interface TouchableHolder {
 
 }
 
-interface OnItemTouchCallback {
+/**
+ * 滑动移除的回调函数
+ */
+fun interface OnItemSwipeCallback {
     /**
      * 当某个Item被滑动删除的时候
      *
      * @param adapterPosition item的position
      */
-    fun onSwiped(adapterPosition: Int)
+    fun onSwipe(adapterPosition: Int)
+}
 
+/**
+ * 拖拽排序的回调函数
+ */
+fun interface OnItemMoveCallback {
     /**
      * 当两个Item位置互换的时候被回调
      *
@@ -32,16 +44,45 @@ interface OnItemTouchCallback {
     fun onMove(srcPosition: Int, targetPosition: Int): Boolean
 }
 
-interface OnItemTouchStateChangedListener {
+/**
+ * 滑动状态的切换监听
+ */
+fun interface OnItemTouchStateChangedListener {
     fun onItemTouchStateChanged(viewHolder: RecyclerView.ViewHolder?, status: ItemTouchState)
 }
 
+/**
+ * 状态提供者
+ */
+fun interface StatusProvider {
+    fun getStatus(): Boolean
+}
+
+/**
+ * 滑动状态的枚举
+ */
 enum class ItemTouchState {
-    IDLE, SWIPE, DRAG
+    /**
+     * 滑动停止，闲置状态
+     */
+    IDLE,
+
+    /**
+     * 正在滑动移除
+     */
+    SWIPE,
+
+    /**
+     * 正在做交换
+     */
+    DRAG
 }
 
 private class LItemTouchCallback(
-    private val callback: OnItemTouchCallback?,
+    private val dragStatusProvider: StatusProvider,
+    private val swipeStatusProvider: StatusProvider,
+    private val swipeCallback: OnItemSwipeCallback?,
+    private val moveCallback: OnItemMoveCallback?,
     private val statusCallback: OnItemTouchStateChangedListener?
 ) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(
@@ -108,22 +149,12 @@ private class LItemTouchCallback(
         return makeMovementFlags(flags[0], flags[1])
     }
 
-    /**
-     * 是否可以拖拽
-     */
-    var isCanDrag = false
-
-    /**
-     * 是否可以被滑动
-     */
-    var isCanSwipe = false
-
     override fun isLongPressDragEnabled(): Boolean {
-        return isCanDrag && callback != null
+        return dragStatusProvider.getStatus() && moveCallback != null
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {
-        return isCanSwipe && callback != null
+        return swipeStatusProvider.getStatus() && swipeCallback != null
     }
 
     override fun onMove(
@@ -131,11 +162,11 @@ private class LItemTouchCallback(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        return callback?.onMove(viewHolder.adapterPosition, target.adapterPosition) ?: false
+        return moveCallback?.onMove(viewHolder.adapterPosition, target.adapterPosition) ?: false
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        callback?.onSwiped(viewHolder.adapterPosition)
+        swipeCallback?.onSwipe(viewHolder.adapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
@@ -163,11 +194,62 @@ private class LItemTouchCallback(
 
 class LItemTouchHelperBuilder(private val recyclerView: RecyclerView) {
 
-    private var touchCallback: OnItemTouchCallback? = null
+    private var swipeCallback: OnItemSwipeCallback? = null
+    private var moveCallback: OnItemMoveCallback? = null
     private var statusCallback: OnItemTouchStateChangedListener? = null
-    private var isCanDrag = false
-    private var isCanSwipe = false
+    private var dragStatusProvider: StatusProvider? = null
+    private var swipeStatusProvider: StatusProvider? = null
 
-    // TODO
+    fun onSwipe(callback: OnItemSwipeCallback): LItemTouchHelperBuilder {
+        this.swipeCallback = callback
+        return this
+    }
 
+    fun onMove(callback: OnItemMoveCallback): LItemTouchHelperBuilder {
+        this.moveCallback = callback
+        return this
+    }
+
+    fun onStatusChange(callback: OnItemTouchStateChangedListener): LItemTouchHelperBuilder {
+        this.statusCallback = callback
+        return this
+    }
+
+    fun canDrag(callback: StatusProvider): LItemTouchHelperBuilder {
+        dragStatusProvider = callback
+        return this
+    }
+
+    fun canSwipe(callback: StatusProvider): LItemTouchHelperBuilder {
+        swipeStatusProvider = callback
+        return this
+    }
+
+    fun canDrag(status: Boolean): LItemTouchHelperBuilder {
+        return canDrag { status }
+    }
+
+    fun canSwipe(status: Boolean): LItemTouchHelperBuilder {
+        return canSwipe { status }
+    }
+
+    fun apply() {
+        ItemTouchHelper(
+            LItemTouchCallback(
+                dragStatusProvider = dragStatusProvider ?: StatusProvider { false },
+                swipeStatusProvider = swipeStatusProvider ?: StatusProvider { false },
+                swipeCallback = swipeCallback,
+                moveCallback = moveCallback,
+                statusCallback = statusCallback
+            )
+        ).attachToRecyclerView(recyclerView)
+    }
+
+}
+
+/**
+ * 附加一个手指处理器
+ */
+fun RecyclerView.attachTouchHelper(): LItemTouchHelperBuilder {
+    return LItemTouchHelperBuilder(this)
 }

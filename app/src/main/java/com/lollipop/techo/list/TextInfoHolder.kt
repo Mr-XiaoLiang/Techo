@@ -1,7 +1,10 @@
 package com.lollipop.techo.list
 
 import android.view.ViewGroup
+import android.view.textservice.TextInfo
 import com.lollipop.base.util.bind
+import com.lollipop.techo.data.CheckBoxItem
+import com.lollipop.techo.data.NumberItem
 import com.lollipop.techo.databinding.ItemEditGroupBinding
 import com.lollipop.techo.databinding.ItemTextBinding
 
@@ -12,13 +15,25 @@ import com.lollipop.techo.databinding.ItemTextBinding
 class TextInfoHolder(
     private val binding: ItemTextBinding,
     optionBinding: ItemEditGroupBinding
-): EditHolder(optionBinding) {
+) : EditHolder(optionBinding) {
 
     companion object {
         fun create(group: ViewGroup): TextInfoHolder {
             val optionBinding = createItemView(group)
             return TextInfoHolder(getContentGroup(optionBinding).bind(true), optionBinding)
         }
+    }
+
+    fun bind(info: TextInfo) {
+        // TODO
+    }
+
+    fun bind(info: NumberItem) {
+        // TODO
+    }
+
+    fun bind(info: CheckBoxItem) {
+        // TODO
     }
 
 }
