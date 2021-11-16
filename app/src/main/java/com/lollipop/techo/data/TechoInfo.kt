@@ -249,9 +249,9 @@ open class EmptyItem : BaseTechoItem() {
     override val itemType: TechoItemType = Empty
 }
 
-open class TextItem(
-    var value: String = "",
-    val spans: MutableList<TextSpan> = mutableListOf()
+open class BaseTextItem(
+    var value: String,
+    val spans: MutableList<TextSpan>
 ) : BaseTechoItem() {
 
     companion object {
@@ -285,6 +285,11 @@ open class TextItem(
     }
 
 }
+
+class TextItem(
+    value: String = "",
+    spans: MutableList<TextSpan> = mutableListOf()
+): BaseTextItem(value, spans)
 
 open class TextSpan(
     /**
@@ -355,9 +360,11 @@ open class TextSpan(
 
 }
 
-open class NumberItem(
-    var number: Int = 0
-) : TextItem() {
+class NumberItem(
+    var number: Int = 0,
+    value: String = "",
+    spans: MutableList<TextSpan> = mutableListOf()
+) : BaseTextItem(value, spans) {
 
     companion object {
         private const val KEY_NUMBER = "number"
@@ -378,9 +385,11 @@ open class NumberItem(
 
 }
 
-open class CheckBoxItem(
-    var isChecked: Boolean = false
-) : TextItem() {
+class CheckBoxItem(
+    var isChecked: Boolean = false,
+    value: String = "",
+    spans: MutableList<TextSpan> = mutableListOf()
+) : BaseTextItem(value, spans) {
 
     companion object {
         private const val KEY_CHECKED = "checked"

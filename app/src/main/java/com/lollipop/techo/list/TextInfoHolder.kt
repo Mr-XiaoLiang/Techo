@@ -5,6 +5,7 @@ import android.view.textservice.TextInfo
 import com.lollipop.base.util.bind
 import com.lollipop.techo.data.CheckBoxItem
 import com.lollipop.techo.data.NumberItem
+import com.lollipop.techo.data.TextItem
 import com.lollipop.techo.databinding.ItemEditGroupBinding
 import com.lollipop.techo.databinding.ItemTextBinding
 
@@ -24,7 +25,7 @@ class TextInfoHolder(
         }
     }
 
-    fun bind(info: TextInfo) {
+    fun bind(info: TextItem) {
         // TODO
     }
 
