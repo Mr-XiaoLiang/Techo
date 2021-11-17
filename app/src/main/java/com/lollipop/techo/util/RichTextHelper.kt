@@ -15,6 +15,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.dp2px
+import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TextItem
 import kotlin.math.abs
@@ -100,14 +101,14 @@ class RichTextHelper {
      * 添加标准的富文本信息
      */
     fun addRichInfo(
-        info: TextItem,
+        info: BaseTextItem,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {
         return addRichInfo(info, option, false)
     }
 
     private fun addRichInfo(
-        info: TextItem,
+        info: BaseTextItem,
         option: RichOption = RichOption.FULL_ALL,
         inner: Boolean
     ): RichTextHelper {
@@ -243,11 +244,11 @@ class RichTextHelper {
      * 1. 如果是字符串内容，那么将会进行
      */
     private fun abbreviateSpace(
-        richList: List<TextItem>,
+        richList: List<BaseTextItem>,
         richOption: RichOption
     ) {
         var isFirstText = true
-        var lastText: TextItem? = null
+        var lastText: BaseTextItem? = null
         var previousHasSpace = false
         richList.forEach {
             previousHasSpace = abbreviateSpace(
@@ -274,7 +275,7 @@ class RichTextHelper {
     }
 
     private fun abbreviateSpace(
-        info: TextItem,
+        info: BaseTextItem,
         richOption: RichOption,
         isFirst: Boolean,
         isLast: Boolean,
