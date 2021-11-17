@@ -29,6 +29,8 @@ open class EditHolder(
 
     private var isInEditMode = false
 
+    private var optionButtonClickListener: OnItemOptionButtonClickListener? = null
+
     override val canDrag: Boolean
         get() {
             return isInEditMode
@@ -40,12 +42,27 @@ open class EditHolder(
 
     init {
         onEditModeChange(false)
+        optionBinding.moreOptionView.setOnClickListener {
+            onOptionButtonClick()
+        }
+    }
+
+    fun setOnItemOptionButtonClickListener(listener: OnItemOptionButtonClickListener) {
+        this.optionButtonClickListener = listener
     }
 
     fun onEditModeChange(isInEditMode: Boolean) {
         this.isInEditMode = isInEditMode
         optionBinding.dragHandlerView.isInvisible = !isInEditMode
         optionBinding.moreOptionView.isInvisible = !isInEditMode
+    }
+
+    private fun onOptionButtonClick() {
+        optionButtonClickListener?.onItemOptionButtonClick(this)
+    }
+
+    fun interface OnItemOptionButtonClickListener {
+        fun onItemOptionButtonClick(holder: EditHolder)
     }
 
 }
