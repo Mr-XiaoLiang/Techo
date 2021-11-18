@@ -255,7 +255,7 @@ open class BaseTextItem(
 ) : BaseTechoItem() {
 
     companion object {
-        private const val KEY_VALUE = "value"
+        private const val KEY_VALUE = "VALUE"
         private const val KEY_SPANS = "SPANS"
     }
 
