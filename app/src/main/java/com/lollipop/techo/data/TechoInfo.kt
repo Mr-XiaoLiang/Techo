@@ -409,8 +409,39 @@ class CheckBoxItem(
     }
 }
 
-class SplitItem : EmptyItem() {
+class SplitItem(
+    var style: SplitStyle = SplitStyle.Default
+) : EmptyItem() {
+
+    companion object {
+        private const val KEY_STYLE = "style"
+    }
+
     override val itemType: TechoItemType = Split
+
+    override fun toJson(): JSONObject {
+        return super.toJson().apply {
+            put(KEY_STYLE, style.name)
+        }
+    }
+
+    override fun parse(json: JSONObject) {
+        super.parse(json)
+        style = optStyle(json.optString(KEY_STYLE))
+    }
+
+    private fun optStyle(name: String): SplitStyle {
+        try {
+            return SplitStyle.valueOf(name)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return SplitStyle.Default
+    }
+}
+
+enum class SplitStyle {
+    Default
 }
 
 class PhotoItem(
