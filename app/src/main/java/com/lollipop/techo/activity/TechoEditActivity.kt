@@ -2,7 +2,6 @@ package com.lollipop.techo.activity
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
