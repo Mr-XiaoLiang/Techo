@@ -4,7 +4,7 @@ apply from: 'config.gradle'
 buildscript {
     ext {
         compose_version = '1.0.1'
-        kotlin_version = "1.5.31"
+        kotlin_version = "1.6.0"
     }
     repositories {
         google()
