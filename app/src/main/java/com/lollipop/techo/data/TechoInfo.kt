@@ -245,7 +245,7 @@ abstract class BaseTechoItem {
 
 }
 
-open class EmptyItem : BaseTechoItem() {
+class EmptyItem : BaseTechoItem() {
     override val itemType: TechoItemType = Empty
 }
 
@@ -411,7 +411,7 @@ class CheckBoxItem(
 
 class SplitItem(
     var style: SplitStyle = SplitStyle.Default
-) : EmptyItem() {
+) : BaseTechoItem() {
 
     companion object {
         private const val KEY_STYLE = "style"
