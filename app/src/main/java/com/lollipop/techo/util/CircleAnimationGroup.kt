@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.view.View
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import kotlin.math.abs
 
 /**
@@ -22,7 +23,8 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         private const val LENGTH = MAX - MIN
     }
 
-    private val planetViewList = ArrayList<View>()
+    private val inactiveViewList = ArrayList<View>()
+    private val activeViewList = ArrayList<View>()
     private var centerView: View? = null
     private var onProgressUpdateListener: OnProgressUpdateListener? = null
 
@@ -41,11 +43,23 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         }
 
     fun addPlanet(vararg views: View) {
-        planetViewList.addAll(views)
+        activeViewList.addAll(views)
+    }
+
+    fun addPlanet(vararg views: Pair<View, Boolean>) {
+        views.forEach {
+            if (it.second) {
+                activeViewList.add(it.first)
+            } else {
+                inactiveViewList.add(it.first)
+            }
+        }
     }
 
     fun removePlanet(vararg views: View) {
-        planetViewList.removeAll(views)
+        val elements = views.toSet()
+        activeViewList.removeAll(elements)
+        inactiveViewList.removeAll(elements)
     }
 
     fun setCenterView(view: View) {
@@ -90,14 +104,20 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
 
     fun destroy() {
         onProgressUpdateListener = null
-        planetViewList.clear()
+        inactiveViewList.clear()
+        activeViewList.clear()
         centerView = null
         valueAnimator.cancel()
     }
 
     private fun visibleChange(visible: Boolean) {
-        planetViewList.forEach {
+        activeViewList.forEach {
             it.isInvisible = !visible
+        }
+        if (!visible) {
+            inactiveViewList.forEach {
+                it.isVisible = false
+            }
         }
     }
 
@@ -106,7 +126,7 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         val center = centerView ?: return
         val centerX = half(center.left, center.right)
         val centerY = half(center.top, center.bottom)
-        planetViewList.forEach {
+        activeViewList.forEach {
             updateView(it, centerX, centerY, progress)
         }
         onProgressUpdateListener?.onProgressUpdate(progress)

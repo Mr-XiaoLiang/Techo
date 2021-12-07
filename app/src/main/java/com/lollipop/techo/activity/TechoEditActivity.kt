@@ -41,20 +41,20 @@ class TechoEditActivity : HeaderActivity() {
     private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
         circleAnimationGroup.addPlanet(
-            floatingBinding.floatingTest1,
-            floatingBinding.floatingTest2,
-            floatingBinding.floatingTest3,
-            floatingBinding.floatingTest4,
-            floatingBinding.floatingTest5,
-            floatingBinding.floatingTest6,
-            floatingBinding.floatingTest7,
-            floatingBinding.floatingTest8,
-            floatingBinding.floatingTest9,
-            floatingBinding.floatingTest10,
-            floatingBinding.floatingTest11,
-            floatingBinding.floatingTest12,
-            floatingBinding.floatingTest13,
-            floatingBinding.floatingTest14,
+            floatingBinding.floatingTest1 to true,
+            floatingBinding.floatingTest2 to true,
+            floatingBinding.floatingTest3 to true,
+            floatingBinding.floatingTest4 to true,
+            floatingBinding.floatingTest5 to true,
+            floatingBinding.floatingTest6 to false,
+            floatingBinding.floatingTest7 to false,
+            floatingBinding.floatingTest8 to false,
+            floatingBinding.floatingTest9 to false,
+            floatingBinding.floatingTest10 to false,
+            floatingBinding.floatingTest11 to false,
+            floatingBinding.floatingTest12 to false,
+            floatingBinding.floatingTest13 to false,
+            floatingBinding.floatingTest14 to false,
         )
         circleAnimationGroup.hide()
         circleAnimationGroup.onProgressUpdate { progress ->
