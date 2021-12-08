@@ -26,7 +26,7 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     private val inactiveViewList = ArrayList<View>()
     private val activeViewList = ArrayList<View>()
     private var centerView: View? = null
-    private var onProgressUpdateListener: OnProgressUpdateListener? = null
+    private var listenerOption:ListenerOption? = null
 
     private var animationProgress = 0F
 
@@ -66,12 +66,14 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         centerView = view
     }
 
-    fun onProgressUpdate(listener: OnProgressUpdateListener) {
-        onProgressUpdateListener = listener
+    fun bindListener(bind: ListenerOption.() -> Unit) {
+        listenerOption = ListenerOption().apply(bind)
     }
 
     fun close() {
+        listenerOption?.onHideCalled?.invoke()
         centerView?.post {
+            listenerOption?.onHideStart?.invoke()
             valueAnimator.cancel()
             valueAnimator.duration = (abs(animationProgress - MIN) / LENGTH * DURATION).toLong()
             valueAnimator.setFloatValues(animationProgress, MIN)
@@ -80,7 +82,9 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     }
 
     fun open() {
+        listenerOption?.onShowCalled?.invoke()
         centerView?.post {
+            listenerOption?.onShowStart?.invoke()
             valueAnimator.cancel()
             valueAnimator.duration = (abs(animationProgress - MAX) / LENGTH * DURATION).toLong()
             valueAnimator.setFloatValues(animationProgress, MAX)
@@ -89,21 +93,27 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     }
 
     fun hide() {
+        listenerOption?.onHideCalled?.invoke()
+        listenerOption?.onHideStart?.invoke()
         valueAnimator.cancel()
         animationProgress = MIN
         update()
         visibleChange(false)
+        listenerOption?.onHideEnd?.invoke()
     }
 
     fun show() {
+        listenerOption?.onShowCalled?.invoke()
+        listenerOption?.onShowStart?.invoke()
         valueAnimator.cancel()
         animationProgress = MAX
         update()
         visibleChange(true)
+        listenerOption?.onShowEnd?.invoke()
     }
 
     fun destroy() {
-        onProgressUpdateListener = null
+        listenerOption = null
         inactiveViewList.clear()
         activeViewList.clear()
         centerView = null
@@ -129,7 +139,7 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         activeViewList.forEach {
             updateView(it, centerX, centerY, progress)
         }
-        onProgressUpdateListener?.onProgressUpdate(progress)
+        listenerOption?.onProgressUpdate?.invoke(progress)
     }
 
     private fun updateView(planet: View, centerX: Int, centerY: Int, progress: Float) {
@@ -150,8 +160,14 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
     }
 
     override fun onAnimationEnd(animation: Animator?) {
-        if (animation == valueAnimator && animationProgress <= CLOSED) {
-            visibleChange(false)
+        if (animation == valueAnimator) {
+            val closed = animationProgress <= CLOSED
+            if (closed) {
+                visibleChange(false)
+                listenerOption?.onHideEnd?.invoke()
+            } else {
+                listenerOption?.onShowEnd?.invoke()
+            }
         }
     }
 
@@ -168,8 +184,43 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
         }
     }
 
-    fun interface OnProgressUpdateListener {
-        fun onProgressUpdate(progress: Float)
+    class ListenerOption {
+        var onShowCalled: (() -> Unit) = {}
+            private set
+        var onShowStart: (() -> Unit) = {}
+            private set
+        var onShowEnd: (() -> Unit) = {}
+            private set
+        var onHideCalled: (() -> Unit) = {}
+            private set
+        var onHideStart: (() -> Unit) = {}
+            private set
+        var onHideEnd: (() -> Unit) = {}
+            private set
+        var onProgressUpdate: ((Float) -> Unit) = {}
+            private set
+
+        fun onShowCalled(callback: () -> Unit) {
+            onShowCalled = callback
+        }
+        fun onShowStart(callback: () -> Unit) {
+            onShowStart = callback
+        }
+        fun onShowEnd(callback: () -> Unit) {
+            onShowEnd = callback
+        }
+        fun onHideCalled(callback: () -> Unit) {
+            onHideCalled = callback
+        }
+        fun onHideStart(callback: () -> Unit) {
+            onHideStart = callback
+        }
+        fun onHideEnd(callback: () -> Unit) {
+            onHideEnd = callback
+        }
+        fun onProgressUpdate(callback: (Float) -> Unit) {
+            onProgressUpdate = callback
+        }
     }
 
 }
