@@ -22,6 +22,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintCircle="@id/floatingMenuBtn"
+        app:layout_constraintCircleAngle="0"
+        app:layout_constraintCircleRadius="80dp"
+        android:src="@drawable/ic_baseline_add_24"
+        style="@style/FloatingSubButton"
+        android:id="@+id/quickAddButton"
+        tools:ignore="ContentDescription,MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintCircle="@id/floatingMenuBtn"
         app:layout_constraintCircleAngle="270"
         app:layout_constraintCircleRadius="80dp"
         style="@style/FloatingSubButton"

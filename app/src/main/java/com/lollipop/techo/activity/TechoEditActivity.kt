@@ -57,8 +57,16 @@ class TechoEditActivity : HeaderActivity() {
             floatingBinding.floatingTest14 to false,
         )
         circleAnimationGroup.hide()
-        circleAnimationGroup.onProgressUpdate { progress ->
-            floatingBinding.floatingMenuBtn.rotation = progress * 135
+        circleAnimationGroup.bindListener {
+            onProgressUpdate {  progress ->
+                floatingBinding.floatingMenuBtn.rotation = progress * 135
+            }
+            onHideCalled {
+                floatingBinding.quickAddButton.show()
+            }
+            onShowCalled {
+                floatingBinding.quickAddButton.hide()
+            }
         }
         floatingBinding.floatingMenuBtn.setOnClickListener {
             if (circleAnimationGroup.isOpened) {
