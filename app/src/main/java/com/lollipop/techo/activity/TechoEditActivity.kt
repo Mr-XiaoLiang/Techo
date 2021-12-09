@@ -2,9 +2,12 @@ package com.lollipop.techo.activity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.util.CircleAnimationGroup
@@ -26,8 +29,10 @@ class TechoEditActivity : HeaderActivity() {
         get() = floatingBinding.root
 
     private val circleAnimationGroup by lazy {
-        CircleAnimationGroup()
+        CircleAnimationGroup<FloatingActionButton>()
     }
+
+    private var quickAddType = TechoItemType.Text
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +46,11 @@ class TechoEditActivity : HeaderActivity() {
     private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
         circleAnimationGroup.addPlanet(
-            floatingBinding.floatingTest1 to true,
-            floatingBinding.floatingTest2 to true,
-            floatingBinding.floatingTest3 to true,
-            floatingBinding.floatingTest4 to true,
-            floatingBinding.floatingTest5 to true,
+            floatingBinding.floatingTextBtn to true,
+            floatingBinding.floatingNumberBtn to true,
+            floatingBinding.floatingCheckboxBtn to true,
+            floatingBinding.floatingPhotoBtn to true,
+            floatingBinding.floatingSplitBtn to true,
             floatingBinding.floatingTest6 to false,
             floatingBinding.floatingTest7 to false,
             floatingBinding.floatingTest8 to false,
@@ -56,9 +61,9 @@ class TechoEditActivity : HeaderActivity() {
             floatingBinding.floatingTest13 to false,
             floatingBinding.floatingTest14 to false,
         )
-        circleAnimationGroup.hide()
+        circleAnimationGroup.onPlanetClick(::onFloatBtnClick)
         circleAnimationGroup.bindListener {
-            onProgressUpdate {  progress ->
+            onProgressUpdate { progress ->
                 floatingBinding.floatingMenuBtn.rotation = progress * 135
             }
             onHideCalled {
@@ -68,6 +73,9 @@ class TechoEditActivity : HeaderActivity() {
                 floatingBinding.quickAddButton.hide()
             }
         }
+        floatingBinding.quickAddButton.setOnClickListener {
+            addItemByType()
+        }
         floatingBinding.floatingMenuBtn.setOnClickListener {
             if (circleAnimationGroup.isOpened) {
                 circleAnimationGroup.close()
@@ -75,6 +83,39 @@ class TechoEditActivity : HeaderActivity() {
                 circleAnimationGroup.open()
             }
         }
+
+        // 初始化默认的类型
+        quickAddType = TechoItemType.Text
+        floatingBinding.quickAddButton.setImageDrawable(floatingBinding.floatingTextBtn.drawable)
+        circleAnimationGroup.hide()
+    }
+
+    private fun onFloatBtnClick(btn: FloatingActionButton) {
+        floatingBinding.quickAddButton.setImageDrawable(btn.drawable)
+        when (btn) {
+            floatingBinding.floatingTextBtn -> {
+                quickAddType = TechoItemType.Text
+            }
+            floatingBinding.floatingNumberBtn -> {
+                quickAddType = TechoItemType.Number
+            }
+            floatingBinding.floatingCheckboxBtn -> {
+                quickAddType = TechoItemType.CheckBox
+            }
+            floatingBinding.floatingPhotoBtn -> {
+                quickAddType = TechoItemType.Photo
+            }
+            floatingBinding.floatingSplitBtn -> {
+                quickAddType = TechoItemType.Split
+            }
+        }
+        circleAnimationGroup.close()
+        addItemByType()
+    }
+
+    private fun addItemByType() {
+        Toast.makeText(this, "添加了$quickAddType", Toast.LENGTH_SHORT).show()
+        // TODO
     }
 
     override fun onBackPressed() {

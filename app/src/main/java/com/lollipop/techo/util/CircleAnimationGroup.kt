@@ -12,19 +12,19 @@ import kotlin.math.abs
  * @date 2021/10/19 22:39
  * 圆形的展开动画管理组
  */
-class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
+class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
 
     companion object {
         private const val MIN = 0F
         private const val MAX = 1F
         private const val CLOSED = 0.001F
         private const val OPENED = 0.999F
-        private const val DURATION = 300L
+        private const val DURATION = 200L
         private const val LENGTH = MAX - MIN
     }
 
-    private val inactiveViewList = ArrayList<View>()
-    private val activeViewList = ArrayList<View>()
+    private val inactiveViewList = ArrayList<T>()
+    private val activeViewList = ArrayList<T>()
     private var centerView: View? = null
     private var listenerOption:ListenerOption? = null
 
@@ -42,16 +42,24 @@ class CircleAnimationGroup : Animator.AnimatorListener, ValueAnimator.AnimatorUp
             return animationProgress >= OPENED
         }
 
-    fun addPlanet(vararg views: View) {
+    fun addPlanet(vararg views: T) {
         activeViewList.addAll(views)
     }
 
-    fun addPlanet(vararg views: Pair<View, Boolean>) {
+    fun addPlanet(vararg views: Pair<T, Boolean>) {
         views.forEach {
             if (it.second) {
                 activeViewList.add(it.first)
             } else {
                 inactiveViewList.add(it.first)
+            }
+        }
+    }
+
+    fun onPlanetClick(callback: (T) -> Unit) {
+        activeViewList.forEach { planet ->
+            planet.setOnClickListener{
+                callback(planet)
             }
         }
     }
