@@ -11,7 +11,6 @@ import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.util.CircleAnimationGroup
-import com.lollipop.techo.view.CheckableView
 
 /**
  * 编辑 & 添加页
@@ -38,9 +37,6 @@ class TechoEditActivity : HeaderActivity() {
         super.onCreate(savedInstanceState)
         floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
         initMenuBtn()
-
-        viewBinding.leftCheckBox.setStyle(CheckableView.CheckStyle.CIRCULAR)
-        viewBinding.rightCheckBox.setStyle(CheckableView.CheckStyle.SQUARE)
     }
 
     private fun initMenuBtn() {
