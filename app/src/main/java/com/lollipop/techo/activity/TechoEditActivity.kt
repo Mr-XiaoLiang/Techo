@@ -1,5 +1,7 @@
 package com.lollipop.techo.activity
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,6 +18,19 @@ import com.lollipop.techo.util.CircleAnimationGroup
  * 编辑 & 添加页
  */
 class TechoEditActivity : HeaderActivity() {
+
+    companion object {
+
+        private const val PARAMETER_TECHO_ID = "PARAMETER_TECHO_ID"
+
+        fun start(context: Context, infoId: Int) {
+            context.startActivity(
+                Intent(context, TechoEditActivity::class.java).apply {
+                    putExtra(PARAMETER_TECHO_ID, infoId)
+                }
+            )
+        }
+    }
 
     private val viewBinding: ActivityTechoEditBinding by lazyBind()
 
