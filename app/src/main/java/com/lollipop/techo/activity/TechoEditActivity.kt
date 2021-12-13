@@ -23,7 +23,7 @@ class TechoEditActivity : HeaderActivity() {
 
         private const val PARAMETER_TECHO_ID = "PARAMETER_TECHO_ID"
 
-        fun start(context: Context, infoId: Int) {
+        fun start(context: Context, infoId: Int = 0) {
             context.startActivity(
                 Intent(context, TechoEditActivity::class.java).apply {
                     putExtra(PARAMETER_TECHO_ID, infoId)
@@ -44,6 +44,10 @@ class TechoEditActivity : HeaderActivity() {
 
     private val circleAnimationGroup by lazy {
         CircleAnimationGroup<FloatingActionButton>()
+    }
+
+    private val techoId by lazy {
+        intent.getIntExtra(PARAMETER_TECHO_ID, 0)
     }
 
     private var quickAddType = TechoItemType.Text
