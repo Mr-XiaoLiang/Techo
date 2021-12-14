@@ -5,13 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
+import com.lollipop.techo.list.DetailListAdapter
 import com.lollipop.techo.util.CircleAnimationGroup
 
 /**
@@ -36,6 +40,8 @@ class TechoEditActivity : HeaderActivity() {
 
     private val floatingBinding: ActivityTechoEditFloatingBinding by lazyBind()
 
+    private val dataList = ArrayList<BaseTechoItem>()
+
     override val contentView: View
         get() = viewBinding.root
 
@@ -55,7 +61,23 @@ class TechoEditActivity : HeaderActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
+        initContentView()
         initMenuBtn()
+        initData()
+    }
+
+    private fun initContentView() {
+        viewBinding.contentListView.apply {
+            layoutManager = LinearLayoutManager(
+                this@TechoEditActivity, RecyclerView.VERTICAL, false
+            )
+            adapter = DetailListAdapter(dataList)
+        }
+        // TODO
+    }
+
+    private fun initData() {
+        // TODO
     }
 
     private fun initMenuBtn() {
