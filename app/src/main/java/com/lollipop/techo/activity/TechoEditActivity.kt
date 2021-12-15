@@ -4,15 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.lollipop.base.list.*
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
-import com.lollipop.techo.data.BaseTechoItem
-import com.lollipop.techo.data.TechoItemType
+import com.lollipop.techo.data.*
+import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.list.DetailListAdapter
@@ -29,9 +29,9 @@ class TechoEditActivity : HeaderActivity() {
 
         fun start(context: Context, infoId: Int = 0) {
             context.startActivity(
-                Intent(context, TechoEditActivity::class.java).apply {
-                    putExtra(PARAMETER_TECHO_ID, infoId)
-                }
+                    Intent(context, TechoEditActivity::class.java).apply {
+                        putExtra(PARAMETER_TECHO_ID, infoId)
+                    }
             )
         }
     }
@@ -40,7 +40,7 @@ class TechoEditActivity : HeaderActivity() {
 
     private val floatingBinding: ActivityTechoEditFloatingBinding by lazyBind()
 
-    private val dataList = ArrayList<BaseTechoItem>()
+    private val dataList: MutableList<BaseTechoItem> = ArrayList()
 
     override val contentView: View
         get() = viewBinding.root
@@ -56,7 +56,7 @@ class TechoEditActivity : HeaderActivity() {
         intent.getIntExtra(PARAMETER_TECHO_ID, 0)
     }
 
-    private var quickAddType = TechoItemType.Text
+    private var quickAddType = Text
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,11 +69,24 @@ class TechoEditActivity : HeaderActivity() {
     private fun initContentView() {
         viewBinding.contentListView.apply {
             layoutManager = LinearLayoutManager(
-                this@TechoEditActivity, RecyclerView.VERTICAL, false
+                    this@TechoEditActivity, RecyclerView.VERTICAL, false
             )
-            adapter = DetailListAdapter(dataList)
+            val listAdapter = DetailListAdapter(dataList).apply {
+                changeEditMode(true)
+            }
+            adapter = listAdapter
+            attachTouchHelper()
+                    .canDrag(true)
+                    .canDrag(true)
+                    .onMoveWithList(dataList) { srcPosition, targetPosition ->
+                        listAdapter.notifyItemMoved(srcPosition, targetPosition)
+                    }
+                    .onSwipeWithList(dataList) {
+                        listAdapter.notifyItemRemoved(it)
+                    }
+                    .onStatusChange(::onItemTouchStateChanged)
+                    .apply()
         }
-        // TODO
     }
 
     private fun initData() {
@@ -83,20 +96,20 @@ class TechoEditActivity : HeaderActivity() {
     private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
         circleAnimationGroup.addPlanet(
-            floatingBinding.floatingTextBtn to true,
-            floatingBinding.floatingNumberBtn to true,
-            floatingBinding.floatingCheckboxBtn to true,
-            floatingBinding.floatingPhotoBtn to true,
-            floatingBinding.floatingSplitBtn to true,
-            floatingBinding.floatingTest6 to false,
-            floatingBinding.floatingTest7 to false,
-            floatingBinding.floatingTest8 to false,
-            floatingBinding.floatingTest9 to false,
-            floatingBinding.floatingTest10 to false,
-            floatingBinding.floatingTest11 to false,
-            floatingBinding.floatingTest12 to false,
-            floatingBinding.floatingTest13 to false,
-            floatingBinding.floatingTest14 to false,
+                floatingBinding.floatingTextBtn to true,
+                floatingBinding.floatingNumberBtn to true,
+                floatingBinding.floatingCheckboxBtn to true,
+                floatingBinding.floatingPhotoBtn to true,
+                floatingBinding.floatingSplitBtn to true,
+                floatingBinding.floatingTest6 to false,
+                floatingBinding.floatingTest7 to false,
+                floatingBinding.floatingTest8 to false,
+                floatingBinding.floatingTest9 to false,
+                floatingBinding.floatingTest10 to false,
+                floatingBinding.floatingTest11 to false,
+                floatingBinding.floatingTest12 to false,
+                floatingBinding.floatingTest13 to false,
+                floatingBinding.floatingTest14 to false,
         )
         circleAnimationGroup.onPlanetClick(::onFloatBtnClick)
         circleAnimationGroup.bindListener {
@@ -122,7 +135,7 @@ class TechoEditActivity : HeaderActivity() {
         }
 
         // 初始化默认的类型
-        quickAddType = TechoItemType.Text
+        quickAddType = Text
         floatingBinding.quickAddButton.setImageDrawable(floatingBinding.floatingTextBtn.drawable)
         circleAnimationGroup.hide()
     }
@@ -131,28 +144,53 @@ class TechoEditActivity : HeaderActivity() {
         floatingBinding.quickAddButton.setImageDrawable(btn.drawable)
         when (btn) {
             floatingBinding.floatingTextBtn -> {
-                quickAddType = TechoItemType.Text
+                quickAddType = Text
             }
             floatingBinding.floatingNumberBtn -> {
-                quickAddType = TechoItemType.Number
+                quickAddType = Number
             }
             floatingBinding.floatingCheckboxBtn -> {
-                quickAddType = TechoItemType.CheckBox
+                quickAddType = CheckBox
             }
             floatingBinding.floatingPhotoBtn -> {
-                quickAddType = TechoItemType.Photo
+                quickAddType = Photo
             }
             floatingBinding.floatingSplitBtn -> {
-                quickAddType = TechoItemType.Split
+                quickAddType = Split
             }
         }
         circleAnimationGroup.close()
         addItemByType()
     }
 
+    private fun onItemTouchStateChanged(viewHolder: RecyclerView.ViewHolder?, status: ItemTouchState) {
+        // TODO("Not yet implemented")
+    }
+
     private fun addItemByType() {
-        Toast.makeText(this, "添加了$quickAddType", Toast.LENGTH_SHORT).show()
-        // TODO
+        val newItem = when (quickAddType) {
+            Empty -> {
+                return
+            }
+            Text -> {
+                TextItem()
+            }
+            Number -> {
+                NumberItem()
+            }
+            CheckBox -> {
+                CheckBoxItem()
+            }
+            Photo -> {
+                PhotoItem()
+            }
+            Split -> {
+                SplitItem()
+            }
+        }
+        val size = dataList.size
+        dataList.add(newItem)
+        viewBinding.contentListView.adapter?.notifyItemInserted(size)
     }
 
     override fun onBackPressed() {

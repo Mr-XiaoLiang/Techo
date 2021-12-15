@@ -10,4 +10,6 @@
 
     <color name="fabIcon">#FFFFFFFF</color>
     <color name="fabBackground">#FF018786</color>
+
+    <color name="detailItemBackground">#FFFFFFFF</color>
 </resources>

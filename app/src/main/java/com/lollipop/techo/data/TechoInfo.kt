@@ -289,7 +289,9 @@ open class BaseTextItem(
 class TextItem(
     value: String = "",
     spans: MutableList<TextSpan> = mutableListOf()
-): BaseTextItem(value, spans)
+): BaseTextItem(value, spans) {
+    override val itemType: TechoItemType = Text
+}
 
 open class TextSpan(
     /**

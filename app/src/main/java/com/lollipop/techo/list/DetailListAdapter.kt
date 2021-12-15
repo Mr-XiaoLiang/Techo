@@ -1,5 +1,6 @@
 package com.lollipop.techo.list
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.techo.data.*
@@ -12,6 +13,8 @@ import com.lollipop.techo.data.TechoItemType.*
 class DetailListAdapter(
     private val data: List<BaseTechoItem>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var isInEdit = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (values()[viewType]) {
@@ -46,6 +49,15 @@ class DetailListAdapter(
                 }
             }
         }
+        if (holder is EditHolder) {
+            holder.onEditModeChange(isInEdit)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun changeEditMode(isInEdit: Boolean) {
+        this.isInEdit = isInEdit
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

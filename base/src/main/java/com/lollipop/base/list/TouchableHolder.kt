@@ -1,6 +1,7 @@
 package com.lollipop.base.list
 
 import androidx.recyclerview.widget.*
+import java.util.*
 
 /**
  * @author lollipop
@@ -79,22 +80,22 @@ enum class ItemTouchState {
 }
 
 private class LItemTouchCallback(
-    private val dragStatusProvider: StatusProvider,
-    private val swipeStatusProvider: StatusProvider,
-    private val swipeCallback: OnItemSwipeCallback?,
-    private val moveCallback: OnItemMoveCallback?,
-    private val statusCallback: OnItemTouchStateChangedListener?
+        private val dragStatusProvider: StatusProvider,
+        private val swipeStatusProvider: StatusProvider,
+        private val swipeCallback: OnItemSwipeCallback?,
+        private val moveCallback: OnItemMoveCallback?,
+        private val statusCallback: OnItemTouchStateChangedListener?
 ) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
     ): Int {
         val layoutManager = recyclerView.layoutManager
         val flags = when (layoutManager) {
             is GridLayoutManager -> {// GridLayoutManager
                 // flag如果值是0，相当于这个功能被关闭
                 val dragFlag =
-                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
                 val swipeFlag = if (layoutManager.orientation == GridLayoutManager.VERTICAL) {
                     ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
                 } else {
@@ -125,13 +126,13 @@ private class LItemTouchCallback(
             is StaggeredGridLayoutManager -> {
                 // flag如果值是0，相当于这个功能被关闭
                 val dragFlag =
-                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN
                 val swipeFlag =
-                    if (layoutManager.orientation == StaggeredGridLayoutManager.VERTICAL) {
-                        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                    } else {
-                        ItemTouchHelper.UP or ItemTouchHelper.DOWN
-                    }
+                        if (layoutManager.orientation == StaggeredGridLayoutManager.VERTICAL) {
+                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                        } else {
+                            ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                        }
                 intArrayOf(dragFlag, swipeFlag)
             }
 
@@ -158,9 +159,9 @@ private class LItemTouchCallback(
     }
 
     override fun onMove(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
     ): Boolean {
         return moveCallback?.onMove(viewHolder.adapterPosition, target.adapterPosition) ?: false
     }
@@ -172,21 +173,21 @@ private class LItemTouchCallback(
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
         statusCallback?.onItemTouchStateChanged(
-            viewHolder,
-            when (actionState) {
-                ItemTouchHelper.ACTION_STATE_SWIPE -> {
-                    ItemTouchState.SWIPE
+                viewHolder,
+                when (actionState) {
+                    ItemTouchHelper.ACTION_STATE_SWIPE -> {
+                        ItemTouchState.SWIPE
+                    }
+                    ItemTouchHelper.ACTION_STATE_DRAG -> {
+                        ItemTouchState.DRAG
+                    }
+                    ItemTouchHelper.ACTION_STATE_IDLE -> {
+                        ItemTouchState.IDLE
+                    }
+                    else -> {
+                        ItemTouchState.IDLE
+                    }
                 }
-                ItemTouchHelper.ACTION_STATE_DRAG -> {
-                    ItemTouchState.DRAG
-                }
-                ItemTouchHelper.ACTION_STATE_IDLE -> {
-                    ItemTouchState.IDLE
-                }
-                else -> {
-                    ItemTouchState.IDLE
-                }
-            }
         )
     }
 
@@ -205,9 +206,23 @@ class LItemTouchHelperBuilder(private val recyclerView: RecyclerView) {
         return this
     }
 
+    fun onSwipeWithList(
+            list: MutableList<out Any>,
+            onSwiped: (adapterPosition: Int) -> Unit
+    ): LItemTouchHelperBuilder {
+        return onSwipe(SimpleSwipeImpl(list, onSwiped))
+    }
+
     fun onMove(callback: OnItemMoveCallback): LItemTouchHelperBuilder {
         this.moveCallback = callback
         return this
+    }
+
+    fun onMoveWithList(
+            list: List<Any>,
+            onMoved: (srcPosition: Int, targetPosition: Int) -> Unit
+    ): LItemTouchHelperBuilder {
+        return onMove(SimpleMoveImpl(list, onMoved))
     }
 
     fun onStatusChange(callback: OnItemTouchStateChangedListener): LItemTouchHelperBuilder {
@@ -235,14 +250,42 @@ class LItemTouchHelperBuilder(private val recyclerView: RecyclerView) {
 
     fun apply() {
         ItemTouchHelper(
-            LItemTouchCallback(
-                dragStatusProvider = dragStatusProvider ?: StatusProvider { false },
-                swipeStatusProvider = swipeStatusProvider ?: StatusProvider { false },
-                swipeCallback = swipeCallback,
-                moveCallback = moveCallback,
-                statusCallback = statusCallback
-            )
+                LItemTouchCallback(
+                        dragStatusProvider = dragStatusProvider ?: StatusProvider { false },
+                        swipeStatusProvider = swipeStatusProvider ?: StatusProvider { false },
+                        swipeCallback = swipeCallback,
+                        moveCallback = moveCallback,
+                        statusCallback = statusCallback
+                )
         ).attachToRecyclerView(recyclerView)
+    }
+
+    private class SimpleMoveImpl(
+            private val list: List<Any>,
+            private val onMoved: (srcPosition: Int, targetPosition: Int) -> Unit
+    ) : OnItemMoveCallback {
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            val indices = list.indices
+            return if (srcPosition in indices && targetPosition in indices) {
+                Collections.swap(list, srcPosition, targetPosition)
+                onMoved(srcPosition, targetPosition)
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private class SimpleSwipeImpl(
+            private val list: MutableList<out Any>,
+            private val onSwiped: (adapterPosition: Int) -> Unit
+    ) : OnItemSwipeCallback {
+        override fun onSwipe(adapterPosition: Int) {
+            if (adapterPosition in list.indices) {
+                list.removeAt(adapterPosition)
+            }
+            onSwiped(adapterPosition)
+        }
     }
 
 }
