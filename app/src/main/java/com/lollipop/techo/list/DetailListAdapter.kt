@@ -49,7 +49,7 @@ class DetailListAdapter(
                 }
             }
         }
-        if (holder is EditHolder) {
+        if (holder is EditHolder<*>) {
             holder.onEditModeChange(isInEdit)
         }
     }

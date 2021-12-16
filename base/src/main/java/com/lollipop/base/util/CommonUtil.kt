@@ -533,16 +533,14 @@ inline fun <reified T : ViewBinding> View.bind(): T {
     return LayoutInflater.from(this.context).bind()
 }
 
-inline fun <reified T : ViewBinding> ViewGroup.bind(isParent: Boolean): T {
-    val parent = if (isParent) {
-        this
-    } else {
-        null
-    }
-    return LayoutInflater.from(this.context).bind(parent)
+inline fun <reified T : ViewBinding> ViewGroup.bind(attach: Boolean = false): T {
+    return LayoutInflater.from(this.context).bind(this, attach)
 }
 
-inline fun <reified T : ViewBinding> LayoutInflater.bind(parent: ViewGroup? = null): T {
+inline fun <reified T : ViewBinding> LayoutInflater.bind(
+    parent: ViewGroup? = null,
+    attach: Boolean = false
+): T {
     val layoutInflater: LayoutInflater = this
     val bindingClass = T::class.java
     if (parent == null) {
@@ -560,6 +558,9 @@ inline fun <reified T : ViewBinding> LayoutInflater.bind(parent: ViewGroup? = nu
         )
         val invokeObj = inflateMethod.invoke(null, layoutInflater, parent, false)
         if (invokeObj is T) {
+            if (attach) {
+                parent.addView(invokeObj.root)
+            }
             return invokeObj
         }
     }

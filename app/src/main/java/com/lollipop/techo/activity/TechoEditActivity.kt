@@ -77,7 +77,7 @@ class TechoEditActivity : HeaderActivity() {
             adapter = listAdapter
             attachTouchHelper()
                     .canDrag(true)
-                    .canDrag(true)
+                    .canSwipe(true)
                     .onMoveWithList(dataList) { srcPosition, targetPosition ->
                         listAdapter.notifyItemMoved(srcPosition, targetPosition)
                     }

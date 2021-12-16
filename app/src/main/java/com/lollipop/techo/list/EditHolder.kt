@@ -3,6 +3,7 @@ package com.lollipop.techo.list
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.lollipop.base.list.TouchableHolder
 import com.lollipop.base.util.bind
 import com.lollipop.techo.databinding.ItemEditGroupBinding
@@ -11,21 +12,21 @@ import com.lollipop.techo.databinding.ItemEditGroupBinding
  * @author lollipop
  * @date 2021/11/13 22:09
  */
-open class EditHolder(
-    private val optionBinding: ItemEditGroupBinding
-) : RecyclerView.ViewHolder(optionBinding.root), TouchableHolder {
+open class EditHolder<T: ViewBinding>(
+        protected val binding: EditItemView<T>
+) : RecyclerView.ViewHolder(binding.option.root), TouchableHolder {
 
     companion object {
-        fun createItemView(
-            group: ViewGroup,
-        ): ItemEditGroupBinding {
-            return group.bind(true)
+
+        inline fun <reified T : ViewBinding> ViewGroup.bindContent(): EditItemView<T> {
+            val optionBinding = bind<ItemEditGroupBinding>()
+            val contentBinding = optionBinding.itemContentGroup.bind<T>()
+            return EditItemView(contentBinding, optionBinding)
         }
 
-        fun getContentGroup(optionBinding: ItemEditGroupBinding): ViewGroup {
-            return optionBinding.itemContentGroup
-        }
     }
+
+    private val optionBinding: ItemEditGroupBinding = binding.option
 
     private var isInEditMode = false
 
@@ -45,6 +46,7 @@ open class EditHolder(
         optionBinding.moreOptionView.setOnClickListener {
             onOptionButtonClick()
         }
+        optionBinding.itemContentGroup.addView(binding.content.root)
     }
 
     fun setOnItemOptionButtonClickListener(listener: OnItemOptionButtonClickListener) {
@@ -62,7 +64,12 @@ open class EditHolder(
     }
 
     fun interface OnItemOptionButtonClickListener {
-        fun onItemOptionButtonClick(holder: EditHolder)
+        fun onItemOptionButtonClick(holder: EditHolder<*>)
     }
+
+    class EditItemView<C : ViewBinding>(
+            val content: C,
+            val option: ItemEditGroupBinding
+    )
 
 }

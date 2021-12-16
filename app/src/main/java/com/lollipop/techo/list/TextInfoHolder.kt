@@ -1,8 +1,12 @@
 package com.lollipop.techo.list
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.withThis
+import com.lollipop.techo.R
+import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.CheckBoxItem
 import com.lollipop.techo.data.NumberItem
 import com.lollipop.techo.data.TextItem
@@ -15,35 +19,43 @@ import com.lollipop.techo.util.RichTextHelper
  * @date 2021/11/13 22:09
  */
 class TextInfoHolder(
-    private val binding: ItemTextBinding,
-    optionBinding: ItemEditGroupBinding
-) : EditHolder(optionBinding) {
+    view: EditItemView<ItemTextBinding>
+) : EditHolder<ItemTextBinding>(view) {
 
     companion object {
         fun create(group: ViewGroup): TextInfoHolder {
-            val optionBinding = createItemView(group)
-            return TextInfoHolder(getContentGroup(optionBinding).bind(true), optionBinding)
+            return TextInfoHolder(group.bindContent())
         }
     }
 
+    init {
+        binding.content.textView.setHint(R.string.hint_text_input)
+    }
+
     fun bind(info: TextItem) {
-        binding.checkBox.isVisible = false
-        binding.numberView.isVisible = false
-        RichTextHelper.startRichFlow().addRichInfo(info).into(binding.textView)
+        changedStyle(checkBox = false, number = false)
+        updateContent(info)
     }
 
     fun bind(info: NumberItem) {
-        binding.checkBox.isVisible = false
-        binding.numberView.isVisible = true
-        binding.numberView.text = info.number.toString()
-        RichTextHelper.startRichFlow().addRichInfo(info).into(binding.textView)
+        changedStyle(checkBox = false, number = true)
+        binding.content.numberView.text = info.number.toString()
+        updateContent(info)
     }
 
     fun bind(info: CheckBoxItem) {
-        binding.checkBox.isVisible = true
-        binding.numberView.isVisible = false
-        binding.checkBox.isChecked = info.isChecked
-        RichTextHelper.startRichFlow().addRichInfo(info).into(binding.textView)
+        changedStyle(checkBox = true, number = false)
+        binding.content.checkBox.isChecked = info.isChecked
+        updateContent(info)
+    }
+
+    private fun updateContent(info: BaseTextItem) {
+        RichTextHelper.startRichFlow().addRichInfo(info).into(binding.content.textView)
+    }
+
+    private fun changedStyle(checkBox: Boolean, number: Boolean) {
+        binding.content.checkBox.isVisible = checkBox
+        binding.content.numberView.isVisible = number
     }
 
 }
