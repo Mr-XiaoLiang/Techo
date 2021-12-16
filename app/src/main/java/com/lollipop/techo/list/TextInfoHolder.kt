@@ -1,16 +1,12 @@
 package com.lollipop.techo.list
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.lollipop.base.util.bind
-import com.lollipop.base.util.withThis
 import com.lollipop.techo.R
 import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.CheckBoxItem
 import com.lollipop.techo.data.NumberItem
 import com.lollipop.techo.data.TextItem
-import com.lollipop.techo.databinding.ItemEditGroupBinding
 import com.lollipop.techo.databinding.ItemTextBinding
 import com.lollipop.techo.util.RichTextHelper
 
