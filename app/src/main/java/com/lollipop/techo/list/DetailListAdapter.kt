@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.techo.data.*
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.Number
 
 /**
  * @author lollipop

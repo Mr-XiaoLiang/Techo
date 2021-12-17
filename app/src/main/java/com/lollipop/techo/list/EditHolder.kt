@@ -12,8 +12,8 @@ import com.lollipop.techo.databinding.ItemEditGroupBinding
  * @author lollipop
  * @date 2021/11/13 22:09
  */
-open class EditHolder<T: ViewBinding>(
-        protected val binding: EditItemView<T>
+open class EditHolder<T : ViewBinding>(
+    protected val binding: EditItemView<T>
 ) : RecyclerView.ViewHolder(binding.option.root), TouchableHolder {
 
     companion object {
@@ -68,8 +68,8 @@ open class EditHolder<T: ViewBinding>(
     }
 
     class EditItemView<C : ViewBinding>(
-            val content: C,
-            val option: ItemEditGroupBinding
+        val content: C,
+        val option: ItemEditGroupBinding
     )
 
 }
