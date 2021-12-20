@@ -21,13 +21,17 @@ abstract class EditDelegate {
     }
 
     fun open(info: BaseTechoItem) {
-        doAnimation(true)
-        onOpen(info)
+        panelView?.post {
+            onOpen(info)
+            doAnimation(true)
+        }
     }
 
     fun close() {
-        doAnimation(false)
-        onClose()
+        panelView?.post {
+            onClose()
+            doAnimation(false)
+        }
     }
 
     fun getPanelView(container: ViewGroup): View {
