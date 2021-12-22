@@ -181,4 +181,10 @@
         app:layout_constraintCircleRadius="220dp"
         tools:ignore="ContentDescription,MissingConstraints" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/editContainer"
+        android:elevation="20dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import com.lollipop.techo.data.*
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
+import com.lollipop.techo.edit.EditManager
 import com.lollipop.techo.list.DetailListAdapter
 import com.lollipop.techo.util.CircleAnimationGroup
 
@@ -29,9 +30,9 @@ class TechoEditActivity : HeaderActivity() {
 
         fun start(context: Context, infoId: Int = 0) {
             context.startActivity(
-                    Intent(context, TechoEditActivity::class.java).apply {
-                        putExtra(PARAMETER_TECHO_ID, infoId)
-                    }
+                Intent(context, TechoEditActivity::class.java).apply {
+                    putExtra(PARAMETER_TECHO_ID, infoId)
+                }
             )
         }
     }
@@ -58,6 +59,10 @@ class TechoEditActivity : HeaderActivity() {
 
     private var quickAddType = Text
 
+    private val editManager by lazy {
+        EditManager(this, floatingBinding.editContainer)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
@@ -69,23 +74,23 @@ class TechoEditActivity : HeaderActivity() {
     private fun initContentView() {
         viewBinding.contentListView.apply {
             layoutManager = LinearLayoutManager(
-                    this@TechoEditActivity, RecyclerView.VERTICAL, false
+                this@TechoEditActivity, RecyclerView.VERTICAL, false
             )
             val listAdapter = DetailListAdapter(dataList).apply {
                 changeEditMode(true)
             }
             adapter = listAdapter
             attachTouchHelper()
-                    .canDrag(true)
-                    .canSwipe(true)
-                    .onMoveWithList(dataList) { srcPosition, targetPosition ->
-                        listAdapter.notifyItemMoved(srcPosition, targetPosition)
-                    }
-                    .onSwipeWithList(dataList) {
-                        listAdapter.notifyItemRemoved(it)
-                    }
-                    .onStatusChange(::onItemTouchStateChanged)
-                    .apply()
+                .canDrag(true)
+                .canSwipe(true)
+                .onMoveWithList(dataList) { srcPosition, targetPosition ->
+                    listAdapter.notifyItemMoved(srcPosition, targetPosition)
+                }
+                .onSwipeWithList(dataList) {
+                    listAdapter.notifyItemRemoved(it)
+                }
+                .onStatusChange(::onItemTouchStateChanged)
+                .apply()
         }
     }
 
@@ -96,20 +101,20 @@ class TechoEditActivity : HeaderActivity() {
     private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
         circleAnimationGroup.addPlanet(
-                floatingBinding.floatingTextBtn to true,
-                floatingBinding.floatingNumberBtn to true,
-                floatingBinding.floatingCheckboxBtn to true,
-                floatingBinding.floatingPhotoBtn to true,
-                floatingBinding.floatingSplitBtn to true,
-                floatingBinding.floatingTest6 to false,
-                floatingBinding.floatingTest7 to false,
-                floatingBinding.floatingTest8 to false,
-                floatingBinding.floatingTest9 to false,
-                floatingBinding.floatingTest10 to false,
-                floatingBinding.floatingTest11 to false,
-                floatingBinding.floatingTest12 to false,
-                floatingBinding.floatingTest13 to false,
-                floatingBinding.floatingTest14 to false,
+            floatingBinding.floatingTextBtn to true,
+            floatingBinding.floatingNumberBtn to true,
+            floatingBinding.floatingCheckboxBtn to true,
+            floatingBinding.floatingPhotoBtn to true,
+            floatingBinding.floatingSplitBtn to true,
+            floatingBinding.floatingTest6 to false,
+            floatingBinding.floatingTest7 to false,
+            floatingBinding.floatingTest8 to false,
+            floatingBinding.floatingTest9 to false,
+            floatingBinding.floatingTest10 to false,
+            floatingBinding.floatingTest11 to false,
+            floatingBinding.floatingTest12 to false,
+            floatingBinding.floatingTest13 to false,
+            floatingBinding.floatingTest14 to false,
         )
         circleAnimationGroup.onPlanetClick(::onFloatBtnClick)
         circleAnimationGroup.bindListener {
@@ -163,7 +168,10 @@ class TechoEditActivity : HeaderActivity() {
         addItemByType()
     }
 
-    private fun onItemTouchStateChanged(viewHolder: RecyclerView.ViewHolder?, status: ItemTouchState) {
+    private fun onItemTouchStateChanged(
+        viewHolder: RecyclerView.ViewHolder?,
+        status: ItemTouchState
+    ) {
         // TODO("Not yet implemented")
     }
 
