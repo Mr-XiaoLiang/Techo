@@ -5,6 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import com.lollipop.techo.data.BaseTechoItem
+import com.lollipop.techo.edit.impl.PhotoEditDelegate
+import com.lollipop.techo.edit.impl.SplitEditDelegate
+import com.lollipop.techo.edit.impl.TextEditDelegate
 
 /**
  * @author lollipop
@@ -16,8 +19,10 @@ class EditManager(
 ) : PanelController {
 
     companion object {
-        private val EDIT_DELEGATE_POOL: Array<Class<EditDelegate>> = arrayOf(
-
+        private val EDIT_DELEGATE_POOL: Array<Class<out EditDelegate>> = arrayOf(
+            TextEditDelegate::class.java,
+            PhotoEditDelegate::class.java,
+            SplitEditDelegate::class.java,
         )
     }
 
