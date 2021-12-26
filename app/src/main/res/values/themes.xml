@@ -35,4 +35,10 @@
         <item name="elevation">4dp</item>
         <item name="tint">@color/fabIcon</item>
     </style>
+
+    <style name="EditPanelCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/editPanelCard</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="cardElevation">8dp</item>
+    </style>
 </resources>

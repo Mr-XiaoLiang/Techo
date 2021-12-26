@@ -12,4 +12,7 @@
     <color name="fabBackground">#FF018786</color>
 
     <color name="detailItemBackground">#FFFFFFFF</color>
+
+    <color name="editPanelBackground">#80000000</color>
+    <color name="editPanelCard">#FFFFFFFF</color>
 </resources>
