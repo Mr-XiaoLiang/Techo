@@ -95,4 +95,5 @@
     <string name="granted">同意授权</string>
     <string name="denied">拒绝授权</string>
     <string name="hint_text_input">请输入内容</string>
+    <string name="done">确定</string>
 </resources>
