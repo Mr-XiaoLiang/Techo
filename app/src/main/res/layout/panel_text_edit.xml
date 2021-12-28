@@ -12,6 +12,7 @@
         android:id="@+id/backgroundView"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/editCard"
         android:layout_width="match_parent"
         android:layout_height="0px"
         app:layout_constraintHeight_percent="0.4"

@@ -142,8 +142,10 @@ class EditManager(
     private fun tryClosePanel(editDelegate: EditDelegate?) {
         editDelegate?.close()
         if (editDelegate == this.activeDelegate) {
-            this.editInfo?.let {
-                this.onEditPanelCloseListener?.onEditPanelClose(editItemIndex, it)
+            if (editDelegate?.isChangedValue == true) {
+                this.editInfo?.let {
+                    this.onEditPanelCloseListener?.onEditPanelClose(editItemIndex, it)
+                }
             }
             this.editInfo = null
             this.onEditPanelCloseListener = null

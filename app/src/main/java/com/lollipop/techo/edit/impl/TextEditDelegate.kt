@@ -12,7 +12,7 @@ import com.lollipop.techo.edit.EditDelegate
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class TextEditDelegate: EditDelegate() {
+class TextEditDelegate : EditDelegate() {
 
     private var binding: PanelTextEditBinding? = null
 
@@ -28,4 +28,38 @@ class TextEditDelegate: EditDelegate() {
         binding = newBinding
         return newBinding.root
     }
+
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        binding?.apply {
+            doneBtn.setOnClickListener {
+                onDone()
+            }
+            clickToClose(backgroundView)
+            keepWithClick(editCard)
+        }
+    }
+
+    override fun onOpen(info: BaseTechoItem) {
+        super.onOpen(info)
+        binding?.editText?.setText(
+            if (info is BaseTextItem) {
+                info.value
+            } else {
+                ""
+            }
+        )
+    }
+
+    private fun onDone() {
+        binding?.editText?.let {
+            val newValue = it.text?.toString() ?: return
+            tryChangeInfo<BaseTextItem> {
+                it.value = newValue
+                notifyDataChanged()
+            }
+        }
+        callClose()
+    }
+
 }
