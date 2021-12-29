@@ -2,7 +2,10 @@ package com.lollipop.techo.edit
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.lollipop.techo.data.BaseTechoItem
+import com.lollipop.techo.util.AnimationHelper
 
 /**
  * @author lollipop
@@ -18,8 +21,33 @@ abstract class EditDelegate {
 
     private var currentInfo: BaseTechoItem? = null
 
+    private val animationHelper = AnimationHelper(onUpdate = ::onAnimationUpdate).apply {
+        onStart {
+            onAnimationStart(it)
+            showOnAnimationStart()
+        }
+        onEnd {
+            onAnimationEnd(it)
+            if (isAnimationClosed) {
+                hideOnAnimationEnd()
+            }
+        }
+    }
+
+    protected val isAnimationOpened: Boolean
+        get() {
+            return animationHelper.progressIs(AnimationHelper.PROGRESS_MAX)
+        }
+
+    protected val isAnimationClosed: Boolean
+        get() {
+            return animationHelper.progressIs(AnimationHelper.PROGRESS_MIN)
+        }
+
     var isChangedValue = false
         private set
+
+    protected open val animationEnable = false
 
     fun setController(controller: PanelController?) {
         this.controller = controller
@@ -49,6 +77,9 @@ abstract class EditDelegate {
         val newView = onCreateView(container)
         this.panelView = newView
         onViewCreated(newView)
+        if (animationEnable) {
+            animationHelper.preload()
+        }
         return newView
     }
 
@@ -64,12 +95,38 @@ abstract class EditDelegate {
         isChangedValue = true
     }
 
-    protected open fun doAnimation(isOpen: Boolean) {
-        // TODO
+    private fun doAnimation(isOpen: Boolean) {
+        if (animationEnable) {
+            if (isOpen) {
+                animationHelper.open(true)
+            } else {
+                animationHelper.close(true)
+            }
+        } else {
+            panelView?.isInvisible = !isOpen
+        }
+    }
+
+    protected open fun onAnimationUpdate(progress: Float) {}
+
+    protected open fun onAnimationStart(progress: Float) {}
+
+    protected open fun onAnimationEnd(progress: Float) {}
+
+    private fun showOnAnimationStart() {
+        panelView?.isInvisible = false
+    }
+
+    private fun hideOnAnimationEnd() {
+        panelView?.isInvisible = true
+    }
+
+    protected fun resetAnimationProgress(progress: Float) {
+        animationHelper.reset(progress)
     }
 
     fun destroy() {
-        // TODO
+        animationHelper.destroy()
     }
 
     protected fun getCurrentInfo(): BaseTechoItem? {
@@ -97,6 +154,50 @@ abstract class EditDelegate {
             it.setOnClickListener {
                 // 点击事件设置，但是不响应
             }
+        }
+    }
+
+    /**
+     * 按照进度来做透明度动画
+     * @param progress 0：完全透明，1：完全显示
+     * @param views 被改变的View
+     */
+    protected fun animationAlpha(progress: Float, vararg views: View) {
+        views.forEach {
+            it.alpha = progress
+        }
+    }
+
+    /**
+     * 按照进度来做上移动画
+     * 它会从容器底部移动出来
+     * @param progress 0：完全隐藏、View位于容器底部边界之外，1：View布局时原本的位置
+     * @param views 被改变的View
+     */
+    protected fun animationUp(progress: Float, vararg views: View) {
+        views.forEach { target ->
+            target.parent?.isViewGroup { parent ->
+                target.translationY = (parent.height - target.top) * (1F - progress)
+            }
+        }
+    }
+
+    /**
+     * 按照进度来做下移动画
+     * 它会从容器顶部移动出来
+     * @param progress 0：完全隐藏、View位于容器顶部边界之外，1：View布局时原本的位置
+     * @param views 被改变的View
+     */
+    protected fun animationDown(progress: Float, vararg views: View) {
+        views.forEach { target ->
+            target.translationY = target.bottom * (progress - 1F)
+        }
+    }
+
+    private fun Any.isViewGroup(run: (ViewGroup) -> Unit) {
+        val any = this
+        if (any is ViewGroup) {
+            run(any)
         }
     }
 

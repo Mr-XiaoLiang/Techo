@@ -59,6 +59,10 @@ class AnimationHelper(
         return abs(float - progress) <= THRESHOLD
     }
 
+    fun preload() {
+        close(false)
+    }
+
     fun open(isAnimation: Boolean = true) {
         run(isAnimation, PROGRESS_MIN, PROGRESS_MAX)
     }

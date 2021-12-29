@@ -16,6 +16,8 @@ class TextEditDelegate : EditDelegate() {
 
     private var binding: PanelTextEditBinding? = null
 
+    override val animationEnable = true
+
     override fun isSupport(info: BaseTechoItem): Boolean {
         return info is BaseTextItem
     }
@@ -61,5 +63,7 @@ class TextEditDelegate : EditDelegate() {
         }
         callClose()
     }
+
+
 
 }
