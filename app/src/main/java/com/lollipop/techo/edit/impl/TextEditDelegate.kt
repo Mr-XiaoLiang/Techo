@@ -64,6 +64,12 @@ class TextEditDelegate : EditDelegate() {
         callClose()
     }
 
-
+    override fun onAnimationUpdate(progress: Float) {
+        super.onAnimationUpdate(progress)
+        binding?.apply {
+            animationAlpha(progress, backgroundView)
+            animationDown(progress, editCard)
+        }
+    }
 
 }
