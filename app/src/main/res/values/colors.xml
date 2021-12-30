@@ -15,4 +15,8 @@
 
     <color name="editPanelBackground">#80000000</color>
     <color name="editPanelCard">#FFFFFFFF</color>
+
+    <color name="optionDialogBackground">#FFFFFFFF</color>
+    <color name="optionDialogItemText">#333</color>
+    <color name="optionDialogItemIcon">#FFFFFFFF</color>
 </resources>
