@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shareSaveImage">保存图片</string>
+    <string name="shareWechat">微信</string>
+    <string name="shareMoments">朋友圈</string>
+    <string name="shareQQ">QQ</string>
+    <string name="shareQzone">QQ空间</string>
+    <string name="shareWeibo">微博</string>
+</resources>

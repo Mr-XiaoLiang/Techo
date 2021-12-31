@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="shareSaveImage">#FF018786</color>
+    <color name="shareWechat">#06C160</color>
+    <color name="shareQQ">#FF52B6EF</color>
+    <color name="shareWeibo">#FFD55926</color>
+</resources>

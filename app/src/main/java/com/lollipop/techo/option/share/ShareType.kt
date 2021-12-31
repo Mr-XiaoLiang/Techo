@@ -3,6 +3,7 @@ package com.lollipop.techo.option.share
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.lollipop.techo.R
 import com.lollipop.techo.option.item.Option
 
 /**
@@ -32,32 +33,32 @@ enum class ShareType(
     /**
      * 保存图片
      */
-    SaveImage(0, 0, 0),
+    SaveImage(R.drawable.ic_baseline_save_24, R.color.shareSaveImage, R.string.shareSaveImage),
 
     /**
      * 微信好友
      */
-    WeChat(0, 0, 0),
+    WeChat(R.drawable.ic_wechat, R.color.shareWechat, R.string.shareWechat),
 
     /**
      * 微信朋友圈
      */
-    Moments(0, 0, 0),
+    Moments(R.drawable.ic_moments, R.color.shareWechat, R.string.shareMoments),
 
     /**
      * QQ好友
      */
-    QQ(0, 0, 0),
+    QQ(R.drawable.ic_qq, R.color.shareQQ, R.string.shareQQ),
 
     /**
      * QQ空间
      */
-    QZone(0, 0, 0),
+    QZone(R.drawable.ic_qzone, R.color.shareQQ, R.string.shareQzone),
 
     /**
      * 新浪微博
      */
-    WeiBo(0, 0, 0);
+    WeiBo(R.drawable.ic_weibo, R.color.shareWeibo, R.string.shareWeibo);
 
     companion object {
         private const val BASE_ID = -10000
