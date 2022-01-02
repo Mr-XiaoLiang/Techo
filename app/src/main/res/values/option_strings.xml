@@ -1,0 +1,7 @@
+<resources>
+    <string name="optionEdit">编辑</string>
+    <string name="optionDelete">删除</string>
+    <string name="optionTopping">置顶</string>
+    <string name="optionLike">收藏</string>
+    <string name="optionUnlike">取消收藏</string>
+</resources>

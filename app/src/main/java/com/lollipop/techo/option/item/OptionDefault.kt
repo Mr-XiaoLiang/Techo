@@ -3,6 +3,7 @@ package com.lollipop.techo.option.item
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.lollipop.techo.R
 
 /**
  * @author lollipop
@@ -30,11 +31,43 @@ enum class OptionDefault(
 
 
     EDIT(
-        0, 0, 0
-    );
+        R.drawable.ic_baseline_edit_24,
+        R.color.optionEdit,
+        R.string.optionEdit
+    ),
+    DELETE(
+        R.drawable.ic_baseline_delete_24,
+        R.color.optionDelete,
+        R.string.optionDelete
+    ),
+    TOPPING(
+        R.drawable.ic_baseline_vertical_align_top_24,
+        R.color.optionTopping,
+        R.string.optionTopping
+    ),
+    LIKE(
+        R.drawable.ic_like,
+        R.color.optionLike,
+        R.string.optionLike
+    ),
+    UNLIKE(
+        R.drawable.ic_unlike,
+        R.color.optionUnlike,
+        R.string.optionUnlike
+    ),
+    ;
 
     companion object {
         private const val BASE_ID = 10000
+
+        fun findByOptionId(id: Int): OptionDefault? {
+            val index = id - BASE_ID
+            val values = values()
+            if (index in values.indices) {
+                return values[index]
+            }
+            return null
+        }
     }
 
     fun new(): Option {
