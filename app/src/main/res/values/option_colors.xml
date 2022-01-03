@@ -3,6 +3,7 @@
     <color name="optionEdit">#4E6363</color>
     <color name="optionDelete">#4E6363</color>
     <color name="optionTopping">#4E6363</color>
+    <color name="optionToppingNot">#4E6363</color>
     <color name="optionLike">#F1306D</color>
     <color name="optionUnlike">#52B598</color>
 </resources>

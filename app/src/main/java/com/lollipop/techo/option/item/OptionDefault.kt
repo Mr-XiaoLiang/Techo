@@ -41,9 +41,14 @@ enum class OptionDefault(
         R.string.optionDelete
     ),
     TOPPING(
-        R.drawable.ic_baseline_vertical_align_top_24,
+        R.drawable.ic_topping,
         R.color.optionTopping,
         R.string.optionTopping
+    ),
+    TOPPING_NOT(
+        R.drawable.ic_topping_not,
+        R.color.optionToppingNot,
+        R.string.optionToppingNot
     ),
     LIKE(
         R.drawable.ic_like,
