@@ -1,5 +1,7 @@
 <resources>
     <string name="optionEdit">编辑</string>
+    <string name="optionStyle">样式</string>
+    <string name="optionImage">图片</string>
     <string name="optionDelete">删除</string>
     <string name="optionTopping">置顶</string>
     <string name="optionToppingNot">取消置顶</string>

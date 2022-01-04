@@ -35,6 +35,16 @@ enum class OptionDefault(
         R.color.optionEdit,
         R.string.optionEdit
     ),
+    STYLE(
+        R.drawable.ic_baseline_color_lens_24,
+        R.color.optionStyle,
+        R.string.optionStyle
+    ),
+    IMAGE(
+        R.drawable.ic_outline_insert_photo_24,
+        R.color.optionImage,
+        R.string.optionImage
+    ),
     DELETE(
         R.drawable.ic_baseline_delete_24,
         R.color.optionDelete,

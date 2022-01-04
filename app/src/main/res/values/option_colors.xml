@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="optionEdit">#4E6363</color>
+    <color name="optionStyle">#4E6363</color>
+    <color name="optionImage">#4E6363</color>
     <color name="optionDelete">#4E6363</color>
     <color name="optionTopping">#4E6363</color>
     <color name="optionToppingNot">#4E6363</color>
