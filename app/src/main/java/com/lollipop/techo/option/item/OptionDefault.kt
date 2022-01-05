@@ -29,7 +29,6 @@ enum class OptionDefault(
     val optionName: Int,
 ) {
 
-
     EDIT(
         R.drawable.ic_baseline_edit_24,
         R.color.optionEdit,
