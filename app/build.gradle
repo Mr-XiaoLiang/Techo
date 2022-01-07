@@ -48,6 +48,7 @@ dependencies {
     implementation project(path: ':gallery')
     implementation project(path: ':maskGuide')
     implementation project(path: ':base')
+    implementation project(path: ':bigBoom')
 
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop
