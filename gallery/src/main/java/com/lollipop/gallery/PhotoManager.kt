@@ -95,6 +95,8 @@ class PhotoManager {
 
     private val dataList = ArrayList<Photo>()
 
+    var isMediaStoreChanged = true
+
     fun shouldShowPermissionRationale(activity: AppCompatActivity): Boolean {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_PERMISSION)
     }
@@ -148,6 +150,14 @@ class PhotoManager {
 
     operator fun get(index: Int): Photo {
         return dataList[index]
+    }
+
+    fun registerMediaChangeListener() {
+        // TODO
+    }
+
+    fun unregisterMediaChangeListener() {
+        // TODO
     }
 
 }
