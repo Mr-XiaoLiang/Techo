@@ -3,8 +3,6 @@ plugins {
     id 'kotlin-android'
 }
 
-def lib = rootProject.ext.dependencies
-
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -33,9 +31,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation lib.core
-    implementation lib.appcompat
-    implementation lib.material
-    implementation lib.constraintlayout
+    implementation "androidx.core:core-ktx:1.5.0"
+    implementation "androidx.appcompat:appcompat:1.3.0"
+    implementation "com.google.android.material:material:1.3.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation project(path: ':base')
 }
