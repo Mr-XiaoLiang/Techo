@@ -29,7 +29,7 @@ class BigBoomView(
 
     private val itemGroup = RecyclerView(context)
 
-    private val quickSelectionHelper = QuickSelectionHelper().apply {
+    private val quickSelectionHelper = QuickSelectionHelper(context).apply {
         onSelectedRangeAdd {
             notifySelectedAdd(it)
         }
@@ -184,7 +184,8 @@ class BigBoomView(
             if (status.isWait) {
                 // 位置偏移是否符合，如果超过范围，那么认为是滑动，放弃事件
                 if (abs(x - lastTouchLocation.x) > scaledTouchSlop
-                    || abs(y - lastTouchLocation.y) > scaledTouchSlop) {
+                    || abs(y - lastTouchLocation.y) > scaledTouchSlop
+                ) {
                     status = Status.CANCEL
                     return
                 }
@@ -207,12 +208,80 @@ class BigBoomView(
                 return
             }
             // 以下逻辑都认为是激活状态
+            if (!isTouchMoved(x, y)) {
+                // 位置不变就不更新
+                return
+            }
+            val position = getPosition(x, y)
+            // 没有找到序号，不更新
+            if (position < 0) {
+                return
+            }
+            // 如果开始时候没有找到序号，那么更新一下序号
+            if (dragStartPosition < 0) {
+                dragStartPosition = position
+                nowSelectedPosition = position
+                lastSelectedPosition = position
+                if (position >= 0) {
+                    notifyPositionAdd(position..position)
+                }
+                return
+            }
+            // 最新选中的序号发生了变化
+            if (nowSelectedPosition != position) {
+                lastSelectedPosition = nowSelectedPosition
+                nowSelectedPosition = position
+                notifyPositionChanged()
+            }
             TODO()
+        }
+
+        private fun notifyPositionChanged() {
+            val last = lastSelectedPosition
+            val start = dragStartPosition
+            val now = nowSelectedPosition
+            if (last - start > 0) {
+                // 原本是向后选择的
+                if (now - start > 0) {
+                    // 现在也是向后选择
+                    if (now > last) {
+                        // 选择的更多了
+                        notifyPositionAdd((last + 1)..now)
+                    } else {
+                        // 选的更少了
+                        notifyPositionReduce((now + 1)..last)
+                    }
+                } else {
+                    // 现在变成了向前选择
+                    // 移除后面的
+                    notifyPositionReduce((start + 1)..last)
+                    // 增加前面的
+                    notifyPositionAdd(now..start)
+                }
+            } else {
+                // 原本是向前选择的
+                if (now - start > 0) {
+                    // 现在变成了向后选择
+                    // 移除前面的
+                    notifyPositionReduce(last until start)
+                    // 增加后面的
+                    notifyPositionAdd(start..now)
+                } else {
+                    // 现在也是向前选择
+                    if (now > last) {
+                        // 选的更少了
+                        notifyPositionReduce(last until now)
+                    } else {
+                        // 选的更多了
+                        notifyPositionAdd(now until last)
+                    }
+                }
+            }
         }
 
         private fun callEnable() {
             val vibratorService = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-            vibratorService?:return
+            vibratorService ?: return
             if (!vibratorService.hasVibrator()) {
                 return
             }
