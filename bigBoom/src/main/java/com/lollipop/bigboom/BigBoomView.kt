@@ -144,10 +144,10 @@ class BigBoomView(
                     onTouchMove(event)
                 }
                 MotionEvent.ACTION_UP -> {
-                    TODO()
+                    reset()
                 }
                 MotionEvent.ACTION_CANCEL -> {
-                    TODO()
+                    reset()
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
                     getFocusTouchPosition(event)
@@ -207,6 +207,7 @@ class BigBoomView(
                 callEnable()
                 return
             }
+            notifyScroll(x, y)
             // 以下逻辑都认为是激活状态
             if (!isTouchMoved(x, y)) {
                 // 位置不变就不更新
@@ -233,7 +234,6 @@ class BigBoomView(
                 nowSelectedPosition = position
                 notifyPositionChanged()
             }
-            TODO()
         }
 
         private fun notifyPositionChanged() {
@@ -277,6 +277,10 @@ class BigBoomView(
                     }
                 }
             }
+        }
+
+        private fun notifyScroll(x: Float, y: Float) {
+            TODO()
         }
 
         private fun callEnable() {
