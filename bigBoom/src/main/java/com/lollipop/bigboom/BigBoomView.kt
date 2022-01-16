@@ -39,6 +39,12 @@ class BigBoomView(
         getPositionByLocation { x, y ->
             findSelectPosition(x, y)
         }
+        notifyListScroll { x, y ->
+            itemGroup.scrollBy(x, y)
+        }
+        getGroupHeight {
+            height
+        }
     }
 
     private fun notifySelectedAdd(intRange: IntRange) {
@@ -101,11 +107,16 @@ class BigBoomView(
 
     private class QuickSelectionHelper(private val context: Context) {
 
-        private var dragStartPosition = -1
-        private var nowSelectedPosition = -1
-        private var lastSelectedPosition = -1
+        companion object {
+            private const val INVALID_TIME = 0L
+            private const val INVALID_POSITION = -1
+        }
 
-        private var touchDownTime = 0L
+        private var dragStartPosition = INVALID_POSITION
+        private var nowSelectedPosition = INVALID_POSITION
+        private var lastSelectedPosition = INVALID_POSITION
+
+        private var touchDownTime = INVALID_TIME
         private var activeTouchId = -1
         private val lastTouchLocation = Point()
 
@@ -114,9 +125,17 @@ class BigBoomView(
         private val longPressTimeout = ViewConfiguration.getLongPressTimeout()
         private val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
+        private var scrollUpTime = INVALID_TIME
+        private var scrollDownTime = INVALID_TIME
+        var scrollUpWeight = 0.1F
+        var scrollDownWeight = 0.1F
+        var scrollSpeed = 1000L
+
         private var onSelectedRangeAddListener: ((IntRange) -> Unit)? = null
         private var onSelectedRangeReduceListener: ((IntRange) -> Unit)? = null
         private var positionProvider: ((x: Float, y: Float) -> Int)? = null
+        private var notifyListScrollCallback: ((x: Int, y: Int) -> Unit)? = null
+        private var groupHeightProvider: (() -> Int)? = null
 
         fun onTouchEvent(event: MotionEvent?): Boolean {
             if (status.isCancel) {
@@ -280,7 +299,42 @@ class BigBoomView(
         }
 
         private fun notifyScroll(x: Float, y: Float) {
-            TODO()
+            val scrollCallback = notifyListScrollCallback ?: return
+            val groupHeight = groupHeightProvider?.invoke() ?: return
+            val upThreshold = groupHeight * scrollUpWeight
+            val downThreshold = groupHeight * (1 - scrollDownWeight)
+            if (y in upThreshold..downThreshold) {
+                scrollUpTime = INVALID_TIME
+                scrollDownTime = INVALID_TIME
+                return
+            }
+            val now = System.currentTimeMillis()
+            if (y < upThreshold) {
+                scrollDownTime = INVALID_TIME
+                if (scrollUpTime == INVALID_TIME) {
+                    scrollUpTime = now
+                    return
+                }
+                val time = (now - scrollUpTime) * 1F / scrollSpeed
+                val distance = upThreshold - y
+                val offset = (distance * time).toInt()
+                if (abs(offset) > 0) {
+                    scrollUpTime = now
+                    scrollCallback.invoke(0, offset * -1)
+                }
+            } else if (y > downThreshold) {
+                scrollUpTime = INVALID_TIME
+                if (scrollDownTime == INVALID_TIME) {
+                    scrollDownTime = now
+                }
+                val time = (now - scrollDownTime) * 1F / scrollSpeed
+                val distance = y - downThreshold
+                val offset = (distance * time).toInt()
+                if (abs(offset) > 0) {
+                    scrollDownTime = now
+                    scrollCallback.invoke(0, offset)
+                }
+            }
         }
 
         private fun callEnable() {
@@ -333,11 +387,13 @@ class BigBoomView(
         }
 
         fun reset() {
-            dragStartPosition = -1
-            nowSelectedPosition = -1
-            lastSelectedPosition = -1
-            touchDownTime = 0L
+            dragStartPosition = INVALID_POSITION
+            nowSelectedPosition = INVALID_POSITION
+            lastSelectedPosition = INVALID_POSITION
+            touchDownTime = INVALID_TIME
             status = Status.CANCEL
+            scrollUpTime = INVALID_TIME
+            scrollDownTime = INVALID_TIME
         }
 
         fun onSelectedRangeAdd(callback: ((IntRange) -> Unit)) {
@@ -352,7 +408,15 @@ class BigBoomView(
             positionProvider = callback
         }
 
-        enum class Status {
+        fun notifyListScroll(callback: (x: Int, y: Int) -> Unit) {
+            notifyListScrollCallback = callback
+        }
+
+        fun getGroupHeight(callback: () -> Int) {
+            groupHeightProvider = callback
+        }
+
+        private enum class Status {
             WAIT,
             ENABLE,
             CANCEL;
