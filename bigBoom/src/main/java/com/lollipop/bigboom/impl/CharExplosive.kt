@@ -7,6 +7,9 @@ import com.lollipop.bigboom.Explosive
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * 字符串的按照字拆解的大爆炸
+ */
 class CharExplosive : Explosive {
 
     private val stringList = LinkedList<String>()
