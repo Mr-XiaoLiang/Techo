@@ -13,4 +13,11 @@ interface Explosive {
      */
     fun pilot(basket: Basket)
 
+    /**
+     * 放置燃料
+     * @param any 任何资源都可以作为燃料，
+     * 但是不同的炸药可能对于燃料会有不同的效果
+     */
+    fun putFuel(any: Any)
+
 }

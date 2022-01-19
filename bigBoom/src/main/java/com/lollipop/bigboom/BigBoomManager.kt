@@ -16,6 +16,10 @@ class BigBoomManager(
 
     private var currentExplosive: Explosive? = null
 
+    fun startFlow(): BoomFlow {
+        return BoomFlow(this)
+    }
+
     fun boom(e: Explosive) {
         currentExplosive = e
         e.pilot(this)

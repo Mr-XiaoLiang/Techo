@@ -14,7 +14,7 @@ class CharExplosive : Explosive {
 
     private val stringList = LinkedList<String>()
 
-    fun putValue(value: String) {
+    private fun putValue(value: String) {
         stringList.add(value)
     }
 
@@ -38,6 +38,14 @@ class CharExplosive : Explosive {
             onUI {
                 basket.goodPatches(resultList.toTypedArray())
             }
+        }
+    }
+
+    override fun putFuel(any: Any) {
+        if (any is String) {
+            putValue(any)
+        } else {
+            putValue(any.toString())
         }
     }
 
