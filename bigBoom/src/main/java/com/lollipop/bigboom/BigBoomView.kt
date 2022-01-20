@@ -11,6 +11,9 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
@@ -22,12 +25,17 @@ import kotlin.math.abs
  */
 class BigBoomView(
     context: Context, attr: AttributeSet?, style: Int
-) : ViewGroup(context, attr, style) {
+) : ViewGroup(context, attr, style), BigBoomAdapter.SelectedStatusCallback {
 
     private val patchList = ArrayList<String>()
     private val selectedPatchSet = TreeSet<Int>()
 
-    private val itemGroup = RecyclerView(context)
+    private val itemGroup = RecyclerView(context).apply {
+        layoutManager = FlexboxLayoutManager(context).apply {
+            flexDirection = FlexDirection.COLUMN;
+            justifyContent = JustifyContent.FLEX_START;
+        }
+    }
 
     private val quickSelectionHelper = QuickSelectionHelper(context).apply {
         onSelectedRangeAdd {
@@ -65,6 +73,14 @@ class BigBoomView(
             intRange.first,
             intRange.last - intRange.first
         )
+    }
+
+    fun bindItemProvider(itemProvider: PatchesItemProvider) {
+        itemGroup.adapter = BigBoomAdapter(patchList, this, itemProvider)
+    }
+
+    override fun isSelected(position: Int): Boolean {
+        return selectedPatchSet.contains(position)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
