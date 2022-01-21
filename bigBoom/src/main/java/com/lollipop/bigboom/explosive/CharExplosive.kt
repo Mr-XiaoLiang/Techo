@@ -1,4 +1,4 @@
-package com.lollipop.bigboom.impl
+package com.lollipop.bigboom.explosive
 
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
