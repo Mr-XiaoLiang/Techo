@@ -49,5 +49,5 @@ dependencies {
 
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop
-    implementation 'androidx.draganddrop:draganddrop:1.0.0-alpha02'
+//    implementation 'androidx.draganddrop:draganddrop:1.0.0-alpha02'
 }

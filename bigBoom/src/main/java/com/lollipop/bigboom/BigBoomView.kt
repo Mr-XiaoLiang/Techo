@@ -27,13 +27,16 @@ class BigBoomView(
     context: Context, attr: AttributeSet?, style: Int
 ) : ViewGroup(context, attr, style), BigBoomAdapter.SelectedStatusCallback {
 
+    constructor(context: Context, attr: AttributeSet?) : this(context, attr, 0)
+    constructor(context: Context) : this(context, null)
+
     private val patchList = ArrayList<String>()
     private val selectedPatchSet = TreeSet<Int>()
 
     private val itemGroup = RecyclerView(context).apply {
         layoutManager = FlexboxLayoutManager(context).apply {
-            flexDirection = FlexDirection.COLUMN;
-            justifyContent = JustifyContent.FLEX_START;
+            flexDirection = FlexDirection.ROW
+            justifyContent = JustifyContent.FLEX_START
         }
     }
 
@@ -53,6 +56,10 @@ class BigBoomView(
         getGroupHeight {
             height
         }
+    }
+
+    init {
+        addView(itemGroup, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     }
 
     private fun notifySelectedAdd(intRange: IntRange) {

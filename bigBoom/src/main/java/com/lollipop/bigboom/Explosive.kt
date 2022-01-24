@@ -20,4 +20,9 @@ interface Explosive {
      */
     fun putFuel(any: Any)
 
+    /**
+     * 清理所有缓存的数据
+     */
+    fun clear()
+
 }

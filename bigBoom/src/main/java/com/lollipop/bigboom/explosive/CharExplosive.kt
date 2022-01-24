@@ -14,11 +14,22 @@ class CharExplosive : Explosive {
 
     private val stringList = LinkedList<String>()
 
+    private val patchesList = ArrayList<String>()
+
+    private var isSrcChanged = true
+
     private fun putValue(value: String) {
+        isSrcChanged = true
         stringList.add(value)
     }
 
     override fun pilot(basket: Basket) {
+        if (!isSrcChanged) {
+            onUI {
+                basket.goodPatches(patchesList.toTypedArray())
+            }
+            return
+        }
         val values = LinkedList(stringList)
         doAsync({
             onUI {
@@ -35,6 +46,9 @@ class CharExplosive : Explosive {
                     }
                 }
             }
+            patchesList.clear()
+            patchesList.addAll(resultList)
+            isSrcChanged = false
             onUI {
                 basket.goodPatches(resultList.toTypedArray())
             }
@@ -47,6 +61,12 @@ class CharExplosive : Explosive {
         } else {
             putValue(any.toString())
         }
+    }
+
+    override fun clear() {
+        stringList.clear()
+        patchesList.clear()
+        isSrcChanged = true
     }
 
 }

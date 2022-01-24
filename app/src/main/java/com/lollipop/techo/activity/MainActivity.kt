@@ -1,16 +1,20 @@
 package com.lollipop.techo.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import com.lollipop.base.util.WindowInsetsHelper
-import com.lollipop.base.util.fixInsetsByPadding
-import com.lollipop.base.util.lazyBind
+import androidx.core.content.ContextCompat
+import com.lollipop.base.util.*
+import com.lollipop.bigboom.BigBoomManager
+import com.lollipop.bigboom.PresetExplosive
+import com.lollipop.bigboom.explosive.CharExplosive
+import com.lollipop.bigboom.item.RectanglePatchesItemProvider
 import com.lollipop.gallery.PhotoManager
 import com.lollipop.guide.GuideHelper
 import com.lollipop.guide.GuideStep
 import com.lollipop.guide.impl.OvalGuideStep
-import com.lollipop.techo.activity.HeaderActivity
+import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityMainBinding
 
 class MainActivity : HeaderActivity() {
@@ -35,6 +39,27 @@ class MainActivity : HeaderActivity() {
 //                    }
 //                }
 //            }
+
+        val bigBoomManager = BigBoomManager {
+            viewBinding.bigBoomView
+        }
+        viewBinding.bigBoomView.bindItemProvider(
+            RectanglePatchesItemProvider().apply {
+                selectedColor = ContextCompat.getColor(this@MainActivity, R.color.teal_700)
+                defaultColor = 0x30333333
+                selectedTextColor = Color.WHITE
+                defaultTextColor = 0xFF333333.toInt()
+                val dp3 = 3.dp2px
+                radius = dp3.toFloat()
+                margin.set(dp3, dp3, dp3, dp3)
+                padding.set(dp3, dp3, dp3, dp3)
+                textSize = 14.sp2px.toFloat()
+            }
+        )
+        bigBoomManager.startFlow()
+            .putFuel("startPermissionFlow(),permissionIs(PhotoManager.READ_PERMISSION),Toast.makeText(this, \"获取到photoSize张照片\", Toast.LENGTH_SHORT).show()")
+            .use(PresetExplosive.CHAR)
+            .fire()
 
         contentView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
 
