@@ -46,14 +46,15 @@ class MainActivity : HeaderActivity() {
         viewBinding.bigBoomView.bindItemProvider(
             RectanglePatchesItemProvider().apply {
                 selectedColor = ContextCompat.getColor(this@MainActivity, R.color.teal_700)
-                defaultColor = 0x30333333
                 selectedTextColor = Color.WHITE
+                defaultColor = 0x30333333
                 defaultTextColor = 0xFF333333.toInt()
                 val dp3 = 3.dp2px
                 radius = dp3.toFloat()
                 margin.set(dp3, dp3, dp3, dp3)
                 padding.set(dp3, dp3, dp3, dp3)
                 textSize = 14.sp2px.toFloat()
+                minWidth = 20.dp2px
             }
         )
         bigBoomManager.startFlow()

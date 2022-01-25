@@ -37,7 +37,6 @@ class BigBoomView(
             flexDirection = FlexDirection.ROW
             justifyContent = JustifyContent.FLEX_START
         }
-        isEnabled = false
     }
 
 //    private val quickSelectionHelper = QuickSelectionHelper(context).apply {
@@ -111,9 +110,7 @@ class BigBoomView(
             }
             DISABLE -> {}
         }
-        post {
-            itemGroup.adapter?.notifyDataSetChanged()
-        }
+        itemGroup.adapter?.notifyItemChanged(position)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -133,6 +130,9 @@ class BigBoomView(
         }
         defaultSelected.forEach {
             patchList[it].status = SELECTED
+        }
+        for (i in 1..10) {
+            patchList[i*i].status = SELECTED
         }
         notifyPatchesChanged()
     }

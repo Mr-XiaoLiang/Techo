@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Rect
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -29,6 +30,7 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
     var padding = Rect()
     var radius = 0F
     var textSize = 14F
+    var minWidth = 0
 
     override fun createHolder(parent: ViewGroup): PatchesHolder {
         return RectangleHolder.create(
@@ -41,7 +43,8 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
                 margin,
                 padding,
                 radius,
-                textSize
+                textSize,
+                minWidth
             )
         )
     }
@@ -55,6 +58,7 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
         val padding: Rect,
         val radius: Float,
         val textSize: Float,
+        val minWidth: Int
     )
 
     private class RectangleHolder private constructor(
@@ -75,7 +79,7 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
                 setRectangleMargin(option.margin)
                 setRectanglePadding(option.padding)
                 setTextSize(option.textSize)
-
+                setRectMinWidth(option.minWidth)
             }
         }
 
@@ -100,7 +104,8 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
         private val valueView = TextView(context)
 
         init {
-            addView(valueView)
+            addView(valueView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+            valueView.gravity = Gravity.CENTER
         }
 
         fun setRectangleMargin(rect: Rect) {
@@ -125,6 +130,10 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
 
         fun setText(value: String) {
             valueView.text = value
+        }
+
+        fun setRectMinWidth(value: Int) {
+            valueView.minWidth = value
         }
 
     }
