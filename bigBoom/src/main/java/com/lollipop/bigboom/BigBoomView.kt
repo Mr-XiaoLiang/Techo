@@ -8,14 +8,14 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import java.util.*
-import kotlin.collections.ArrayList
+import com.lollipop.bigboom.PatchesStatus.*
 import kotlin.math.abs
 
 /**
@@ -25,38 +25,38 @@ import kotlin.math.abs
  */
 class BigBoomView(
     context: Context, attr: AttributeSet?, style: Int
-) : ViewGroup(context, attr, style), BigBoomAdapter.SelectedStatusCallback {
+) : ViewGroup(context, attr, style){
 
     constructor(context: Context, attr: AttributeSet?) : this(context, attr, 0)
     constructor(context: Context) : this(context, null)
 
-    private val patchList = ArrayList<String>()
-    private val selectedPatchSet = TreeSet<Int>()
+    private val patchList = ArrayList<Patches>()
 
     private val itemGroup = RecyclerView(context).apply {
         layoutManager = FlexboxLayoutManager(context).apply {
             flexDirection = FlexDirection.ROW
             justifyContent = JustifyContent.FLEX_START
         }
+        isEnabled = false
     }
 
-    private val quickSelectionHelper = QuickSelectionHelper(context).apply {
-        onSelectedRangeAdd {
-            notifySelectedAdd(it)
-        }
-        onSelectedRangeReduce {
-            notifySelectedReduce(it)
-        }
-        getPositionByLocation { x, y ->
-            findSelectPosition(x, y)
-        }
-        notifyListScroll { x, y ->
-            itemGroup.scrollBy(x, y)
-        }
-        getGroupHeight {
-            height
-        }
-    }
+//    private val quickSelectionHelper = QuickSelectionHelper(context).apply {
+//        onSelectedRangeAdd {
+//            notifySelectedAdd(it)
+//        }
+//        onSelectedRangeReduce {
+//            notifySelectedReduce(it)
+//        }
+//        getPositionByLocation { x, y ->
+//            findSelectPosition(x, y)
+//        }
+//        notifyListScroll { x, y ->
+//            itemGroup.scrollBy(x, y)
+//        }
+//        getGroupHeight {
+//            height
+//        }
+//    }
 
     init {
         addView(itemGroup, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -64,7 +64,11 @@ class BigBoomView(
 
     private fun notifySelectedAdd(intRange: IntRange) {
         intRange.forEach {
-            selectedPatchSet.add(it)
+            patchList[it].let { patches ->
+                if (!patches.status.isDisable) {
+                    patches.status = SELECTED
+                }
+            }
         }
         itemGroup.adapter?.notifyItemRangeChanged(
             intRange.first,
@@ -74,7 +78,11 @@ class BigBoomView(
 
     private fun notifySelectedReduce(intRange: IntRange) {
         intRange.forEach {
-            selectedPatchSet.remove(it)
+            patchList[it].let { patches ->
+                if (!patches.status.isDisable) {
+                    patches.status = DEFAULT
+                }
+            }
         }
         itemGroup.adapter?.notifyItemRangeChanged(
             intRange.first,
@@ -83,11 +91,29 @@ class BigBoomView(
     }
 
     fun bindItemProvider(itemProvider: PatchesItemProvider) {
-        itemGroup.adapter = BigBoomAdapter(patchList, this, itemProvider)
+        itemGroup.adapter = BigBoomAdapter(patchList, itemProvider, ::onItemClick)
     }
 
-    override fun isSelected(position: Int): Boolean {
-        return selectedPatchSet.contains(position)
+    private fun onItemClick(position: Int) {
+        if (position < 0 || position >= patchList.size) {
+            return
+        }
+        val patches = patchList[position]
+        if (patches.status.isDisable) {
+            return
+        }
+        when (patches.status) {
+            SELECTED -> {
+                patches.status = DEFAULT
+            }
+            DEFAULT -> {
+                patches.status = SELECTED
+            }
+            DISABLE -> {}
+        }
+        post {
+            itemGroup.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -102,26 +128,29 @@ class BigBoomView(
 
     fun setPatches(value: Array<String>, defaultSelected: Array<Int> = emptyArray()) {
         patchList.clear()
-        patchList.addAll(value)
-        selectedPatchSet.clear()
-        selectedPatchSet.addAll(defaultSelected)
+        value.forEach {
+            patchList.add(Patches(it))
+        }
+        defaultSelected.forEach {
+            patchList[it].status = SELECTED
+        }
         notifyPatchesChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun notifyPatchesChanged() {
-        quickSelectionHelper.reset()
+//        quickSelectionHelper.reset()
         itemGroup.adapter?.notifyDataSetChanged()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return quickSelectionHelper.onTouchEvent(event) || super.onTouchEvent(event)
-    }
-
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return quickSelectionHelper.onInterceptTouchEvent(ev) || super.onInterceptTouchEvent(ev)
-    }
+//    @SuppressLint("ClickableViewAccessibility")
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        return quickSelectionHelper.onTouchEvent(event) || super.onTouchEvent(event)
+//    }
+//
+//    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+//        return quickSelectionHelper.onInterceptTouchEvent(ev) || super.onInterceptTouchEvent(ev)
+//    }
 
     private fun findSelectPosition(x: Float, y: Float): Int {
         val itemView = itemGroup.findChildViewUnder(x, y) ?: return -1
@@ -460,5 +489,49 @@ class BigBoomView(
         }
 
     }
+
+    private class BigBoomAdapter(
+        private val valueList: List<Patches>,
+        private val itemProvider: PatchesItemProvider,
+        private val itemClickListener: OnItemClickListener
+    ) : RecyclerView.Adapter<PatchesHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PatchesHolder {
+            return itemProvider.createHolder(parent).apply {
+                itemView.setOnClickListener(OnHolderClickListener(this, itemClickListener))
+            }
+        }
+
+        override fun onBindViewHolder(holder: PatchesHolder, position: Int) {
+            val patches = valueList[position]
+            holder.bind(patches.value, patches.status)
+        }
+
+        override fun getItemCount(): Int {
+            return valueList.size
+        }
+
+        private class OnHolderClickListener(
+            private val holder: PatchesHolder,
+            private val callback: OnItemClickListener
+        ) : OnClickListener {
+            override fun onClick(v: View?) {
+                if (v != holder.itemView) {
+                    return
+                }
+                callback.onItemClick(holder.adapterPosition)
+            }
+        }
+
+        fun interface OnItemClickListener {
+            fun onItemClick(position: Int)
+        }
+
+    }
+
+    private class Patches(
+        val value: String,
+        var status: PatchesStatus = DEFAULT
+    )
 
 }

@@ -18,7 +18,7 @@ abstract class PatchesHolder(view: View): RecyclerView.ViewHolder(view) {
         bindClickEvent()
     }
 
-    abstract fun bind(value: String, isSelected: Boolean)
+    abstract fun bind(value: String, status: PatchesStatus)
 
     fun callOnHolderClick() {
         onHolderClickListener?.onHolderClick(this)

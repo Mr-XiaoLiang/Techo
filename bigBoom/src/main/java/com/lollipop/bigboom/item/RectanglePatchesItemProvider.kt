@@ -14,6 +14,7 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.bigboom.PatchesHolder
 import com.lollipop.bigboom.PatchesItemProvider
+import com.lollipop.bigboom.PatchesStatus
 
 /**
  * 矩形的碎片内容提供者
@@ -78,9 +79,9 @@ class RectanglePatchesItemProvider : PatchesItemProvider {
             }
         }
 
-        override fun bind(value: String, isSelected: Boolean) {
+        override fun bind(value: String, status: PatchesStatus) {
             view.setText(value)
-            updateByStatus(isSelected)
+            updateByStatus(status.isSelected)
         }
 
         private fun updateByStatus(isSelected: Boolean) {
