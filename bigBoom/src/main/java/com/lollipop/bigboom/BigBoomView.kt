@@ -106,6 +106,27 @@ class BigBoomView(
         return array
     }
 
+    /**
+     * 获取选中范围
+     */
+    fun getSelectedRange(): List<IntRange> {
+        val array = ArrayList<IntRange>()
+        var lastIndex = -1
+        for (index in patchList.indices) {
+            if (patchList[index].status.isSelected) {
+                if (lastIndex < 0) {
+                    lastIndex = index
+                }
+            } else {
+                if (lastIndex >= 0 && index != 0) {
+                    array.add(IntRange(lastIndex, index - 1))
+                    lastIndex = -1
+                }
+            }
+        }
+        return array
+    }
+
     private fun onItemClick(position: Int) {
         if (position < 0 || position >= patchList.size) {
             return
@@ -144,6 +165,7 @@ class BigBoomView(
         defaultSelected.forEach {
             patchList[it].status = SELECTED
         }
+        // TODO 测试代码
         for (i in 1..10) {
             patchList[i*i].status = SELECTED
         }
