@@ -165,10 +165,6 @@ class BigBoomView(
         defaultSelected.forEach {
             patchList[it].status = SELECTED
         }
-        // TODO 测试代码
-        for (i in 1..10) {
-            patchList[i*i].status = SELECTED
-        }
         notifyPatchesChanged()
     }
 
