@@ -93,6 +93,19 @@ class BigBoomView(
         itemGroup.adapter = BigBoomAdapter(patchList, itemProvider, ::onItemClick)
     }
 
+    /**
+     * 获取被选中的字符串的集合
+     */
+    fun getSelectedValues(): List<String> {
+        val array = ArrayList<String>()
+        patchList.forEach {
+            if (it.status.isSelected) {
+                array.add(it.value)
+            }
+        }
+        return array
+    }
+
     private fun onItemClick(position: Int) {
         if (position < 0 || position >= patchList.size) {
             return
