@@ -144,7 +144,9 @@ class BigBoomView(
             }
             DISABLE -> {}
         }
-        itemGroup.adapter?.notifyItemChanged(position)
+        post {
+            itemGroup.adapter?.notifyItemChanged(position)
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
