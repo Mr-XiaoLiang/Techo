@@ -20,15 +20,48 @@ object TechoMode {
 
         val info = TechoInfo()
 
-        fun reset() {
-            loadStart()
+        private fun resetInfo() {
             info.id = NO_ID
             info.flag = TechoFlag()
             info.title = ""
             info.items.clear()
             initList()
+        }
+
+        fun reset() {
+            loadStart()
+            resetInfo()
             infoChanged(0, info.items.size)
             loadEnd()
+        }
+
+        fun update() {
+            loadStart()
+            doAsync {
+                if (info.id == NO_ID) {
+                    // 插入后更新id
+                    info.id = dbUtil.insertTecho(info)
+                } else {
+                    dbUtil.updateTecho(info)
+                }
+                onUI {
+                    loadEnd()
+                }
+            }
+        }
+
+        fun delete() {
+            loadStart()
+            doAsync {
+                if (info.id != NO_ID) {
+                    dbUtil.deleteTecho(info.id)
+                }
+                resetInfo()
+                onUI {
+                    infoChanged(0, info.items.size)
+                    loadEnd()
+                }
+            }
         }
 
         fun new() {
@@ -38,6 +71,7 @@ object TechoMode {
         fun load() {
             loadStart()
             if (info.id == NO_ID) {
+                resetInfo()
                 infoChanged(0, info.items.size)
                 loadEnd()
                 return

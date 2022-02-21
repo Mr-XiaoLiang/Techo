@@ -52,6 +52,19 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             }
             return getFloat(columnIndex)
         }
+
+        private fun selectLastId(table: String, db: SQLiteDatabase): Int {
+            try {
+                val sql = "SELECT last_insert_rowid() FROM $table"
+                val cursor = db.rawQuery(sql, null)
+                val rowId = cursor.getInt(0)
+                cursor.close()
+                return rowId
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            return 0
+        }
     }
 
     private val flagCache = ArrayList<TechoFlag>()
@@ -97,15 +110,15 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         return TechoTable.selectAll(readDb, pageIndex, pageSize)
     }
 
-    fun insertFlag(flag: TechoFlag) {
+    fun insertFlag(flag: TechoFlag): Int {
         synchronized(FlagTable) {
             flagCache.add(flag.copyTo())
-            FlagTable.insert(writeDb, flag)
+            return FlagTable.insert(writeDb, flag)
         }
     }
 
-    fun insertTecho(info: TechoInfo) {
-        TechoTable.insert(writeDb, info)
+    fun insertTecho(info: TechoInfo): Int {
+        return TechoTable.insert(writeDb, info)
     }
 
     fun updateFlag(flag: TechoFlag) {
@@ -200,14 +213,18 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return list
         }
 
-        fun insert(db: SQLiteDatabase, flag: TechoFlag) {
-            db.insert(
+        fun insert(db: SQLiteDatabase, flag: TechoFlag): Int {
+            val insert = db.insert(
                 NAME,
                 null,
                 ContentValues().apply {
                     put(Column.NAME, flag.name)
                     put(Column.COLOR, flag.color)
                 })
+            if (insert >= 0) {
+                return selectLastId(NAME, db)
+            }
+            return 0
         }
 
         fun update(db: SQLiteDatabase, flag: TechoFlag) {
@@ -324,8 +341,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return list
         }
 
-        fun insert(db: SQLiteDatabase, info: TechoInfo) {
-            db.insert(
+        fun insert(db: SQLiteDatabase, info: TechoInfo): Int {
+            val insert = db.insert(
                 NAME,
                 null,
                 ContentValues().apply {
@@ -333,6 +350,10 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                     put(Column.FLAG, info.flag.id)
                     put(Column.CONTENT, info.toJson().toString())
                 })
+            if (insert >= 0) {
+                return selectLastId(NAME, db)
+            }
+            return 0
         }
 
         fun update(db: SQLiteDatabase, info: TechoInfo) {
