@@ -22,7 +22,7 @@ import com.lollipop.techo.util.CircleAnimationGroup
 /**
  * 编辑 & 添加页
  */
-class TechoEditActivity : HeaderActivity() {
+class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
 
     companion object {
 
@@ -35,6 +35,10 @@ class TechoEditActivity : HeaderActivity() {
                 }
             )
         }
+    }
+
+    private val mode by lazy {
+        TechoMode.create(this).attach(this).buildDetailMode()
     }
 
     private val viewBinding: ActivityTechoEditBinding by lazyBind()
@@ -95,7 +99,7 @@ class TechoEditActivity : HeaderActivity() {
     }
 
     private fun initData() {
-        // TODO
+        mode.loadOrCreate(techoId)
     }
 
     private fun initMenuBtn() {
@@ -199,6 +203,18 @@ class TechoEditActivity : HeaderActivity() {
         val size = dataList.size
         dataList.add(newItem)
         viewBinding.contentListView.adapter?.notifyItemInserted(size)
+    }
+
+    override fun onLoadStart() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLoadEnd() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInfoChanged(start: Int, count: Int) {
+        TODO("Not yet implemented")
     }
 
     override fun onBackPressed() {

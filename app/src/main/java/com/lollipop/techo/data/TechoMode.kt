@@ -7,6 +7,39 @@ import java.lang.ref.WeakReference
 
 object TechoMode {
 
+    fun create(context: Context): Builder {
+        return Builder(context)
+    }
+
+    class Builder(private val context: Context) {
+        private var listener: StateListener? = null
+
+        fun attach(listener: StateListener): Builder {
+            this.listener = listener
+            return this
+        }
+
+        fun buildDetailMode(): Detail {
+            val lis = listener ?: EmptyListener()
+            return Detail(lis, context)
+        }
+
+        fun buildListMode(): List {
+            val lis = listener ?: EmptyListener()
+            return List(lis, context)
+        }
+
+        private class EmptyListener : StateListener {
+            override fun onLoadStart() {
+            }
+            override fun onLoadEnd() {
+            }
+            override fun onInfoChanged(start: Int, count: Int) {
+            }
+        }
+
+    }
+
     class Detail(
         listener: StateListener,
         context: Context
@@ -26,6 +59,15 @@ object TechoMode {
             info.title = ""
             info.items.clear()
             initList()
+        }
+
+        fun loadOrCreate(id: Int) {
+            if (id != NO_ID) {
+                info.id = id
+                load()
+            } else {
+                new()
+            }
         }
 
         fun reset() {
@@ -83,6 +125,8 @@ object TechoMode {
                     info.items.clear()
                     info.items.addAll(newInfo.items)
                     info.title = newInfo.title
+                } else {
+                    resetInfo()
                 }
                 initList()
                 onUI {
