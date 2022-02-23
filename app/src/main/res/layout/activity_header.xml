@@ -21,10 +21,10 @@
             app:toolbarId="@+id/toolbar">
 
             <ImageView
-                android:scaleType="centerCrop"
+                android:id="@+id/headerBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/headerBackground"/>
+                android:scaleType="centerCrop" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -38,14 +38,31 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
-        android:id="@+id/contentRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:id="@+id/contentRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:indicatorColor="@color/content_loading"
+            app:indicatorSize="24dp"
+            android:layout_margin="24dp"
+            android:id="@+id/contentLoadingView"
+            android:visibility="gone"
+            app:showDelay="300"
+            app:minHideDelay="300"/>
+    </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/floatingRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/floatingRoot"/>
+        android:layout_height="match_parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

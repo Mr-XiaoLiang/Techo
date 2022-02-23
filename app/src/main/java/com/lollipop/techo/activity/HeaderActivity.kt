@@ -3,6 +3,7 @@ package com.lollipop.techo.activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.lollipop.base.ui.BaseActivity
@@ -52,6 +53,15 @@ abstract class HeaderActivity : BaseActivity() {
             insets
         }
         loadHeader()
+        hideLoading()
+    }
+
+    protected fun showLoading() {
+        viewBinding.contentLoadingView.show()
+    }
+
+    protected fun hideLoading() {
+        viewBinding.contentLoadingView.hide()
     }
 
     private fun loadHeader() {

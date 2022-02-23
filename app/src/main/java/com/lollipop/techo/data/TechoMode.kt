@@ -1,9 +1,13 @@
 package com.lollipop.techo.data
 
 import android.content.Context
+import com.lollipop.base.list.OnItemMoveCallback
+import com.lollipop.base.list.OnItemSwipeCallback
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
 import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
 
 object TechoMode {
 
@@ -34,7 +38,7 @@ object TechoMode {
             }
             override fun onLoadEnd() {
             }
-            override fun onInfoChanged(start: Int, count: Int) {
+            override fun onInfoChanged(start: Int, count: Int, type: ChangedType) {
             }
         }
 
@@ -43,7 +47,7 @@ object TechoMode {
     class Detail(
         listener: StateListener,
         context: Context
-    ) : BaseMode(listener) {
+    ) : BaseMode(listener), OnItemMoveCallback, OnItemSwipeCallback {
 
         companion object {
             private const val NO_ID = 0
@@ -51,6 +55,9 @@ object TechoMode {
 
         private val dbUtil = TechoDbUtil(context)
 
+        /**
+         * 手帐详情的主体
+         */
         val info = TechoInfo()
 
         private fun resetInfo() {
@@ -61,6 +68,9 @@ object TechoMode {
             initList()
         }
 
+        /**
+         * 尝试加载一个手帐，如果加载失败，那么会创建一个新的
+         */
         fun loadOrCreate(id: Int) {
             if (id != NO_ID) {
                 info.id = id
@@ -70,13 +80,92 @@ object TechoMode {
             }
         }
 
+        /**
+         * 插入一个新的内容
+         * 这个内容是空的
+         */
+        fun insert(type: TechoItemType) {
+            val newItem = when (type) {
+                TechoItemType.Empty -> {
+                    return
+                }
+                TechoItemType.Text -> {
+                    TextItem()
+                }
+                TechoItemType.Number -> {
+                    NumberItem()
+                }
+                TechoItemType.CheckBox -> {
+                    CheckBoxItem()
+                }
+                TechoItemType.Photo -> {
+                    PhotoItem()
+                }
+                TechoItemType.Split -> {
+                    SplitItem()
+                }
+            }
+            val start = info.items.size
+            info.items.add(newItem)
+            infoChanged(start, 1, ChangedType.Insert)
+            update()
+        }
+
+        /**
+         * 修改一个内容
+         */
+        fun modify(item: BaseTechoItem) {
+            val index = info.items.indexOf(item)
+            if (index >= 0) {
+                infoChanged(index, 1, ChangedType.Modify)
+                update()
+            }
+        }
+
+        /**
+         * 对所有内容进行格式化
+         * 主要是针对带有序号的项进行序号重排
+         */
+        fun format() {
+            loadStart()
+            doAsync {
+                formatData()
+                onUI {
+                    loadEnd()
+                }
+            }
+        }
+
+        private fun formatData() {
+            var number = 1
+            info.items.forEach {
+                when (it) {
+                    is NumberItem -> {
+                        it.number = number
+                        number++
+                    }
+                    is SplitItem -> {
+                        number = 1
+                    }
+                }
+            }
+        }
+
+        /**
+         * 重置
+         * 将会重置所有数据为新建状态
+         */
         fun reset() {
             loadStart()
             resetInfo()
-            infoChanged(0, info.items.size)
+            infoChanged(0, info.items.size, ChangedType.Full)
             loadEnd()
         }
 
+        /**
+         * 更新
+         * 将会把当前数据更新并同步到数据库
+         */
         fun update() {
             loadStart()
             doAsync {
@@ -92,6 +181,9 @@ object TechoMode {
             }
         }
 
+        /**
+         * 删除当前整个手帐本身
+         */
         fun delete() {
             loadStart()
             doAsync {
@@ -100,21 +192,27 @@ object TechoMode {
                 }
                 resetInfo()
                 onUI {
-                    infoChanged(0, info.items.size)
+                    infoChanged(0, info.items.size, ChangedType.Delete)
                     loadEnd()
                 }
             }
         }
 
-        fun new() {
+        /**
+         * 创建一个新的手帐
+         */
+        private fun new() {
             reset()
         }
 
-        fun load() {
+        /**
+         * 加载手帐信息
+         */
+        private fun load() {
             loadStart()
             if (info.id == NO_ID) {
                 resetInfo()
-                infoChanged(0, info.items.size)
+                infoChanged(0, info.items.size, ChangedType.Full)
                 loadEnd()
                 return
             }
@@ -129,8 +227,9 @@ object TechoMode {
                     resetInfo()
                 }
                 initList()
+                formatData()
                 onUI {
-                    infoChanged(0, info.items.size)
+                    infoChanged(0, info.items.size, ChangedType.Full)
                     loadEnd()
                 }
             }
@@ -139,6 +238,32 @@ object TechoMode {
         private fun initList() {
             if (info.items.isEmpty()) {
                 info.items.add(TextItem())
+            }
+        }
+
+        /**
+         * 当手帐中的item顺序被调整时触发
+         */
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            val indices = info.items.indices
+            return if (srcPosition in indices && targetPosition in indices) {
+                Collections.swap(info.items, srcPosition, targetPosition)
+                infoChanged(srcPosition, targetPosition, ChangedType.Move)
+                update()
+                true
+            } else {
+                false
+            }
+        }
+
+        /**
+         * 当手帐中的item被移除时触发
+         */
+        override fun onSwipe(adapterPosition: Int) {
+            if (adapterPosition in info.items.indices) {
+                info.items.removeAt(adapterPosition)
+                infoChanged(adapterPosition, 1, ChangedType.Delete)
+                update()
             }
         }
 
@@ -170,7 +295,7 @@ object TechoMode {
                 val count = newList.size
                 info.addAll(newList)
                 onUI {
-                    infoChanged(start, count)
+                    infoChanged(start, count, ChangedType.Insert)
                     loadEnd()
                 }
             }
@@ -197,8 +322,8 @@ object TechoMode {
             listenerWrapper.get()?.onLoadEnd()
         }
 
-        protected fun infoChanged(start: Int, count: Int) {
-            listenerWrapper.get()?.onInfoChanged(start, count)
+        protected fun infoChanged(start: Int, count: Int, type: ChangedType) {
+            listenerWrapper.get()?.onInfoChanged(start, count, type)
         }
 
     }
@@ -206,7 +331,15 @@ object TechoMode {
     interface StateListener {
         fun onLoadStart()
         fun onLoadEnd()
-        fun onInfoChanged(start: Int, count: Int)
+        fun onInfoChanged(start: Int, count: Int, type: ChangedType)
+    }
+
+    enum class ChangedType {
+        Full,
+        Modify,
+        Insert,
+        Delete,
+        Move
     }
 
 }

@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.data.*
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
@@ -44,8 +46,6 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     private val viewBinding: ActivityTechoEditBinding by lazyBind()
 
     private val floatingBinding: ActivityTechoEditFloatingBinding by lazyBind()
-
-    private val dataList: MutableList<BaseTechoItem> = ArrayList()
 
     override val contentView: View
         get() = viewBinding.root
@@ -80,19 +80,15 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
             layoutManager = LinearLayoutManager(
                 this@TechoEditActivity, RecyclerView.VERTICAL, false
             )
-            val listAdapter = DetailListAdapter(dataList).apply {
+            val listAdapter = DetailListAdapter(mode.info.items).apply {
                 changeEditMode(true)
             }
             adapter = listAdapter
             attachTouchHelper()
                 .canDrag(true)
                 .canSwipe(true)
-                .onMoveWithList(dataList) { srcPosition, targetPosition ->
-                    listAdapter.notifyItemMoved(srcPosition, targetPosition)
-                }
-                .onSwipeWithList(dataList) {
-                    listAdapter.notifyItemRemoved(it)
-                }
+                .onMove(mode)
+                .onSwipe(mode)
                 .onStatusChange(::onItemTouchStateChanged)
                 .apply()
         }
@@ -176,45 +172,44 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
         viewHolder: RecyclerView.ViewHolder?,
         status: ItemTouchState
     ) {
-        // TODO("Not yet implemented")
+        if (status == ItemTouchState.IDLE) {
+            mode.format()
+        }
     }
 
     private fun addItemByType() {
-        val newItem = when (quickAddType) {
-            Empty -> {
-                return
-            }
-            Text -> {
-                TextItem()
-            }
-            Number -> {
-                NumberItem()
-            }
-            CheckBox -> {
-                CheckBoxItem()
-            }
-            Photo -> {
-                PhotoItem()
-            }
-            Split -> {
-                SplitItem()
-            }
-        }
-        val size = dataList.size
-        dataList.add(newItem)
-        viewBinding.contentListView.adapter?.notifyItemInserted(size)
+        mode.insert(quickAddType)
     }
 
     override fun onLoadStart() {
-        TODO("Not yet implemented")
+        showLoading()
     }
 
     override fun onLoadEnd() {
-        TODO("Not yet implemented")
+        hideLoading()
     }
 
-    override fun onInfoChanged(start: Int, count: Int) {
-        TODO("Not yet implemented")
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
+        viewBinding.contentListView.apply {
+            when (type) {
+                Full -> {
+                    adapter?.notifyDataSetChanged()
+                }
+                Modify -> {
+                    adapter?.notifyItemRangeChanged(start, count)
+                }
+                Insert -> {
+                    adapter?.notifyItemRangeInserted(start, count)
+                }
+                Delete -> {
+                    adapter?.notifyItemRangeRemoved(start, count)
+                }
+                Move -> {
+                    adapter?.notifyItemMoved(start, count)
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
