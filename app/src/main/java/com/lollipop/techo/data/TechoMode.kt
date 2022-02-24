@@ -49,10 +49,6 @@ object TechoMode {
         context: Context
     ) : BaseMode(listener), OnItemMoveCallback, OnItemSwipeCallback {
 
-        companion object {
-            private const val NO_ID = 0
-        }
-
         private val dbUtil = TechoDbUtil(context)
 
         /**
@@ -301,6 +297,27 @@ object TechoMode {
             }
         }
 
+        fun onNewInsert(id: Int) {
+            if (id == NO_ID) {
+                return
+            }
+            loadStart()
+            doAsync {
+                val techo = dbUtil.selectTechoById(id)
+                var isInsert = false
+                if (techo != null) {
+                    info.add(0, techo)
+                    isInsert = true
+                }
+                onUI {
+                    if (isInsert) {
+                        infoChanged(0, 1, ChangedType.Insert)
+                    }
+                    loadEnd()
+                }
+            }
+        }
+
         fun refresh() {
             pageIndex = DEFAULT_PAGE_INDEX
             loadNext()
@@ -311,6 +328,10 @@ object TechoMode {
     open class BaseMode(
         listener: StateListener
     ) {
+
+        companion object {
+            const val NO_ID = 0
+        }
 
         private val listenerWrapper = WeakReference(listener)
 
