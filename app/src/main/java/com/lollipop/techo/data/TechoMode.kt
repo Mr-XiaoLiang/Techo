@@ -268,7 +268,7 @@ object TechoMode {
     class List(
         listener: StateListener,
         context: Context
-    ) : BaseMode(listener) {
+    ) : BaseMode(listener), OnItemSwipeCallback {
 
         companion object {
             private const val DEFAULT_PAGE_INDEX = 0
@@ -318,9 +318,17 @@ object TechoMode {
             }
         }
 
+
         fun refresh() {
             pageIndex = DEFAULT_PAGE_INDEX
             loadNext()
+        }
+
+        override fun onSwipe(adapterPosition: Int) {
+            if (adapterPosition in info.indices) {
+                info.removeAt(adapterPosition)
+                infoChanged(adapterPosition, 1, ChangedType.Delete)
+            }
         }
 
     }
