@@ -8,16 +8,16 @@ import androidx.core.content.ContextCompat
 import com.lollipop.base.util.*
 import com.lollipop.bigboom.BigBoomManager
 import com.lollipop.bigboom.PresetExplosive
-import com.lollipop.bigboom.explosive.CharExplosive
 import com.lollipop.bigboom.item.RectanglePatchesItemProvider
 import com.lollipop.gallery.PhotoManager
 import com.lollipop.guide.GuideHelper
 import com.lollipop.guide.GuideStep
 import com.lollipop.guide.impl.OvalGuideStep
 import com.lollipop.techo.R
+import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityMainBinding
 
-class MainActivity : HeaderActivity() {
+class MainActivity : HeaderActivity(), TechoMode.StateListener {
 
     private val viewBinding: ActivityMainBinding by lazyBind()
 
@@ -25,6 +25,10 @@ class MainActivity : HeaderActivity() {
         get() = viewBinding.root
 
     private val photoManager = PhotoManager()
+
+    private val mode by lazy {
+        TechoMode.create(this).attach(this).buildListMode()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +96,18 @@ class MainActivity : HeaderActivity() {
                 ).show()
         }
 
+    }
+
+    override fun onLoadStart() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLoadEnd() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
+        TODO("Not yet implemented")
     }
 
 }
