@@ -1,4 +1,4 @@
-package com.lollipop.techo.list
+package com.lollipop.techo.list.detail
 
 import android.view.ViewGroup
 import com.lollipop.techo.data.SplitItem

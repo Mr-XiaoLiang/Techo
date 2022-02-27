@@ -18,7 +18,7 @@ import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
-import com.lollipop.techo.list.DetailListAdapter
+import com.lollipop.techo.list.detail.DetailListAdapter
 import com.lollipop.techo.util.CircleAnimationGroup
 
 /**
