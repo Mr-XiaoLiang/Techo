@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.data.TechoMode
+import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityMainBinding
 import com.lollipop.techo.list.home.HomeListAdapter
 
@@ -37,19 +39,40 @@ class MainActivity : HeaderActivity(),
     }
 
     override fun onLoadStart() {
-        TODO("Not yet implemented")
+        if (viewBinding.swipeRefreshLayout.isRefreshing) {
+            return
+        }
+        showLoading()
     }
 
     override fun onLoadEnd() {
-        TODO("Not yet implemented")
+        viewBinding.swipeRefreshLayout.isRefreshing = false
+        hideLoading()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
-        TODO("Not yet implemented")
+        when (type) {
+            Full -> {
+                viewBinding.techoListView.adapter?.notifyDataSetChanged()
+            }
+            Modify -> {
+                viewBinding.techoListView.adapter?.notifyItemRangeChanged(start, count)
+            }
+            Insert -> {
+                viewBinding.techoListView.adapter?.notifyItemRangeInserted(start, count)
+            }
+            Delete -> {
+                viewBinding.techoListView.adapter?.notifyItemRangeRemoved(start, count)
+            }
+            Move -> {
+                viewBinding.techoListView.adapter?.notifyItemMoved(start, count)
+            }
+        }
     }
 
     override fun onRefresh() {
-        TODO("Not yet implemented")
+        mode.refresh()
     }
 
 }
