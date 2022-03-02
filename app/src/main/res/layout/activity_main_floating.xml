@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/newTechoBtn"
+        android:layout_margin="16dp"
+        app:icon="@drawable/ic_baseline_add_24"
+        android:text="@string/new_techo"
+        app:iconTint="@color/fabIcon"
+        android:textColor="@color/fabIcon"
+        app:backgroundTint="@color/fabBackground"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityMainBinding
+import com.lollipop.techo.databinding.ActivityMainFloatingBinding
 import com.lollipop.techo.list.home.HomeListAdapter
 
 class MainActivity : HeaderActivity(),
@@ -17,9 +19,13 @@ class MainActivity : HeaderActivity(),
     TechoMode.StateListener {
 
     private val viewBinding: ActivityMainBinding by lazyBind()
+    private val floatingBinding: ActivityMainFloatingBinding by lazyBind()
 
     override val contentView: View
         get() = viewBinding.root
+
+    override val floatingView: View
+        get() = floatingBinding.root
 
     private val mode by lazy {
         TechoMode.create(this).attach(this).buildListMode()
@@ -36,6 +42,17 @@ class MainActivity : HeaderActivity(),
             this, RecyclerView.VERTICAL, false
         )
         viewBinding.techoListView.adapter = HomeListAdapter(mode.info)
+
+        floatingBinding.newTechoBtn.onClick {
+            requestActivity<TechoEditActivity> {
+                if (it.isOk) {
+                    val newId = TechoEditActivity.getResultTechoId(it.data)
+                    if (newId != TechoEditActivity.NO_ID) {
+                        mode.onNewInsert(newId)
+                    }
+                }
+            }
+        }
     }
 
     override fun onLoadStart() {

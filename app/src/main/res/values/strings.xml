@@ -5,4 +5,5 @@
     <string name="denied">拒绝授权</string>
     <string name="hint_text_input">请输入内容</string>
     <string name="done">完成</string>
+    <string name="new_techo">新手帐</string>
 </resources>

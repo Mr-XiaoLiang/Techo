@@ -30,13 +30,19 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
 
         private const val PARAMETER_TECHO_ID = "PARAMETER_TECHO_ID"
 
-        fun start(context: Context, infoId: Int = 0) {
-            context.startActivity(
-                Intent(context, TechoEditActivity::class.java).apply {
-                    putExtra(PARAMETER_TECHO_ID, infoId)
-                }
-            )
+        private const val RESULT_TECHO_ID = "RESULT_TECHO_ID"
+
+        const val NO_ID = 0
+
+        fun putParams(intent: Intent, infoId: Int = 0): Intent {
+            return intent.putExtra(PARAMETER_TECHO_ID, infoId)
         }
+
+        fun getResultTechoId(intent: Intent?): Int {
+            intent ?: return NO_ID
+            return intent.getIntExtra(RESULT_TECHO_ID, NO_ID)
+        }
+
     }
 
     private val mode by lazy {
