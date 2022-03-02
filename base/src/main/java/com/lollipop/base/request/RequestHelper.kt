@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 class RequestHelper private constructor(private val requestOwner: RequestOwner) {
 
     companion object {
+
         private const val DEFAULT_REQUEST_ID = 233
 
         fun with(activity: Activity): RequestHelper {

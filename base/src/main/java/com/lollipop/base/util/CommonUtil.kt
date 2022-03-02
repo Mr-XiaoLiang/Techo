@@ -652,6 +652,10 @@ fun View.tryInvisible() {
     }
 }
 
+fun View.onClick(callback: (View) -> Unit) {
+    this.setOnClickListener(callback)
+}
+
 fun Int.smallerThen(o: Int): Int {
     if (this > o) {
         return o

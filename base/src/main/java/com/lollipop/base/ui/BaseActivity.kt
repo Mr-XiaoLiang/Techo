@@ -1,11 +1,14 @@
 package com.lollipop.base.ui
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.provider.BackPressProvider
+import com.lollipop.base.request.RequestCallback
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.util.BackPressProviderHelper
@@ -16,7 +19,7 @@ import com.lollipop.base.util.BackPressProviderHelper
  * 基础的Activity
  * 提供基础的实现和能力
  */
-open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLauncher{
+open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLauncher {
 
     private val backPressProviderHelper = BackPressProviderHelper()
 
@@ -31,8 +34,9 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         event ?: return super.onKeyUp(keyCode, event)
         if (keyCode == KeyEvent.KEYCODE_BACK
-                && event.isTracking
-                && !event.isCanceled) {
+            && event.isTracking
+            && !event.isCanceled
+        ) {
             if (dispatchBackEvent()) {
                 return true
             }
@@ -46,6 +50,16 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    protected inline fun <reified T : Activity> requestActivity(
+        paramsProvider: ((Intent) -> Unit) = {},
+        callback: RequestCallback
+    ) {
+        requestActivity(
+            Intent(this, T::class.java).apply(paramsProvider),
+            callback
+        )
     }
 
     private fun dispatchBackEvent(): Boolean {
