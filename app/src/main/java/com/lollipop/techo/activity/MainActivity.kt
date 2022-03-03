@@ -69,21 +69,22 @@ class MainActivity : HeaderActivity(),
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
+        val adapter = viewBinding.techoListView.adapter ?: return
         when (type) {
             Full -> {
-                viewBinding.techoListView.adapter?.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
             }
             Modify -> {
-                viewBinding.techoListView.adapter?.notifyItemRangeChanged(start, count)
+                adapter.notifyItemRangeChanged(start, count)
             }
             Insert -> {
-                viewBinding.techoListView.adapter?.notifyItemRangeInserted(start, count)
+                adapter.notifyItemRangeInserted(start, count)
             }
             Delete -> {
-                viewBinding.techoListView.adapter?.notifyItemRangeRemoved(start, count)
+                adapter.notifyItemRangeRemoved(start, count)
             }
             Move -> {
-                viewBinding.techoListView.adapter?.notifyItemMoved(start, count)
+                adapter.notifyItemMoved(start, count)
             }
         }
     }

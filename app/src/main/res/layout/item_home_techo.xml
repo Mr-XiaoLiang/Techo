@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/dateView">
+        <TextView
+            android:id="@+id/monthNumberView"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:text="12"
+            android:gravity="start|top"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/dayNumberView"
+            app:layout_constraintTop_toTopOf="@id/dayNumberView"
+            android:textSize="80sp"
+            android:alpha="0.5"/>
+
+        <TextView
+            android:textColor="#333"
+            android:id="@+id/dayNumberView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:text="17"
+            android:gravity="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="40sp" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
