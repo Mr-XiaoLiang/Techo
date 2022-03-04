@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import androidx.appcompat.app.AlertDialog
 import com.lollipop.base.request.PermissionFlow
+import com.lollipop.techo.util.FontHelper
 
 /**
  * @author lollipop
@@ -15,6 +16,7 @@ class LApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PermissionFlow.globalRationaleCallback = PermissionRationaleCallback()
+        FontHelper.init(this)
     }
 
     class PermissionRationaleCallback : PermissionFlow.RationaleCallback {
