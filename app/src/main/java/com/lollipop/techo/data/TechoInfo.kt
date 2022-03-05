@@ -16,7 +16,9 @@ data class TechoInfo(
     var id: Int = 0,
     var title: String = "",
     var flag: TechoFlag = TechoFlag(),
-    val items: MutableList<BaseTechoItem> = mutableListOf()
+    val items: MutableList<BaseTechoItem> = mutableListOf(),
+    var createTime: Long = 0,
+    var updateTime: Long = 0
 ) {
 
     companion object {
@@ -26,6 +28,9 @@ data class TechoInfo(
         private const val KEY_FLAG_COLOR = "flagColor"
         private const val KEY_FLAG_NAME = "flagName"
         private const val KEY_ITEMS = "items"
+        private const val KEY_CREATE_TIME = "createTime"
+        private const val KEY_UPDATE_TIME = "updateTime"
+
 
         fun fromJson(json: String): TechoInfo {
             val info = TechoInfo()
@@ -35,6 +40,8 @@ data class TechoInfo(
                 info.flag.id = jsonObject.optInt(KEY_FLAG_ID, 0)
                 info.flag.name = jsonObject.optString(KEY_FLAG_NAME)
                 info.flag.color = jsonObject.optInt(KEY_FLAG_COLOR, Color.BLACK)
+                info.createTime = jsonObject.optLong(KEY_CREATE_TIME)
+                info.updateTime = jsonObject.optLong(KEY_UPDATE_TIME)
                 val optJSONArray = jsonObject.optJSONArray(KEY_ITEMS)
                 if (optJSONArray != null) {
                     for (index in 0 until optJSONArray.length()) {
@@ -79,6 +86,8 @@ data class TechoInfo(
                 put(KEY_FLAG_ID, info.flag.id)
                 put(KEY_FLAG_NAME, info.flag.name)
                 put(KEY_FLAG_COLOR, info.flag.color)
+                put(KEY_CREATE_TIME, info.createTime)
+                put(KEY_UPDATE_TIME, info.updateTime)
                 val itemArray = JSONArray()
                 info.items.forEach {
                     itemArray.put(it.toJson())
