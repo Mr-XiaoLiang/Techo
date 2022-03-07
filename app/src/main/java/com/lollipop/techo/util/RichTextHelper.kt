@@ -15,6 +15,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.dp2px
+import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TextItem
@@ -81,7 +82,7 @@ class RichTextHelper {
      * 添加标准的富文本信息
      */
     fun addRichInfo(
-        info: List<TextItem>,
+        info: List<BaseTextItem>,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {
         if (option.font.isNone) {
