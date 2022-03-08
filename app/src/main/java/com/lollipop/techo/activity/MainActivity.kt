@@ -6,6 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.lollipop.base.list.LoadMoreHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoMode
@@ -31,6 +32,10 @@ class MainActivity : HeaderActivity(),
         TechoMode.create(this).attach(this).buildListMode()
     }
 
+    private val loadMoreHelper by lazy {
+        LoadMoreHelper.bind(viewBinding.techoListView, ::onLoadMore)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
@@ -42,6 +47,9 @@ class MainActivity : HeaderActivity(),
             this, RecyclerView.VERTICAL, false
         )
         viewBinding.techoListView.adapter = HomeListAdapter(mode.info)
+
+        // 调用触发实例化
+        loadMoreHelper
 
         floatingBinding.newTechoBtn.onClick {
             requestActivity<TechoEditActivity> {
@@ -87,10 +95,15 @@ class MainActivity : HeaderActivity(),
                 adapter.notifyItemMoved(start, count)
             }
         }
+        loadMoreHelper.isLoading = false
     }
 
     override fun onRefresh() {
         mode.refresh()
+    }
+
+    private fun onLoadMore() {
+        mode.loadNext()
     }
 
 }
