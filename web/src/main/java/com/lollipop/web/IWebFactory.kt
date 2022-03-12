@@ -7,10 +7,10 @@ import java.lang.RuntimeException
 
 object IWebFactory {
 
-    fun create(view: View): IWeb {
+    fun create(host: WebHost, view: View): IWeb {
         when (view) {
             is WebView -> {
-                return DefaultIWeb(view)
+                return DefaultIWeb(host, view)
             }
             else -> {
                 throw RuntimeException("未知的WebView")
