@@ -1,10 +1,5 @@
 package com.lollipop.web.bridge
 
-import android.content.Context
-import android.graphics.Canvas
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import com.lollipop.web.IWeb
 import com.lollipop.web.WebHost
 

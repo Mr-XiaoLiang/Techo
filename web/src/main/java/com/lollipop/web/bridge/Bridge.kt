@@ -19,6 +19,9 @@ interface Bridge {
      * @param host 上下文信息
      * @param web Web容器的对象
      * @param params 方法的参数
+     *
+     * 但是对于直接注册的JavascriptInterface而言，它是不一样的
+     * 并不能直接使用addJavascriptInterface时期生效，他只是一个规范后的工具类
      */
     fun invoke(host: WebHost, web: IWeb, params: Array<String>)
 

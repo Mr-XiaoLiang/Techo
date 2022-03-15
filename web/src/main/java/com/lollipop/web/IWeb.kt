@@ -2,6 +2,8 @@ package com.lollipop.web
 
 import android.view.View
 import com.lollipop.web.bridge.Bridge
+import com.lollipop.web.bridge.BridgeRoot
+import com.lollipop.web.listener.ProgressListener
 
 interface IWeb {
 
@@ -9,8 +11,10 @@ interface IWeb {
 
     val view: View
 
-    fun addBridge(bridge: Bridge)
+    fun addBridgeRoot(bridge: BridgeRoot)
 
     fun load(url: String)
+
+    fun setProgressListener(listener: ProgressListener?)
 
 }
