@@ -3,6 +3,8 @@ package com.lollipop.web
 import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
+import com.lollipop.web.listener.ProgressListener
+import com.lollipop.web.listener.TitleListener
 
 /**
  * 放弃继承和包装，采用组合组件的形式来提供Web的支持能力
@@ -89,5 +91,14 @@ class WebHelper(private val iWeb: IWeb) {
         init()
         iWeb.load(url)
     }
+
+    fun onProgressChanged(listener: ProgressListener) {
+        iWeb.setProgressListener(listener)
+    }
+
+    fun onTitleChanged(listener: TitleListener) {
+        iWeb.setTitleListener(listener)
+    }
+
 
 }

@@ -2,7 +2,7 @@ package com.lollipop.web.listener
 
 import com.lollipop.web.IWeb
 
-interface TitleListener {
+fun interface TitleListener {
 
     /**
      * 标题发生变化时

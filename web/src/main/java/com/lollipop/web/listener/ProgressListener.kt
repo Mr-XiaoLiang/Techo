@@ -2,7 +2,7 @@ package com.lollipop.web.listener
 
 import com.lollipop.web.IWeb
 
-interface ProgressListener {
+fun interface ProgressListener {
 
     /**
      * 加载进度
