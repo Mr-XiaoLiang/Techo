@@ -9,6 +9,7 @@ import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.impl.default.WebChromeClientImpl
 import com.lollipop.web.impl.default.WebViewClientImpl
 import com.lollipop.web.listener.ProgressListener
+import com.lollipop.web.listener.TitleListener
 
 class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
@@ -36,6 +37,11 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
     override fun setProgressListener(listener: ProgressListener?) {
         chromeClientImpl.progressListener = listener
+    }
+
+    override fun setTitleListener(listener: TitleListener?) {
+        chromeClientImpl.titleListener = listener
+        viewClientImpl.titleListener = listener
     }
 
 }

@@ -4,6 +4,7 @@ import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.listener.ProgressListener
+import com.lollipop.web.listener.TitleListener
 
 interface IWeb {
 
@@ -16,5 +17,7 @@ interface IWeb {
     fun load(url: String)
 
     fun setProgressListener(listener: ProgressListener?)
+
+    fun setTitleListener(listener: TitleListener?)
 
 }
