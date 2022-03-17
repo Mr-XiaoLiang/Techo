@@ -56,22 +56,24 @@ class WebHelper(private val iWeb: IWeb) {
 
     private val bridgeRootList = ArrayList<BridgeRoot>()
 
-    fun addBridgeRoot(bridge: BridgeRoot) {
+    fun addBridgeRoot(bridge: BridgeRoot): WebHelper {
         iWeb.addBridgeRoot(bridge)
+        return this
     }
 
-    fun addBridge(rootName: String, bridge: Bridge) {
+    fun addBridge(rootName: String, bridge: Bridge): WebHelper {
         this.bridgeRootList.forEach {
             if (it.name == rootName) {
                 it.addBridge(bridge)
-                return
+                return this
             }
         }
+        return this
     }
 
-    fun init() {
+    fun init(): WebHelper {
         if (isInit) {
-            return
+            return this
         }
         isInit = true
         globeBridgeRoot.forEach {
@@ -85,19 +87,23 @@ class WebHelper(private val iWeb: IWeb) {
                 }
             }
         }
+        return this
     }
 
-    fun loadUrl(url: String) {
+    fun loadUrl(url: String): WebHelper {
         init()
         iWeb.load(url)
+        return this
     }
 
-    fun onProgressChanged(listener: ProgressListener) {
+    fun onProgressChanged(listener: ProgressListener): WebHelper {
         iWeb.setProgressListener(listener)
+        return this
     }
 
-    fun onTitleChanged(listener: TitleListener) {
+    fun onTitleChanged(listener: TitleListener): WebHelper {
         iWeb.setTitleListener(listener)
+        return this
     }
 
 
