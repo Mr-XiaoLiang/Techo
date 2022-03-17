@@ -24,6 +24,13 @@
             android:id="@+id/doneBtn"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:id="@+id/progressBar"
+        android:max="100"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
