@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.lazyBind
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.web.WebHelper
-import com.lollipop.web.host.ActivityHost
+import com.lollipop.web.WebHost
 
-class MainActivity : AppCompatActivity(), ActivityHost {
+class MainActivity : AppCompatActivity(), WebHost {
 
     private val binding: ActivityMainBinding by lazyBind()
 
