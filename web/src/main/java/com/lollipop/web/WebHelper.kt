@@ -90,10 +90,19 @@ class WebHelper(private val iWeb: IWeb) {
         return this
     }
 
-    fun loadUrl(url: String): WebHelper {
+    fun loadUrl(url: String, fixUrl: Boolean = true): WebHelper {
         init()
-        iWeb.load(url)
+        val realUrl = if (fixUrl) {
+            urlFix(url)
+        } else {
+            url
+        }
+        iWeb.load(realUrl)
         return this
+    }
+
+    fun urlFix(url: String): String {
+        TODO()
     }
 
     fun onProgressChanged(listener: ProgressListener): WebHelper {
