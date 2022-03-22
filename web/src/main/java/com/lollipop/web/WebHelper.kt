@@ -111,7 +111,7 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
         return this
     }
 
-    fun loadUrl(url: String, fixUrl: Boolean = true): WebHelper {
+    fun loadUrl(url: String): WebHelper {
         init()
         getCompletion().complement(url, this)
         return this
