@@ -3,18 +3,27 @@ package com.lollipop.web
 import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
+import com.lollipop.web.completion.UrlCompletion
+import com.lollipop.web.completion.UrlCompletionResult
+import com.lollipop.web.completion.impl.EmptyCompletion
 import com.lollipop.web.listener.ProgressListener
 import com.lollipop.web.listener.TitleListener
 
 /**
  * 放弃继承和包装，采用组合组件的形式来提供Web的支持能力
  */
-class WebHelper(private val iWeb: IWeb) {
+class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
 
     companion object {
 
         private val globeBridgeRoot = ArrayList<Class<out BridgeRoot>>()
         private val globeBridge = HashMap<String, ArrayList<Class<out Bridge>>>()
+
+        private var globeUrlCompletion: Class<out UrlCompletion> = EmptyCompletion::class.java
+
+        fun setGlobeUrlCompletion(clazz: Class<out UrlCompletion>) {
+            globeUrlCompletion = clazz
+        }
 
         fun bind(host: WebHost, view: View): WebHelper {
             return WebHelper(IWebFactory.create(host, view))
@@ -49,12 +58,21 @@ class WebHelper(private val iWeb: IWeb) {
 
     private var isInit = false
 
+    private var urlCompletion: UrlCompletion? = null
+
+    private val defaultCompletion by lazy { EmptyCompletion() }
+
     val canRegisterBridgeRoot: Boolean
         get() {
             return !isInit
         }
 
     private val bridgeRootList = ArrayList<BridgeRoot>()
+
+    fun setUrlCompletion(completion: UrlCompletion): WebHelper {
+        this.urlCompletion = completion
+        return this
+    }
 
     fun addBridgeRoot(bridge: BridgeRoot): WebHelper {
         iWeb.addBridgeRoot(bridge)
@@ -87,22 +105,20 @@ class WebHelper(private val iWeb: IWeb) {
                 }
             }
         }
+        if (urlCompletion == null) {
+            urlCompletion = globeUrlCompletion.newInstance()
+        }
         return this
     }
 
     fun loadUrl(url: String, fixUrl: Boolean = true): WebHelper {
         init()
-        val realUrl = if (fixUrl) {
-            urlFix(url)
-        } else {
-            url
-        }
-        iWeb.load(realUrl)
+        getCompletion().complement(url, this)
         return this
     }
 
-    fun urlFix(url: String): String {
-        TODO()
+    private fun getCompletion(): UrlCompletion {
+        return urlCompletion ?: defaultCompletion
     }
 
     fun onProgressChanged(listener: ProgressListener): WebHelper {
@@ -115,5 +131,8 @@ class WebHelper(private val iWeb: IWeb) {
         return this
     }
 
+    override fun onCompletionResult(url: String) {
+        iWeb.load(url)
+    }
 
 }
