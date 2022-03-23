@@ -8,11 +8,14 @@ import com.lollipop.web.completion.UrlCompletionResult
 import com.lollipop.web.completion.impl.EmptyCompletion
 import com.lollipop.web.listener.ProgressListener
 import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.search.SearchEngine
+import com.lollipop.web.search.SearchEngineCallback
+import com.lollipop.web.search.impl.Bing
 
 /**
  * 放弃继承和包装，采用组合组件的形式来提供Web的支持能力
  */
-class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
+class WebHelper(private val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
 
     companion object {
 
@@ -21,8 +24,14 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
 
         private var globeUrlCompletion: Class<out UrlCompletion> = EmptyCompletion::class.java
 
+        private var globeSearchEngine: Class<out SearchEngine> = Bing::class.java
+
         fun setGlobeUrlCompletion(clazz: Class<out UrlCompletion>) {
             globeUrlCompletion = clazz
+        }
+
+        fun setGlobeSearchEngine(clazz: Class<out SearchEngine>) {
+            globeSearchEngine = clazz
         }
 
         fun bind(host: WebHost, view: View): WebHelper {
@@ -60,7 +69,11 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
 
     private var urlCompletion: UrlCompletion? = null
 
+    private var searchEngine: SearchEngine? = null
+
     private val defaultCompletion by lazy { EmptyCompletion() }
+
+    private val defaultSearchEngine by lazy { Bing() }
 
     val canRegisterBridgeRoot: Boolean
         get() {
@@ -108,6 +121,9 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
         if (urlCompletion == null) {
             urlCompletion = globeUrlCompletion.newInstance()
         }
+        if (searchEngine != null) {
+            searchEngine = globeSearchEngine.newInstance()
+        }
         return this
     }
 
@@ -121,6 +137,10 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
         return urlCompletion ?: defaultCompletion
     }
 
+    private fun getSearchEngine(): SearchEngine {
+        return searchEngine ?: defaultSearchEngine
+    }
+
     fun onProgressChanged(listener: ProgressListener): WebHelper {
         iWeb.setProgressListener(listener)
         return this
@@ -131,8 +151,20 @@ class WebHelper(private val iWeb: IWeb) : UrlCompletionResult {
         return this
     }
 
-    override fun onCompletionResult(url: String) {
+    override fun onLoadUrl(url: String) {
         iWeb.load(url)
+    }
+
+    override fun onSearch(keyword: String) {
+        getSearchEngine().getSearchUrl(keyword, this)
+    }
+
+    override fun onSearchEngineResult(url: String) {
+        onLoadUrl(url)
+    }
+
+    override fun onSearchRelevantResult(values: List<String>) {
+        // TODO("Not yet implemented")
     }
 
 }

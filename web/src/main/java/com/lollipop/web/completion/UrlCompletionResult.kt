@@ -1,7 +1,9 @@
 package com.lollipop.web.completion
 
-fun interface UrlCompletionResult {
+interface UrlCompletionResult {
 
-    fun onCompletionResult(url: String)
+    fun onLoadUrl(url: String)
+
+    fun onSearch(keyword: String)
 
 }
