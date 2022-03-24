@@ -3,6 +3,7 @@ package com.lollipop.browser
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.lollipop.base.util.closeBoard
 import com.lollipop.base.util.lazyBind
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.web.WebHelper
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity(), WebHost {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.doneBtn.setOnClickListener {
+            binding.urlInput.closeBoard()
             webHelper.loadUrl(binding.urlInput.text?.toString() ?: "")
         }
     }
