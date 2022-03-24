@@ -6,8 +6,10 @@ import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.completion.UrlCompletion
 import com.lollipop.web.completion.UrlCompletionResult
 import com.lollipop.web.completion.impl.EmptyCompletion
+import com.lollipop.web.listener.GeolocationPermissionsListener
 import com.lollipop.web.listener.ProgressListener
 import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.listener.WindowListener
 import com.lollipop.web.search.SearchEngine
 import com.lollipop.web.search.SearchEngineCallback
 import com.lollipop.web.search.impl.Bing
@@ -148,6 +150,21 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
 
     fun onTitleChanged(listener: TitleListener): WebHelper {
         iWeb.setTitleListener(listener)
+        return this
+    }
+
+    fun setGeolocationPermissionsListener(listener: GeolocationPermissionsListener): WebHelper {
+        iWeb.setGeolocationPermissionsListener(listener)
+        return this
+    }
+
+    fun setWindowListener(listener: WindowListener): WebHelper {
+        iWeb.setWindowListener(listener)
+        return this
+    }
+
+    fun setConfig(config: IWebConfig): WebHelper {
+        iWeb.setConfig(config)
         return this
     }
 

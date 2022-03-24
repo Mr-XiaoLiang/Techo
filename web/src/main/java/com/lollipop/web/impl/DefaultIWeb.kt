@@ -14,10 +14,7 @@ import com.lollipop.web.WebHost
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.impl.default.WebChromeClientImpl
 import com.lollipop.web.impl.default.WebViewClientImpl
-import com.lollipop.web.listener.GeolocationPermissionsListener
-import com.lollipop.web.listener.ProgressListener
-import com.lollipop.web.listener.TitleListener
-import com.lollipop.web.listener.WindowListener
+import com.lollipop.web.listener.*
 
 class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
@@ -58,6 +55,10 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
     override fun setWindowListener(listener: WindowListener?) {
         chromeClientImpl.windowListener = listener
+    }
+
+    override fun setHintProvider(provider: HintProvider?) {
+        chromeClientImpl.hintProvider = provider
     }
 
     override val canGoBack: Boolean

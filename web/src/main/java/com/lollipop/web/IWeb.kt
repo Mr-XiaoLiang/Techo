@@ -3,10 +3,7 @@ package com.lollipop.web
 import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
-import com.lollipop.web.listener.GeolocationPermissionsListener
-import com.lollipop.web.listener.ProgressListener
-import com.lollipop.web.listener.TitleListener
-import com.lollipop.web.listener.WindowListener
+import com.lollipop.web.listener.*
 
 interface IWeb {
 
@@ -25,6 +22,8 @@ interface IWeb {
     fun setGeolocationPermissionsListener(listener: GeolocationPermissionsListener?)
 
     fun setWindowListener(listener: WindowListener?)
+
+    fun setHintProvider(provider: HintProvider?)
 
     val canGoBack: Boolean
 

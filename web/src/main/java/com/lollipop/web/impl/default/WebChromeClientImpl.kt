@@ -1,9 +1,8 @@
 package com.lollipop.web.impl.default
 
+import android.graphics.Bitmap
 import android.os.Message
-import android.webkit.GeolocationPermissions
-import android.webkit.WebChromeClient
-import android.webkit.WebView
+import android.webkit.*
 import com.lollipop.web.IWeb
 import com.lollipop.web.listener.*
 
@@ -17,6 +16,8 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
 
     var windowListener: WindowListener? = null
 
+    var hintProvider: HintProvider? = null
+
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
         if (iWeb.view === view) {
@@ -29,6 +30,91 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         if (iWeb.view === view) {
             titleListener?.onTitleChanged(iWeb, title ?: "")
         }
+    }
+
+    override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
+        super.onReceivedIcon(view, icon)
+        if (iWeb.view === view) {
+            titleListener?.onIconChanged(iWeb, icon)
+        }
+    }
+
+    override fun onPermissionRequest(request: PermissionRequest?) {
+        super.onPermissionRequest(request)
+    }
+
+    override fun onPermissionRequestCanceled(request: PermissionRequest?) {
+        super.onPermissionRequestCanceled(request)
+    }
+
+    override fun onJsPrompt(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        defaultValue: String?,
+        result: JsPromptResult?
+    ): Boolean {
+        if (view === iWeb.view) {
+            return hintProvider?.prompt(
+                iWeb,
+                url ?: "",
+                message ?: "",
+                defaultValue ?: "",
+                PromptResultWrapper(result)
+            ) ?: super.onJsPrompt(view, url, message, defaultValue, result)
+        }
+        return false
+    }
+
+    override fun onJsAlert(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean {
+        if (view === iWeb.view) {
+            return hintProvider?.alert(
+                iWeb,
+                url ?: "",
+                message ?: "",
+                ConfirmResultWrapper(result)
+            ) ?: super.onJsAlert(view, url, message, result)
+        }
+        return false
+    }
+
+    override fun onJsBeforeUnload(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean {
+        if (view === iWeb.view) {
+            return hintProvider?.beforeUnload(
+                iWeb,
+                url ?: "",
+                message ?: "",
+                ConfirmResultWrapper(result)
+            ) ?: super.onJsBeforeUnload(view, url, message, result)
+        }
+        return false
+    }
+
+    override fun onJsConfirm(
+        view: WebView?,
+        url: String?,
+        message: String?,
+        result: JsResult?
+    ): Boolean {
+        if (view === iWeb.view) {
+            return hintProvider?.confirm(
+                iWeb,
+                url ?: "",
+                message ?: "",
+                ConfirmResultWrapper(result)
+            ) ?: super.onJsConfirm(view, url, message, result)
+        }
+        return false
     }
 
     override fun onGeolocationPermissionsShowPrompt(
@@ -90,6 +176,30 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
                 transport.webView = view
                 resultMsg.sendToTarget()
             }
+        }
+    }
+
+    private class PromptResultWrapper(
+        private val jsResult: JsPromptResult?
+    ) : HintProvider.PromptResult {
+        override fun cancel() {
+            jsResult?.cancel()
+        }
+
+        override fun confirm(result: String) {
+            jsResult?.confirm(result)
+        }
+    }
+
+    private class ConfirmResultWrapper(
+        private val jsResult: JsResult?
+    ) : HintProvider.AlertResult, HintProvider.ConfirmResult {
+        override fun cancel() {
+            jsResult?.cancel()
+        }
+
+        override fun confirm() {
+            jsResult?.confirm()
         }
     }
 
