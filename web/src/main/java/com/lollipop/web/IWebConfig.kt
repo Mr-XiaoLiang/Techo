@@ -20,11 +20,6 @@ class IWebConfig {
     var javaScriptEnabled = false
 
     /**
-     * 支持插件
-     */
-    var pluginsEnabled = false
-
-    /**
      * 将图片调整到适合webView的大小
      */
     var useWideViewPort = true
