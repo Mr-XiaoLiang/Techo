@@ -1,7 +1,5 @@
 package com.lollipop.web
 
-import android.webkit.WebSettings
-
 class IWebConfig {
 
     companion object {
@@ -9,9 +7,11 @@ class IWebConfig {
         const val FONT_SIZE_DEFAULT = 16
         const val FONT_SIZE_MIN = 8
         val FONT_SIZE_RANGE = 1..72
+        const val TEXT_ZOOM = 100
         const val FONT_FAMILY_CURSIVE = "cursive"
         const val FONT_FAMILY_FANTASY = "fantasy"
         const val FONT_FAMILY_MONOSPACE = "monospace"
+        const val FONT_FAMILY_SANS_SERIF = "sans-serif"
     }
 
     /**
@@ -110,6 +110,21 @@ class IWebConfig {
     var fixedFontFamily = FONT_FAMILY_MONOSPACE
 
     /**
+     * Sets the sans-serif font family name. The default is "sans-serif".
+     */
+    var sansSerifFontFamily = FONT_FAMILY_SANS_SERIF
+
+    /**
+     * Sets the serif font family name. The default is "sans-serif".
+     */
+    var serifFontFamily = FONT_FAMILY_SANS_SERIF
+
+    /**
+     * Sets the standard font family name. The default is "sans-serif".
+     */
+    var standardFontFamily = FONT_FAMILY_SANS_SERIF
+
+    /**
      * 启用数据库功能
      */
     var databaseEnabled = true
@@ -184,6 +199,33 @@ class IWebConfig {
      * WebView.requestFocus(int, android.graphics.Rect)
      */
     var needInitialFocus = true
+
+    /**
+     * 设置是否支持离屏渲染
+     * 它生效的前提是被附加在一个window上
+     * 但是请注意，它会增加很大的消耗，因此请保证以下两点：
+     * WebView 大小不应大于设备屏幕大小。
+     * 将此模式的使用限制为少量 WebView。 将它用于可见的 WebView 和即将被动画化为可见的 WebView。
+     */
+    var offscreenPreRaster = false
+
+    /**
+     * 是否启用安全浏览
+     * 安全浏览允许 WebView 通过验证链接来防止恶意软件和网络钓鱼攻击。
+     */
+    var safeBrowsingEnabled = true
+
+    /**
+     * 设置 WebView 是否支持多窗口。
+     * 如果设置为 true，则 WebChromeClient.onCreateWindow 必须由主机应用程序实现。
+     * 默认值为false。
+     */
+    var supportMultipleWindows = false
+
+    /**
+     * 以百分比设置页面的文本缩放。 默认值为 100。
+     */
+    var textZoom = TEXT_ZOOM
 
     /**
      * 内容混合模式

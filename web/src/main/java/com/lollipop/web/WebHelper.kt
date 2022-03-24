@@ -15,7 +15,7 @@ import com.lollipop.web.search.impl.Bing
 /**
  * 放弃继承和包装，采用组合组件的形式来提供Web的支持能力
  */
-class WebHelper(private val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
+class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
 
     companion object {
 

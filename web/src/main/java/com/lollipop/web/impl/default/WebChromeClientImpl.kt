@@ -1,13 +1,11 @@
 package com.lollipop.web.impl.default
 
+import android.os.Message
 import android.webkit.GeolocationPermissions
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import com.lollipop.web.IWeb
-import com.lollipop.web.listener.GeolocationPermissionsListener
-import com.lollipop.web.listener.GeolocationPermissionsResult
-import com.lollipop.web.listener.ProgressListener
-import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.listener.*
 
 class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
 
@@ -16,6 +14,8 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
     var titleListener: TitleListener? = null
 
     var geolocationPermissionsListener: GeolocationPermissionsListener? = null
+
+    var windowListener: WindowListener? = null
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
@@ -45,6 +45,29 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         geolocationPermissionsListener?.abandon()
     }
 
+    override fun onCreateWindow(
+        view: WebView?,
+        isDialog: Boolean,
+        isUserGesture: Boolean,
+        resultMsg: Message?
+    ): Boolean {
+        if (iWeb.view == view && resultMsg != null) {
+            return windowListener?.onCrete(
+                iWeb,
+                isDialog,
+                isUserGesture,
+                WindowCreateResultWrapper(resultMsg)
+            ) ?: false
+        }
+        return false
+    }
+
+    override fun onCloseWindow(window: WebView?) {
+        if (iWeb.view == window) {
+            windowListener?.onClose(iWeb)
+        }
+    }
+
     private class GeolocationPermissionsResultWrapper(
         private val callback: GeolocationPermissions.Callback?
     ) : GeolocationPermissionsResult {
@@ -55,7 +78,19 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         ) {
             callback?.invoke(origin, allow, retain)
         }
+    }
 
+    private class WindowCreateResultWrapper(
+        private val resultMsg: Message
+    ) : WindowListener.WindowCreateResult {
+        override fun onWebCreated(iWeb: IWeb) {
+            val transport = resultMsg.obj
+            val view = iWeb.view
+            if (transport is WebView.WebViewTransport && view is WebView) {
+                transport.webView = view
+                resultMsg.sendToTarget()
+            }
+        }
     }
 
 }

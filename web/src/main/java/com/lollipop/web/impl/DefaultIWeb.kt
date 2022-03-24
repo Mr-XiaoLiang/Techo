@@ -12,6 +12,7 @@ import com.lollipop.web.impl.default.WebViewClientImpl
 import com.lollipop.web.listener.GeolocationPermissionsListener
 import com.lollipop.web.listener.ProgressListener
 import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.listener.WindowListener
 
 class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
@@ -48,6 +49,10 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
     override fun setGeolocationPermissionsListener(listener: GeolocationPermissionsListener?) {
         chromeClientImpl.geolocationPermissionsListener = listener
+    }
+
+    override fun setWindowListener(listener: WindowListener?) {
+        chromeClientImpl.windowListener = listener
     }
 
     override val canGoBack: Boolean
