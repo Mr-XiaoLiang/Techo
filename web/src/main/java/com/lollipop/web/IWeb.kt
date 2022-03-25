@@ -25,6 +25,8 @@ interface IWeb {
 
     fun setHintProvider(provider: HintProvider?)
 
+    fun setLogPrinter(printer: LogPrinter?)
+
     val canGoBack: Boolean
 
     val canGoForward: Boolean

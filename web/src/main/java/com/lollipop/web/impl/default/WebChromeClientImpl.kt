@@ -2,7 +2,9 @@ package com.lollipop.web.impl.default
 
 import android.graphics.Bitmap
 import android.os.Message
+import android.util.Log
 import android.webkit.*
+import android.webkit.ConsoleMessage.MessageLevel.*
 import com.lollipop.web.IWeb
 import com.lollipop.web.listener.*
 
@@ -17,6 +19,8 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
     var windowListener: WindowListener? = null
 
     var hintProvider: HintProvider? = null
+
+    var logPrinter: LogPrinter = DefaultLogPrinter()
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
@@ -37,6 +41,26 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         if (iWeb.view === view) {
             titleListener?.onIconChanged(iWeb, icon)
         }
+    }
+
+    override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+        consoleMessage ?: return super.onConsoleMessage(consoleMessage)
+        logPrinter.log(
+            LogPrinter.LogInfo(
+                consoleMessage.message() ?: "",
+                consoleMessage.sourceId() ?: "",
+                consoleMessage.lineNumber() ?: 0,
+                when (consoleMessage.messageLevel()) {
+                    TIP -> LogPrinter.LogLevel.TIP
+                    LOG -> LogPrinter.LogLevel.LOG
+                    WARNING -> LogPrinter.LogLevel.WARNING
+                    ERROR -> LogPrinter.LogLevel.ERROR
+                    DEBUG -> LogPrinter.LogLevel.DEBUG
+                    else -> LogPrinter.LogLevel.LOG
+                }
+            )
+        )
+        return true
     }
 
     override fun onPermissionRequest(request: PermissionRequest?) {
@@ -201,6 +225,37 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         override fun confirm() {
             jsResult?.confirm()
         }
+    }
+
+    private class DefaultLogPrinter : LogPrinter {
+        override fun log(info: LogPrinter.LogInfo) {
+            Log.println(
+                getPriority(info.level),
+                "Web-Console",
+                "source${info.sourceId}-line${info.lineNumber}: ${info.message}"
+            )
+        }
+
+        private fun getPriority(level: LogPrinter.LogLevel): Int {
+            return when (level) {
+                LogPrinter.LogLevel.TIP -> {
+                    Log.VERBOSE
+                }
+                LogPrinter.LogLevel.LOG -> {
+                    Log.INFO
+                }
+                LogPrinter.LogLevel.WARNING -> {
+                    Log.WARN
+                }
+                LogPrinter.LogLevel.ERROR -> {
+                    Log.ERROR
+                }
+                LogPrinter.LogLevel.DEBUG -> {
+                    Log.DEBUG
+                }
+            }
+        }
+
     }
 
 }

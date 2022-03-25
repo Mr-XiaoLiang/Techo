@@ -61,6 +61,10 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
         chromeClientImpl.hintProvider = provider
     }
 
+    override fun setLogPrinter(printer: LogPrinter?) {
+        chromeClientImpl.logPrinter = printer
+    }
+
     override val canGoBack: Boolean
         get() {
             return webView.canGoBack()
