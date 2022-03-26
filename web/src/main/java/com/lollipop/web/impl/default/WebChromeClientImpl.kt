@@ -1,8 +1,10 @@
 package com.lollipop.web.impl.default
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Message
 import android.util.Log
+import android.view.View
 import android.webkit.*
 import android.webkit.ConsoleMessage.MessageLevel.*
 import com.lollipop.web.IWeb
@@ -21,6 +23,8 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
     var hintProvider: HintProvider? = null
 
     var logPrinter: LogPrinter = DefaultLogPrinter()
+
+    var customViewListener: CustomViewListener? = null
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
@@ -41,6 +45,25 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
         if (iWeb.view === view) {
             titleListener?.onIconChanged(iWeb, icon)
         }
+    }
+
+    override fun onShowFileChooser(
+        webView: WebView?,
+        filePathCallback: ValueCallback<Array<Uri>>?,
+        fileChooserParams: FileChooserParams?
+    ): Boolean {
+        // TODO
+        return super.onShowFileChooser(webView, filePathCallback, fileChooserParams)
+    }
+
+    override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+        customViewListener?.onShowCustomView(
+            view, CustomViewCallbackWrapper(callback)
+        ) ?: super.onShowCustomView(view, callback)
+    }
+
+    override fun onHideCustomView() {
+        customViewListener?.onHideCustomView() ?: super.onHideCustomView()
     }
 
     override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
@@ -256,6 +279,14 @@ class WebChromeClientImpl(private val iWeb: IWeb) : WebChromeClient() {
             }
         }
 
+    }
+
+    private class CustomViewCallbackWrapper(
+        private val callback: CustomViewCallback?
+    ) : CustomViewListener.CustomViewCallback {
+        override fun onCustomViewHidden() {
+            callback?.onCustomViewHidden()
+        }
     }
 
 }

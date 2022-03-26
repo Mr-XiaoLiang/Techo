@@ -1,7 +1,6 @@
 package com.lollipop.web
 
 import android.view.View
-import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.listener.*
 
@@ -25,7 +24,9 @@ interface IWeb {
 
     fun setHintProvider(provider: HintProvider?)
 
-    fun setLogPrinter(printer: LogPrinter?)
+    fun setLogPrinter(printer: LogPrinter)
+
+    fun setCustomViewListener(listener: CustomViewListener?)
 
     val canGoBack: Boolean
 
@@ -38,5 +39,11 @@ interface IWeb {
     fun goBackOrForward(steps: Int)
 
     fun setConfig(config: IWebConfig)
+
+    fun onResume()
+
+    fun onPause()
+
+    fun onDestroy()
 
 }

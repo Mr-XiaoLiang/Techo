@@ -61,8 +61,12 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
         chromeClientImpl.hintProvider = provider
     }
 
-    override fun setLogPrinter(printer: LogPrinter?) {
+    override fun setLogPrinter(printer: LogPrinter) {
         chromeClientImpl.logPrinter = printer
+    }
+
+    override fun setCustomViewListener(listener: CustomViewListener?) {
+        chromeClientImpl.customViewListener = listener
     }
 
     override val canGoBack: Boolean
@@ -164,6 +168,18 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        webView.onResume()
+    }
+
+    override fun onPause() {
+        webView.onPause()
+    }
+
+    override fun onDestroy() {
+        webView.destroy()
     }
 
 }
