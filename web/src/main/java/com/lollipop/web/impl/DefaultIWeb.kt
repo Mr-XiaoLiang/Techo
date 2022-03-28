@@ -69,6 +69,14 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
         chromeClientImpl.customViewListener = listener
     }
 
+    override fun setDownloadListener(listener: DownloadListener?) {
+        if (listener == null) {
+            webView.setDownloadListener(null)
+        } else {
+            webView.setDownloadListener(DownloadListenerWrapper(listener))
+        }
+    }
+
     override val canGoBack: Boolean
         get() {
             return webView.canGoBack()
@@ -180,6 +188,27 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
     override fun onDestroy() {
         webView.destroy()
+    }
+
+    private class DownloadListenerWrapper(
+        private val listener: DownloadListener
+    ) : android.webkit.DownloadListener {
+        override fun onDownloadStart(
+            url: String?,
+            userAgent: String?,
+            contentDisposition: String?,
+            mimetype: String?,
+            contentLength: Long
+        ) {
+            listener.createDownload(
+                url ?: "",
+                userAgent ?: "",
+                contentDisposition ?: "",
+                mimetype ?: "",
+                contentLength
+            )
+        }
+
     }
 
 }

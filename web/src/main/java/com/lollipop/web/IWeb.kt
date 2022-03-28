@@ -28,6 +28,8 @@ interface IWeb {
 
     fun setCustomViewListener(listener: CustomViewListener?)
 
+    fun setDownloadListener(listener: DownloadListener?)
+
     val canGoBack: Boolean
 
     val canGoForward: Boolean
