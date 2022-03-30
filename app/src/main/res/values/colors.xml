@@ -21,4 +21,6 @@
     <color name="optionDialogBackground">#FFFFFFFF</color>
     <color name="optionDialogItemText">#333</color>
     <color name="optionDialogItemIcon">#FFFFFFFF</color>
+
+    <color name="splashBackground">#FFF</color>
 </resources>
