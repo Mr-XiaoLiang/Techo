@@ -1,5 +1,6 @@
 package com.lollipop.web
 
+import android.graphics.Bitmap
 import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeRoot
@@ -153,6 +154,10 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
         return this
     }
 
+    fun onTitleChanged(run: SimpleTitleListener.() -> Unit): WebHelper {
+        return onTitleChanged(SimpleTitleListener().apply { run() })
+    }
+
     fun setGeolocationPermissionsListener(listener: GeolocationPermissionsListener): WebHelper {
         iWeb.setGeolocationPermissionsListener(listener)
         return this
@@ -182,6 +187,29 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
 
     override fun onSearchRelevantResult(values: List<String>) {
         // TODO("Not yet implemented")
+    }
+
+    class SimpleTitleListener : TitleListener {
+
+        private var onTitleChangedCallback: ((iWeb: IWeb, title: String) -> Unit)? = null
+        private var onIconChangedCallback: ((iWeb: IWeb, icon: Bitmap?) -> Unit)? = null
+
+        override fun onTitleChanged(iWeb: IWeb, title: String) {
+            onTitleChangedCallback?.invoke(iWeb, title)
+        }
+
+        override fun onIconChanged(iWeb: IWeb, icon: Bitmap?) {
+            onIconChangedCallback?.invoke(iWeb, icon)
+        }
+
+        fun onTitleChanged(callback: ((iWeb: IWeb, title: String) -> Unit)?) {
+            this.onTitleChangedCallback = callback
+        }
+
+        fun onIconChanged(callback: ((iWeb: IWeb, icon: Bitmap?) -> Unit)?) {
+            this.onIconChangedCallback = callback
+        }
+
     }
 
 }

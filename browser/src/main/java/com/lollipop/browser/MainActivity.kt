@@ -15,8 +15,10 @@ class MainActivity : AppCompatActivity(), WebHost {
 
     private val webHelper by lazy {
         WebHelper.bind(this, binding.webView)
-            .onTitleChanged { _, title ->
-                Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
+            .onTitleChanged {
+                onTitleChanged { iWeb, title ->
+                    Toast.makeText(this@MainActivity, title, Toast.LENGTH_SHORT).show()
+                }
             }.onProgressChanged { _, progress ->
                 binding.progressBar.progress = progress
             }
