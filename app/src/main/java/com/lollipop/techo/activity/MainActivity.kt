@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lollipop.base.list.LoadMoreHelper
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoMode
@@ -61,6 +63,9 @@ class MainActivity : HeaderActivity(),
                 }
             }
         }
+
+        floatingBinding.root.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
+        viewBinding.root.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
     }
 
     override fun onLoadStart() {

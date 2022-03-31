@@ -3,7 +3,6 @@ package com.lollipop.techo.activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.lollipop.base.ui.BaseActivity
@@ -41,17 +40,7 @@ abstract class HeaderActivity : BaseActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        viewBinding.appBar.fixInsetsByPadding { _, _, insets ->
-            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
-            WindowInsetsHelper.setMargin(
-                viewBinding.toolbar,
-                insetsValue.left,
-                insetsValue.top,
-                insetsValue.right,
-                0
-            )
-            insets
-        }
+        viewBinding.appBar.fixInsetsByPadding(WindowInsetsHelper.Edge.HEADER)
         loadHeader()
         hideLoading()
     }
