@@ -12,6 +12,7 @@ import com.lollipop.base.list.*
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onUI
 import com.lollipop.techo.data.*
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.data.TechoMode.ChangedType.*
@@ -101,7 +102,9 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     }
 
     private fun initData() {
-        mode.loadOrCreate(techoId)
+        onUI {
+            mode.loadOrCreate(techoId)
+        }
     }
 
     private fun initMenuBtn() {

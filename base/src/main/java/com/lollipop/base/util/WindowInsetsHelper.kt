@@ -21,7 +21,8 @@ import kotlin.math.max
 class WindowInsetsHelper(
     val applyType: ApplyType,
     val edge: Edge = Edge.ALL,
-    private val insetsListener: OnWindowInsetsChangedListener? = null
+    private val insetsListener: OnWindowInsetsChangedListener? = null,
+    private val targetView: View? = null
 ) : View.OnApplyWindowInsetsListener {
 
     companion object {
@@ -106,7 +107,7 @@ class WindowInsetsHelper(
             ApplyType.Margin -> {
                 insetsValue.basePlus(baseMargin, edge)
                 setMargin(
-                    v,
+                    targetView ?: v,
                     insetsValue.left,
                     insetsValue.top,
                     insetsValue.right,
@@ -116,7 +117,7 @@ class WindowInsetsHelper(
             ApplyType.Padding -> {
                 insetsValue.basePlus(basePadding, edge)
                 setPadding(
-                    v,
+                    targetView ?: v,
                     insetsValue.left,
                     insetsValue.top,
                     insetsValue.right,
@@ -222,11 +223,13 @@ class WindowInsetsHelper(
 
 fun View.fixInsetsByPadding(
     edge: WindowInsetsHelper.Edge = WindowInsetsHelper.Edge.ALL,
+    target: View? = null,
 ): WindowInsetsHelper {
     return setWindowInsetsHelper(
         WindowInsetsHelper.ApplyType.Padding,
         edge,
-        null
+        null,
+        target
     ).apply {
         snapshotPadding(this@fixInsetsByPadding)
     }
@@ -238,7 +241,8 @@ fun View.fixInsetsByPadding(
     return setWindowInsetsHelper(
         WindowInsetsHelper.ApplyType.Padding,
         WindowInsetsHelper.Edge.ALL,
-        listener
+        listener,
+        null
     ).apply {
         snapshotPadding(this@fixInsetsByPadding)
     }
@@ -246,11 +250,13 @@ fun View.fixInsetsByPadding(
 
 fun View.fixInsetsByMargin(
     edge: WindowInsetsHelper.Edge = WindowInsetsHelper.Edge.ALL,
+    target: View? = null
 ): WindowInsetsHelper {
     return setWindowInsetsHelper(
         WindowInsetsHelper.ApplyType.Margin,
         edge,
-        null
+        null,
+        target
     ).apply {
         snapshotMargin(this@fixInsetsByMargin)
     }
@@ -262,7 +268,8 @@ fun View.fixInsetsByMargin(
     return setWindowInsetsHelper(
         WindowInsetsHelper.ApplyType.Margin,
         WindowInsetsHelper.Edge.ALL,
-        listener
+        listener,
+        null
     ).apply {
         snapshotMargin(this@fixInsetsByMargin)
     }
@@ -271,9 +278,10 @@ fun View.fixInsetsByMargin(
 private fun View.setWindowInsetsHelper(
     type: WindowInsetsHelper.ApplyType,
     edge: WindowInsetsHelper.Edge,
-    listener: WindowInsetsHelper.OnWindowInsetsChangedListener?
+    listener: WindowInsetsHelper.OnWindowInsetsChangedListener?,
+    customTarget: View?
 ): WindowInsetsHelper {
-    val windowInsetsHelper = WindowInsetsHelper(type, edge, listener)
+    val windowInsetsHelper = WindowInsetsHelper(type, edge, listener, customTarget)
     setOnApplyWindowInsetsListener(windowInsetsHelper)
 
     if (isAttachedToWindow) {

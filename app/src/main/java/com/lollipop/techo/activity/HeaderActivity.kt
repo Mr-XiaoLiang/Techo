@@ -1,6 +1,7 @@
 package com.lollipop.techo.activity
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -19,17 +20,27 @@ import com.lollipop.techo.util.BlurTransformation
  */
 abstract class HeaderActivity : BaseActivity() {
 
+    companion object {
+        /**
+         * 每次启动都保持不变吧
+         */
+        private var headerImageUrl = ""
+    }
+
     private val viewBinding: ActivityHeaderBinding by lazyBind()
 
     abstract val contentView: View
 
     open val floatingView: View? = null
 
+    protected open val showBackArrow = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
         setContentView(viewBinding.root)
         setSupportActionBar(viewBinding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(showBackArrow)
         viewBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
@@ -40,7 +51,7 @@ abstract class HeaderActivity : BaseActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        viewBinding.appBar.fixInsetsByPadding(WindowInsetsHelper.Edge.HEADER)
+        viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER, viewBinding.toolbar)
         loadHeader()
         hideLoading()
     }
@@ -54,23 +65,33 @@ abstract class HeaderActivity : BaseActivity() {
     }
 
     private fun loadHeader() {
-        doAsync {
-            RequestService.getHeaderImageInfo().images
-                ?.getValue<HeaderImageInfo.ImageInfo>(0)
-                ?.let { imageInfo ->
-                    if (imageInfo.url.isNotEmpty()) {
-                        onUI {
-                            Glide.with(viewBinding.headerBackground)
-                                .load(imageInfo.fullUrl)
-                                .apply(
-                                    RequestOptions().transform(
-                                        BlurTransformation.create(this@HeaderActivity)
-                                    )
-                                ).into(viewBinding.headerBackground)
+        val imageUrl = headerImageUrl
+        if (imageUrl.isNotEmpty()) {
+            onUrlLoaded(imageUrl)
+        } else {
+            doAsync {
+                RequestService.getHeaderImageInfo().images
+                    ?.getValue<HeaderImageInfo.ImageInfo>(0)
+                    ?.let { imageInfo ->
+                        if (imageInfo.url.isNotEmpty()) {
+                            headerImageUrl = imageInfo.fullUrl
+                            onUI {
+                                onUrlLoaded(headerImageUrl)
+                            }
                         }
                     }
-                }
+            }
         }
+    }
+
+    private fun onUrlLoaded(url: String) {
+        Glide.with(viewBinding.headerBackground)
+            .load(url)
+            .apply(
+                RequestOptions().transform(
+                    BlurTransformation.create(this@HeaderActivity)
+                )
+            ).into(viewBinding.headerBackground)
     }
 
 }

@@ -24,6 +24,8 @@ class MainActivity : HeaderActivity(),
     private val viewBinding: ActivityMainBinding by lazyBind()
     private val floatingBinding: ActivityMainFloatingBinding by lazyBind()
 
+    override val showBackArrow = false
+
     override val contentView: View
         get() = viewBinding.root
 
