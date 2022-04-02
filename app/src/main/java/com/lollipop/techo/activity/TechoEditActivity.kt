@@ -1,20 +1,21 @@
 package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.lollipop.base.list.*
+import com.lollipop.base.list.ItemTouchState
+import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onUI
-import com.lollipop.techo.data.*
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.Number
+import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
