@@ -69,4 +69,9 @@ class RecorderConfig private constructor(
             }
     }
 
+    val is16Bit: Boolean
+        get() {
+            return audioFormat == AudioFormat.ENCODING_PCM_16BIT
+        }
+
 }

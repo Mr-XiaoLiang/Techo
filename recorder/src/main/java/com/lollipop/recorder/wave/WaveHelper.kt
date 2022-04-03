@@ -1,6 +1,12 @@
-package com.lollipop.recorder
+package com.lollipop.recorder.wave
 
-class WaveHelper: RecorderListener {
+import com.lollipop.recorder.RecorderConfig
+import com.lollipop.recorder.RecorderListener
+
+/**
+ * 波形监听器
+ */
+class WaveHelper(val config: RecorderConfig): RecorderListener {
 
     /**
      * 波形图的缓存大小
@@ -28,6 +34,17 @@ class WaveHelper: RecorderListener {
     var enable = false
 
     override fun onRecord(data: ByteArray, begin: Int, end: Int) {
+        if (!enable) {
+            return
+        }
+        TODO("Not yet implemented")
+    }
+
+    override fun onStart() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStop() {
         TODO("Not yet implemented")
     }
 
