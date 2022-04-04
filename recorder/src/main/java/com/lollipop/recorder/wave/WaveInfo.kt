@@ -1,6 +1,6 @@
 package com.lollipop.recorder.wave
 
 class WaveInfo(
-    val left: Short,
-    val right: Short
+    val left: Float,
+    val right: Float
 )

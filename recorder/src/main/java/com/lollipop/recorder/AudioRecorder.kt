@@ -50,6 +50,10 @@ class AudioRecorder(
             }
             // 创建一个缓冲
             val buffer = ByteArray(size)
+
+            // 通知格式发生变化
+            listener.forEach { it.onFormatChanged(config.is16Bit, record.channelCount) }
+
             // 断开的话我们要尽快停止
             while (canNext()) {
                 // 读取一个缓冲数据
