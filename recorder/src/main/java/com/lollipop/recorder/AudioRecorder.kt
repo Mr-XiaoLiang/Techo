@@ -9,6 +9,7 @@ import android.media.audiofx.NoiseSuppressor
 import androidx.core.app.ActivityCompat
 import com.lollipop.recorder.wave.WaveHelper
 import java.io.File
+import java.io.FileOutputStream
 import java.io.OutputStream
 import kotlin.math.max
 
@@ -101,6 +102,7 @@ class AudioRecorder(
     private val cacheFiles = ArrayList<File>()
 
     private val recorderListenerList = ArrayList<RecorderListener>()
+    private val recordStatusListenerList = ArrayList<RecordStatusListener>()
 
     /**
      * 波形辅助器
@@ -166,6 +168,44 @@ class AudioRecorder(
 
     fun save(file: File) {
         TODO()
+    }
+
+    private class RecordThread(
+        private val config: RecorderConfig,
+        private val record: AudioRecord,
+        private val outputStream: OutputStream,
+        private val canNext: () -> Boolean,
+        private val listener: Array<RecorderListener>,
+        private val statusListener: Array<RecordStatusListener>
+    ) : Thread() {
+
+        companion object {
+            fun start(
+                config: RecorderConfig,
+                record: AudioRecord,
+                cacheFile: File,
+                listener: Array<RecorderListener>,
+                statusListener: Array<RecordStatusListener>,
+                canNext: () -> Boolean
+            ) {
+                val fileOutputStream = FileOutputStream(cacheFile)
+                RecordThread(
+                    config,
+                    record,
+                    fileOutputStream,
+                    canNext,
+                    listener,
+                    statusListener
+                ).start()
+            }
+        }
+
+        override fun run() {
+            statusListener.forEach { it.onRecordStart() }
+            val result = record(config, record, outputStream, canNext, listener)
+            statusListener.forEach { it.onRecordStop(result) }
+        }
+
     }
 
     /**
