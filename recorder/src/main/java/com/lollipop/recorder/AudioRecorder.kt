@@ -31,7 +31,7 @@ class AudioRecorder(
             config: RecorderConfig,
             record: AudioRecord,
             outputStream: OutputStream,
-            canNext: () -> Boolean,
+            recordSwitch: RecordSwitch,
             listener: Array<RecorderListener>
         ): RecordResult {
             // 一次数据的数量
@@ -56,7 +56,7 @@ class AudioRecorder(
             listener.forEach { it.onFormatChanged(config.is16Bit, record.channelCount) }
 
             // 断开的话我们要尽快停止
-            while (canNext()) {
+            while (recordSwitch.canNext) {
                 // 读取一个缓冲数据
                 val result = record.read(buffer, 0, size)
                 // 大于等于0才说明正确读取到了
@@ -97,7 +97,7 @@ class AudioRecorder(
 
     private var noiseSuppressor: NoiseSuppressor? = null
 
-    private var status = Status.NO_READY
+    private var status = Status.PAUSE
 
     private val cacheFiles = ArrayList<File>()
 
@@ -113,6 +113,8 @@ class AudioRecorder(
         get() {
             return cacheFiles.isNotEmpty()
         }
+
+    private var recordSwitch: RecordStatusSwitch? = null
 
     init {
         recorderListenerList.add(wave)
@@ -137,6 +139,7 @@ class AudioRecorder(
             cacheDir.mkdirs()
         }
         cacheRoot = "LAudio" + System.currentTimeMillis()
+        isInit = true
     }
 
     fun enableNoiseSuppressor(enable: Boolean) {
@@ -159,14 +162,40 @@ class AudioRecorder(
     }
 
     fun start() {
-        TODO()
+        init()
+        val recorder = audioRecord ?: return
+        if (status.isRunning) {
+            return
+        }
+        status = Status.START
+        val recordStatusSwitch = RecordStatusSwitch(Status.START)
+        recordSwitch = recordStatusSwitch
+        val cacheFile = File(cacheDir, cacheRoot + cacheFiles.size)
+        cacheFiles.add(cacheFile)
+        RecordThread.start(
+            config,
+            recorder,
+            cacheFile,
+            recorderListenerList,
+            recordStatusListenerList,
+            recordStatusSwitch
+        )
     }
 
     fun pause() {
-        TODO()
+        // 状态切换
+        status = Status.PAUSE
+        // 关闭任务
+        recordSwitch?.curreyStatus = Status.PAUSE
     }
 
     fun save(file: File) {
+        if (!hasCache) {
+            return
+        }
+        if (status.isRunning) {
+            pause()
+        }
         TODO()
     }
 
@@ -174,54 +203,83 @@ class AudioRecorder(
         private val config: RecorderConfig,
         private val record: AudioRecord,
         private val outputStream: OutputStream,
-        private val canNext: () -> Boolean,
+        private val recordSwitch: RecordSwitch,
         private val listener: Array<RecorderListener>,
         private val statusListener: Array<RecordStatusListener>
-    ) : Thread() {
+    ) : Thread(), RecordSwitch {
 
         companion object {
             fun start(
                 config: RecorderConfig,
                 record: AudioRecord,
                 cacheFile: File,
-                listener: Array<RecorderListener>,
-                statusListener: Array<RecordStatusListener>,
-                canNext: () -> Boolean
+                listener: List<RecorderListener>,
+                statusListener: List<RecordStatusListener>,
+                recordSwitch: RecordSwitch
             ) {
-                val fileOutputStream = FileOutputStream(cacheFile)
+                if (cacheFile.exists()) {
+                    cacheFile.delete()
+                }
+                cacheFile.createNewFile()
                 RecordThread(
                     config,
                     record,
-                    fileOutputStream,
-                    canNext,
-                    listener,
-                    statusListener
+                    FileOutputStream(cacheFile),
+                    recordSwitch,
+                    listener.toTypedArray(),
+                    statusListener.toTypedArray()
                 ).start()
             }
         }
 
+        private var isActive = true
+
         override fun run() {
             statusListener.forEach { it.onRecordStart() }
-            val result = record(config, record, outputStream, canNext, listener)
+            val result = try {
+                record(config, record, outputStream, this, listener)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                RecordResult.GenericError(msg = e.message ?: "", obj = e)
+            }
+            try {
+                outputStream.close()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
             statusListener.forEach { it.onRecordStop(result) }
         }
 
+        override val canNext: Boolean
+            get() {
+                // 如果关闭一次，那么任务就永远终止
+                if (isActive) {
+                    val next = recordSwitch.canNext
+                    isActive = next
+                    return next
+                }
+                return false
+            }
+
+    }
+
+    private class RecordStatusSwitch(var curreyStatus: Status = Status.START) : RecordSwitch {
+
+        override val canNext: Boolean
+            get() {
+                return curreyStatus.isRunning
+            }
+
+    }
+
+    private interface RecordSwitch {
+        val canNext: Boolean
     }
 
     /**
      * 录音对象的状态
      */
     enum class Status {
-        /**
-         * 未开始
-         */
-        NO_READY,
-
-        /**
-         * 预备
-         */
-        READY,
-
         /**
          * 录音
          */
@@ -230,12 +288,7 @@ class AudioRecorder(
         /**
          * 暂停
          */
-        PAUSE,
-
-        /**
-         * 停止
-         */
-        STOP;
+        PAUSE;
 
         val isRunning: Boolean
             get() {
