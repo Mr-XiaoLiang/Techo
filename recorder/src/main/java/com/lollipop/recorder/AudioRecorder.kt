@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.audiofx.NoiseSuppressor
 import androidx.core.app.ActivityCompat
+import com.lollipop.recorder.encode.DefaultEncoderProvider
 import com.lollipop.recorder.wave.WaveHelper
 import java.io.File
 import java.io.FileOutputStream
@@ -85,6 +86,8 @@ class AudioRecorder(
             outputStream.flush()
             return RecordResult.Success()
         }
+
+        var DEFAULT = DefaultEncoderProvider()
     }
 
     private var isInit = false
@@ -113,6 +116,11 @@ class AudioRecorder(
         get() {
             return cacheFiles.isNotEmpty()
         }
+
+    /**
+     * 默认的编码器提供者
+     */
+    var encoderProvider = DEFAULT
 
     private var recordSwitch: RecordStatusSwitch? = null
 

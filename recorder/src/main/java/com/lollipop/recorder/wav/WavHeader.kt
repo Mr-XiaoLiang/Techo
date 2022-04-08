@@ -6,14 +6,18 @@ package com.lollipop.recorder.wav
 class WavHeader(
     /**
      * sampling frequency in Hz (e.g. 44100).
+     * 采样率
      */
     private val sampleRate: Int = 0,
     /**
      * number of channels.
+     * 声道数量
      */
     private val channels: Int = 0,
     /**
      * total number of samples per channel.
+     * 样本数量，数据块的数量
+     * 一块数据 = 2 * 声道数量
      */
     private val mumSamples: Int = 0,
 ) {

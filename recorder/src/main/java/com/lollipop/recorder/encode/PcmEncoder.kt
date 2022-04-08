@@ -1,4 +1,4 @@
-package com.lollipop.recorder
+package com.lollipop.recorder.encode
 
 import java.io.OutputStream
 
@@ -7,7 +7,9 @@ import java.io.OutputStream
  */
 abstract class PcmEncoder(private val outputStream: OutputStream) {
 
+    open fun ready() {
 
+    }
 
     abstract fun write(byteArray: ByteArray, offset: Int, count: Int)
 
