@@ -4,18 +4,27 @@ import android.media.AudioRecord
 import com.lollipop.recorder.RecorderConfig
 import java.io.OutputStream
 
-interface EncoderProvider {
+abstract class EncoderProvider {
 
-    fun createEncoder(
+    fun getEncoder(
         config: RecorderConfig,
         audioRecord: AudioRecord,
         outputStream: OutputStream
-    ): PcmEncoder
+    ): PcmEncoder {
+        val encoder = createEncoder()
+        init(encoder, config, audioRecord, outputStream)
+        return encoder
+    }
 
-    companion object {
+    abstract fun createEncoder(): PcmEncoder
 
-
-
+    private fun init(
+        encoder: PcmEncoder,
+        config: RecorderConfig,
+        audioRecord: AudioRecord,
+        outputStream: OutputStream
+    ) {
+        encoder.init(EncodeFormat.create(config, audioRecord), outputStream)
     }
 
 }

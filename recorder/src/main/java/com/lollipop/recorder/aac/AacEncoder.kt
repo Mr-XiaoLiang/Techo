@@ -1,11 +1,11 @@
-package com.lollipop.recorder.wav
+package com.lollipop.recorder.aac
 
 import com.lollipop.recorder.encode.PcmEncoder
 
-class WavEncoder(): PcmEncoder() {
+class AacEncoder: PcmEncoder() {
 
     override fun write(byteArray: ByteArray, offset: Int, count: Int) {
-        writeOut(byteArray, offset, count)
+        TODO("Not yet implemented")
     }
 
 }

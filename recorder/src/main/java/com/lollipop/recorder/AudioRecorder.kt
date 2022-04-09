@@ -8,6 +8,7 @@ import android.media.AudioRecord
 import android.media.audiofx.NoiseSuppressor
 import androidx.core.app.ActivityCompat
 import com.lollipop.recorder.encode.DefaultEncoderProvider
+import com.lollipop.recorder.encode.PcmEncoder
 import com.lollipop.recorder.wave.WaveHelper
 import java.io.File
 import java.io.FileOutputStream
@@ -115,6 +116,7 @@ class AudioRecorder(
 
     private val recorderListenerList = ArrayList<RecorderListener>()
     private val recordStatusListenerList = ArrayList<RecordStatusListener>()
+    private val recordSaveListenerList = ArrayList<RecordSaveListener>()
 
     /**
      * 波形辅助器
@@ -210,10 +212,20 @@ class AudioRecorder(
         if (!hasCache) {
             return
         }
-        if (audioRecord?.isRunning == true) {
+        val record = audioRecord ?: return
+        if (record.isRunning) {
             pause()
         }
-        TODO()
+        if (file.exists()) {
+            file.delete()
+        }
+        val outputStream = FileOutputStream(file)
+        val encoder = encoderProvider.getEncoder(config, record, outputStream)
+        SaveThread(
+            cacheFiles.toTypedArray(),
+            recordSaveListenerList.toTypedArray(),
+            encoder
+        ).start()
     }
 
     fun destroy() {
@@ -287,6 +299,17 @@ class AudioRecorder(
                 return false
             }
 
+    }
+
+    private class SaveThread(
+        private val cacheFile: Array<File>,
+        private val listener: Array<RecordSaveListener>,
+        private val encoder: PcmEncoder,
+    ) : Thread() {
+        override fun run() {
+            super.run()
+            TODO()
+        }
     }
 
     private class RecordStatusSwitch : RecordSwitch {
