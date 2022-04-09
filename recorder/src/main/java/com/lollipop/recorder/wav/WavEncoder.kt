@@ -11,8 +11,6 @@ class WavEncoder(
     outputStream: OutputStream
 ): PcmEncoder(outputStream) {
 
-//    private
-
     override fun write(byteArray: ByteArray, offset: Int, count: Int) {
         writeOut(byteArray, offset, count)
     }
