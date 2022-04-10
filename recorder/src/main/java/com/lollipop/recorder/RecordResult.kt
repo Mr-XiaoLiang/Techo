@@ -12,7 +12,13 @@ sealed class RecordResult {
         val code: Int = AudioRecord.ERROR,
         val msg: String = "Denotes a generic operation failure.",
         val obj: Any? = null
-    ) : RecordResult()
+    ) : RecordResult() {
+        companion object {
+            fun create(e: Throwable): GenericError {
+                return GenericError(msg = e.message ?: e.localizedMessage ?: "", obj = e)
+            }
+        }
+    }
 
     /**
      * 错误数据

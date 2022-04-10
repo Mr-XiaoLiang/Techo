@@ -7,10 +7,12 @@ import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.audiofx.NoiseSuppressor
 import androidx.core.app.ActivityCompat
+import com.lollipop.recorder.AudioRecorder.Task.Companion.start
 import com.lollipop.recorder.encode.DefaultEncoderProvider
 import com.lollipop.recorder.encode.PcmEncoder
 import com.lollipop.recorder.wave.WaveHelper
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.OutputStream
 import kotlin.math.max
@@ -244,7 +246,7 @@ class AudioRecorder(
         private val recordSwitch: RecordSwitch,
         private val listener: Array<RecorderListener>,
         private val statusListener: Array<RecordStatusListener>
-    ) : Thread(), RecordSwitch {
+    ) : Task, RecordSwitch {
 
         companion object {
             fun start(
@@ -272,7 +274,7 @@ class AudioRecorder(
 
         private var isActive = true
 
-        override fun run() {
+        override fun doTask() {
             statusListener.forEach { it.onRecordStart() }
             val result = try {
                 record(config, record, outputStream, this, listener)
@@ -285,6 +287,11 @@ class AudioRecorder(
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
+            statusListener.forEach { it.onRecordStop(result) }
+        }
+
+        override fun onError(e: Throwable, result: RecordResult) {
+            super.onError(e, result)
             statusListener.forEach { it.onRecordStop(result) }
         }
 
@@ -305,11 +312,54 @@ class AudioRecorder(
         private val cacheFile: Array<File>,
         private val listener: Array<RecordSaveListener>,
         private val encoder: PcmEncoder,
-    ) : Thread() {
-        override fun run() {
-            super.run()
-            TODO()
+    ) : Task {
+
+        override fun doTask() {
+            val fileCount = cacheFile.size
+            listener.forEach { it.onSaveStart() }
+            val buffer = ByteArray(1024)
+            cacheFile.forEachIndexed { index, file ->
+                val fileLength = file.length()
+                var writeLength = 0L
+                val inputStream = FileInputStream(file)
+                var readLength = inputStream.read(buffer)
+                while (readLength >= 0) {
+                    encoder.write(buffer, 0, readLength)
+                    writeLength += readLength
+                    listener.forEach {
+                        it.onSaveProgressChanged(
+                            getProgress(
+                                fileCount,
+                                index,
+                                fileLength,
+                                writeLength
+                            )
+                        )
+                    }
+                    readLength = inputStream.read(buffer)
+                }
+            }
+            encoder.flush()
+            val result = RecordResult.Success()
+            listener.forEach { it.onSaveEnd(result) }
         }
+
+        override fun onError(e: Throwable, result: RecordResult) {
+            super.onError(e, result)
+            listener.forEach { it.onSaveEnd(result) }
+        }
+
+        private fun getProgress(
+            fileCount: Int,
+            fileIndex: Int,
+            fileLength: Long,
+            writeLength: Long
+        ): Float {
+            val countProgress = fileIndex * 1F / fileCount
+            val fileProgress = max(writeLength * 1F / fileLength, 1F) / fileCount
+            return countProgress + fileProgress
+        }
+
     }
 
     private class RecordStatusSwitch : RecordSwitch {
@@ -349,6 +399,33 @@ class AudioRecorder(
             get() {
                 return this == START
             }
+    }
+
+    private interface Task {
+
+        companion object {
+            fun Task.start() {
+                Thread(TaskRunnable(this)).start()
+            }
+        }
+
+        fun onError(e: Throwable, result: RecordResult) {
+
+        }
+
+        fun doTask()
+
+    }
+
+    private class TaskRunnable(private val task: Task) : Runnable {
+        override fun run() {
+            try {
+                task.doTask()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                task.onError(e, RecordResult.GenericError.create(e))
+            }
+        }
     }
 
 }
