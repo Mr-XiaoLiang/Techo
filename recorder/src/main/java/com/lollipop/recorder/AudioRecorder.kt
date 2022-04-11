@@ -239,6 +239,16 @@ class AudioRecorder(
         audioRecord = null
     }
 
+    fun cleanCache() {
+        cacheFiles.forEach {
+            try {
+                it.delete()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     private class RecordThread(
         private val config: RecorderConfig,
         private val record: AudioRecord,
