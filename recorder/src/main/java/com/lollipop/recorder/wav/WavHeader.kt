@@ -1,5 +1,7 @@
 package com.lollipop.recorder.wav
 
+import com.lollipop.recorder.util.ByteHeader
+
 /**
  * WAV的头信息
  */
@@ -20,7 +22,7 @@ class WavHeader(
      * 一块数据 = 2 * 声道数量
      */
     private val mumSamples: Int = 0,
-) {
+): ByteHeader() {
 
     /**
      * number of bytes per sample, all channels included.
@@ -108,21 +110,6 @@ class WavHeader(
         offset += 4
         offset += header.putInt(offset, mumSamples * numBytesPerSample)
         return header
-    }
-
-    private fun ByteArray.putInt(offset: Int, value: Int): Int {
-        return putBytes(offset, value, 4)
-    }
-
-    private fun ByteArray.putShort(offset: Int, value: Int): Int {
-        return putBytes(offset, value, 2)
-    }
-
-    private fun ByteArray.putBytes(offset: Int, value: Int, count: Int): Int {
-        for (i in 0 until count) {
-            this[offset+i] = value.shr(i * 8).and(0xFF).toByte()
-        }
-        return count
     }
 
 }
