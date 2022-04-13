@@ -48,25 +48,15 @@ class AacHeader(
      * 长度占用：28bit
      */
     private fun putFixedHeader(array: ByteArray) {
-
         val builder = buildByteArray(array, 0)
-
         // syncword：帧同步标识一个帧的开始，固定为0xFFF
         val syncWord = 0xFFF0
         // ID：MPEG 标示符。0表示MPEG-4，1表示MPEG-2
-        val id = if (useMpeg4) {
-            0
-        } else {
-            0x8
-        }
+        val id = if (useMpeg4) { 0 } else { 0x8 }
         // layer：固定为'00'
         val layer = 0
         // protection_absent：标识是否进行误码校验。0表示有CRC校验，1表示没有CRC校验
-        val protectionAbsent = if (hasCrc) {
-            0
-        } else {
-            0x1
-        }
+        val protectionAbsent = if (hasCrc) { 0 } else { 0x1 }
         // 一般情况下：bit = 1111 1111 1111 1001
         builder.putShortBits(syncWord, id, layer, protectionAbsent)
 
