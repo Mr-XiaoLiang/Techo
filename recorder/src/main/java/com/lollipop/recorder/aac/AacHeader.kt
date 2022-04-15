@@ -1,23 +1,76 @@
 package com.lollipop.recorder.aac
 
+import com.lollipop.recorder.encode.EncodeFormat
 import com.lollipop.recorder.util.ByteHeader
 
 class AacHeader(
-    val useMpeg4: Boolean = false,
-    val hasCrc: Boolean = false,
-    val profile: Profile = Profile.AAC_MAIN,
-    val samplingFrequencies: SamplingFrequencies = SamplingFrequencies.HZ_44100,
-    val channel: ChannelConfiguration = ChannelConfiguration.CHANNEL_1
+    val useMpeg4: Boolean,
+    val hasCrc: Boolean,
+    val profile: Profile,
+    val samplingFrequencies: SamplingFrequencies,
+    val channel: ChannelConfiguration
 ) : ByteHeader() {
 
-    private val headerLength: Int
+    companion object {
+        fun create(
+            format: EncodeFormat? = null,
+            useMpeg4: Boolean = false,
+            hasCrc: Boolean = false,
+            profile: Profile = Profile.AAC_MAIN,
+            samplingFrequencies: SamplingFrequencies? = null,
+            channel: ChannelConfiguration? = null
+        ): AacHeader {
+            val sf = samplingFrequencies ?: if (format != null) {
+                findSamplingFrequencies(format.sampleRate)
+            } else {
+                SamplingFrequencies.HZ_44100
+            }
+            val ch = channel ?: if (format != null) {
+                findChannelConfiguration(format.channelCount)
+            } else {
+                ChannelConfiguration.CHANNEL_1
+            }
+            return AacHeader(
+                useMpeg4 = useMpeg4,
+                hasCrc = hasCrc,
+                profile = profile,
+                samplingFrequencies = sf,
+                channel = ch
+            )
+        }
+
+        private fun findSamplingFrequencies(hz: Int): SamplingFrequencies {
+            SamplingFrequencies.values().forEach {
+                if (it.hz == hz) {
+                    return it
+                }
+            }
+            return SamplingFrequencies.HZ_44100
+        }
+
+        private fun findChannelConfiguration(count: Int): ChannelConfiguration {
+            ChannelConfiguration.values().forEach {
+                if (it.count == count) {
+                    return it
+                }
+            }
+            return ChannelConfiguration.CHANNEL_1
+        }
+    }
+
+    val headerLength: Int
         get() {
-            return if (hasCrc) { 9 } else { 7 }
+            return if (hasCrc) {
+                9
+            } else {
+                7
+            }
         }
 
     /**
-     * 饮品数据的长度，单位是byte，
+     * 音频数据的长度，单位是byte，
      * 最大长度为：0x7FF, 即2047
+     * 它不需要包含ADST头部的长度
      */
     var audioDataLength = 0
 
@@ -52,11 +105,19 @@ class AacHeader(
         // syncword：帧同步标识一个帧的开始，固定为0xFFF
         val syncWord = 0xFFF0
         // ID：MPEG 标示符。0表示MPEG-4，1表示MPEG-2
-        val id = if (useMpeg4) { 0 } else { 0x8 }
+        val id = if (useMpeg4) {
+            0
+        } else {
+            0x8
+        }
         // layer：固定为'00'
         val layer = 0
         // protection_absent：标识是否进行误码校验。0表示有CRC校验，1表示没有CRC校验
-        val protectionAbsent = if (hasCrc) { 0 } else { 0x1 }
+        val protectionAbsent = if (hasCrc) {
+            0
+        } else {
+            0x1
+        }
         // 一般情况下：bit = 1111 1111 1111 1001
         builder.putShortBits(syncWord, id, layer, protectionAbsent)
 
@@ -124,6 +185,7 @@ class AacHeader(
 
         // number_of_raw_data_blocks_in_frame
         // ADTS帧中的AAC帧数（RDB）减去1，为获得最大兼容性，请始终为每个ADTS帧使用1个AAC帧
+        // 有效位置 0000 0000 0000 0011
         val rawBlocksInFrame = (rawBlocksSize - 1).and(0x3)
 
         builder.putShortBits(aacFrameLengthEnd, adtsBufferFullness, rawBlocksInFrame)
@@ -203,57 +265,57 @@ class AacHeader(
         AAC_LTP(4),
     }
 
-    enum class SamplingFrequencies(val id: Int) {
-        HZ_96000(0),
-        HZ_88200(1),
-        HZ_64000(2),
-        HZ_48000(3),
-        HZ_44100(4),
-        HZ_32000(5),
-        HZ_24000(6),
-        HZ_22050(7),
-        HZ_16000(8),
-        HZ_12000(9),
-        HZ_11025(10),
-        HZ_8000(11),
-        HZ_7350(12);
+    enum class SamplingFrequencies(val id: Int, val hz: Int) {
+        HZ_96000(0, 96000),
+        HZ_88200(1, 88200),
+        HZ_64000(2, 64000),
+        HZ_48000(3, 48000),
+        HZ_44100(4, 44100),
+        HZ_32000(5, 32000),
+        HZ_24000(6, 24000),
+        HZ_22050(7, 22050),
+        HZ_16000(8, 16000),
+        HZ_12000(9, 12000),
+        HZ_11025(10, 11025),
+        HZ_8000(11, 8000),
+        HZ_7350(12, 7350);
     }
 
-    enum class ChannelConfiguration(val id: Int) {
+    enum class ChannelConfiguration(val id: Int, val count: Int) {
         /**
          * 1 channel: front-center
          */
-        CHANNEL_1(1),
+        CHANNEL_1(1, 1),
 
         /**
          * 2 channels: front-left, front-right
          */
-        CHANNEL_2(2),
+        CHANNEL_2(2, 2),
 
         /**
          * 3 channels: front-center, front-left, front-right
          */
-        CHANNEL_3(3),
+        CHANNEL_3(3, 3),
 
         /**
          * 4 channels: front-center, front-left, front-right, back-center
          */
-        CHANNEL_4(4),
+        CHANNEL_4(4, 4),
 
         /**
          * 5 channels: front-center, front-left, front-right, back-left, back-right
          */
-        CHANNEL_5(5),
+        CHANNEL_5(5, 5),
 
         /**
          * 6 channels: front-center, front-left, front-right, back-left, back-right, LFE-channel
          */
-        CHANNEL_6(6),
+        CHANNEL_6(6, 6),
 
         /**
          * 8 channels: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel
          */
-        CHANNEL_8(7),
+        CHANNEL_8(7, 8);
     }
 
 }

@@ -15,6 +15,7 @@ class EncodeFormat(
     val channelCount: Int = 0,
     val format: AudioFormat = DEFAULT_AUDIO_FORMAT,
     val isPrivacySensitive: Boolean = false,
+    val sampleRate: Int = 0
 ) {
     companion object {
 
@@ -47,7 +48,8 @@ class EncodeFormat(
                 channelConfiguration = audioRecord.channelConfiguration,
                 channelCount = audioRecord.channelCount,
                 format = format,
-                isPrivacySensitive = isPrivacySensitive
+                isPrivacySensitive = isPrivacySensitive,
+                sampleRate = audioRecord.sampleRate
             )
         }
     }
