@@ -1,7 +1,9 @@
 package com.lollipop.recorder.encode
 
-class DefaultEncoderProvider: EncoderProvider() {
+import com.lollipop.recorder.aac.AacEncoder
+
+class DefaultEncoderProvider : EncoderProvider() {
     override fun createEncoder(): PcmEncoder {
-        TODO("Not yet implemented")
+        return AacEncoder()
     }
 }
