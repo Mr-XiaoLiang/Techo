@@ -62,6 +62,11 @@ class AacEncoder(
                 codec.queueInputBuffer(inputBufferIndex, offset, count, 0, 0)
             }
         }
+        output()
+    }
+
+    private fun output() {
+        val codec = mediaCodec ?: return
         val bufferInfo = MediaCodec.BufferInfo()
         while (true) {
             val outputBufferIndex = codec.dequeueOutputBuffer(bufferInfo, TIMEOUT_NOW)
@@ -79,6 +84,11 @@ class AacEncoder(
                 codec.releaseOutputBuffer(outputBufferIndex, false)
             }
         }
+    }
+
+    override fun flush() {
+        super.flush()
+        output()
     }
 
     private fun addAdtsToPacket(array: ByteArray, length: Int) {

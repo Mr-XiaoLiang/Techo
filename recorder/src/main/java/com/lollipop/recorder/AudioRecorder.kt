@@ -350,6 +350,7 @@ class AudioRecorder(
                 }
             }
             encoder.flush()
+            encoder.destroy()
             val result = RecordResult.Success()
             listener.forEach { it.onSaveEnd(result) }
         }
