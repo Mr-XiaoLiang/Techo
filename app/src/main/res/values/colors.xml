@@ -23,4 +23,7 @@
     <color name="optionDialogItemIcon">#FFFFFFFF</color>
 
     <color name="splashBackground">#FFF</color>
+    <color name="recorderBackground">#FFF</color>
+    <color name="recorderCancelBackgroundDefault">#C35656</color>
+    <color name="recorderCancelBackgroundSelected">#E82929</color>
 </resources>
