@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.getColor
+import com.lollipop.recorder.wave.WaveInfo
 
 /**
  * 录音是波纹显示组件
@@ -65,6 +66,39 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
         var lineSpace = 1
 
         var color = Color.BLACK
+
+        private var dateSize = 1
+
+        private val waveList = ArrayList<WaveInfo>()
+        private val tempList = ArrayList<WaveInfo>()
+
+        fun addData(list: List<WaveInfo>) {
+            if (list.size > dateSize) {
+                waveList.clear()
+                waveList.addAll(list)
+            } else {
+                tempList.clear()
+                tempList.addAll(waveList)
+                waveList.clear()
+                val offset = tempList.size + list.size - dateSize
+                if (offset < 0) {
+                    waveList.addAll(tempList)
+                    waveList.addAll(list)
+                } else {
+                    for (i in offset until tempList.size) {
+                        waveList.add(tempList[i])
+                    }
+                    waveList.addAll(list)
+                }
+            }
+            invalidateSelf()
+        }
+
+        override fun onBoundsChange(bounds: Rect) {
+            super.onBoundsChange(bounds)
+            val allLength = bounds.width() / 2 + lineWidth
+            dateSize = allLength / (lineWidth + lineSpace) + 1
+        }
 
         override fun draw(canvas: Canvas) {
             TODO("Not yet implemented")

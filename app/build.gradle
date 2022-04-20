@@ -47,6 +47,7 @@ dependencies {
     implementation project(path: ':maskGuide')
     implementation project(path: ':base')
     implementation project(path: ':bigBoom')
+    implementation project(path: ':recorder')
 
     implementation 'com.lollipop.plugin:bridge:1.0'
 
