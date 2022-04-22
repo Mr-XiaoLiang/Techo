@@ -10,6 +10,7 @@ open class ByteHeader {
          * @param offset 放置的起始位置
          * @param value 放入value中的四个Byte
          */
+        @JvmStatic
         protected fun ByteArray.putInt(offset: Int, value: Int): Int {
             return putBytes(offset, value, 4)
         }
@@ -18,6 +19,7 @@ open class ByteHeader {
          * @param offset 放置的起始位置
          * @param value 放入value中的最后两个Byte
          */
+        @JvmStatic
         protected fun ByteArray.putShort(offset: Int, value: Int): Int {
             return putBytes(offset, value, 2)
         }
@@ -26,6 +28,7 @@ open class ByteHeader {
          * @param offset 放置的起始位置
          * @param value 放入value中的最后一个Byte
          */
+        @JvmStatic
         protected fun ByteArray.putByte(offset: Int, value: Int): Int {
             return putBytes(offset, value, 1)
         }
@@ -35,6 +38,7 @@ open class ByteHeader {
          * @param value 放入value中的最后几个Byte
          * @param count 放入的byte数量
          */
+        @JvmStatic
         protected fun ByteArray.putBytes(offset: Int, value: Int, count: Int): Int {
             val end = max(min(count, 4), 0)
             for (i in 0 until end) {
