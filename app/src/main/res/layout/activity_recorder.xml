@@ -30,7 +30,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recorderCloseBtn"
-            tools:background="#fF0" />
+            app:lineSpace="5dp"
+            app:lineWidth="5dp"
+            app:lineColor="@color/recorderWaveColor"/>
 
         <ImageView
             android:id="@+id/recorderCancelView"

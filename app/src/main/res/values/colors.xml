@@ -26,4 +26,7 @@
     <color name="recorderBackground">#FFF</color>
     <color name="recorderCancelBackgroundDefault">#C35656</color>
     <color name="recorderCancelBackgroundSelected">#E82929</color>
+
+    <color name="recorderWaveColor">#FF018786</color>
+
 </resources>

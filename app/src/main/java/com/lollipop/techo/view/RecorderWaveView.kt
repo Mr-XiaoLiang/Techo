@@ -8,6 +8,7 @@ import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.getColor
 import com.lollipop.recorder.wave.WaveInfo
+import com.lollipop.techo.R
 import kotlin.math.min
 
 /**
@@ -24,6 +25,27 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
 
     init {
         setImageDrawable(waveDrawable)
+
+        attributeSet?.let { attrs ->
+            val typeArray = context.obtainStyledAttributes(attrs, R.styleable.RecorderWaveView)
+            lineSpace = typeArray.getDimensionPixelSize(R.styleable.RecorderWaveView_lineSpace, 1)
+            lineWidth = typeArray.getDimensionPixelSize(R.styleable.RecorderWaveView_lineWidth, 1)
+            color = typeArray.getColor(R.styleable.RecorderWaveView_lineColor, Color.BLACK)
+            typeArray.recycle()
+        }
+
+        if (isInEditMode) {
+            addData(
+                listOf(
+                    WaveInfo.new(0.5F),
+                    WaveInfo.new(0.4F),
+                    WaveInfo.new(0.2F),
+                    WaveInfo.new(0.5F),
+                    WaveInfo.new(0.7F),
+                    WaveInfo.new(0.8F),
+                )
+            )
+        }
     }
 
     var lineWidth: Int
@@ -69,7 +91,13 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
 
         var lineSpace = 1
 
-        var color = Color.BLACK
+        var color: Int
+            get() {
+                return paint.color
+            }
+            set(value) {
+                paint.color = value
+            }
 
         private var dateSize = 1
 
@@ -139,7 +167,8 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
             paint.colorFilter = colorFilter
         }
 
-        @Deprecated("Deprecated in Java",
+        @Deprecated(
+            "Deprecated in Java",
             ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
         )
         override fun getOpacity(): Int {
@@ -165,8 +194,8 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
                 val height = bounds.height()
                 val maxLength = height / 2
                 val lineY = bounds.exactCenterY()
-                top = lineY - getOffset(maxLength,  info.left)
-                bottom = lineY + getOffset(maxLength,  info.right)
+                top = lineY - getOffset(maxLength, info.left)
+                bottom = lineY + getOffset(maxLength, info.right)
                 offset(bounds, index, lineWidth, lineSpace)
             }
 
