@@ -1,5 +1,6 @@
 package com.lollipop.base.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -690,6 +691,15 @@ fun View.findRootGroup(filter: (ViewGroup) -> Boolean): ViewGroup? {
         }
     } while (parent != null)
     return group
+}
+
+fun View.setEmptyClick() {
+    setOnClickListener {  }
+}
+
+@SuppressLint("ClickableViewAccessibility")
+fun View.setEmptyTouch() {
+    setOnTouchListener { _, _ -> true }
 }
 
 /**

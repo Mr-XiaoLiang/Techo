@@ -3,6 +3,7 @@ package com.lollipop.techo.util
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
+import com.lollipop.base.util.onUI
 import kotlin.math.abs
 
 /**
@@ -39,6 +40,8 @@ class AnimationHelper(
 
     private var endProgress = PROGRESS_MAX
 
+    var isNeedPost = false
+
     fun setInterpolator(run: TimeInterpolator) {
         animator.interpolator = run
     }
@@ -52,7 +55,13 @@ class AnimationHelper(
     }
 
     fun repeatInfinite(isInfinite: Boolean) {
-        repeatCount(if (isInfinite) {ValueAnimator.INFINITE} else { 0 })
+        repeatCount(
+            if (isInfinite) {
+                ValueAnimator.INFINITE
+            } else {
+                0
+            }
+        )
     }
 
     fun progressIs(float: Float): Boolean {
@@ -67,8 +76,16 @@ class AnimationHelper(
         run(isAnimation, PROGRESS_MIN, PROGRESS_MAX)
     }
 
+    fun toOpen(isAnimation: Boolean = true) {
+        run(isAnimation, progress, PROGRESS_MAX)
+    }
+
     fun close(isAnimation: Boolean = true) {
         run(isAnimation, PROGRESS_MAX, PROGRESS_MIN)
+    }
+
+    fun toClose(isAnimation: Boolean = true) {
+        run(isAnimation, progress, PROGRESS_MIN)
     }
 
     private fun run(
@@ -107,7 +124,13 @@ class AnimationHelper(
         val d = (abs(progress - end) / abs(start - end) * duration).toLong()
         animator.setFloatValues(progress, end)
         animator.duration = d
-        animator.start()
+        if (isNeedPost) {
+            onUI {
+                animator.start()
+            }
+        } else {
+            animator.start()
+        }
     }
 
     private fun onProgressChange(progress: Float) {
