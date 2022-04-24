@@ -7,16 +7,16 @@
     tools:context=".activity.RecorderActivity">
 
     <View
+        android:id="@+id/backgroundView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/backgroundView"
-        android:background="#3000"/>
+        android:background="#3000" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialogRootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:id="@+id/dialogRootView"
         android:background="@drawable/bg_recorder_dialog">
 
         <ImageView
@@ -36,23 +36,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recorderCloseBtn"
+            app:lineColor="@color/recorderWaveColor"
             app:lineSpace="5dp"
-            app:lineWidth="5dp"
-            app:lineColor="@color/recorderWaveColor"/>
-
-        <ImageView
-            android:id="@+id/recorderCancelView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_recorder_dialog_cancel"
-            android:padding="18dp"
-            android:src="@drawable/ic_baseline_close_24"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/recorderWaveView"
-            app:layout_constraintEnd_toEndOf="@id/recorderWaveView"
-            app:layout_constraintStart_toStartOf="@id/recorderWaveView"
-            app:layout_constraintTop_toTopOf="@id/recorderWaveView"
-            app:tint="@color/fabIcon" />
+            app:lineWidth="5dp" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/recorderMicView"
@@ -60,13 +46,30 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
+            android:textColor="@color/fabIcon"
             app:backgroundTint="@color/fabBackground"
             app:icon="@drawable/ic_baseline_mic_24"
+            app:iconSize="24dp"
             app:iconTint="@color/fabIcon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recorderWaveView" />
+            app:layout_constraintTop_toBottomOf="@id/recorderWaveView"
+            android:text="@string/start" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/recorderCancelView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:backgroundTint="@color/recorderCancel"
+            app:icon="@drawable/ic_baseline_close_24"
+            app:iconSize="24dp"
+            app:iconTint="@color/fabIcon"
+            app:layout_constraintBottom_toBottomOf="@id/recorderMicView"
+            app:layout_constraintEnd_toStartOf="@id/recorderMicView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/recorderMicView"
+            app:tint="@color/fabIcon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
