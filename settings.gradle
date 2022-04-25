@@ -4,7 +4,6 @@ include ':palette'
 include ':maskGuide'
 include ':app'
 rootProject.name = "Techo"
-include ':app2'
 include ':bigBoom'
 include ':web'
 include ':browser'
