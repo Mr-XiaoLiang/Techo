@@ -1,6 +1,7 @@
 package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,14 +57,15 @@ class MainActivity : HeaderActivity(),
         loadMoreHelper
 
         floatingBinding.newTechoBtn.onClick {
-            requestActivity<TechoEditActivity> {
-                if (it.isOk) {
-                    val newId = TechoEditActivity.getResultTechoId(it.data)
-                    if (newId != TechoEditActivity.NO_ID) {
-                        mode.onNewInsert(newId)
-                    }
-                }
-            }
+//            requestActivity<TechoEditActivity> {
+//                if (it.isOk) {
+//                    val newId = TechoEditActivity.getResultTechoId(it.data)
+//                    if (newId != TechoEditActivity.NO_ID) {
+//                        mode.onNewInsert(newId)
+//                    }
+//                }
+//            }
+            startActivity(Intent(this, RecorderActivity::class.java))
         }
 
         floatingBinding.root.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)

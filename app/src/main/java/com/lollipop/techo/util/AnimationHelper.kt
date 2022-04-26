@@ -34,7 +34,7 @@ class AnimationHelper(
 
     private var onStartCallback: ((Float) -> Unit)? = null
 
-    private var onEndCallback: ((Float) -> Unit)? = null
+    private var onEndCallback: ((Float, Boolean) -> Unit)? = null
 
     private var startProgress = PROGRESS_MIN
 
@@ -100,7 +100,7 @@ class AnimationHelper(
             doAnimation(delay)
         } else {
             onProgressChange(endProgress)
-            onAnimationEnd(animator)
+            onEndCallback?.invoke(progress, true)
         }
     }
 
@@ -108,7 +108,7 @@ class AnimationHelper(
         this.onStartCallback = callback
     }
 
-    fun onEnd(callback: (Float) -> Unit) {
+    fun onEnd(callback: (progress: Float, isPreload: Boolean) -> Unit) {
         this.onEndCallback = callback
     }
 
@@ -152,7 +152,7 @@ class AnimationHelper(
 
     override fun onAnimationEnd(animation: Animator?) {
         if (animation == animator) {
-            onEndCallback?.invoke(progress)
+            onEndCallback?.invoke(progress, false)
         }
     }
 

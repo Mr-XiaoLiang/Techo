@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Techo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -40,5 +40,18 @@
         <item name="cardBackgroundColor">@color/editPanelCard</item>
         <item name="cardCornerRadius">10dp</item>
         <item name="cardElevation">8dp</item>
+    </style>
+
+    <style name="DialogActivity" parent="Theme.Techo">
+        <!-- 背景色透明度 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 半透明,设置为false无透明效果 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 模糊 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 窗口样式Dialog -->
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
     </style>
 </resources>

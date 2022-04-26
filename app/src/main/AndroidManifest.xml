@@ -17,7 +17,8 @@
             android:exported="false" />
         <activity
             android:name=".activity.RecorderActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/DialogActivity"/>
         <activity
             android:name=".activity.TechoEditActivity"
             android:exported="false" />

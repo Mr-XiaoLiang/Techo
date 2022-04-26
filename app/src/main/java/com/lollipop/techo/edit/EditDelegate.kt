@@ -27,9 +27,9 @@ abstract class EditDelegate {
             onAnimationStart(it)
             showOnAnimationStart()
         }
-        onEnd {
-            onAnimationEnd(it)
-            if (isAnimationClosed) {
+        onEnd { progress, preload ->
+            onAnimationEnd(progress)
+            if (!preload && isAnimationClosed) {
                 hideOnAnimationEnd()
             }
         }

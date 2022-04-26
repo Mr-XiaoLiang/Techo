@@ -1,6 +1,8 @@
 package com.lollipop.techo.activity
 
 import android.os.Bundle
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
@@ -13,7 +15,10 @@ class RecorderActivity : BaseActivity() {
 
     private val binding: ActivityRecorderBinding by lazyBind()
 
-    private val dialogAnimationHelper = AnimationHelper(onUpdate = ::onDialogAnimationUpdate).apply {
+    private val dialogAnimationHelper = AnimationHelper(
+        onUpdate = ::onDialogAnimationUpdate
+    ).apply {
+        onStart(::onDialogAnimationStart)
         onEnd(::onDialogAnimationEnd)
     }
 
@@ -26,6 +31,7 @@ class RecorderActivity : BaseActivity() {
             dismiss()
         }
         binding.dialogRootView.setEmptyClick()
+        dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
         dialogAnimationHelper.open(true)
     }
@@ -39,10 +45,20 @@ class RecorderActivity : BaseActivity() {
         dialogAnimationHelper.toClose(true)
     }
 
-    private fun onDialogAnimationEnd(progress: Float) {
-        if (dialogAnimationHelper.progressIs(AnimationHelper.PROGRESS_MIN)) {
+    private fun onDialogAnimationStart(progress: Float) {
+        binding.root.isVisible = true
+    }
+
+    private fun onDialogAnimationEnd(progress: Float, isPreload: Boolean) {
+        if (isPreload) {
+            binding.root.isInvisible = true
+        } else if (dialogAnimationHelper.progressIs(AnimationHelper.PROGRESS_MIN)) {
             finish()
         }
+    }
+
+    override fun onBackPressed() {
+        dismiss()
     }
 
 }
