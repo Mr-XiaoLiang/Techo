@@ -8,14 +8,16 @@ import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.getColor
 import com.lollipop.recorder.wave.WaveInfo
+import com.lollipop.recorder.wave.WaveListener
 import com.lollipop.techo.R
 import kotlin.math.min
 
 /**
  * 录音是波纹显示组件
  */
-class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int) :
-    AppCompatImageView(context, attributeSet, style) {
+class RecorderWaveView(
+    context: Context, attributeSet: AttributeSet?, style: Int
+) : AppCompatImageView(context, attributeSet, style), WaveListener {
 
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
@@ -78,6 +80,11 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
 
     fun setColorByResource(@ColorRes id: Int) {
         color = getColor(id)
+    }
+
+
+    override fun onWaveChanged(info: List<WaveInfo>, stereo: Boolean) {
+        addData(info)
     }
 
     private class WaveDrawable : Drawable() {
@@ -225,5 +232,4 @@ class RecorderWaveView(context: Context, attributeSet: AttributeSet?, style: Int
         }
 
     }
-
 }

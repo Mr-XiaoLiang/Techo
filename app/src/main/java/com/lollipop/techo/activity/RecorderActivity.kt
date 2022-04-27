@@ -8,6 +8,8 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.setEmptyClick
+import com.lollipop.recorder.AudioRecorder
+import com.lollipop.recorder.RecorderConfig
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.util.AnimationHelper
 
@@ -22,6 +24,10 @@ class RecorderActivity : BaseActivity() {
         onEnd(::onDialogAnimationEnd)
     }
 
+    private val recorder by lazy {
+        AudioRecorder(RecorderConfig.create(), cacheDir)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
@@ -33,7 +39,17 @@ class RecorderActivity : BaseActivity() {
         binding.dialogRootView.setEmptyClick()
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
+
+        initRecorder()
+
         dialogAnimationHelper.open(true)
+    }
+
+    private fun initRecorder() {
+        recorder.wave.apply {
+            waveListener = binding.recorderWaveView
+            enable = true
+        }
     }
 
     private fun onDialogAnimationUpdate(progress: Float) {

@@ -44,7 +44,7 @@ class RecorderConfig private constructor(
         }
 
         val DEFAULT by lazy {
-            val channel = AudioFormat.CHANNEL_IN_STEREO
+            val channel = AudioFormat.CHANNEL_IN_DEFAULT
             val encoding = AudioFormat.ENCODING_PCM_16BIT
             val maxSampleRateAndMinBufferSize = findMaxSampleRateAndMinBufferSize(channel, encoding)
             val sampleRate = maxSampleRateAndMinBufferSize[0]
