@@ -40,6 +40,14 @@ class RecorderActivity : BaseActivity() {
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
 
+        binding.recorderCancelView.setOnClickListener {
+            cancel()
+        }
+
+        binding.recorderMicView.setOnClickListener {
+            onRecordButtonClick()
+        }
+
         initRecorder()
 
         dialogAnimationHelper.open(true)
@@ -50,6 +58,16 @@ class RecorderActivity : BaseActivity() {
             waveListener = binding.recorderWaveView
             enable = true
         }
+    }
+
+    private fun cancel() {
+        recorder.pause()
+        recorder.cleanCache()
+        dismiss()
+    }
+
+    private fun onRecordButtonClick() {
+        // TODO
     }
 
     private fun onDialogAnimationUpdate(progress: Float) {
