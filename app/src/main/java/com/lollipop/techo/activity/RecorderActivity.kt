@@ -10,8 +10,10 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.setEmptyClick
 import com.lollipop.recorder.AudioRecorder
 import com.lollipop.recorder.RecorderConfig
+import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.util.AnimationHelper
+import java.io.File
 
 class RecorderActivity : BaseActivity() {
 
@@ -51,6 +53,8 @@ class RecorderActivity : BaseActivity() {
         initRecorder()
 
         dialogAnimationHelper.open(true)
+
+        updateRecordButton()
     }
 
     private fun initRecorder() {
@@ -67,7 +71,26 @@ class RecorderActivity : BaseActivity() {
     }
 
     private fun onRecordButtonClick() {
-        // TODO
+        if (recorder.isRunning) {
+            recorder.save(getAudioFile())
+        } else {
+            recorder.start()
+        }
+        updateRecordButton()
+    }
+
+    private fun getAudioFile(): File {
+        TODO()
+    }
+
+    private fun updateRecordButton() {
+        binding.recorderMicView.setText(
+            if (recorder.isRunning) {
+                R.string.stop
+            } else {
+                R.string.start
+            }
+        )
     }
 
     private fun onDialogAnimationUpdate(progress: Float) {

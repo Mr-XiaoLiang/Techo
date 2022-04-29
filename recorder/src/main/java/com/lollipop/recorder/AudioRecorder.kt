@@ -135,6 +135,11 @@ class AudioRecorder(
      */
     var encoderProvider = DEFAULT
 
+    val isRunning: Boolean
+        get() {
+            return audioRecord.isRunning ?: false
+        }
+
     private var recordSwitch: RecordStatusSwitch? = null
 
     init {
