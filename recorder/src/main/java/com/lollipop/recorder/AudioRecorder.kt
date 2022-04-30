@@ -137,13 +137,13 @@ class AudioRecorder(
 
     val isRunning: Boolean
         get() {
-            return audioRecord.isRunning ?: false
+            return audioRecord?.isRunning ?: false
         }
 
     private var recordSwitch: RecordStatusSwitch? = null
 
     init {
-        recorderListenerList.add(wave)
+        addRecorderListener(wave)
     }
 
     @SuppressLint("MissingPermission")
@@ -166,6 +166,30 @@ class AudioRecorder(
         }
         cacheRoot = "LAudio" + System.currentTimeMillis()
         isInit = true
+    }
+
+    fun addRecorderListener(listener: RecorderListener) {
+        recorderListenerList.add(listener)
+    }
+
+    fun removeRecorderListener(listener: RecorderListener) {
+        recorderListenerList.remove(listener)
+    }
+
+    fun addRecordStatusListener(listener: RecordStatusListener) {
+        recordStatusListenerList.add(listener)
+    }
+
+    fun removeRecordStatusListener(listener: RecordStatusListener) {
+        recordStatusListenerList.remove(listener)
+    }
+
+    fun addRecordSaveListener(listener: RecordSaveListener) {
+        recordSaveListenerList.add(listener)
+    }
+
+    fun removeRecordSaveListener(listener: RecordSaveListener) {
+        recordSaveListenerList.remove(listener)
     }
 
     fun enableNoiseSuppressor(enable: Boolean) {
@@ -199,6 +223,9 @@ class AudioRecorder(
         val cacheFile = File(cacheDir, cacheRoot + cacheFiles.size)
         cacheFiles.add(cacheFile)
         recorder.startRecording()
+        if (enableNoiseSuppressor) {
+            enableNoiseSuppressor(enableNoiseSuppressor)
+        }
         RecordThread.start(
             config,
             recorder,

@@ -8,14 +8,15 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.setEmptyClick
-import com.lollipop.recorder.AudioRecorder
-import com.lollipop.recorder.RecorderConfig
+import com.lollipop.recorder.*
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.util.AnimationHelper
 import java.io.File
 
-class RecorderActivity : BaseActivity() {
+class RecorderActivity : BaseActivity(),
+    RecordStatusListener,
+    RecordSaveListener {
 
     private val binding: ActivityRecorderBinding by lazyBind()
 
@@ -28,6 +29,14 @@ class RecorderActivity : BaseActivity() {
 
     private val recorder by lazy {
         AudioRecorder(RecorderConfig.create(), cacheDir)
+    }
+
+    private val audioDir: File by lazy {
+        File(filesDir, "recorder")
+    }
+
+    private val audioFile: File by lazy {
+        File(audioDir, "audio_${System.currentTimeMillis()}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +71,8 @@ class RecorderActivity : BaseActivity() {
             waveListener = binding.recorderWaveView
             enable = true
         }
+        recorder.addRecordSaveListener(this)
+        recorder.addRecordStatusListener(this)
     }
 
     private fun cancel() {
@@ -72,15 +83,11 @@ class RecorderActivity : BaseActivity() {
 
     private fun onRecordButtonClick() {
         if (recorder.isRunning) {
-            recorder.save(getAudioFile())
+            recorder.save(audioFile)
         } else {
             recorder.start()
         }
         updateRecordButton()
-    }
-
-    private fun getAudioFile(): File {
-        TODO()
     }
 
     private fun updateRecordButton() {
@@ -116,6 +123,44 @@ class RecorderActivity : BaseActivity() {
 
     override fun onBackPressed() {
         dismiss()
+    }
+
+    override fun onSaveStart() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSaveProgressChanged(progress: Float) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSaveEnd(result: RecordResult) {
+        when (result) {
+            is RecordResult.Success -> {
+                TODO()
+            }
+            is RecordResult.BadValueError -> TODO()
+            is RecordResult.DeadObjectError -> TODO()
+            is RecordResult.GenericError -> TODO()
+            is RecordResult.InvalidOperationError -> TODO()
+        }
+        TODO("Not yet implemented")
+    }
+
+    override fun onRecordStart() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRecordStop(result: RecordResult) {
+        when (result) {
+            is RecordResult.Success -> {
+                TODO()
+            }
+            is RecordResult.BadValueError -> TODO()
+            is RecordResult.DeadObjectError -> TODO()
+            is RecordResult.GenericError -> TODO()
+            is RecordResult.InvalidOperationError -> TODO()
+        }
+        TODO("Not yet implemented")
     }
 
 }
