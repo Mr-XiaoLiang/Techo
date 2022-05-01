@@ -11,6 +11,7 @@ import com.lollipop.base.util.setEmptyClick
 import com.lollipop.recorder.*
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
+import com.lollipop.techo.drawable.CircularProgressDrawable
 import com.lollipop.techo.util.AnimationHelper
 import java.io.File
 
@@ -38,6 +39,10 @@ class RecorderActivity : BaseActivity(),
     private val audioFile: File by lazy {
         File(audioDir, "audio_${System.currentTimeMillis()}")
     }
+
+    private var isSaving = false
+
+    private var progressDrawable: CircularProgressDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,13 +96,27 @@ class RecorderActivity : BaseActivity(),
     }
 
     private fun updateRecordButton() {
-        binding.recorderMicView.setText(
-            if (recorder.isRunning) {
-                R.string.stop
-            } else {
-                R.string.start
+        if (isFinishing || isDestroyed) {
+            return
+        }
+        when {
+            isSaving -> {
+                if (progressDrawable == null) {
+                    progressDrawable = CircularProgressDrawable()
+                }
+                binding.recorderMicView.setText(R.string.saving)
+                binding.recorderMicView.icon = progressDrawable
+                progressDrawable?.start()
             }
-        )
+            recorder.isRunning -> {
+                binding.recorderMicView.setText(R.string.stop)
+                binding.recorderMicView.setIconResource(R.drawable.ic_baseline_stop_24)
+            }
+            else -> {
+                binding.recorderMicView.setText(R.string.start)
+                binding.recorderMicView.setIconResource(R.drawable.ic_baseline_mic_24)
+            }
+        }
     }
 
     private fun onDialogAnimationUpdate(progress: Float) {
@@ -125,7 +144,15 @@ class RecorderActivity : BaseActivity(),
         dismiss()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        recorder.pause()
+        recorder.cleanCache()
+        recorder.destroy()
+    }
+
     override fun onSaveStart() {
+        isSaving = true
         TODO("Not yet implemented")
     }
 
@@ -134,6 +161,7 @@ class RecorderActivity : BaseActivity(),
     }
 
     override fun onSaveEnd(result: RecordResult) {
+        isSaving = false
         when (result) {
             is RecordResult.Success -> {
                 TODO()
