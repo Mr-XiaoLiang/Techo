@@ -1,11 +1,13 @@
 package com.lollipop.techo.drawable
 
+import android.animation.ValueAnimator
 import android.graphics.*
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import com.lollipop.base.util.range
+import kotlin.math.min
 
-class CircularProgressDrawable : Drawable(), Animatable {
+class CircularProgressDrawable : Drawable(), Animatable, ValueAnimator.AnimatorUpdateListener {
 
     private val paint = Paint().apply {
         isAntiAlias = true
@@ -34,6 +36,25 @@ class CircularProgressDrawable : Drawable(), Animatable {
 
     private var degrees = 0F
 
+    var animationDuration = 300L
+
+    private val rotateAnimator by lazy {
+        ValueAnimator().apply {
+            addUpdateListener(this@CircularProgressDrawable)
+        }
+    }
+
+    override fun onBoundsChange(bounds: Rect) {
+        super.onBoundsChange(bounds)
+        val width = bounds.width() - padding.left - padding.right - strokeWidth
+        val height = bounds.height() - padding.top - padding.bottom - strokeWidth
+        val d = min(width, height)
+        val r = d / 2
+        val left = bounds.centerX() - r
+        val top = bounds.centerY() - r
+        arcBounds.set(left, top, left + d, top + d)
+    }
+
     override fun draw(canvas: Canvas) {
         val saveCount = canvas.save()
         canvas.rotate(degrees, bounds.exactCenterX(), bounds.exactCenterY())
@@ -59,14 +80,25 @@ class CircularProgressDrawable : Drawable(), Animatable {
     }
 
     override fun start() {
-        TODO("Not yet implemented")
+        rotateAnimator.duration = animationDuration
+        rotateAnimator.repeatCount = ValueAnimator.INFINITE
+        rotateAnimator.repeatMode = ValueAnimator.RESTART
+        rotateAnimator.setFloatValues(0F, 360F)
+        rotateAnimator.start()
     }
 
     override fun stop() {
-        TODO("Not yet implemented")
+        rotateAnimator.cancel()
     }
 
     override fun isRunning(): Boolean {
-        TODO("Not yet implemented")
+        return rotateAnimator.isRunning
+    }
+
+    override fun onAnimationUpdate(animation: ValueAnimator?) {
+        if (animation == rotateAnimator) {
+            degrees = animation.animatedValue as Float
+            invalidateSelf()
+        }
     }
 }

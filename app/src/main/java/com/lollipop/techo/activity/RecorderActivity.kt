@@ -153,42 +153,51 @@ class RecorderActivity : BaseActivity(),
 
     override fun onSaveStart() {
         isSaving = true
-        TODO("Not yet implemented")
+        if (isDestroyed || isFinishing) {
+            return
+        }
+        progressDrawable?.start()
     }
 
     override fun onSaveProgressChanged(progress: Float) {
-        TODO("Not yet implemented")
+        if (isDestroyed || isFinishing) {
+            return
+        }
+        progressDrawable?.progress = progress
     }
 
     override fun onSaveEnd(result: RecordResult) {
         isSaving = false
-        when (result) {
-            is RecordResult.Success -> {
-                TODO()
-            }
-            is RecordResult.BadValueError -> TODO()
-            is RecordResult.DeadObjectError -> TODO()
-            is RecordResult.GenericError -> TODO()
-            is RecordResult.InvalidOperationError -> TODO()
+        if (isDestroyed || isFinishing) {
+            return
         }
-        TODO("Not yet implemented")
+//        when (result) {
+//            is RecordResult.Success -> {
+//                TODO()
+//            }
+//            is RecordResult.BadValueError -> TODO()
+//            is RecordResult.DeadObjectError -> TODO()
+//            is RecordResult.GenericError -> TODO()
+//            is RecordResult.InvalidOperationError -> TODO()
+//        }
+//        TODO("Not yet implemented")
     }
 
     override fun onRecordStart() {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     override fun onRecordStop(result: RecordResult) {
-        when (result) {
-            is RecordResult.Success -> {
-                TODO()
-            }
-            is RecordResult.BadValueError -> TODO()
-            is RecordResult.DeadObjectError -> TODO()
-            is RecordResult.GenericError -> TODO()
-            is RecordResult.InvalidOperationError -> TODO()
-        }
-        TODO("Not yet implemented")
+//        when (result) {
+//            is RecordResult.Success -> {
+//                TODO()
+//            }
+//            is RecordResult.BadValueError -> TODO()
+//            is RecordResult.DeadObjectError -> TODO()
+//            is RecordResult.GenericError -> TODO()
+//            is RecordResult.InvalidOperationError -> TODO()
+//        }
+//        TODO("Not yet implemented")
     }
 
 }
