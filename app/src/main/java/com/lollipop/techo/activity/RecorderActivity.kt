@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -18,6 +19,20 @@ import java.io.File
 class RecorderActivity : BaseActivity(),
     RecordStatusListener,
     RecordSaveListener {
+
+    companion object {
+
+        private const val PARAMS_AUDIO_FILE = "RECORD_AUDIO_FILE"
+
+        fun getAudioFile(intent: Intent?): String {
+            return intent?.getStringExtra(PARAMS_AUDIO_FILE) ?: ""
+        }
+
+        private fun putAudioFile(intent: Intent, file: String) {
+            intent.putExtra(PARAMS_AUDIO_FILE, file)
+        }
+
+    }
 
     private val binding: ActivityRecorderBinding by lazyBind()
 
@@ -171,33 +186,31 @@ class RecorderActivity : BaseActivity(),
         if (isDestroyed || isFinishing) {
             return
         }
-//        when (result) {
-//            is RecordResult.Success -> {
-//                TODO()
-//            }
-//            is RecordResult.BadValueError -> TODO()
-//            is RecordResult.DeadObjectError -> TODO()
-//            is RecordResult.GenericError -> TODO()
-//            is RecordResult.InvalidOperationError -> TODO()
-//        }
-//        TODO("Not yet implemented")
+
+
+        when (result) {
+            is RecordResult.Success -> {
+                setResult(
+                    RESULT_OK,
+                    Intent().apply {
+                        putAudioFile(this, audioFile.path)
+                    }
+                )
+                dismiss()
+            }
+            is RecordResult.BadValueError -> TODO()
+            is RecordResult.DeadObjectError -> TODO()
+            is RecordResult.GenericError -> TODO()
+            is RecordResult.InvalidOperationError -> TODO()
+        }
     }
 
     override fun onRecordStart() {
-        // TODO("Not yet implemented")
+        updateRecordButton()
     }
 
     override fun onRecordStop(result: RecordResult) {
-//        when (result) {
-//            is RecordResult.Success -> {
-//                TODO()
-//            }
-//            is RecordResult.BadValueError -> TODO()
-//            is RecordResult.DeadObjectError -> TODO()
-//            is RecordResult.GenericError -> TODO()
-//            is RecordResult.InvalidOperationError -> TODO()
-//        }
-//        TODO("Not yet implemented")
+        updateRecordButton()
     }
 
 }
