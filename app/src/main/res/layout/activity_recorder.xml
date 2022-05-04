@@ -17,7 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@drawable/bg_recorder_dialog">
+        android:background="@drawable/bg_recorder_dialog"
+        android:clipToOutline="true"
+        android:outlineProvider="background">
 
         <ImageView
             android:id="@+id/recorderCloseBtn"
@@ -40,13 +42,16 @@
             app:lineSpace="5dp"
             app:lineWidth="5dp" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/recorderMicView"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
+            android:text="@string/start"
             android:textColor="@color/fabIcon"
+            android:textSize="16sp"
             app:backgroundTint="@color/fabBackground"
             app:icon="@drawable/ic_baseline_mic_24"
             app:iconSize="24dp"
@@ -54,22 +59,35 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recorderWaveView"
-            android:text="@string/start" />
+            app:layout_constraintTop_toBottomOf="@id/recorderWaveView" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/recorderCancelView"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:backgroundTint="@color/recorderCancel"
-            app:icon="@drawable/ic_baseline_close_24"
-            app:iconSize="24dp"
-            app:iconTint="@color/fabIcon"
-            app:layout_constraintBottom_toBottomOf="@id/recorderMicView"
-            app:layout_constraintEnd_toStartOf="@id/recorderMicView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/recorderMicView"
-            app:tint="@color/fabIcon" />
+        <LinearLayout
+            android:id="@+id/statusPanel"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:background="#EFFF"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/statusIconView"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_baseline_warning_24"
+                app:tint="@color/lightWarning" />
+
+            <TextView
+                android:id="@+id/statusMsgView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/app_name" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

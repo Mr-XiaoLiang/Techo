@@ -28,4 +28,6 @@
 
     <color name="recorderWaveColor">#FF018786</color>
 
+    <color name="lightWarning">#C35656</color>
+
 </resources>

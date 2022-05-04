@@ -65,13 +65,13 @@ class RecorderActivity : BaseActivity(),
         setContentView(binding.root)
         binding.dialogRootView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
         binding.backgroundView.setOnClickListener {
-            dismiss()
+            cancel()
         }
         binding.dialogRootView.setEmptyClick()
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
 
-        binding.recorderCancelView.setOnClickListener {
+        binding.recorderCloseBtn.setOnClickListener {
             cancel()
         }
 
@@ -186,8 +186,7 @@ class RecorderActivity : BaseActivity(),
         if (isDestroyed || isFinishing) {
             return
         }
-
-
+        updateStatusView(result)
         when (result) {
             is RecordResult.Success -> {
                 setResult(
@@ -198,10 +197,8 @@ class RecorderActivity : BaseActivity(),
                 )
                 dismiss()
             }
-            is RecordResult.BadValueError -> TODO()
-            is RecordResult.DeadObjectError -> TODO()
-            is RecordResult.GenericError -> TODO()
-            is RecordResult.InvalidOperationError -> TODO()
+            else -> {
+            }
         }
     }
 
@@ -211,6 +208,52 @@ class RecorderActivity : BaseActivity(),
 
     override fun onRecordStop(result: RecordResult) {
         updateRecordButton()
+        updateStatusView(result)
+    }
+
+    private fun updateStatusView(result: RecordResult) {
+        val isSuccess = result is RecordResult.Success
+        binding.statusPanel.isVisible = !isSuccess
+        if (isSuccess) {
+            return
+        }
+        val errorType: Int
+        val errorCode: Int
+        val errorMsg: String
+        when (result) {
+            is RecordResult.BadValueError -> {
+                errorCode = result.code
+                errorMsg = result.msg
+                errorType = R.string.record_result_error_bad_value
+            }
+            is RecordResult.DeadObjectError -> {
+                errorCode = result.code
+                errorMsg = result.msg
+                errorType = R.string.record_result_error_dead_object
+            }
+            is RecordResult.GenericError -> {
+                errorCode = result.code
+                errorMsg = result.msg
+                errorType = R.string.record_result_error_generic
+            }
+            is RecordResult.InvalidOperationError -> {
+                errorCode = result.code
+                errorMsg = result.msg
+                errorType = R.string.record_result_error_invalid_operation
+            }
+            is RecordResult.Success -> {
+                errorCode = 0
+                errorMsg = ""
+                errorType = 0
+                // do nothing
+            }
+        }
+        binding.statusMsgView.text = getString(
+            R.string.record_result_error,
+            getString(errorType),
+            errorCode,
+            errorMsg
+        )
     }
 
 }

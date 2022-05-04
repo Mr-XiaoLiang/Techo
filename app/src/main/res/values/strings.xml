@@ -10,4 +10,10 @@
     <string name="start">开始</string>
     <string name="stop">停止</string>
     <string name="saving">保存中</string>
+
+    <string name="record_result_error">%1$s\n%2$d,%3$s</string>
+    <string name="record_result_error_bad_value">数据出现异常</string>
+    <string name="record_result_error_dead_object">无效操作对象</string>
+    <string name="record_result_error_generic">常规错误</string>
+    <string name="record_result_error_invalid_operation">无效操作</string>
 </resources>
