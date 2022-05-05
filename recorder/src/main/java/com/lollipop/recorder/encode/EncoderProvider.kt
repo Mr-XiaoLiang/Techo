@@ -12,7 +12,8 @@ abstract class EncoderProvider {
         outputStream: OutputStream
     ): PcmEncoder {
         val encoder = createEncoder()
-        init(encoder, config, audioRecord, outputStream)
+        val format = EncodeFormat.create(config, audioRecord)
+        encoder.init(format, outputStream)
         return encoder
     }
 

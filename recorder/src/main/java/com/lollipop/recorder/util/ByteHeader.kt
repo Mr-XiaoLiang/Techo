@@ -63,12 +63,12 @@ open class ByteHeader {
         }
 
         fun putShort(value: Int): ByteArrayBuilder {
-            offset += byteArray.putInt(offset, value)
+            offset += byteArray.putShort(offset, value)
             return this
         }
 
         fun putByte(value: Int): ByteArrayBuilder {
-            offset += byteArray.putInt(offset, value)
+            offset += byteArray.putByte(offset, value)
             return this
         }
 

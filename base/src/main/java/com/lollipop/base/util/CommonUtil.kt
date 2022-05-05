@@ -67,6 +67,17 @@ object CommonUtil {
     }
 
     /**
+     * 主线程
+     */
+    fun <T> tryUI(task: Task<T>) {
+        if (Thread.currentThread() == Looper.getMainLooper().thread) {
+            task.runnable.run()
+        } else {
+            mainThread.post(task.runnable)
+        }
+    }
+
+    /**
      * 延迟任务
      */
     fun <T> delay(delay: Long, task: Task<T>) {
@@ -169,6 +180,15 @@ inline fun <reified T> T.onUI(
 ): CommonUtil.Task<T> {
     val task = task(err, run)
     CommonUtil.onUI(task)
+    return task
+}
+
+inline fun <reified T> T.tryUI(
+    noinline err: ((Throwable) -> Unit) = {},
+    noinline run: T.() -> Unit
+): CommonUtil.Task<T> {
+    val task = task(err, run)
+    CommonUtil.tryUI(task)
     return task
 }
 

@@ -250,9 +250,14 @@ class AudioRecorder(
         if (record.isRunning) {
             pause()
         }
+        val dir = file.parentFile ?: return
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
         if (file.exists()) {
             file.delete()
         }
+        file.createNewFile()
         val outputStream = FileOutputStream(file)
         val encoder = encoderProvider.getEncoder(config, record, outputStream)
         SaveThread(

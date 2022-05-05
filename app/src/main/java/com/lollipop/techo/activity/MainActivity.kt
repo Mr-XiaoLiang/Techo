@@ -1,9 +1,9 @@
 package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -65,7 +65,16 @@ class MainActivity : HeaderActivity(),
 //                    }
 //                }
 //            }
-            startActivity(Intent(this, RecorderActivity::class.java))
+            requestActivity<RecorderActivity> {
+                if (it.isOk) {
+                    Toast.makeText(
+                        this,
+                        RecorderActivity.getAudioFile(it.data),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+//            startActivity(Intent(this, RecorderActivity::class.java))
         }
 
         floatingBinding.root.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)

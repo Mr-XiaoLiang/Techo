@@ -5,10 +5,7 @@ import android.os.Bundle
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
-import com.lollipop.base.util.WindowInsetsHelper
-import com.lollipop.base.util.fixInsetsByPadding
-import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.setEmptyClick
+import com.lollipop.base.util.*
 import com.lollipop.recorder.*
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
@@ -23,6 +20,12 @@ class RecorderActivity : BaseActivity(),
     companion object {
 
         private const val PARAMS_AUDIO_FILE = "RECORD_AUDIO_FILE"
+
+        private const val PARAMS_AUTO_RECORD = "AUTO_RECORD"
+
+        fun autoRecord(intent: Intent) {
+            intent.putExtra(PARAMS_AUTO_RECORD, true)
+        }
 
         fun getAudioFile(intent: Intent?): String {
             return intent?.getStringExtra(PARAMS_AUDIO_FILE) ?: ""
@@ -42,6 +45,11 @@ class RecorderActivity : BaseActivity(),
         onStart(::onDialogAnimationStart)
         onEnd(::onDialogAnimationEnd)
     }
+
+    private val isAutoRecord: Boolean
+        get() {
+            return intent.getBooleanExtra(PARAMS_AUTO_RECORD, false)
+        }
 
     private val recorder by lazy {
         AudioRecorder(RecorderConfig.create(), cacheDir)
@@ -84,6 +92,12 @@ class RecorderActivity : BaseActivity(),
         dialogAnimationHelper.open(true)
 
         updateRecordButton()
+
+        binding.recorderMicView.post {
+            if (isAutoRecord) {
+                binding.recorderMicView.callOnClick()
+            }
+        }
     }
 
     private fun initRecorder() {
@@ -114,22 +128,24 @@ class RecorderActivity : BaseActivity(),
         if (isFinishing || isDestroyed) {
             return
         }
-        when {
-            isSaving -> {
-                if (progressDrawable == null) {
-                    progressDrawable = CircularProgressDrawable()
+        tryUI {
+            when {
+                isSaving -> {
+                    if (progressDrawable == null) {
+                        progressDrawable = CircularProgressDrawable()
+                    }
+                    binding.recorderMicView.setText(R.string.saving)
+                    binding.recorderMicView.icon = progressDrawable
+                    progressDrawable?.start()
                 }
-                binding.recorderMicView.setText(R.string.saving)
-                binding.recorderMicView.icon = progressDrawable
-                progressDrawable?.start()
-            }
-            recorder.isRunning -> {
-                binding.recorderMicView.setText(R.string.stop)
-                binding.recorderMicView.setIconResource(R.drawable.ic_baseline_stop_24)
-            }
-            else -> {
-                binding.recorderMicView.setText(R.string.start)
-                binding.recorderMicView.setIconResource(R.drawable.ic_baseline_mic_24)
+                recorder.isRunning -> {
+                    binding.recorderMicView.setText(R.string.stop)
+                    binding.recorderMicView.setIconResource(R.drawable.ic_baseline_stop_24)
+                }
+                else -> {
+                    binding.recorderMicView.setText(R.string.start)
+                    binding.recorderMicView.setIconResource(R.drawable.ic_baseline_mic_24)
+                }
             }
         }
     }
@@ -155,6 +171,12 @@ class RecorderActivity : BaseActivity(),
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        // 更新intent
+        setIntent(intent)
+    }
+
     override fun onBackPressed() {
         dismiss()
     }
@@ -171,14 +193,18 @@ class RecorderActivity : BaseActivity(),
         if (isDestroyed || isFinishing) {
             return
         }
-        progressDrawable?.start()
+        tryUI {
+            progressDrawable?.start()
+        }
     }
 
     override fun onSaveProgressChanged(progress: Float) {
         if (isDestroyed || isFinishing) {
             return
         }
-        progressDrawable?.progress = progress
+        tryUI {
+            progressDrawable?.progress = progress
+        }
     }
 
     override fun onSaveEnd(result: RecordResult) {
@@ -186,29 +212,36 @@ class RecorderActivity : BaseActivity(),
         if (isDestroyed || isFinishing) {
             return
         }
-        updateStatusView(result)
-        when (result) {
-            is RecordResult.Success -> {
-                setResult(
-                    RESULT_OK,
-                    Intent().apply {
-                        putAudioFile(this, audioFile.path)
-                    }
-                )
-                dismiss()
-            }
-            else -> {
+        tryUI {
+            progressDrawable?.stop()
+            updateStatusView(result)
+            when (result) {
+                is RecordResult.Success -> {
+                    setResult(
+                        RESULT_OK,
+                        Intent().apply {
+                            putAudioFile(this, audioFile.path)
+                        }
+                    )
+                    dismiss()
+                }
+                else -> {
+                }
             }
         }
     }
 
     override fun onRecordStart() {
-        updateRecordButton()
+        tryUI {
+            updateRecordButton()
+        }
     }
 
     override fun onRecordStop(result: RecordResult) {
-        updateRecordButton()
-        updateStatusView(result)
+        tryUI {
+            updateRecordButton()
+            updateStatusView(result)
+        }
     }
 
     private fun updateStatusView(result: RecordResult) {

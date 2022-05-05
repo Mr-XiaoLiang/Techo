@@ -7,12 +7,17 @@ import java.io.OutputStream
  */
 abstract class PcmEncoder {
 
-    protected var format: EncodeFormat = EncodeFormat.EMPTY
-        private set
+    private var encodeFormat: EncodeFormat? = null
+
+    protected val format: EncodeFormat
+        get() {
+            return encodeFormat ?: EncodeFormat.EMPTY
+        }
+
     private var outputStream: OutputStream? = null
 
     fun init(format: EncodeFormat, outputStream: OutputStream) {
-        this.format = format
+        this.encodeFormat = format
         this.outputStream = outputStream
         onReady()
     }
@@ -38,7 +43,7 @@ abstract class PcmEncoder {
     fun destroy() {
         onDestroy()
         outputStream = null
-        format = EncodeFormat.EMPTY
+        encodeFormat = EncodeFormat.EMPTY
     }
 
     open fun onDestroy() {}
