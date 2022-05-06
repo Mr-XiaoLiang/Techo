@@ -57,24 +57,23 @@ class MainActivity : HeaderActivity(),
         loadMoreHelper
 
         floatingBinding.newTechoBtn.onClick {
-//            requestActivity<TechoEditActivity> {
-//                if (it.isOk) {
-//                    val newId = TechoEditActivity.getResultTechoId(it.data)
-//                    if (newId != TechoEditActivity.NO_ID) {
-//                        mode.onNewInsert(newId)
-//                    }
-//                }
-//            }
-            requestActivity<RecorderActivity> {
+            requestActivity<TechoEditActivity> {
                 if (it.isOk) {
-                    Toast.makeText(
-                        this,
-                        RecorderActivity.getAudioFile(it.data),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val newId = TechoEditActivity.getResultTechoId(it.data)
+                    if (newId != TechoEditActivity.NO_ID) {
+                        mode.onNewInsert(newId)
+                    }
                 }
             }
-//            startActivity(Intent(this, RecorderActivity::class.java))
+//            requestActivity<RecorderActivity> {
+//                if (it.isOk) {
+//                    Toast.makeText(
+//                        this,
+//                        RecorderActivity.getAudioFile(it.data),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
         }
 
         floatingBinding.root.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
