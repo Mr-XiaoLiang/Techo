@@ -19,7 +19,9 @@
 
     <style name="Theme.Techo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.Techo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+<!--    <style name="Theme.Techo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
+
+    <style name="Theme.Techo.PopupOverlay" parent="Theme.Techo" />
 
     <style name="FloatingButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="iconTint">@color/fabIcon</item>

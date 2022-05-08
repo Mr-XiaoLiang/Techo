@@ -16,23 +16,29 @@
             android:id="@+id/toolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:collapsedTitleTextColor="@color/titleColor"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleTextColor="@color/titleColor"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleCollapseMode="scale"
             app:toolbarId="@+id/toolbar">
 
             <ImageView
                 android:id="@+id/headerBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="?attr/colorPrimary"/>
+                android:background="?attr/colorPrimary"
+                android:scaleType="centerCrop" />
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/Theme.Techo.PopupOverlay" />
+                app:popupTheme="@style/Theme.Techo.PopupOverlay"
+                app:title="@string/app_name"
+                app:titleCentered="true"
+                app:titleTextColor="@color/titleColor" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -49,16 +55,16 @@
             android:layout_height="match_parent" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/contentLoadingView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="24dp"
             android:indeterminate="true"
+            android:visibility="gone"
             app:indicatorColor="@color/content_loading"
             app:indicatorSize="24dp"
-            android:layout_margin="24dp"
-            android:id="@+id/contentLoadingView"
-            android:visibility="gone"
-            app:showDelay="300"
-            app:minHideDelay="300"/>
+            app:minHideDelay="300"
+            app:showDelay="300" />
     </FrameLayout>
 
     <FrameLayout

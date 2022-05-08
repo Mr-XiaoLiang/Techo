@@ -1,7 +1,7 @@
 package com.lollipop.techo.activity
 
 import android.os.Bundle
-import android.view.MenuItem
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -35,6 +35,8 @@ abstract class HeaderActivity : BaseActivity() {
 
     protected open val showBackArrow = true
 
+    protected open val optionsMenu = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
@@ -62,6 +64,14 @@ abstract class HeaderActivity : BaseActivity() {
 
     protected fun hideLoading() {
         viewBinding.contentLoadingView.hide()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (optionsMenu != 0) {
+            menuInflater.inflate(optionsMenu, menu)
+            return true
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun loadHeader() {

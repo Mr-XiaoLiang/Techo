@@ -12,6 +12,7 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityMainBinding
@@ -32,6 +33,9 @@ class MainActivity : HeaderActivity(),
 
     override val floatingView: View
         get() = floatingBinding.root
+
+    override val optionsMenu: Int
+        get() = R.menu.menu_main
 
     private val mode by lazy {
         TechoMode.create(this).attach(this).buildListMode()

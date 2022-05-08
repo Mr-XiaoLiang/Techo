@@ -30,4 +30,6 @@
 
     <color name="lightWarning">#C35656</color>
 
+    <color name="titleColor">#FFF</color>
+
 </resources>
