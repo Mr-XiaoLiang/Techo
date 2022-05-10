@@ -2,6 +2,7 @@ package com.lollipop.techo.view
 
 import android.animation.Animator
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewAnimationUtils
@@ -51,6 +52,20 @@ class CheckableView(
         }
         checkStatus()
         setStyle(CheckStyle.SQUARE)
+        attributeSet?.let { attrs ->
+            val typeArray = context.obtainStyledAttributes(attrs, R.styleable.CheckableView)
+            var defStyle = CheckStyle.CIRCULAR
+            val index = typeArray.getInt(
+                R.styleable.CheckableView_checkStyle,
+                CheckStyle.CIRCULAR.ordinal
+            )
+            if (index in CheckStyle.values().indices) {
+                defStyle = CheckStyle.values()[index]
+            }
+            setStyle(defStyle)
+            isChecked = typeArray.getBoolean(R.styleable.CheckableView_android_checked, false)
+            typeArray.recycle()
+        }
     }
 
     fun setDefaultDrawable(drawable: Drawable?) {

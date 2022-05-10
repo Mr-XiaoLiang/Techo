@@ -5,4 +5,11 @@
         <attr name="lineSpace" format="dimension"/>
         <attr name="lineColor" format="color"/>
     </declare-styleable>
+    <declare-styleable name="CheckableView">
+        <attr name="checkStyle" format="enum">
+            <enum name="circular" value="0"/>
+            <enum name="square" value="1"/>
+        </attr>
+        <attr name="android:checked" format="boolean"/>
+    </declare-styleable>
 </resources>

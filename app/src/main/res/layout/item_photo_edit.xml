@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/photoView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.lollipop.techo.view.CheckableView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="@id/photoView"
+        app:layout_constraintTop_toTopOf="@id/photoView"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        app:checkStyle="circular"
+        android:id="@+id/photoCheckView"
+        tools:checked="true"/>
+
+    <TextView
+        android:id="@+id/photoNumberView"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        app:layout_constraintTop_toTopOf="@id/photoCheckView"
+        app:layout_constraintBottom_toBottomOf="@id/photoCheckView"
+        app:layout_constraintStart_toStartOf="@id/photoCheckView"
+        app:layout_constraintEnd_toEndOf="@id/photoCheckView"
+        android:gravity="center"
+        android:textSize="12dp"
+        tools:text="9"
+        android:textColor="@android:color/white"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
