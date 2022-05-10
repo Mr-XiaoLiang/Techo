@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.util.AnimationHelper
 
@@ -149,7 +150,7 @@ abstract class EditDelegate {
 
     protected fun clickToClose(vararg views: View) {
         views.forEach {
-            it.setOnClickListener {
+            it.onClick {
                 callClose()
             }
         }
@@ -157,7 +158,7 @@ abstract class EditDelegate {
 
     protected fun keepWithClick(vararg views: View) {
         views.forEach {
-            it.setOnClickListener {
+            it.onClick {
                 // 点击事件设置，但是不响应
             }
         }

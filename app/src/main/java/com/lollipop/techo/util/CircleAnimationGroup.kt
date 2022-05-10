@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.lollipop.base.util.onClick
 import kotlin.math.abs
 
 /**
@@ -58,7 +59,7 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
 
     fun onPlanetClick(callback: (T) -> Unit) {
         activeViewList.forEach { planet ->
-            planet.setOnClickListener{
+            (planet as View).onClick{
                 callback(planet)
             }
         }

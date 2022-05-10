@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.gallery.Photo
 import com.lollipop.gallery.PhotoManager
@@ -112,10 +113,10 @@ class PhotoEditDelegate : EditDelegate() {
         }
 
         init {
-            binding.photoView.setOnClickListener {
+            binding.photoView.onClick {
                 onPhotoClick()
             }
-            binding.photoCheckView.setOnClickListener {
+            binding.photoCheckView.onClick {
                 onCheckboxClick()
             }
         }

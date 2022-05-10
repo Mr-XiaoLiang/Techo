@@ -3,6 +3,7 @@ package com.lollipop.techo.edit.impl
 import android.view.View
 import android.view.ViewGroup
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
@@ -34,7 +35,7 @@ class TextEditDelegate : EditDelegate() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         binding?.apply {
-            doneBtn.setOnClickListener {
+            doneBtn.onClick {
                 onDone()
             }
             clickToClose(backgroundView)

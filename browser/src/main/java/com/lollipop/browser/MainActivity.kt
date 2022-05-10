@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.closeBoard
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.web.WebHelper
 import com.lollipop.web.WebHost
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity(), WebHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.doneBtn.setOnClickListener {
+        binding.doneBtn.onClick {
             binding.urlInput.closeBoard()
             webHelper.loadUrl(binding.urlInput.text?.toString() ?: "")
         }

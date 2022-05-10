@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.findInSelf
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ItemOptionBinding
 import com.lollipop.techo.option.OptionDialog.*
@@ -116,7 +117,7 @@ class OptionDialog(
         }
 
         init {
-            itemView.setOnClickListener {
+            itemView.onClick {
                 onClick()
             }
             binding.iconView.clipToOutline = true

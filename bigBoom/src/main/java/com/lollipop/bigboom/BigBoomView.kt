@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.lollipop.base.util.SimpleViewClickCallback
+import com.lollipop.base.util.onClick
 import com.lollipop.bigboom.PatchesStatus.*
 import kotlin.math.abs
 
@@ -531,7 +533,7 @@ class BigBoomView(
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PatchesHolder {
             return itemProvider.createHolder(parent).apply {
-                itemView.setOnClickListener(OnHolderClickListener(this, itemClickListener))
+                itemView.onClick(callback = OnHolderClickListener(this, itemClickListener))
             }
         }
 
@@ -547,8 +549,8 @@ class BigBoomView(
         private class OnHolderClickListener(
             private val holder: PatchesHolder,
             private val callback: OnItemClickListener
-        ) : OnClickListener {
-            override fun onClick(v: View?) {
+        ) : SimpleViewClickCallback<View> {
+            override fun onClick(v: View) {
                 if (v != holder.itemView) {
                     return
                 }

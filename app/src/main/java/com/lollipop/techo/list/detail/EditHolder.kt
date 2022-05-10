@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lollipop.base.list.TouchableHolder
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.databinding.ItemEditGroupBinding
 
 /**
@@ -43,7 +44,7 @@ open class EditHolder<T : ViewBinding>(
 
     init {
         onEditModeChange(false)
-        optionBinding.moreOptionView.setOnClickListener {
+        optionBinding.moreOptionView.onClick {
             onOptionButtonClick()
         }
         optionBinding.itemContentGroup.addView(binding.content.root)

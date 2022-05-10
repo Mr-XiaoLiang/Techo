@@ -2,7 +2,6 @@ package com.lollipop.base.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
@@ -22,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import java.io.*
+import java.lang.ref.WeakReference
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -673,8 +673,35 @@ fun View.tryInvisible() {
     }
 }
 
-fun View.onClick(callback: (View) -> Unit) {
-    this.setOnClickListener(callback)
+fun interface SimpleViewClickCallback<V : View> {
+    fun onClick(v: V)
+}
+
+inline fun <reified T : View> T.onClick(interval: Long = 300, callback: SimpleViewClickCallback<T>) {
+    setOnClickListener(SimpleIntervalClickListener(interval, this, callback))
+}
+
+class SimpleIntervalClickListener<V : View>(
+    private val interval: Long = 0,
+    target: V,
+    private val callback: SimpleViewClickCallback<V>
+) : View.OnClickListener {
+
+    private var lastClickTime = 0L
+    private val targetView = WeakReference(target)
+
+    override fun onClick(v: View?) {
+        val target = targetView.get() ?: return
+        if (target != v) {
+            return
+        }
+        val now = System.currentTimeMillis()
+        if (interval < 0 || now - lastClickTime > interval) {
+            lastClickTime = now
+            callback.onClick(target)
+        }
+    }
+
 }
 
 fun Int.smallerThen(o: Int): Int {
@@ -714,7 +741,7 @@ fun View.findRootGroup(filter: (ViewGroup) -> Boolean): ViewGroup? {
 }
 
 fun View.setEmptyClick() {
-    setOnClickListener {  }
+    onClick { }
 }
 
 @SuppressLint("ClickableViewAccessibility")

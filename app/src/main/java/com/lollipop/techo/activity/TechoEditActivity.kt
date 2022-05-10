@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
-import com.lollipop.base.util.WindowInsetsHelper
-import com.lollipop.base.util.fixInsetsByPadding
-import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.onUI
+import com.lollipop.base.util.*
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
@@ -138,10 +135,10 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
                 floatingBinding.quickAddButton.hide()
             }
         }
-        floatingBinding.quickAddButton.setOnClickListener {
+        floatingBinding.quickAddButton.onClick {
             addItemByType()
         }
-        floatingBinding.floatingMenuBtn.setOnClickListener {
+        floatingBinding.floatingMenuBtn.onClick {
             if (circleAnimationGroup.isOpened) {
                 circleAnimationGroup.close()
             } else {

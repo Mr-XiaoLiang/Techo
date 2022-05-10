@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.log
+import com.lollipop.base.util.onClick
 import com.lollipop.base.util.visibleOrInvisible
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
@@ -104,7 +105,7 @@ class DefaultGuideProvider : GuideProvider() {
                     marginHorizontal,
                     marginVertical
                 )
-                guide.setOnClickListener {
+                guide.onClick {
                     callNextStep()
                 }
             }

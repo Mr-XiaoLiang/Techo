@@ -72,18 +72,18 @@ class RecorderActivity : BaseActivity(),
         WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         binding.dialogRootView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
-        binding.backgroundView.setOnClickListener {
+        binding.backgroundView.onClick {
             cancel()
         }
         binding.dialogRootView.setEmptyClick()
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
 
-        binding.recorderCloseBtn.setOnClickListener {
+        binding.recorderCloseBtn.onClick {
             cancel()
         }
 
-        binding.recorderMicView.setOnClickListener {
+        binding.recorderMicView.onClick {
             onRecordButtonClick()
         }
 

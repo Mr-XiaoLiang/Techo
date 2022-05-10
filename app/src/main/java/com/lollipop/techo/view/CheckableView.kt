@@ -13,6 +13,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.addListener
 import androidx.core.view.isInvisible
+import com.lollipop.base.util.onClick
 import com.lollipop.techo.R
 import kotlin.math.sqrt
 
@@ -47,7 +48,7 @@ class CheckableView(
     init {
         addView(defaultStatusView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         addView(checkedStatusView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        setOnClickListener {
+        onClick {
             onClick()
         }
         checkStatus()
