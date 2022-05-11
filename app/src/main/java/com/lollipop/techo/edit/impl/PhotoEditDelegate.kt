@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.doAsync
@@ -27,7 +26,7 @@ class PhotoEditDelegate : EditDelegate() {
 
     private var binding: PanelPhotoSelectBinding? = null
 
-    private val photoManager = PhotoManager()
+    private val photoManager = PhotoManager.create()
 
     override fun isSupport(info: BaseTechoItem): Boolean {
         return info is PhotoItem
@@ -100,14 +99,31 @@ class PhotoEditDelegate : EditDelegate() {
         // TODO
     }
 
-//    private class PhotoAdapter:
+    private class PhotoAdapter(
+        private val data: List<Photo>,
+        private val photoClickListener: PhotoClickListener,
+        private val selectedIndexProvider: PhotoSelectedStatusProvider
+    ) : RecyclerView.Adapter<ItemHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
+            return ItemHolder.create(parent, photoClickListener)
+        }
+
+        override fun onBindViewHolder(holder: ItemHolder, position: Int) {
+            holder.bind(data[position], selectedIndexProvider.getSelectedIndex(position))
+        }
+
+        override fun getItemCount(): Int {
+            return data.size
+        }
+
+    }
 
     private class ItemHolder(
         private val binding: ItemPhotoEditBinding,
-        private val onClickListener: (Boolean, Int) -> Unit
+        private val onClickListener: PhotoClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
         companion object {
-            fun create(parent: ViewGroup, onClickListener: (Boolean, Int) -> Unit): ItemHolder {
+            fun create(parent: ViewGroup, onClickListener: PhotoClickListener): ItemHolder {
                 return ItemHolder(parent.bind(), onClickListener)
             }
         }
@@ -122,11 +138,11 @@ class PhotoEditDelegate : EditDelegate() {
         }
 
         private fun onPhotoClick() {
-            onClickListener(false, adapterPosition)
+            onClickListener.onPhotoClick(false, adapterPosition)
         }
 
         private fun onCheckboxClick() {
-            onClickListener(true, adapterPosition)
+            onClickListener.onPhotoClick(true, adapterPosition)
         }
 
         fun bind(info: Photo, selectedIndex: Int) {
@@ -139,8 +155,14 @@ class PhotoEditDelegate : EditDelegate() {
                 ""
             }
         }
+    }
 
+    private fun interface PhotoSelectedStatusProvider {
+        fun getSelectedIndex(position: Int): Int
+    }
 
+    private fun interface PhotoClickListener {
+        fun onPhotoClick(check: Boolean, position: Int)
     }
 
 }

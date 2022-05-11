@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,12 +20,18 @@ import java.io.FileOutputStream
  * 相片管理器
  * 提供了图片的简单查询功能和保存功能
  */
-class PhotoManager {
+class PhotoManager private constructor(
+    private val dataList: ArrayList<Photo> = ArrayList()
+) : List<Photo> by dataList {
 
     companion object {
         const val READ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
 
         private const val PHOTO_DIR = "my_photo"
+
+        fun create(): PhotoManager {
+            return PhotoManager()
+        }
 
         private fun getLocalPhotoDir(context: Context): File {
             return File(context.filesDir, PHOTO_DIR).apply {
@@ -93,16 +97,10 @@ class PhotoManager {
         }
     }
 
-    private val dataList = ArrayList<Photo>()
-
     var isMediaStoreChanged = true
 
     fun shouldShowPermissionRationale(activity: AppCompatActivity): Boolean {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_PERMISSION)
-    }
-
-    fun indexOf(photo: Photo): Int {
-        return dataList.indexOf(photo)
     }
 
     /**
@@ -141,15 +139,6 @@ class PhotoManager {
         } catch (e: Throwable) {
             e.printStackTrace()
         }
-    }
-
-    val size: Int
-        get() {
-            return dataList.size
-        }
-
-    operator fun get(index: Int): Photo {
-        return dataList[index]
     }
 
     fun registerMediaChangeListener() {
