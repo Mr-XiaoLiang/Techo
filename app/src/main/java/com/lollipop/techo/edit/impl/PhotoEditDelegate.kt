@@ -1,5 +1,6 @@
 package com.lollipop.techo.edit.impl
 
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
@@ -50,15 +51,32 @@ class PhotoEditDelegate : EditDelegate() {
 
     override fun onOpen(info: BaseTechoItem) {
         super.onOpen(info)
-        loadPhotos()
-    }
-
-    private fun loadPhotos() {
         val activity = context
         if (activity == null) {
             onPhotoLoadError()
             return
         }
+        if (PhotoManager.checkPermission(activity)) {
+            loadPhotos(activity)
+        } else {
+            startPermissionFlow { flow ->
+                if (flow == null) {
+                    onPermissionDenied()
+                } else {
+                    flow.permissionIs(PhotoManager.READ_PERMISSION)
+                        .request { result ->
+                            if (result.isGranted(PhotoManager.READ_PERMISSION)) {
+                                loadPhotos(activity)
+                            } else {
+                                onPermissionDenied()
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    private fun loadPhotos(activity: Activity) {
         onPhotoLoadStart()
         if (!photoManager.isMediaStoreChanged) {
             onPhotoLoaded()

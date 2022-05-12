@@ -1,10 +1,12 @@
 package com.lollipop.techo.edit
 
 import android.app.Activity
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
+import com.lollipop.base.request.PermissionFlow
+import com.lollipop.base.request.RequestLauncher
+import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.util.AnimationHelper
@@ -39,6 +41,11 @@ abstract class EditDelegate {
     protected val context: Activity?
         get() {
             return controller?.context
+        }
+
+    protected val requestLauncher: RequestLauncher?
+        get() {
+            return controller?.requestLauncher
         }
 
     protected val isAnimationOpened: Boolean
@@ -212,6 +219,19 @@ abstract class EditDelegate {
 
     fun callClose() {
         controller?.callClose(this)
+    }
+
+    protected fun startPermissionFlow(callback: (PermissionFlow?) -> Unit) {
+        val activity = context
+        if (activity == null) {
+            callback(null)
+            return
+        }
+        if (requestLauncher == null && activity !is RequestLauncher) {
+            callback(null)
+            return
+        }
+        callback(activity.startPermissionFlow(requestLauncher))
     }
 
 }

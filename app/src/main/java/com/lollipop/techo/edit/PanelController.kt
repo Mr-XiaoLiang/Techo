@@ -1,6 +1,7 @@
 package com.lollipop.techo.edit
 
 import android.app.Activity
+import com.lollipop.base.request.RequestLauncher
 
 /**
  * @author lollipop
@@ -11,5 +12,7 @@ interface PanelController {
     fun callClose(editDelegate: EditDelegate)
 
     val context: Activity
+
+    val requestLauncher: RequestLauncher
 
 }
