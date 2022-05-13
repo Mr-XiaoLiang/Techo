@@ -1,5 +1,6 @@
 package com.lollipop.techo.edit.impl
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,10 @@ class PhotoEditDelegate : EditDelegate() {
 
     private val photoManager = PhotoManager.create()
 
+    private val adapter by lazy {
+        PhotoAdapter(photoManager, ::onPhotoClick, ::getSelectedIndex)
+    }
+
     override fun isSupport(info: BaseTechoItem): Boolean {
         return info is PhotoItem
     }
@@ -46,6 +51,7 @@ class PhotoEditDelegate : EditDelegate() {
         super.onViewCreated(view)
         binding?.let {
             it.photoSelectGroup.layoutManager = GridLayoutManager(view.context, 4)
+            it.photoSelectGroup.adapter = adapter
         }
     }
 
@@ -74,6 +80,22 @@ class PhotoEditDelegate : EditDelegate() {
                 }
             }
         }
+    }
+
+    private fun onPhotoClick(check: Boolean, position: Int) {
+        if (check) {
+            TODO()
+        } else {
+            showPhotoDetail(position)
+        }
+    }
+
+    private fun getSelectedIndex(position: Int): Int {
+        TODO()
+    }
+
+    private fun showPhotoDetail(position: Int) {
+        TODO()
     }
 
     private fun loadPhotos(activity: Activity) {
@@ -109,8 +131,10 @@ class PhotoEditDelegate : EditDelegate() {
         // TODO
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun onPhotoLoaded() {
         // TODO
+        adapter.notifyDataSetChanged()
     }
 
     private fun onPhotoLoadError() {
