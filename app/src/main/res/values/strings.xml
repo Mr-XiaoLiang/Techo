@@ -17,4 +17,7 @@
     <string name="record_result_error_generic">常规错误</string>
     <string name="record_result_error_invalid_operation">无效操作</string>
     <string name="settings">设置</string>
+
+    <string name="photo_permission_denied">由于权限原因，无法读取本地图片</string>
+    <string name="photo_load_error">本地图片加载失败</string>
 </resources>

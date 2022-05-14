@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.request.startPermissionFlow
@@ -13,6 +14,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.gallery.Photo
 import com.lollipop.gallery.PhotoManager
+import com.lollipop.techo.R
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.PhotoItem
 import com.lollipop.techo.databinding.ItemPhotoEditBinding
@@ -124,21 +126,31 @@ class PhotoEditDelegate : EditDelegate() {
     }
 
     private fun onPermissionDenied() {
-        // TODO
+        binding?.let { bd ->
+            bd.photoSelectGroup.isVisible = false
+            bd.statusPanel.isVisible = true
+            bd.statusMsgView.setText(R.string.photo_permission_denied)
+        }
     }
 
     private fun onPhotoLoadStart() {
-        // TODO
+        binding?.let { bd ->
+            bd.photoSelectGroup.isVisible = true
+            bd.statusPanel.isVisible = false
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onPhotoLoaded() {
-        // TODO
         adapter.notifyDataSetChanged()
     }
 
     private fun onPhotoLoadError() {
-        // TODO
+        binding?.let { bd ->
+            bd.photoSelectGroup.isVisible = false
+            bd.statusPanel.isVisible = true
+            bd.statusMsgView.setText(R.string.photo_load_error)
+        }
     }
 
     private class PhotoAdapter(
