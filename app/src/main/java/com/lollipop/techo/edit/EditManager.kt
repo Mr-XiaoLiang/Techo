@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
+import com.lollipop.base.request.RequestLauncher
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.edit.impl.PhotoEditDelegate
 import com.lollipop.techo.edit.impl.SplitEditDelegate
@@ -15,6 +16,7 @@ import com.lollipop.techo.edit.impl.TextEditDelegate
  */
 class EditManager(
     private val activity: Activity,
+    private val launcher: RequestLauncher,
     private val container: ViewGroup
 ) : PanelController {
 
@@ -138,6 +140,8 @@ class EditManager(
 
     override val context: Activity
         get() = activity
+    override val requestLauncher: RequestLauncher
+        get() = launcher
 
     private fun tryClosePanel(editDelegate: EditDelegate?) {
         editDelegate?.close()

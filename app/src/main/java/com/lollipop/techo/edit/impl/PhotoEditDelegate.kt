@@ -2,6 +2,7 @@ package com.lollipop.techo.edit.impl
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -31,6 +32,8 @@ class PhotoEditDelegate : EditDelegate() {
     private var binding: PanelPhotoSelectBinding? = null
 
     private val photoManager = PhotoManager.create()
+
+    private val selectedPhotoList = SparseArray<Photo>()
 
     private val adapter by lazy {
         PhotoAdapter(photoManager, ::onPhotoClick, ::getSelectedIndex)
@@ -86,14 +89,23 @@ class PhotoEditDelegate : EditDelegate() {
 
     private fun onPhotoClick(check: Boolean, position: Int) {
         if (check) {
-            TODO()
+            if (selectedPhotoList.indexOfKey(position) >= 0) {
+                selectedPhotoList.remove(position)
+            } else {
+                selectedPhotoList.put(position, photoManager[position])
+            }
+            adapter.notifyItemChanged(position)
         } else {
             showPhotoDetail(position)
         }
     }
 
     private fun getSelectedIndex(position: Int): Int {
-        TODO()
+        val indexOfKey = selectedPhotoList.indexOfKey(position)
+        if (indexOfKey >= 0) {
+            return indexOfKey + 1
+        }
+        return -1
     }
 
     private fun showPhotoDetail(position: Int) {
@@ -116,7 +128,6 @@ class PhotoEditDelegate : EditDelegate() {
                 }) {
                     context?.let { c ->
                         photoManager.refresh(c)
-//                        val photoSize = photoManager.size
                         onUI {
                             onPhotoLoaded()
                         }
@@ -142,6 +153,8 @@ class PhotoEditDelegate : EditDelegate() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onPhotoLoaded() {
+        // 加载完成后顺序可能变化，所以清空
+        selectedPhotoList.clear()
         adapter.notifyDataSetChanged()
     }
 
