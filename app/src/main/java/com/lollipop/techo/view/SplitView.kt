@@ -58,7 +58,7 @@ class SplitView(
         val maxChildWidth = widthSize - paddingLeft - paddingRight
         for (i in 0 until childCount) {
             getChildAt(i)?.let { child ->
-                val layoutParams = child.layoutParams.format()
+                val layoutParams = formatLayoutParams(child.layoutParams)
                 getChildSize(tempPoint, maxChildWidth, layoutParams)
                 child.measure(
                     MeasureSpec.makeMeasureSpec(tempPoint.x, MeasureSpec.EXACTLY),
@@ -84,7 +84,7 @@ class SplitView(
         val maxChildHeight = height - paddingTop - paddingBottom
         for (i in 0 until childCount) {
             getChildAt(i)?.let { child ->
-                val layoutParams = child.layoutParams.format()
+                val layoutParams = formatLayoutParams(child.layoutParams)
                 getChildSize(tempPoint, maxChildWidth, layoutParams)
                 val childLeft = ((maxChildWidth - tempPoint.x) / 2) + paddingLeft
                 val childTop = ((maxChildHeight - tempPoint.y) / 2) + paddingTop
@@ -118,14 +118,14 @@ class SplitView(
         }
     }
 
-    private fun ViewGroup.LayoutParams?.format(): RatioLayoutParams {
-        if (this == null) {
+    private fun formatLayoutParams(lp: ViewGroup.LayoutParams?): RatioLayoutParams {
+        if (lp == null) {
             return RatioLayoutParams(MATCH_PARENT, 5.dp2px)
         }
-        if (this is RatioLayoutParams) {
-            return this
+        if (lp is RatioLayoutParams) {
+            return lp
         }
-        return RatioLayoutParams(this)
+        return RatioLayoutParams(lp)
     }
 
     override fun checkLayoutParams(p: ViewGroup.LayoutParams?): Boolean {
