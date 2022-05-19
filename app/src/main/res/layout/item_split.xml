@@ -4,11 +4,11 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
+    <com.lollipop.techo.view.SplitView
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/teal_700"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/splitView"/>
 
 </FrameLayout>

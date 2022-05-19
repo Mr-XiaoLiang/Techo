@@ -37,6 +37,9 @@ class SplitView(
 
     init {
         addView(imageView)
+        if (isInEditMode) {
+            load(SplitStyle.Default)
+        }
     }
 
     fun load(splitStyle: SplitStyle) {
@@ -47,7 +50,11 @@ class SplitView(
 
     private fun updateSize(info: SplitLoader.SplitInfo) {
         imageView.layoutParams = RatioLayoutParams(
-            info.width, info.height, info.ratio, info.widthType, info.heightType
+            info.width.dp2px,
+            info.height.dp2px,
+            info.ratio,
+            info.widthType,
+            info.heightType
         )
     }
 
@@ -73,7 +80,7 @@ class SplitView(
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         if (heightMode == MeasureSpec.UNSPECIFIED) {
             heightSize = maxChildHeight
-        } else if (heightMode == MeasureSpec.AT_MOST && heightSize < maxChildHeight) {
+        } else if (heightMode == MeasureSpec.AT_MOST && heightSize > maxChildHeight) {
             heightSize = maxChildHeight
         }
         setMeasuredDimension(widthSize, heightSize)

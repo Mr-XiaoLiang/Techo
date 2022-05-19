@@ -69,7 +69,7 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     private var quickAddType = Text
 
     private val editManager by lazy {
-        EditManager(this, floatingBinding.editContainer)
+        EditManager(this, this, floatingBinding.editContainer)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
