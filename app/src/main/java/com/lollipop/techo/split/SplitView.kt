@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.techo.split
 
 import android.content.Context
 import android.graphics.Point
@@ -7,12 +7,10 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.content.res.ResourcesCompat
 import com.lollipop.base.util.dp2px
 import com.lollipop.techo.data.SplitStyle
-import com.lollipop.techo.util.SplitLoader
-import com.lollipop.techo.view.SplitView.WidthType.ABSOLUTELY
-import com.lollipop.techo.view.SplitView.WidthType.MATCH
+import com.lollipop.techo.split.SplitView.WidthType.ABSOLUTELY
+import com.lollipop.techo.split.SplitView.WidthType.MATCH
 
 class SplitView(
     context: Context, attributeSet: AttributeSet?, style: Int
@@ -183,7 +181,7 @@ class SplitView(
 
     private fun getDrawable(info: SplitLoader.SplitInfo): Drawable? {
         return try {
-            ResourcesCompat.getDrawable(resources, info.resourceId, context.theme)
+            info.drawable.load(context)
         } catch (e: Throwable) {
             e.printStackTrace()
             null
