@@ -2,7 +2,7 @@ package com.lollipop.techo.util
 
 import com.lollipop.techo.R
 import com.lollipop.techo.data.SplitStyle
-import com.lollipop.techo.data.SplitStyle.*
+import com.lollipop.techo.data.SplitStyle.Default
 import com.lollipop.techo.view.SplitView
 
 object SplitLoader {
@@ -10,7 +10,7 @@ object SplitLoader {
     fun getInfo(style: SplitStyle): SplitInfo {
         return when (style) {
             Default -> SplitInfo(
-                resourceId = R.color.teal_700,
+                resourceId = R.color.defaultSplit,
                 widthType = SplitView.WidthType.MATCH,
                 heightType = SplitView.HeightType.ABSOLUTELY,
                 width = 0,

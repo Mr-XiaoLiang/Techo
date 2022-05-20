@@ -32,4 +32,6 @@
 
     <color name="titleColor">#FFF</color>
 
+    <color name="defaultSplit">#5E6565</color>
+
 </resources>
