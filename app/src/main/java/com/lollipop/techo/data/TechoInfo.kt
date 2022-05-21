@@ -452,7 +452,8 @@ class SplitItem(
 }
 
 enum class SplitStyle {
-    Default
+    Default,
+    DottedLine
 }
 
 class PhotoItem(

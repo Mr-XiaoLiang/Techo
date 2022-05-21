@@ -13,6 +13,14 @@ abstract class SplitDrawable(protected val context: Context) : Drawable() {
         isDither = true
     }
 
+    var color: Int
+        get() {
+            return paint.color
+        }
+        set(value) {
+            paint.color = value
+        }
+
     override fun setAlpha(alpha: Int) {
         paint.alpha = alpha
     }
@@ -24,4 +32,5 @@ abstract class SplitDrawable(protected val context: Context) : Drawable() {
     override fun getOpacity(): Int {
         return PixelFormat.TRANSPARENT
     }
+
 }

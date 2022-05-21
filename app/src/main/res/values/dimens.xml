@@ -1,3 +1,6 @@
 <resources>
     <dimen name="app_bar_height">240dp</dimen>
+    <dimen name="dotted_line_solid">3dp</dimen>
+    <dimen name="dotted_line_interval">3dp</dimen>
+    <dimen name="dotted_line_width">1dp</dimen>
 </resources>
