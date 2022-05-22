@@ -36,7 +36,7 @@ class SplitView(
     init {
         addView(imageView)
         if (isInEditMode) {
-            load(SplitStyle.Default)
+            load(SplitStyle.DottedLine)
         }
     }
 

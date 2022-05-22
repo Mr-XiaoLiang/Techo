@@ -25,8 +25,12 @@ object SplitLoader {
             DottedLine -> SplitInfo(
                 drawable = DottedLineRenderer(
                     colorId = R.color.defaultSplit,
-                    solidLengthId = R.dimen.dotted_line_solid,
-                    intervalLengthId = R.dimen.dotted_line_interval,
+                    dottedArray = intArrayOf(
+                        R.dimen.dotted_line_solid,
+                        R.dimen.dotted_line_interval,
+                        R.dimen.dotted_line_dot,
+                        R.dimen.dotted_line_interval
+                    ),
                     strokeWidthId = R.dimen.dotted_line_width
                 ),
                 widthType = SplitView.WidthType.MATCH,
@@ -98,24 +102,30 @@ object SplitLoader {
 
     class DottedLineRenderer(
         colorId: Int = 0,
-        private val solidLengthId: Int = 0,
-        private val intervalLengthId: Int = 0,
-        private val strokeWidthId: Int = 0,
+        private val dottedArray: IntArray,
+        private val strokeWidthId: Int,
     ) : CustomRenderer<DottedLineDrawable>(DottedLineDrawable::class.java, colorId) {
 
         override fun load(context: Context): Drawable? {
-            val instance = getInstance(context) ?: return null
-            if (solidLengthId != 0) {
-                instance.solidLength = context.resources.getDimensionPixelSize(solidLengthId)
+            try {
+                if (dottedArray.isEmpty()) {
+                    return null
+                }
+                val instance = getInstance(context) ?: return null
+                instance.updateDottedInfo(
+                    dottedArray.map {
+                        context.resources.getDimensionPixelSize(it)
+                    }
+                )
+                if (strokeWidthId != 0) {
+                    instance.strokeWidth =
+                        context.resources.getDimensionPixelSize(strokeWidthId).toFloat()
+                }
+                return instance
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
-            if (intervalLengthId != 0) {
-                instance.intervalLength = context.resources.getDimensionPixelSize(intervalLengthId)
-            }
-            if (strokeWidthId != 0) {
-                instance.strokeWidth =
-                    context.resources.getDimensionPixelSize(strokeWidthId).toFloat()
-            }
-            return instance
+            return null
         }
 
     }
