@@ -19,7 +19,7 @@ class SplitInfoHolder(
     }
 
     fun bind(info: SplitItem) {
-
+        binding.content.splitView.load(info.style, info.flagValue)
     }
 
 }

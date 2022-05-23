@@ -40,8 +40,8 @@ class SplitView(
         }
     }
 
-    fun load(splitStyle: SplitStyle) {
-        val info = SplitLoader.getInfo(splitStyle)
+    fun load(splitStyle: SplitStyle, value: String = "") {
+        val info = SplitLoader.getInfo(splitStyle, value)
         imageView.setImageDrawable(getDrawable(info))
         updateSize(info)
     }

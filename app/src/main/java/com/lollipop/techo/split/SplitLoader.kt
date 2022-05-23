@@ -9,10 +9,11 @@ import com.lollipop.techo.data.SplitStyle
 import com.lollipop.techo.data.SplitStyle.Default
 import com.lollipop.techo.data.SplitStyle.DottedLine
 import com.lollipop.techo.split.impl.DottedLineDrawable
+import java.util.*
 
 object SplitLoader {
 
-    fun getInfo(style: SplitStyle): SplitInfo {
+    fun getInfo(style: SplitStyle, value: String): SplitInfo {
         return when (style) {
             Default -> SplitInfo(
                 drawable = ResourceRenderer(R.color.defaultSplit),
@@ -31,7 +32,8 @@ object SplitLoader {
                         R.dimen.dotted_line_dot,
                         R.dimen.dotted_line_interval
                     ),
-                    strokeWidthId = R.dimen.dotted_line_width
+                    strokeWidthId = R.dimen.dotted_line_width,
+                    value
                 ),
                 widthType = SplitView.WidthType.MATCH,
                 heightType = SplitView.HeightType.ABSOLUTELY,
@@ -104,7 +106,13 @@ object SplitLoader {
         colorId: Int = 0,
         private val dottedArray: IntArray,
         private val strokeWidthId: Int,
+        private val flag: String
     ) : CustomRenderer<DottedLineDrawable>(DottedLineDrawable::class.java, colorId) {
+
+        companion object {
+            private val cacheFlag = LinkedList<String>()
+            private val cacheMap = HashMap<String, List<Int>>()
+        }
 
         override fun load(context: Context): Drawable? {
             try {
@@ -112,11 +120,8 @@ object SplitLoader {
                     return null
                 }
                 val instance = getInstance(context) ?: return null
-                instance.updateDottedInfo(
-                    dottedArray.map {
-                        context.resources.getDimensionPixelSize(it)
-                    }
-                )
+                val custom = getCustomDotted(flag, context) ?: return null
+                instance.updateDottedInfo(custom)
                 if (strokeWidthId != 0) {
                     instance.strokeWidth =
                         context.resources.getDimensionPixelSize(strokeWidthId).toFloat()
@@ -126,6 +131,51 @@ object SplitLoader {
                 e.printStackTrace()
             }
             return null
+        }
+
+        private fun getCustomDotted(value: String, context: Context): List<Int>? {
+            val oldInfo = getCache(value)
+            if (oldInfo != null) {
+                return oldInfo
+            }
+            if (value.isNotEmpty()) {
+                try {
+                    val list = value.split(",")
+                    val result = list.map { it.trim().toInt() }
+                    saveCache(value, result)
+                    return result
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+            }
+            try {
+                val result = dottedArray.map {
+                    context.resources.getDimensionPixelSize(it)
+                }
+                saveCache(value, result)
+                return result
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        private fun getCache(value: String): List<Int>? {
+            val result = cacheMap[value]
+            if (result != null) {
+                cacheFlag.remove(value)
+                cacheFlag.addLast(value)
+            }
+            return result
+        }
+
+        private fun saveCache(value: String, dotted: List<Int>) {
+            cacheMap[value] = dotted
+            cacheFlag.addLast(value)
+            while (cacheFlag.isNotEmpty() && cacheFlag.size > 200) {
+                val first = cacheFlag.removeFirst()
+                cacheMap.remove(first)
+            }
         }
 
     }

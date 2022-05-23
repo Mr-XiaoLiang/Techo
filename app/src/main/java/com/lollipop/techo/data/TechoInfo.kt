@@ -5,6 +5,7 @@ import android.net.Uri
 import com.lollipop.gallery.Photo
 import com.lollipop.gallery.PhotoGridLayout
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.Number
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -298,7 +299,7 @@ open class BaseTextItem(
 class TextItem(
     value: String = "",
     spans: MutableList<TextSpan> = mutableListOf()
-): BaseTextItem(value, spans) {
+) : BaseTextItem(value, spans) {
     override val itemType: TechoItemType = Text
 }
 
@@ -421,11 +422,13 @@ class CheckBoxItem(
 }
 
 class SplitItem(
-    var style: SplitStyle = SplitStyle.Default
+    var style: SplitStyle = SplitStyle.Default,
+    var flagValue: String = ""
 ) : BaseTechoItem() {
 
     companion object {
         private const val KEY_STYLE = "style"
+        private const val KEY_FLAG = "flag"
     }
 
     override val itemType: TechoItemType = Split
@@ -433,12 +436,14 @@ class SplitItem(
     override fun toJson(): JSONObject {
         return super.toJson().apply {
             put(KEY_STYLE, style.name)
+            put(KEY_FLAG, flagValue)
         }
     }
 
     override fun parse(json: JSONObject) {
         super.parse(json)
         style = optStyle(json.optString(KEY_STYLE))
+        flagValue = json.optString(KEY_FLAG) ?: ""
     }
 
     private fun optStyle(name: String): SplitStyle {
