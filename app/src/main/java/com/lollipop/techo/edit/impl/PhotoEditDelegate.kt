@@ -109,7 +109,8 @@ class PhotoEditDelegate : EditDelegate() {
     }
 
     private fun showPhotoDetail(position: Int) {
-        TODO()
+        // TODO()
+        // 打开图片详情页
     }
 
     private fun loadPhotos(activity: Activity) {
