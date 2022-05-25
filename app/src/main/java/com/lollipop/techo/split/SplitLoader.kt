@@ -1,17 +1,66 @@
 package com.lollipop.techo.split
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import com.lollipop.base.util.dp2px
 import com.lollipop.techo.R
+import com.lollipop.techo.data.SplitItem
 import com.lollipop.techo.data.SplitStyle
 import com.lollipop.techo.data.SplitStyle.Default
 import com.lollipop.techo.data.SplitStyle.DottedLine
 import com.lollipop.techo.split.impl.DottedLineDrawable
+import org.json.JSONArray
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 object SplitLoader {
+
+    private const val CONFIG_NAME = "split/SplitConfig.json"
+    private const val KEY_FLAG = "flag"
+    private const val KEY_COLOR = "color"
+    private const val FLAG_SEPARATOR = ","
+
+    fun read(context: Context): List<SplitItem> {
+        val result = ArrayList<SplitItem>()
+        try {
+            val inputStream = context.assets.open(CONFIG_NAME)
+            val byteArray = ByteArrayOutputStream()
+            val buffer = ByteArray(2048)
+            var readLength = 0
+            do {
+                readLength = inputStream.read(buffer)
+                byteArray.write(buffer, 0, readLength)
+            } while (readLength > 0)
+            val jsonValue = byteArray.toString()
+            byteArray.flush()
+            inputStream.close()
+            val jsonArray = JSONArray(jsonValue)
+            for (index in 0 until jsonArray.length()) {
+                try {
+                    val obj = jsonArray.optJSONObject(index)
+                    val flag = obj.optString(KEY_FLAG)
+                    val color = obj.optString(KEY_COLOR)
+                    if (flag.isEmpty()) {
+                        continue
+                    }
+                    val colorValue = if (color.isEmpty()) {
+                        Color.BLACK
+                    } else {
+                        Color.parseColor(color)
+                    }
+                    result.add(SplitItem(DottedLine, flag, colorValue))
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return result
+    }
 
     fun getInfo(style: SplitStyle, value: String): SplitInfo {
         return when (style) {
@@ -140,8 +189,8 @@ object SplitLoader {
             }
             if (value.isNotEmpty()) {
                 try {
-                    val list = value.split(",")
-                    val result = list.map { it.trim().toInt() }
+                    val list = value.split(FLAG_SEPARATOR)
+                    val result = list.map { it.trim().toInt().dp2px }
                     saveCache(value, result)
                     return result
                 } catch (e: Throwable) {

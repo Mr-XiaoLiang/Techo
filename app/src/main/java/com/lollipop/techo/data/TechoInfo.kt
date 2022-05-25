@@ -423,12 +423,14 @@ class CheckBoxItem(
 
 class SplitItem(
     var style: SplitStyle = SplitStyle.Default,
-    var flagValue: String = ""
+    var flagValue: String = "",
+    var color: Int = Color.BLACK
 ) : BaseTechoItem() {
 
     companion object {
         private const val KEY_STYLE = "style"
         private const val KEY_FLAG = "flag"
+        private const val KEY_COLOR = "color"
     }
 
     override val itemType: TechoItemType = Split
@@ -437,6 +439,7 @@ class SplitItem(
         return super.toJson().apply {
             put(KEY_STYLE, style.name)
             put(KEY_FLAG, flagValue)
+            put(KEY_COLOR, color)
         }
     }
 
@@ -444,6 +447,7 @@ class SplitItem(
         super.parse(json)
         style = optStyle(json.optString(KEY_STYLE))
         flagValue = json.optString(KEY_FLAG) ?: ""
+        color = json.optInt(KEY_COLOR, Color.BLACK)
     }
 
     private fun optStyle(name: String): SplitStyle {

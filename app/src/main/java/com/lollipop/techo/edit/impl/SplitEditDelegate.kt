@@ -1,16 +1,20 @@
 package com.lollipop.techo.edit.impl
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
 import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.SplitItem
 import com.lollipop.techo.databinding.ItemSplitBinding
 import com.lollipop.techo.databinding.PanelSplitSelectBinding
 import com.lollipop.techo.edit.EditDelegate
+import com.lollipop.techo.split.SplitLoader
 
 /**
  * @author lollipop
@@ -39,6 +43,22 @@ class SplitEditDelegate : EditDelegate() {
         binding?.splitSelectGroup?.let { rv ->
             rv.layoutManager = LinearLayoutManager(rv.context, RecyclerView.VERTICAL, false)
             rv.adapter = adapter
+        }
+        loadConfig()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun loadConfig() {
+        doAsync {
+            val c = context
+            if (c != null) {
+                val list = SplitLoader.read(c)
+                onUI {
+                    dataList.clear()
+                    dataList.addAll(list)
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
