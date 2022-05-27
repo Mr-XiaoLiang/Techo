@@ -15,10 +15,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.dp2px
-import com.lollipop.techo.data.BaseTechoItem
 import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.FontStyle
-import com.lollipop.techo.data.TextItem
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -88,37 +86,18 @@ class RichTextHelper {
         if (option.font.isNone) {
             return this
         }
-        // 如果需要清理文本中的空格
-        if (option.font.isText && option.abbreviateSpace) {
-            abbreviateSpace(info, option)
-        }
         info.forEach {
-            addRichInfo(it, option, true)
+            addRichInfo(it, option)
         }
         return this
     }
 
-    /**
-     * 添加标准的富文本信息
-     */
-    fun addRichInfo(
+    private fun addRichInfo(
         info: BaseTextItem,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {
-        return addRichInfo(info, option, false)
-    }
-
-    private fun addRichInfo(
-        info: BaseTextItem,
-        option: RichOption = RichOption.FULL_ALL,
-        inner: Boolean
-    ): RichTextHelper {
         if (option.font.isNone) {
             return this
-        }
-        // 如果需要清理文本中的空格
-        if (!inner && option.font.isText && option.abbreviateSpace) {
-            abbreviateSpace(listOf(info), option)
         }
 
         var allStr = info.value
@@ -238,107 +217,6 @@ class RichTextHelper {
         // 添加到集合中
         addSpan(spanBuilder)
         return this
-    }
-
-    /**
-     * 分析并处理富文本结构体的空格信息
-     * 1. 如果是字符串内容，那么将会进行
-     */
-    private fun abbreviateSpace(
-        richList: List<BaseTextItem>,
-        richOption: RichOption
-    ) {
-        var isFirstText = true
-        var lastText: BaseTextItem? = null
-        var previousHasSpace = false
-        richList.forEach {
-            previousHasSpace = abbreviateSpace(
-                it,
-                richOption,
-                isFirstText,
-                false,
-                previousHasSpace
-            )
-            isFirstText = false
-            lastText = it
-        }
-        if (richOption.lastSpace == SpaceLevel.NONE) {
-            lastText?.let {
-                abbreviateSpace(
-                    it,
-                    richOption,
-                    isFirst = false,
-                    isLast = true,
-                    preHasSpace = previousHasSpace
-                )
-            }
-        }
-    }
-
-    private fun abbreviateSpace(
-        info: BaseTextItem,
-        richOption: RichOption,
-        isFirst: Boolean,
-        isLast: Boolean,
-        preHasSpace: Boolean
-    ): Boolean {
-        // 空白字符的检查范围：换行、回车、空格
-        val space = "[\\n\\r ]"
-
-        var newString = info.value
-        // 清空前置的所有空白字符
-        if (isFirst) {
-            newString = replaceString(newString, "^$space*", richOption.firstSpace)
-        }
-        // 如果前面已经有空格了，那么也需要清理全部空格，但是需要做合并操作
-        // 前面留下空格，只有两种情况，要么是做了合并，要么保留，如果保留，那么我们接着保留，
-        // 否则的话，合并为一个，但是前面已经有了，所以我们需要直接清理
-        if (preHasSpace) {
-            newString = replaceString(
-                newString,
-                "^$space*",
-                if (richOption.contentSpace.isKeep) {
-                    SpaceLevel.KEEP
-                } else {
-                    SpaceLevel.NONE
-                }
-            )
-        }
-        // 清理末尾的所有空格元素
-        if (isLast) {
-            newString = replaceString(newString, "$space*$", richOption.lastSpace)
-        }
-        // 处理内容中的元素，如果是合并，那么是大于一个的时候，才需要合并
-        // 如果是不显示，那么直接清理所有的空格
-        newString = replaceString(
-            newString,
-            if (richOption.contentSpace.isNone) {
-                space
-            } else {
-                "$space+"
-            }, richOption.contentSpace
-        )
-
-        info.value = newString
-
-        // 处理内部的富文本
-//        abbreviateSpace(info.text, richOption)
-
-        return newString.endsWith(" ")
-    }
-
-    private fun replaceString(string: String, pattern: String, spaceLevel: SpaceLevel): String {
-        if (spaceLevel.isKeep) {
-            return string
-        }
-        return string.replace(
-            Regex(pattern),
-            if (spaceLevel.isNone) {
-                ""
-            } else {
-                " "
-            }
-        )
     }
 
     /**
@@ -518,43 +396,21 @@ class RichTextHelper {
      */
     data class RichOption(
         val font: DecodeLevel = DecodeLevel.TEXT,
-        val firstSpace: SpaceLevel = SpaceLevel.KEEP,
-        val lastSpace: SpaceLevel = SpaceLevel.KEEP,
-        val contentSpace: SpaceLevel = SpaceLevel.KEEP
     ) {
         companion object {
             val FULL_ALL = RichOption(
                 font = DecodeLevel.FULL,
-                firstSpace = SpaceLevel.KEEP,
-                lastSpace = SpaceLevel.KEEP,
-                contentSpace = SpaceLevel.KEEP
             )
             val TEXT_ALL = RichOption(
                 font = DecodeLevel.TEXT,
-                firstSpace = SpaceLevel.NONE,
-                lastSpace = SpaceLevel.NONE,
-                contentSpace = SpaceLevel.MERGE
             )
         }
 
-        val abbreviateSpace: Boolean
-            get() {
-                return firstSpace != SpaceLevel.KEEP ||
-                        lastSpace != SpaceLevel.KEEP ||
-                        contentSpace != SpaceLevel.KEEP
-            }
-
         fun baseTo(
             font: DecodeLevel = this.font,
-            firstSpace: SpaceLevel = this.firstSpace,
-            lastSpace: SpaceLevel = this.lastSpace,
-            contentSpace: SpaceLevel = this.contentSpace
         ): RichOption {
             return RichOption(
                 font = font,
-                firstSpace = firstSpace,
-                lastSpace = lastSpace,
-                contentSpace = contentSpace
             )
         }
 
@@ -590,29 +446,6 @@ class RichTextHelper {
         val isText: Boolean
             get() {
                 return this == TEXT
-            }
-
-        val isNone: Boolean
-            get() {
-                return this == NONE
-            }
-    }
-
-    /**
-     * 空格的等级
-     * 分为保留，合并，不显示三个级别
-     */
-    enum class SpaceLevel {
-        KEEP, MERGE, NONE;
-
-        val isKeep: Boolean
-            get() {
-                return this == KEEP
-            }
-
-        val isMerge: Boolean
-            get() {
-                return this == MERGE
             }
 
         val isNone: Boolean
