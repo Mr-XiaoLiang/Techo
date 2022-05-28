@@ -197,23 +197,25 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
+    override fun onInfoChanged(first: Int, second: Int, type: TechoMode.ChangedType) {
         viewBinding.contentListView.apply {
             when (type) {
                 Full -> {
                     adapter?.notifyDataSetChanged()
                 }
                 Modify -> {
-                    adapter?.notifyItemRangeChanged(start, count)
+                    adapter?.notifyItemRangeChanged(first, second)
                 }
                 Insert -> {
-                    adapter?.notifyItemRangeInserted(start, count)
+                    adapter?.notifyItemRangeInserted(first, second)
                 }
                 Delete -> {
-                    adapter?.notifyItemRangeRemoved(start, count)
+                    adapter?.notifyItemRangeRemoved(first, second)
                 }
                 Move -> {
-                    adapter?.notifyItemMoved(start, count)
+                    adapter?.notifyItemMoved(first, second)
+                    adapter?.notifyItemChanged(first)
+                    adapter?.notifyItemChanged(second)
                 }
             }
         }

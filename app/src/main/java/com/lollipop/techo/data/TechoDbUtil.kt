@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import java.lang.StringBuilder
 
 /**
  * @author lollipop
@@ -53,13 +52,20 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return getFloat(columnIndex)
         }
 
-        private fun selectLastId(table: String, db: SQLiteDatabase): Int {
+        private fun selectLastId(table: String, idName: String, db: SQLiteDatabase): Int {
             try {
-                val sql = "SELECT last_insert_rowid() FROM $table"
+                val sql = "SELECT $idName from $table order by $idName DESC limit 1"
                 val cursor = db.rawQuery(sql, null)
-                val rowId = cursor.getInt(0)
-                cursor.close()
-                return rowId
+                if (cursor.moveToNext()) {
+                    val index = cursor.getColumnIndex(idName)
+                    val rowId = if (index < 0) {
+                        0
+                    } else {
+                        cursor.getInt(index)
+                    }
+                    cursor.close()
+                    return rowId
+                }
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
@@ -222,7 +228,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                     put(Column.COLOR, flag.color)
                 })
             if (insert >= 0) {
-                return selectLastId(NAME, db)
+                return selectLastId(NAME, ID, db)
             }
             return 0
         }
@@ -351,7 +357,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                     put(Column.CONTENT, info.toJson().toString())
                 })
             if (insert >= 0) {
-                return selectLastId(NAME, db)
+                return selectLastId(NAME, ID, db)
             }
             return 0
         }

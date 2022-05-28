@@ -92,7 +92,7 @@ class RichTextHelper {
         return this
     }
 
-    private fun addRichInfo(
+    fun addRichInfo(
         info: BaseTextItem,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {

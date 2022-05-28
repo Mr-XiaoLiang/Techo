@@ -7,7 +7,6 @@ import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
 import java.lang.ref.WeakReference
 import java.util.*
-import kotlin.collections.ArrayList
 
 object TechoMode {
 
@@ -36,8 +35,10 @@ object TechoMode {
         private class EmptyListener : StateListener {
             override fun onLoadStart() {
             }
+
             override fun onLoadEnd() {
             }
+
             override fun onInfoChanged(start: Int, count: Int, type: ChangedType) {
             }
         }
@@ -105,6 +106,7 @@ object TechoMode {
             info.items.add(newItem)
             infoChanged(start, 1, ChangedType.Insert)
             update()
+            format()
         }
 
         /**
@@ -125,19 +127,37 @@ object TechoMode {
         fun format() {
             loadStart()
             doAsync {
-                formatData()
+                val formatResult = formatData()
                 onUI {
+                    notifyInfoFormatChanged(formatResult)
                     loadEnd()
                 }
             }
         }
 
-        private fun formatData() {
+        private fun notifyInfoFormatChanged(formatResult: IntArray) {
+            val start = formatResult[0]
+            val count = formatResult[1] - start + 1
+            if (start < 0 || start >= info.items.size || count < 1) {
+                return
+            }
+            infoChanged(start, count, ChangedType.Modify)
+        }
+
+        private fun formatData(): IntArray {
             var number = 1
-            info.items.forEach {
-                when (it) {
+            var updateStart = -1
+            var updateEnd = -1
+            info.items.forEachIndexed { index, info ->
+                when (info) {
                     is NumberItem -> {
-                        it.number = number
+                        if (index < 0) {
+                            updateStart = index
+                        }
+                        if (updateEnd < index) {
+                            updateEnd = index
+                        }
+                        info.number = number
                         number++
                     }
                     is SplitItem -> {
@@ -145,6 +165,7 @@ object TechoMode {
                     }
                 }
             }
+            return intArrayOf(updateStart, updateEnd)
         }
 
         /**
@@ -243,6 +264,13 @@ object TechoMode {
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
             val indices = info.items.indices
             return if (srcPosition in indices && targetPosition in indices) {
+                val srcItem = info.items[srcPosition]
+                val targetItem = info.items[targetPosition]
+                if (srcItem is NumberItem && targetItem is NumberItem) {
+                    val number = srcItem.number
+                    srcItem.number = targetItem.number
+                    targetItem.number = number
+                }
                 Collections.swap(info.items, srcPosition, targetPosition)
                 infoChanged(srcPosition, targetPosition, ChangedType.Move)
                 update()
@@ -351,8 +379,8 @@ object TechoMode {
             listenerWrapper.get()?.onLoadEnd()
         }
 
-        protected fun infoChanged(start: Int, count: Int, type: ChangedType) {
-            listenerWrapper.get()?.onInfoChanged(start, count, type)
+        protected fun infoChanged(first: Int, second: Int, type: ChangedType) {
+            listenerWrapper.get()?.onInfoChanged(first, second, type)
         }
 
     }
@@ -360,7 +388,7 @@ object TechoMode {
     interface StateListener {
         fun onLoadStart()
         fun onLoadEnd()
-        fun onInfoChanged(start: Int, count: Int, type: ChangedType)
+        fun onInfoChanged(first: Int, second: Int, type: ChangedType)
     }
 
     enum class ChangedType {
