@@ -12,13 +12,14 @@ import com.lollipop.techo.data.TechoItemType.Number
  * @date 2021/12/6 22:45
  */
 class DetailListAdapter(
-    private val data: List<BaseTechoItem>
+    private val data: List<BaseTechoItem>,
+    private val onItemOptionButtonClickListener: EditHolder.OnItemOptionButtonClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isInEdit = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (values()[viewType]) {
+        val holder = when (values()[viewType]) {
             Empty -> EmptyHolder.create(parent)
             Text,
             Number,
@@ -26,6 +27,10 @@ class DetailListAdapter(
             Photo -> PhotoInfoHolder.create(parent)
             Split -> SplitInfoHolder.create(parent)
         }
+        if (holder is EditHolder<*>) {
+            holder.setOnItemOptionButtonClickListener(onItemOptionButtonClickListener)
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

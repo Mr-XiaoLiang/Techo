@@ -18,12 +18,15 @@ import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
 import com.lollipop.techo.list.detail.DetailListAdapter
+import com.lollipop.techo.list.detail.EditHolder
 import com.lollipop.techo.util.CircleAnimationGroup
 
 /**
  * 编辑 & 添加页
  */
-class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
+class TechoEditActivity : HeaderActivity(),
+    TechoMode.StateListener,
+    EditHolder.OnItemOptionButtonClickListener {
 
     companion object {
 
@@ -81,15 +84,15 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     }
 
     private fun initContentView() {
-        viewBinding.contentListView.apply {
-            layoutManager = LinearLayoutManager(
+        viewBinding.contentListView.let { recyclerView ->
+            recyclerView.layoutManager = LinearLayoutManager(
                 this@TechoEditActivity, RecyclerView.VERTICAL, false
             )
-            val listAdapter = DetailListAdapter(mode.info.items).apply {
+            val listAdapter = DetailListAdapter(mode.info.items, this).apply {
                 changeEditMode(true)
             }
-            adapter = listAdapter
-            attachTouchHelper()
+            recyclerView.adapter = listAdapter
+            recyclerView.attachTouchHelper()
                 .canDrag(true)
                 .canSwipe(true)
                 .onMove(mode)
@@ -232,6 +235,11 @@ class TechoEditActivity : HeaderActivity(), TechoMode.StateListener {
     override fun onDestroy() {
         super.onDestroy()
         circleAnimationGroup.destroy()
+    }
+
+    override fun onItemOptionButtonClick(holder: EditHolder<*>) {
+        val adapterPosition = holder.adapterPosition
+        TODO("Not yet implemented")
     }
 
 }
