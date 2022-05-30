@@ -242,4 +242,12 @@ class TechoEditActivity : HeaderActivity(),
         TODO("Not yet implemented")
     }
 
+    override fun onItemEditButtonClick(holder: EditHolder<*>) {
+        val adapterPosition = holder.adapterPosition
+        val item = mode.info.items[adapterPosition]
+        editManager.openPanel(adapterPosition, item) { index, _ ->
+            viewBinding.contentListView.adapter?.notifyItemChanged(index)
+        }
+    }
+
 }

@@ -60,12 +60,17 @@ open class EditHolder<T : ViewBinding>(
         optionBinding.moreOptionView.isInvisible = !isInEditMode
     }
 
+    protected fun callOnEditClick() {
+        optionButtonClickListener?.onItemEditButtonClick(this)
+    }
+
     private fun onOptionButtonClick() {
         optionButtonClickListener?.onItemOptionButtonClick(this)
     }
 
-    fun interface OnItemOptionButtonClickListener {
+    interface OnItemOptionButtonClickListener {
         fun onItemOptionButtonClick(holder: EditHolder<*>)
+        fun onItemEditButtonClick(holder: EditHolder<*>)
     }
 
     class EditItemView<C : ViewBinding>(
