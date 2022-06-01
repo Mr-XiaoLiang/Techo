@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.lollipop.base.util.dp2px
-import com.lollipop.techo.data.SplitStyle
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.split.SplitView.WidthType.ABSOLUTELY
 import com.lollipop.techo.split.SplitView.WidthType.MATCH
 
@@ -36,12 +36,16 @@ class SplitView(
     init {
         addView(imageView)
         if (isInEditMode) {
-            load(SplitStyle.DottedLine)
+            load("3,2,1,2")
         }
     }
 
-    fun load(splitStyle: SplitStyle, value: String = "") {
-        val info = SplitLoader.getInfo(splitStyle, value)
+    fun load(info: TechoItem.Split) {
+        load(info.value, info.color)
+    }
+
+    fun load(value: String = "", color: Int = 0) {
+        val info = SplitLoader.getInfo(color, value)
         imageView.setImageDrawable(getDrawable(info))
         updateSize(info)
     }

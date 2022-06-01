@@ -82,26 +82,10 @@ object TechoMode {
          * 这个内容是空的
          */
         fun insert(type: TechoItemType) {
-            val newItem = when (type) {
-                TechoItemType.Empty -> {
-                    return
-                }
-                TechoItemType.Text -> {
-                    TextItem()
-                }
-                TechoItemType.Number -> {
-                    NumberItem()
-                }
-                TechoItemType.CheckBox -> {
-                    CheckBoxItem()
-                }
-                TechoItemType.Photo -> {
-                    PhotoItem()
-                }
-                TechoItemType.Split -> {
-                    SplitItem()
-                }
+            if (type == TechoItemType.Empty) {
+                return
             }
+            val newItem = TechoItem.createItem(type)
             val start = info.items.size
             info.items.add(newItem)
             infoChanged(start, 1, ChangedType.Insert)
@@ -112,7 +96,7 @@ object TechoMode {
         /**
          * 修改一个内容
          */
-        fun modify(item: BaseTechoItem) {
+        fun modify(item: TechoItem) {
             val index = info.items.indexOf(item)
             if (index >= 0) {
                 infoChanged(index, 1, ChangedType.Modify)
@@ -150,7 +134,7 @@ object TechoMode {
             var updateEnd = -1
             info.items.forEachIndexed { index, info ->
                 when (info) {
-                    is NumberItem -> {
+                    is TechoItem.Number -> {
                         if (index < 0) {
                             updateStart = index
                         }
@@ -160,8 +144,20 @@ object TechoMode {
                         info.number = number
                         number++
                     }
-                    is SplitItem -> {
+                    is TechoItem.Split -> {
                         number = 1
+                    }
+                    is TechoItem.CheckBox -> {
+
+                    }
+                    is TechoItem.Empty -> {
+
+                    }
+                    is TechoItem.Photo -> {
+
+                    }
+                    is TechoItem.Text -> {
+
                     }
                 }
             }
@@ -254,7 +250,7 @@ object TechoMode {
 
         private fun initList() {
             if (info.items.isEmpty()) {
-                info.items.add(TextItem())
+                info.items.add(TechoItem.Text())
             }
         }
 
@@ -266,7 +262,7 @@ object TechoMode {
             return if (srcPosition in indices && targetPosition in indices) {
                 val srcItem = info.items[srcPosition]
                 val targetItem = info.items[targetPosition]
-                if (srcItem is NumberItem && targetItem is NumberItem) {
+                if (srcItem is TechoItem.Number && targetItem is TechoItem.Number) {
                     val number = srcItem.number
                     srcItem.number = targetItem.number
                     targetItem.number = number

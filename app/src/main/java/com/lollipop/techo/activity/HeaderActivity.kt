@@ -8,7 +8,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
-import com.lollipop.techo.data.HeaderImageInfo
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.BlurTransformation
@@ -80,16 +79,14 @@ abstract class HeaderActivity : BaseActivity() {
             onUrlLoaded(imageUrl)
         } else {
             doAsync {
-                RequestService.getHeaderImageInfo().images
-                    ?.getValue<HeaderImageInfo.ImageInfo>(0)
-                    ?.let { imageInfo ->
-                        if (imageInfo.url.isNotEmpty()) {
-                            headerImageUrl = imageInfo.fullUrl
-                            onUI {
-                                onUrlLoaded(headerImageUrl)
-                            }
+                RequestService.getHeaderImageInfo().let { imageInfo ->
+                    if (imageInfo.url.isNotEmpty()) {
+                        headerImageUrl = imageInfo.fullUrl
+                        onUI {
+                            onUrlLoaded(headerImageUrl)
                         }
                     }
+                }
             }
         }
     }

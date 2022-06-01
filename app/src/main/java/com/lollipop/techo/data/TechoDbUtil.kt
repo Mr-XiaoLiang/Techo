@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.lollipop.techo.data.json.mapToJson
+import com.lollipop.techo.data.json.toJsonObject
 
 /**
  * @author lollipop
@@ -71,6 +73,20 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             }
             return 0
         }
+
+        private inline fun <reified T : Any> queryList(
+            db: SQLiteDatabase,
+            rawQueryCallback: (SQLiteDatabase) -> Cursor,
+            mapCallback: (Cursor) -> T
+        ): List<T> {
+            val list = ArrayList<T>()
+            val cursor = rawQueryCallback(db)
+            while (cursor.moveToNext()) {
+                list.add(mapCallback(cursor))
+            }
+            cursor.close()
+            return list
+        }
     }
 
     private val flagCache = ArrayList<TechoFlag>()
@@ -112,8 +128,16 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         }
     }
 
+    fun selectFlagByName(name: String): List<TechoFlag> {
+        return FlagTable.selectByName(readDb, name)
+    }
+
     fun selectTecho(pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
         return TechoTable.selectAll(readDb, pageIndex, pageSize)
+    }
+
+    fun selectTechoByKeyword(keyword: String, pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
+        return TechoTable.selectByKeyword(readDb, keyword, pageIndex, pageSize)
     }
 
     fun insertFlag(flag: TechoFlag): Int {
@@ -195,28 +219,45 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             return sql.toString()
         }
 
-        fun selectAll(db: SQLiteDatabase): List<TechoFlag> {
-            val list = ArrayList<TechoFlag>()
-            val cursor = db.query(
-                NAME,
-                COLUMNS,
-                null,
-                null,
-                null,
-                null,
-                "$ID DESC"
-            )
-            while (cursor.moveToNext()) {
-                list.add(
-                    TechoFlag(
-                        name = cursor.getText(Column.NAME),
-                        color = cursor.getInt(Column.COLOR),
-                        id = cursor.getInt(ID),
-                    )
+        private fun queryTechoFlagList(
+            db: SQLiteDatabase,
+            rawQueryCallback: (SQLiteDatabase) -> Cursor,
+        ): List<TechoFlag> {
+            return queryList(db, rawQueryCallback) {
+                TechoFlag.create(
+                    id = it.getInt(ID),
+                    name = it.getText(Column.NAME),
+                    color = it.getInt(Column.COLOR),
                 )
             }
-            cursor.close()
-            return list
+        }
+
+        fun selectByName(db: SQLiteDatabase, name: String): List<TechoFlag> {
+            return queryTechoFlagList(db) {
+                db.query(
+                    NAME,
+                    COLUMNS,
+                    "${Column.NAME} LIKE ?",
+                    arrayOf("%${name}%"),
+                    null,
+                    null,
+                    "$ID DESC"
+                )
+            }
+        }
+
+        fun selectAll(db: SQLiteDatabase): List<TechoFlag> {
+            return queryTechoFlagList(db) {
+                db.query(
+                    NAME,
+                    COLUMNS,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "$ID DESC"
+                )
+            }
         }
 
         fun insert(db: SQLiteDatabase, flag: TechoFlag): Int {
@@ -268,8 +309,32 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         enum class Column(val format: ColumnFormat) {
             TITLE(ColumnFormat.TEXT),
             FLAG(ColumnFormat.INTEGER),
-            CONTENT(ColumnFormat.TEXT)
+            CONTENT(ColumnFormat.TEXT),
+            KEYWORD(ColumnFormat.TEXT),
         }
+
+        val SELECT_ALL = "SELECT t.$ID AS $ID, " +
+                "${Column.TITLE}, " +
+                "${Column.FLAG}, " +
+                "${Column.CONTENT}, " +
+                "${Column.KEYWORD}, " +
+                "${FlagTable.Column.NAME}, " +
+                "${FlagTable.Column.COLOR} " +
+                "FROM $NAME t LEFT JOIN ${FlagTable.NAME} f ON t.${Column.FLAG} = f.${FlagTable.ID} " +
+                "ORDER BY t.$ID DESC " +
+                "LIMIT ? OFFSET ?"
+
+        val SELECT_BY_KEYWORD = "SELECT t.$ID AS $ID, " +
+                "${Column.TITLE}, " +
+                "${Column.FLAG}, " +
+                "${Column.CONTENT}, " +
+                "${Column.KEYWORD}, " +
+                "${FlagTable.Column.NAME}, " +
+                "${FlagTable.Column.COLOR} " +
+                "FROM $NAME t LEFT JOIN ${FlagTable.NAME} f ON t.${Column.FLAG} = f.${FlagTable.ID} " +
+                "WHERE ${Column.KEYWORD} LIKE ? " +
+                "ORDER BY t.$ID DESC " +
+                "LIMIT ? OFFSET ?"
 
         fun getCreateSql(): String {
             val sql = StringBuilder()
@@ -296,66 +361,59 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                 null,
                 null
             )
+            var info: TechoInfo? = null
             if (cursor.moveToNext()) {
-                val content = cursor.getText(Column.CONTENT)
-                return TechoInfo.fromJson(content).apply {
-                    this.flag = TechoFlag(
-                        name = cursor.getText(FlagTable.Column.NAME),
-                        color = cursor.getInt(FlagTable.Column.COLOR),
-                        id = cursor.getInt(FlagTable.ID),
-                    )
-                    this.id = cursor.getInt(ID)
-                    this.title = cursor.getText(Column.TITLE)
-                }
+                info = cursor.toTechoInfo()
             }
             cursor.close()
-            return null
+            return info
+        }
+
+        private fun queryTechoList(
+            db: SQLiteDatabase,
+            rawQueryCallback: (SQLiteDatabase) -> Cursor
+        ): List<TechoInfo> {
+            return queryList(db, rawQueryCallback) {
+                it.toTechoInfo()
+            }
+        }
+
+        fun selectByKeyword(
+            db: SQLiteDatabase,
+            keyword: String,
+            pageIndex: Int,
+            pageSize: Int = 20
+        ): List<TechoInfo> {
+            return queryTechoList(db) {
+                db.rawQuery(
+                    SELECT_BY_KEYWORD,
+                    arrayOf(
+                        "%${keyword}%",
+                        pageSize.toString(),
+                        (pageIndex * pageSize).toString()
+                    )
+                )
+            }
         }
 
         fun selectAll(db: SQLiteDatabase, pageIndex: Int, pageSize: Int = 20): List<TechoInfo> {
-            val list = ArrayList<TechoInfo>()
-            val cursor = db.rawQuery(
-                "SELECT t.$ID AS $ID, " +
-                        "${Column.TITLE}, " +
-                        "${Column.FLAG}, " +
-                        "${Column.CONTENT}, " +
-                        "${FlagTable.Column.NAME}, " +
-                        "${FlagTable.Column.COLOR} " +
-                        "FROM $NAME t LEFT JOIN ${FlagTable.NAME} f ON t.${Column.FLAG} = f.${FlagTable.ID} " +
-                        "ORDER BY t.$ID DESC " +
-                        "LIMIT ? OFFSET ?",
-                arrayOf(
-                    pageSize.toString(),
-                    (pageIndex * pageSize).toString()
-                )
-            )
-            while (cursor.moveToNext()) {
-                val content = cursor.getText(Column.CONTENT)
-                list.add(
-                    TechoInfo.fromJson(content).apply {
-                        flag = TechoFlag(
-                            name = cursor.getText(FlagTable.Column.NAME),
-                            color = cursor.getInt(FlagTable.Column.COLOR),
-                            id = cursor.getInt(FlagTable.ID),
-                        )
-                        id = cursor.getInt(ID)
-                        title = cursor.getText(Column.TITLE)
-                    }
+            return queryTechoList(db) {
+                db.rawQuery(
+                    SELECT_ALL,
+                    arrayOf(
+                        pageSize.toString(),
+                        (pageIndex * pageSize).toString()
+                    )
                 )
             }
-            cursor.close()
-            return list
         }
 
         fun insert(db: SQLiteDatabase, info: TechoInfo): Int {
             val insert = db.insert(
                 NAME,
                 null,
-                ContentValues().apply {
-                    put(Column.TITLE, info.title)
-                    put(Column.FLAG, info.flag.id)
-                    put(Column.CONTENT, info.toJson().toString())
-                })
+                info.toContentValues()
+            )
             if (insert >= 0) {
                 return selectLastId(NAME, ID, db)
             }
@@ -365,11 +423,7 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         fun update(db: SQLiteDatabase, info: TechoInfo) {
             db.update(
                 NAME,
-                ContentValues().apply {
-                    put(Column.TITLE, info.title)
-                    put(Column.FLAG, info.flag.id)
-                    put(Column.CONTENT, info.toJson().toString())
-                },
+                info.toContentValues(),
                 "$ID = ?",
                 arrayOf(info.id.toString())
             )
@@ -381,6 +435,30 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                 "$ID = ?",
                 arrayOf(id.toString())
             )
+        }
+
+        private fun Cursor.toTechoInfo(): TechoInfo {
+            val cursor = this
+            return TechoInfo().apply {
+                parse(cursor.getText(Column.CONTENT).toJsonObject())
+                flag = TechoFlag.create(
+                    id = cursor.getInt(FlagTable.ID),
+                    name = cursor.getText(FlagTable.Column.NAME),
+                    color = cursor.getInt(FlagTable.Column.COLOR),
+                )
+                id = cursor.getInt(ID)
+                title = cursor.getText(Column.TITLE)
+            }
+        }
+
+        private fun TechoInfo.toContentValues(): ContentValues {
+            val info = this
+            return ContentValues().apply {
+                put(Column.TITLE, info.title)
+                put(Column.FLAG, info.flag.id)
+                put(Column.CONTENT, info.toJson().toString())
+                put(Column.KEYWORD, info.keyWords.mapToJson().toString())
+            }
         }
     }
 

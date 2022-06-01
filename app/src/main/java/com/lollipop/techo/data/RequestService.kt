@@ -1,8 +1,8 @@
 package com.lollipop.techo.data
 
-import com.lollipop.techo.data.json.toJsonObjectInfo
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
+import org.json.JSONObject
 
 
 /**
@@ -16,7 +16,14 @@ object RequestService {
     private const val HEAD_IMAGE_URL = "$HEAD_IMAGE_BASE/HPImageArchive.aspx?format=js&idx=0&n=1"
 
     fun getHeaderImageInfo(): HeaderImageInfo {
-        return getString(HEAD_IMAGE_URL).toJsonObjectInfo()
+        val result = getString(HEAD_IMAGE_URL)
+        val info = HeaderImageInfo()
+        try {
+            info.parse(JSONObject(result))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return info
     }
 
     /**

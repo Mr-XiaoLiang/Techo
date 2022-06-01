@@ -1,19 +1,8 @@
 package com.lollipop.techo.data.json
 
-/**
- * @author lollipop
- * @date 4/30/21 20:33
- * Json信息的扩展方法
- */
+import org.json.JSONObject
 
-inline fun <reified T : JsonObjectInfo> String.toJsonObjectInfo(): T {
-    val newInstance = T::class.java.getConstructor().newInstance()
-    newInstance.parse(this)
-    return newInstance
-}
-
-inline fun <reified T : JsonArrayInfo> String.toJsonArrayInfo(): T {
-    val newInstance = T::class.java.getConstructor().newInstance()
-    newInstance.parse(this)
-    return newInstance
+interface JsonInfo {
+    fun toJson(): JSONObject
+    fun parse(json: JSONObject)
 }
