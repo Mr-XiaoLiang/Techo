@@ -15,8 +15,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.dp2px
-import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.FontStyle
+import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.data.TextSpan
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -34,6 +35,45 @@ class RichTextHelper {
          */
         fun startRichFlow(): RichTextHelper {
             return RichTextHelper()
+        }
+
+        /**
+         * Span的Builder的扩展方法，可以直接指定开始位置以及长度的方式来设置span
+         * 它允许对同一段文字设置多个sapn
+         */
+        private fun SpannableStringBuilder.addSpan(
+            start: Int,
+            length: Int,
+            spans: Array<out Any>
+        ): SpannableStringBuilder {
+            val startIndex = min(this.length, max(start, 0))
+            val endIndex = min(this.length, max(length + startIndex, 0))
+            for (span in spans) {
+                try {
+                    setSpan(span, startIndex, endIndex, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+            }
+            return this
+        }
+
+        fun textSpanBuilder(
+            span: TextSpan,
+            builder: SpannableStringBuilder
+        ): (impl: Array<Any>) -> Unit {
+            return {
+                builder.addSpan(span.start, span.length, it)
+            }
+        }
+
+        fun textSpanSimpleBuilder(
+            span: TextSpan,
+            builder: SpannableStringBuilder
+        ): (impl: Any) -> Unit {
+            return {
+                builder.addSpan(span.start, span.length, arrayOf(it))
+            }
         }
 
     }
@@ -80,143 +120,124 @@ class RichTextHelper {
      * 添加标准的富文本信息
      */
     fun addRichInfo(
-        info: List<BaseTextItem>,
+        info: List<TechoItem>,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {
         if (option.font.isNone) {
             return this
         }
-        info.forEach {
-            addRichInfo(it, option)
+        info.forEachIndexed { index, item ->
+            if (index > 0) {
+                addInfo("\n")
+            }
+            addRichInfo(item, option)
         }
         return this
     }
 
     fun addRichInfo(
-        info: BaseTextItem,
+        info: TechoItem,
         option: RichOption = RichOption.FULL_ALL
     ): RichTextHelper {
         if (option.font.isNone) {
             return this
         }
 
-        var allStr = info.value
-
-        if (option.font.isText) {
-            allStr = allStr.replace("\n", "")
+        val allStr = when (info) {
+            is TechoItem.CheckBox,
+            is TechoItem.Number,
+            is TechoItem.Text -> {
+                info.value
+            }
+            is TechoItem.Photo -> {
+                "[^_^]"
+            }
+            is TechoItem.Split -> {
+                "[---]"
+            }
+        }.let {
+            if (option.font.isText) {
+                it.replace("\n", "")
+            } else {
+                it
+            }
         }
 
         val spanBuilder = SpannableStringBuilder(allStr)
 
-        if (option.font.isText) {
+        if (option.font.isText || !info.spanEnable) {
             // 添加到集合中
             addSpan(spanBuilder)
             return this
         }
 
         info.spans.forEach { span ->
-            val spanStart = span.start
-            val spanLength = span.length
-            if (span.hasStyle(FontStyle.FontSize)) {
-                // 添加字体大小的Span
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    AbsoluteSizeSpan(span.fontSize, true)
-                )
-            }
-            if (span.hasStyle(FontStyle.Link) && span.link.isNotEmpty()) {
-                //设置 link
-                hasLink = true
-                // 添加一个点击的span
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    ClickSpan(
-                        span.color,
-                        ClickWrapper(span.link, ClickEvent.LINK, ::onClick)
-                    )
-                )
-            } else if (span.hasStyle(FontStyle.Color)) {
-                // 添加一个前景色的span
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    ForegroundColorSpan(span.color)
-                )
-            }
-            //设置 粗体& 斜体
-            val typeface = when {
-                FontStyle.hasAll(span.style, FontStyle.Bold, FontStyle.Italic) -> {
-                    Typeface.BOLD_ITALIC
-                }
-                FontStyle.has(span.style, FontStyle.Bold) -> {
-                    Typeface.BOLD
-                }
-                FontStyle.has(span.style, FontStyle.Italic) -> {
-                    Typeface.ITALIC
-                }
-                else -> {
-                    Typeface.NORMAL
-                }
-            }
-            if (typeface != Typeface.NORMAL) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    StyleSpan(typeface)
-                )
-            }
-
-            // 设置 下划线
-            if (span.hasStyle(FontStyle.Underline)) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    UnderlineSpan()
-                )
-            }
-
-            // 设置 删除线
-            if (span.hasStyle(FontStyle.Strikethrough)) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    StrikethroughSpan()
-                )
-            }
-
-            // 设置 上标
-            if (span.hasStyle(FontStyle.Superscript)) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    SuperscriptSpan()
-                )
-            }
-
-            // 设置 下标
-            if (span.hasStyle(FontStyle.Subscript)) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    SubscriptSpan()
-                )
-            }
-
-            // 设置模糊
-            if (span.hasStyle(FontStyle.Blur)) {
-                spanBuilder.addSpan(
-                    spanStart,
-                    spanLength,
-                    MaskFilterSpan(BlurMaskFilter(20F, BlurMaskFilter.Blur.NORMAL))
-                )
-            }
+            addSpan(spanBuilder, span)
         }
 
         // 添加到集合中
         addSpan(spanBuilder)
         return this
+    }
+
+    private fun addSpan(spanBuilder: SpannableStringBuilder, span: TextSpan) {
+        val addTextSpan = textSpanSimpleBuilder(span, spanBuilder)
+        if (span.hasStyle(FontStyle.FontSize)) {
+            // 添加字体大小的Span
+            addTextSpan(AbsoluteSizeSpan(span.fontSize, true))
+        }
+        if (span.hasStyle(FontStyle.Link) && span.link.isNotEmpty()) {
+            //设置 link
+            hasLink = true
+            // 添加一个点击的span
+            addTextSpan(ClickSpan(span.color, ClickWrapper(span.link, ClickEvent.LINK, ::onClick)))
+        } else if (span.hasStyle(FontStyle.Color)) {
+            // 添加一个前景色的span
+            addTextSpan(ForegroundColorSpan(span.color))
+        }
+        //设置 粗体& 斜体
+        val typeface = when {
+            FontStyle.hasAll(span.style, FontStyle.Bold, FontStyle.Italic) -> {
+                Typeface.BOLD_ITALIC
+            }
+            FontStyle.has(span.style, FontStyle.Bold) -> {
+                Typeface.BOLD
+            }
+            FontStyle.has(span.style, FontStyle.Italic) -> {
+                Typeface.ITALIC
+            }
+            else -> {
+                Typeface.NORMAL
+            }
+        }
+        if (typeface != Typeface.NORMAL) {
+            addTextSpan(StyleSpan(typeface))
+        }
+
+        // 设置 下划线
+        if (span.hasStyle(FontStyle.Underline)) {
+            addTextSpan(UnderlineSpan())
+        }
+
+        // 设置 删除线
+        if (span.hasStyle(FontStyle.Strikethrough)) {
+            addTextSpan(StrikethroughSpan())
+        }
+
+        // 设置 上标
+        if (span.hasStyle(FontStyle.Superscript)) {
+            addTextSpan(SuperscriptSpan())
+        }
+
+        // 设置 下标
+        if (span.hasStyle(FontStyle.Subscript)) {
+            addTextSpan(SubscriptSpan())
+        }
+
+        // 设置模糊
+        if (span.hasStyle(FontStyle.Blur)) {
+            addTextSpan(MaskFilterSpan(BlurMaskFilter(20F, BlurMaskFilter.Blur.NORMAL)))
+        }
     }
 
     /**
@@ -283,28 +304,7 @@ class RichTextHelper {
         value: String,
         vararg span: Any
     ) {
-        addSpan(SpannableStringBuilder(value).addSpan(0, value.length, *span))
-    }
-
-    /**
-     * Span的Builder的扩展方法，可以直接指定开始位置以及长度的方式来设置span
-     * 它允许对同一段文字设置多个sapn
-     */
-    private fun SpannableStringBuilder.addSpan(
-        start: Int,
-        length: Int,
-        vararg spans: Any
-    ): SpannableStringBuilder {
-        val startIndex = min(this.length, max(start, 0))
-        val endIndex = min(this.length, max(length + startIndex, 0))
-        for (span in spans) {
-            try {
-                setSpan(span, startIndex, endIndex, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-        return this
+        addSpan(SpannableStringBuilder(value).addSpan(0, value.length, span))
     }
 
     /**

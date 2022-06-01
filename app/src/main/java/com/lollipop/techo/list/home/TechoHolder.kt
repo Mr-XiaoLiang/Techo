@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.activity.TechoDetailActivity
-import com.lollipop.techo.data.BaseTextItem
 import com.lollipop.techo.data.TechoInfo
 import com.lollipop.techo.databinding.ItemHomeTechoBinding
 import com.lollipop.techo.util.FontHelper
@@ -53,7 +52,7 @@ class TechoHolder(
         binding.monthNumberView.text = monthNumber.formatNumber()
         binding.titleInfoView.text = info.title
         RichTextHelper.startRichFlow()
-            .addRichInfo(info.items.filterIsInstance<BaseTextItem>())
+            .addRichInfo(info.items, RichTextHelper.RichOption.TEXT_ALL)
             .into(binding.summaryInfoView)
     }
 

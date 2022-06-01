@@ -3,10 +3,7 @@ package com.lollipop.techo.list.detail
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.lollipop.techo.R
-import com.lollipop.techo.data.BaseTextItem
-import com.lollipop.techo.data.CheckBoxItem
-import com.lollipop.techo.data.NumberItem
-import com.lollipop.techo.data.TextItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemTextBinding
 import com.lollipop.techo.util.RichTextHelper
 
@@ -28,24 +25,24 @@ class TextInfoHolder(
         binding.content.textView.setHint(R.string.hint_text_input)
     }
 
-    fun bind(info: TextItem) {
+    fun bind(info: TechoItem.Text) {
         changedStyle(checkBox = false, number = false)
         updateContent(info)
     }
 
-    fun bind(info: NumberItem) {
+    fun bind(info: TechoItem.Number) {
         changedStyle(checkBox = false, number = true)
         binding.content.numberView.text = info.number.toString()
         updateContent(info)
     }
 
-    fun bind(info: CheckBoxItem) {
+    fun bind(info: TechoItem.CheckBox) {
         changedStyle(checkBox = true, number = false)
         binding.content.checkBox.isChecked = info.isChecked
         updateContent(info)
     }
 
-    private fun updateContent(info: BaseTextItem) {
+    private fun updateContent(info: TechoItem) {
         RichTextHelper.startRichFlow().addRichInfo(info).into(binding.content.textView)
     }
 

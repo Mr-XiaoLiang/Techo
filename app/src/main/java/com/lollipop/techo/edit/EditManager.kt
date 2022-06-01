@@ -5,10 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import com.lollipop.base.request.RequestLauncher
-import com.lollipop.techo.data.BaseTechoItem
-import com.lollipop.techo.edit.impl.PhotoEditDelegate
-import com.lollipop.techo.edit.impl.SplitEditDelegate
-import com.lollipop.techo.edit.impl.TextEditDelegate
+import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.edit.impl.*
 
 /**
  * @author lollipop
@@ -20,51 +18,70 @@ class EditManager(
     private val container: ViewGroup
 ) : PanelController {
 
-    companion object {
-        private val EDIT_DELEGATE_POOL: Array<Class<out EditDelegate>> = arrayOf(
-            TextEditDelegate::class.java,
-            PhotoEditDelegate::class.java,
-            SplitEditDelegate::class.java,
-        )
-    }
-
-    private val editDelegateList = ArrayList<EditDelegate>()
+    private val editDelegateList = ArrayList<EditDelegate<*>>()
     private val panelViewMap = ArrayList<PanelView>()
 
-    private var activeDelegate: EditDelegate? = null
+    private var activeDelegate: EditDelegate<*>? = null
     private var editItemIndex = 0
-    private var editInfo: BaseTechoItem? = null
+    private var editInfo: TechoItem? = null
     private var onEditPanelCloseListener: OnEditPanelCloseListener? = null
 
-    init {
-        editDelegateList.clear()
-        EDIT_DELEGATE_POOL.forEach {
-            val element = it.newInstance()
-            element.setController(this)
-            editDelegateList.add(element)
-        }
-    }
-
-    fun openPanel(index: Int = 0, info: BaseTechoItem, listener: OnEditPanelCloseListener?) {
-        val supported = editDelegateList.filter { it.isSupport(info) }
-        if (supported.isEmpty()) {
-            return
-        }
+    fun openPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
         closePanel()
-        val editDelegate = supported[0]
-        this.activeDelegate = editDelegate
-        this.editItemIndex = index
-        this.editInfo = info
-        this.onEditPanelCloseListener = listener
-        checkPanelView(editDelegate)
-        editDelegate.open(info)
+        openByInfo(index, info, listener)
     }
 
     fun closePanel() {
         tryClosePanel(this.activeDelegate)
     }
 
-    private fun checkPanelView(panel: EditDelegate) {
+    private fun openByInfo(
+        index: Int = 0,
+        info: TechoItem,
+        listener: OnEditPanelCloseListener?
+    ) {
+        when (info) {
+            is TechoItem.Photo -> {
+                findDelegate<PhotoEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
+            is TechoItem.Text -> {
+                findDelegate<TextEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
+            is TechoItem.CheckBox -> {
+                findDelegate<CheckBoxEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
+            is TechoItem.Number -> {
+                findDelegate<NumberEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
+            is TechoItem.Split -> {
+                findDelegate<SplitEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
+        }
+    }
+
+    private inline fun <reified T : EditDelegate<*>> T.applyDelegate(
+        index: Int = 0,
+        info: TechoItem,
+        listener: OnEditPanelCloseListener?
+    ): T {
+        updateContextInfo(this, index, info, listener)
+        checkPanelView(this)
+        return this
+    }
+
+    private fun updateContextInfo(
+        editDelegate: EditDelegate<*>,
+        index: Int,
+        info: TechoItem,
+        listener: OnEditPanelCloseListener?
+    ) {
+        this.activeDelegate = editDelegate
+        this.editItemIndex = index
+        this.editInfo = info
+        this.onEditPanelCloseListener = listener
+    }
+
+    private fun checkPanelView(panel: EditDelegate<*>) {
         val findPanel = panelViewMap.filter { it.panel == panel }.toMutableList()
         val view = panel.getPanelView(container)
         if (findPanel.isNotEmpty()) {
@@ -125,6 +142,17 @@ class EditManager(
         )
     }
 
+    private inline fun <reified T : EditDelegate<*>> findDelegate(): T {
+        editDelegateList.forEach {
+            if (it is T) {
+                return it
+            }
+        }
+        val newDelegate = T::class.java.newInstance()
+        editDelegateList.add(newDelegate)
+        return newDelegate
+    }
+
     private fun View?.tryRemoveFromParent() {
         val view = this
         view?.parent?.let { parent ->
@@ -134,7 +162,7 @@ class EditManager(
         }
     }
 
-    override fun callClose(editDelegate: EditDelegate) {
+    override fun callClose(editDelegate: EditDelegate<*>) {
         tryClosePanel(editDelegate)
     }
 
@@ -143,7 +171,7 @@ class EditManager(
     override val requestLauncher: RequestLauncher
         get() = launcher
 
-    private fun tryClosePanel(editDelegate: EditDelegate?) {
+    private fun tryClosePanel(editDelegate: EditDelegate<*>?) {
         editDelegate?.close()
         if (editDelegate == this.activeDelegate) {
             if (editDelegate?.isChangedValue == true) {
@@ -172,12 +200,12 @@ class EditManager(
     }
 
     fun interface OnEditPanelCloseListener {
-        fun onEditPanelClose(index: Int, info: BaseTechoItem)
+        fun onEditPanelClose(index: Int, info: TechoItem)
     }
 
     private class PanelView(
         val view: View,
-        val panel: EditDelegate
+        val panel: EditDelegate<*>
     )
 
 }

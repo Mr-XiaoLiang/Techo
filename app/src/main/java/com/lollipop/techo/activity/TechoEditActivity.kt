@@ -235,6 +235,7 @@ class TechoEditActivity : HeaderActivity(),
     override fun onDestroy() {
         super.onDestroy()
         circleAnimationGroup.destroy()
+        editManager.destroy()
     }
 
     override fun onItemOptionButtonClick(holder: EditHolder<*>) {

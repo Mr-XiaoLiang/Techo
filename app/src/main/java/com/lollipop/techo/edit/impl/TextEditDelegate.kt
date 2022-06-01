@@ -4,8 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
-import com.lollipop.techo.data.BaseTechoItem
-import com.lollipop.techo.data.BaseTextItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
 import com.lollipop.techo.edit.EditDelegate
 
@@ -13,15 +12,11 @@ import com.lollipop.techo.edit.EditDelegate
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class TextEditDelegate : EditDelegate() {
+abstract class BaseTextEditDelegate<T: TechoItem> : EditDelegate<T>() {
 
     private var binding: PanelTextEditBinding? = null
 
     override val animationEnable = true
-
-    override fun isSupport(info: BaseTechoItem): Boolean {
-        return info is BaseTextItem
-    }
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -43,22 +38,16 @@ class TextEditDelegate : EditDelegate() {
         }
     }
 
-    override fun onOpen(info: BaseTechoItem) {
+    override fun onOpen(info: T) {
         super.onOpen(info)
-        binding?.editText?.setText(
-            if (info is BaseTextItem) {
-                info.value
-            } else {
-                ""
-            }
-        )
+        binding?.editText?.setText(info.value)
     }
 
     private fun onDone() {
         binding?.editText?.let {
             val newValue = it.text?.toString() ?: return
-            tryChangeInfo<BaseTextItem> {
-                it.value = newValue
+            tryChangeInfo { info ->
+                info.value = newValue
                 notifyDataChanged()
             }
         }
@@ -74,3 +63,6 @@ class TextEditDelegate : EditDelegate() {
     }
 
 }
+class TextEditDelegate: BaseTextEditDelegate<TechoItem.Text>()
+class CheckBoxEditDelegate: BaseTextEditDelegate<TechoItem.CheckBox>()
+class NumberEditDelegate: BaseTextEditDelegate<TechoItem.Number>()

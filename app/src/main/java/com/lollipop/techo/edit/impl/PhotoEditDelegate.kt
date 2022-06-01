@@ -16,8 +16,7 @@ import com.lollipop.base.util.onUI
 import com.lollipop.gallery.Photo
 import com.lollipop.gallery.PhotoManager
 import com.lollipop.techo.R
-import com.lollipop.techo.data.BaseTechoItem
-import com.lollipop.techo.data.PhotoItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemPhotoEditBinding
 import com.lollipop.techo.databinding.PanelPhotoSelectBinding
 import com.lollipop.techo.edit.EditDelegate
@@ -27,7 +26,7 @@ import com.lollipop.techo.util.load
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class PhotoEditDelegate : EditDelegate() {
+class PhotoEditDelegate : EditDelegate<TechoItem.Photo>() {
 
     private var binding: PanelPhotoSelectBinding? = null
 
@@ -37,10 +36,6 @@ class PhotoEditDelegate : EditDelegate() {
 
     private val adapter by lazy {
         PhotoAdapter(photoManager, ::onPhotoClick, ::getSelectedIndex)
-    }
-
-    override fun isSupport(info: BaseTechoItem): Boolean {
-        return info is PhotoItem
     }
 
     override fun onCreateView(container: ViewGroup): View {
@@ -60,7 +55,7 @@ class PhotoEditDelegate : EditDelegate() {
         }
     }
 
-    override fun onOpen(info: BaseTechoItem) {
+    override fun onOpen(info: TechoItem.Photo) {
         super.onOpen(info)
         val activity = context
         if (activity == null) {

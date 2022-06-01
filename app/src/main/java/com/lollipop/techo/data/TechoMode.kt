@@ -82,9 +82,6 @@ object TechoMode {
          * 这个内容是空的
          */
         fun insert(type: TechoItemType) {
-            if (type == TechoItemType.Empty) {
-                return
-            }
             val newItem = TechoItem.createItem(type)
             val start = info.items.size
             info.items.add(newItem)
@@ -148,9 +145,6 @@ object TechoMode {
                         number = 1
                     }
                     is TechoItem.CheckBox -> {
-
-                    }
-                    is TechoItem.Empty -> {
 
                     }
                     is TechoItem.Photo -> {

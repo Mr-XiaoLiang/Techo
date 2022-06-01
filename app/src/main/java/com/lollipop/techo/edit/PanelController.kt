@@ -9,7 +9,7 @@ import com.lollipop.base.request.RequestLauncher
  */
 interface PanelController {
 
-    fun callClose(editDelegate: EditDelegate)
+    fun callClose(editDelegate: EditDelegate<*>)
 
     val context: Activity
 

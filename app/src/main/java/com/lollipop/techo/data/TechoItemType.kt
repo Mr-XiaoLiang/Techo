@@ -1,7 +1,6 @@
 package com.lollipop.techo.data
 
 enum class TechoItemType {
-    Empty,
     Text,
     Number,
     CheckBox,
@@ -15,7 +14,7 @@ enum class TechoItemType {
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
-            return Empty
+            return Text
         }
     }
 }

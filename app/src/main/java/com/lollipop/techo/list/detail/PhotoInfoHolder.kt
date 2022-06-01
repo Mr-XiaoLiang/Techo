@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.lollipop.base.util.dp2px
 import com.lollipop.gallery.Photo
-import com.lollipop.techo.data.PhotoItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemPhotoBinding
 import java.util.*
 
@@ -34,7 +34,7 @@ class PhotoInfoHolder(
 
     private val recycledViewPool = LinkedList<GridPhotoView>()
 
-    fun bind(info: PhotoItem) {
+    fun bind(info: TechoItem.Photo) {
         val photoSize = info.values.size
         val childCount = binding.content.photoGridLayout.childCount
         if (photoSize > childCount) {

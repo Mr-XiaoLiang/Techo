@@ -9,8 +9,7 @@ import com.lollipop.base.util.bind
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
-import com.lollipop.techo.data.BaseTechoItem
-import com.lollipop.techo.data.SplitItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemSplitBinding
 import com.lollipop.techo.databinding.PanelSplitSelectBinding
 import com.lollipop.techo.edit.EditDelegate
@@ -20,17 +19,13 @@ import com.lollipop.techo.split.SplitLoader
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class SplitEditDelegate : EditDelegate() {
+class SplitEditDelegate : EditDelegate<TechoItem.Split>() {
 
     private var binding: PanelSplitSelectBinding? = null
 
-    private val dataList = ArrayList<SplitItem>()
+    private val dataList = ArrayList<TechoItem.Split>()
 
     private val adapter = Adapter(dataList, ::onSplitClick)
-
-    override fun isSupport(info: BaseTechoItem): Boolean {
-        return info is SplitItem
-    }
 
     override fun onCreateView(container: ViewGroup): View {
         val newBinding: PanelSplitSelectBinding = container.bind(false)
@@ -62,13 +57,13 @@ class SplitEditDelegate : EditDelegate() {
         }
     }
 
-    private fun onSplitClick(item: SplitItem) {
+    private fun onSplitClick(item: TechoItem.Split) {
         // TODO
     }
 
     private class Adapter(
-        private val data: List<SplitItem>,
-        private val onSelectedSplit: (SplitItem) -> Unit
+        private val data: List<TechoItem.Split>,
+        private val onSelectedSplit: (TechoItem.Split) -> Unit
     ) : RecyclerView.Adapter<Holder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             return Holder.create(parent, ::onItemClick)
@@ -107,8 +102,8 @@ class SplitEditDelegate : EditDelegate() {
             }
         }
 
-        fun bind(info: SplitItem) {
-            binding.splitView.load(info.style, info.flagValue)
+        fun bind(info: TechoItem.Split) {
+            binding.splitView.load(info)
         }
 
         private fun onItemClick() {

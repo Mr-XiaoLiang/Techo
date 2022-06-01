@@ -8,22 +8,20 @@ import com.lollipop.base.request.PermissionFlow
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.onClick
-import com.lollipop.techo.data.BaseTechoItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.util.AnimationHelper
 
 /**
  * @author lollipop
  * @date 2021/12/18 20:15
  */
-abstract class EditDelegate {
-
-    abstract fun isSupport(info: BaseTechoItem): Boolean
+abstract class EditDelegate<T : TechoItem> {
 
     private var controller: PanelController? = null
 
     private var panelView: View? = null
 
-    private var currentInfo: BaseTechoItem? = null
+    private var currentInfo: T? = null
 
     private val animationHelper = AnimationHelper(onUpdate = ::onAnimationUpdate).apply {
         onStart {
@@ -67,7 +65,7 @@ abstract class EditDelegate {
         this.controller = controller
     }
 
-    fun open(info: BaseTechoItem) {
+    fun open(info: T) {
         currentInfo = info
         isChangedValue = false
         panelView?.post {
@@ -101,7 +99,7 @@ abstract class EditDelegate {
 
     protected open fun onViewCreated(view: View) {}
 
-    protected open fun onOpen(info: BaseTechoItem) {}
+    protected open fun onOpen(info: T) {}
 
     protected open fun onClose() {}
 
@@ -143,16 +141,12 @@ abstract class EditDelegate {
         animationHelper.destroy()
     }
 
-    protected fun getCurrentInfo(): BaseTechoItem? {
+    protected fun getCurrentInfo(): T? {
         return currentInfo
     }
 
-    protected inline fun <reified T : BaseTechoItem> tryChangeInfo(callback: (T) -> Unit) {
-        getCurrentInfo()?.let {
-            if (it is T) {
-                callback(it)
-            }
-        }
+    protected inline fun tryChangeInfo(callback: (T) -> Unit) {
+        getCurrentInfo()?.let(callback)
     }
 
     protected fun clickToClose(vararg views: View) {

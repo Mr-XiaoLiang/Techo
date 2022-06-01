@@ -9,7 +9,7 @@ import com.lollipop.techo.data.json.forEachObj
 import com.lollipop.techo.data.json.mapToJson
 import org.json.JSONObject
 
-sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
+sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
 
     companion object {
         private const val KEY_VALUE = "VALUE"
@@ -29,9 +29,6 @@ sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
 
         fun createItem(type: TechoItemType): TechoItem {
             return when (type) {
-                TechoItemType.Empty -> {
-                    Empty()
-                }
                 TechoItemType.Text -> {
                     Text()
                 }
@@ -51,6 +48,8 @@ sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
         }
     }
 
+    open val spanEnable = true
+
     var value: String = ""
 
     val spans: MutableList<TextSpan> = ArrayList()
@@ -59,29 +58,23 @@ sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
         return JSONObject().apply {
             put(KEY_ITEM_TYPE, itemType.name)
             put(KEY_VALUE, value)
-            put(KEY_SPANS, spans.mapToJson())
+            if (spanEnable) {
+                put(KEY_SPANS, spans.mapToJson())
+            }
         }
     }
 
     override fun parse(json: JSONObject) {
         value = json.optString(KEY_VALUE)
         spans.clear()
-        json.optJSONArray(KEY_SPANS)?.forEachObj { obj, _ ->
-            spans.add(TextSpan.fromJson(obj))
+        if (spanEnable) {
+            json.optJSONArray(KEY_SPANS)?.forEachObj { obj, _ ->
+                spans.add(TextSpan.fromJson(obj))
+            }
         }
     }
 
     class Text : TechoItem(TechoItemType.Text)
-
-    class Empty : TechoItem(TechoItemType.Empty) {
-        override fun toJson(): JSONObject {
-            return JSONObject()
-        }
-
-        override fun parse(json: JSONObject) {
-            // do nothing
-        }
-    }
 
     class Number : TechoItem(TechoItemType.Number) {
 
@@ -137,6 +130,8 @@ sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
             }
         }
 
+        override val spanEnable = false
+
         var color: Int = Color.BLACK
 
         override fun toJson(): JSONObject {
@@ -161,8 +156,13 @@ sealed class TechoItem(private val itemType: TechoItemType) : JsonInfo {
             private const val KEY_PHOTO_TITLE = "photoTitle"
         }
 
+        override val spanEnable = false
         val values: MutableList<com.lollipop.gallery.Photo> = mutableListOf()
         var style: PhotoGridLayout.Style = PhotoGridLayout.Style.Playbill
+
+        init {
+            value = "[^_^]"
+        }
 
         override fun toJson(): JSONObject {
             return super.toJson().apply {

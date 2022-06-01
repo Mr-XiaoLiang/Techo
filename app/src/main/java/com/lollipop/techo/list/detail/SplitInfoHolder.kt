@@ -1,7 +1,7 @@
 package com.lollipop.techo.list.detail
 
 import android.view.ViewGroup
-import com.lollipop.techo.data.SplitItem
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemSplitBinding
 
 /**
@@ -18,8 +18,8 @@ class SplitInfoHolder(
         }
     }
 
-    fun bind(info: SplitItem) {
-        binding.content.splitView.load(info.style, info.flagValue)
+    fun bind(info: TechoItem.Split) {
+        binding.content.splitView.load(info)
     }
 
 }
