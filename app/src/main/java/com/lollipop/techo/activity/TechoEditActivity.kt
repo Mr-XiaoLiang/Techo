@@ -13,7 +13,6 @@ import com.lollipop.base.util.*
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
-import com.lollipop.techo.data.TechoMode.ChangedType.*
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
@@ -201,27 +200,7 @@ class TechoEditActivity : HeaderActivity(),
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(first: Int, second: Int, type: TechoMode.ChangedType) {
-        viewBinding.contentListView.apply {
-            when (type) {
-                Full -> {
-                    adapter?.notifyDataSetChanged()
-                }
-                Modify -> {
-                    adapter?.notifyItemRangeChanged(first, second)
-                }
-                Insert -> {
-                    adapter?.notifyItemRangeInserted(first, second)
-                }
-                Delete -> {
-                    adapter?.notifyItemRangeRemoved(first, second)
-                }
-                Move -> {
-                    adapter?.notifyItemMoved(first, second)
-                    adapter?.notifyItemChanged(first)
-                    adapter?.notifyItemChanged(second)
-                }
-            }
-        }
+        mode.onInfoChangedDefaultImpl(viewBinding.contentListView.adapter, first, second, type)
     }
 
     override fun onBackPressed() {

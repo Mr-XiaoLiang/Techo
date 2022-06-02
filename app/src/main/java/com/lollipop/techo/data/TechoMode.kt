@@ -1,6 +1,11 @@
 package com.lollipop.techo.data
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.ContextWrapper
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.list.OnItemMoveCallback
 import com.lollipop.base.list.OnItemSwipeCallback
 import com.lollipop.base.util.doAsync
@@ -10,26 +15,83 @@ import java.util.*
 
 object TechoMode {
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun onInfoChangedDefaultImpl(
+        adapter: RecyclerView.Adapter<*>?,
+        first: Int,
+        second: Int,
+        type: ChangedType
+    ) {
+        adapter ?: return
+        when (type) {
+            ChangedType.Full -> {
+                adapter.notifyDataSetChanged()
+            }
+            ChangedType.Modify -> {
+                adapter.notifyItemRangeChanged(first, second)
+            }
+            ChangedType.Insert -> {
+                adapter.notifyItemRangeInserted(first, second)
+            }
+            ChangedType.Delete -> {
+                adapter.notifyItemRangeRemoved(first, second)
+            }
+            ChangedType.Move -> {
+                adapter.notifyItemMoved(first, second)
+                adapter.notifyItemChanged(first)
+                adapter.notifyItemChanged(second)
+            }
+        }
+    }
+
     fun create(context: Context): Builder {
         return Builder(context)
     }
 
     class Builder(private val context: Context) {
         private var listener: StateListener? = null
+        private var lifecycle: Lifecycle? = null
 
         fun attach(listener: StateListener): Builder {
             this.listener = listener
             return this
         }
 
+        fun bind(lifecycle: Lifecycle): Builder {
+            this.lifecycle = lifecycle
+            return this
+        }
+
         fun buildDetailMode(): Detail {
             val lis = listener ?: EmptyListener()
-            return Detail(lis, context)
+            return Detail(lis, findLifecycle(), context)
         }
 
         fun buildListMode(): List {
             val lis = listener ?: EmptyListener()
-            return List(lis, context)
+            return List(lis, findLifecycle(), context)
+        }
+
+        private fun findLifecycle(): Lifecycle? {
+            val l = lifecycle
+            if (l != null) {
+                return l
+            }
+            return findActivity()?.lifecycle
+        }
+
+        private fun findActivity(): AppCompatActivity? {
+            var c: Context? = context
+            do {
+                if (c is AppCompatActivity) {
+                    return c
+                }
+                if (c is ContextWrapper) {
+                    c = c.baseContext
+                } else {
+                    return null
+                }
+            } while (true)
         }
 
         private class EmptyListener : StateListener {
@@ -39,7 +101,7 @@ object TechoMode {
             override fun onLoadEnd() {
             }
 
-            override fun onInfoChanged(start: Int, count: Int, type: ChangedType) {
+            override fun onInfoChanged(first: Int, second: Int, type: ChangedType) {
             }
         }
 
@@ -47,8 +109,9 @@ object TechoMode {
 
     class Detail(
         listener: StateListener,
-        context: Context
-    ) : BaseMode(listener), OnItemMoveCallback, OnItemSwipeCallback {
+        lifecycle: Lifecycle?,
+        context: Context,
+    ) : BaseMode(listener, lifecycle), OnItemMoveCallback, OnItemSwipeCallback {
 
         private val dbUtil = TechoDbUtil(context)
 
@@ -281,12 +344,25 @@ object TechoMode {
             }
         }
 
+        /**
+         * 内容变化时的响应操作的默认实现
+         */
+        fun onInfoChangedDefaultImpl(
+            adapter: RecyclerView.Adapter<*>?,
+            first: Int,
+            second: Int,
+            type: ChangedType
+        ) {
+            TechoMode.onInfoChangedDefaultImpl(adapter, first, second, type)
+        }
+
     }
 
     class List(
         listener: StateListener,
+        lifecycle: Lifecycle?,
         context: Context
-    ) : BaseMode(listener), OnItemSwipeCallback {
+    ) : BaseMode(listener, lifecycle), OnItemSwipeCallback {
 
         companion object {
             private const val DEFAULT_PAGE_INDEX = 0
@@ -352,25 +428,45 @@ object TechoMode {
     }
 
     open class BaseMode(
-        listener: StateListener
+        listener: StateListener,
+        lifecycle: Lifecycle?
     ) {
 
         companion object {
             const val NO_ID = 0
         }
 
+        private val lifecycleEnable = lifecycle != null
+
         private val listenerWrapper = WeakReference(listener)
+        private val lifecycleWrapper = WeakReference(lifecycle)
+
+        private val isActive: Boolean
+            get() {
+                if (lifecycleEnable) {
+                    val currentState = lifecycleWrapper.get()?.currentState ?: return false
+                    return currentState.isAtLeast(Lifecycle.State.CREATED)
+                } else {
+                    return true
+                }
+            }
 
         protected fun loadStart() {
-            listenerWrapper.get()?.onLoadStart()
+            if (isActive) {
+                listenerWrapper.get()?.onLoadStart()
+            }
         }
 
         protected fun loadEnd() {
-            listenerWrapper.get()?.onLoadEnd()
+            if (isActive) {
+                listenerWrapper.get()?.onLoadEnd()
+            }
         }
 
         protected fun infoChanged(first: Int, second: Int, type: ChangedType) {
-            listenerWrapper.get()?.onInfoChanged(first, second, type)
+            if (isActive) {
+                listenerWrapper.get()?.onInfoChanged(first, second, type)
+            }
         }
 
     }
