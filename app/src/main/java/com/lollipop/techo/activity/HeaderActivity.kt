@@ -1,5 +1,7 @@
 package com.lollipop.techo.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -99,6 +101,14 @@ abstract class HeaderActivity : BaseActivity() {
                     BlurTransformation.create(this@HeaderActivity)
                 )
             ).into(viewBinding.headerBackground)
+    }
+
+    fun resultOk(callback: (Intent) -> Unit) {
+        setResult(Activity.RESULT_OK, Intent().apply { callback(this) })
+    }
+
+    fun resultCanceled(callback: ((Intent) -> Unit)? = null) {
+        setResult(Activity.RESULT_CANCELED, Intent().apply { callback?.invoke(this) })
     }
 
 }

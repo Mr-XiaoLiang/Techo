@@ -2,8 +2,11 @@ package com.lollipop.techo.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import com.lollipop.base.util.isCreated
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoDetailBinding
 
@@ -29,7 +32,14 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
             return intent.getIntExtra(RESULT_TECHO_ID, NO_ID)
         }
 
+        private fun setResultTechoId(intent: Intent, id: Int) {
+            intent.putExtra(RESULT_TECHO_ID, id)
+        }
+
     }
+
+    override val optionsMenu: Int
+        get() = R.menu.menu_detail
 
     private val viewBinding: ActivityTechoDetailBinding by lazyBind()
 
@@ -62,5 +72,24 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
         mode.onInfoChangedDefaultImpl(viewBinding.recyclerView.adapter, first, second, type)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuEdit -> {
+                val id = techoId
+                requestActivity<TechoEditActivity>({ i ->
+                    TechoEditActivity.putParams(i, id)
+                }) { result ->
+                    if (result.isOk) {
+                        if (isCreated()) {
+                            mode.loadOrCreate(id)
+                            resultOk { setResultTechoId(it, id) }
+                        }
+                    }
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }

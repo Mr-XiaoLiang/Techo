@@ -219,7 +219,7 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onItemOptionButtonClick(holder: EditHolder<*>) {
         val adapterPosition = holder.adapterPosition
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     override fun onItemEditButtonClick(holder: EditHolder<*>) {
