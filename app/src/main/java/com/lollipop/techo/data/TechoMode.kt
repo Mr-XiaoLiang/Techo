@@ -236,7 +236,7 @@ object TechoMode {
          * 更新
          * 将会把当前数据更新并同步到数据库
          */
-        fun update() {
+        fun update(callback: (() -> Unit)? = null) {
             loadStart()
             doAsync {
                 if (info.id == NO_ID) {
@@ -246,6 +246,7 @@ object TechoMode {
                     dbUtil.updateTecho(info)
                 }
                 onUI {
+                    callback?.invoke()
                     loadEnd()
                 }
             }

@@ -3,6 +3,7 @@ package com.lollipop.techo.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
+import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
@@ -44,11 +46,18 @@ class TechoEditActivity : HeaderActivity(),
             return intent.getIntExtra(RESULT_TECHO_ID, NO_ID)
         }
 
+        fun putResultTechoId(intent: Intent, id: Int) {
+            intent.putExtra(RESULT_TECHO_ID, id)
+        }
+
     }
 
     private val mode by lazy {
         TechoMode.create(this).attach(this).buildDetailMode()
     }
+
+    override val optionsMenu: Int
+        get() = R.menu.menu_edit
 
     private val viewBinding: ActivityTechoEditBinding by lazyBind()
 
@@ -152,6 +161,21 @@ class TechoEditActivity : HeaderActivity(),
         quickAddType = Text
         floatingBinding.quickAddButton.setImageDrawable(floatingBinding.floatingTextBtn.drawable)
         circleAnimationGroup.hide()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuDone -> {
+                mode.update {
+                    if (isCreated()) {
+                        resultOk { putResultTechoId(it, mode.info.id) }
+                        onBackPressed()
+                    }
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun onFloatBtnClick(btn: FloatingActionButton) {
