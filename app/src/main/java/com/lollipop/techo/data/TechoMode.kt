@@ -399,14 +399,33 @@ object TechoMode {
             loadStart()
             doAsync {
                 val techo = dbUtil.selectTechoById(id)
+                var itemPosition = -1
                 var isInsert = false
                 if (techo != null) {
-                    info.add(0, techo)
-                    isInsert = true
+                    for (index in info.indices) {
+                        if (info[index].id == id) {
+                            itemPosition = index
+                            info[index] = techo
+                            break
+                        }
+                    }
+                    if (itemPosition < 0) {
+                        info.add(0, techo)
+                        itemPosition = 0
+                        isInsert = true
+                    }
                 }
                 onUI {
-                    if (isInsert) {
-                        infoChanged(0, 1, ChangedType.Insert)
+                    if (itemPosition >= 0) {
+                        infoChanged(
+                            itemPosition,
+                            1,
+                            if (isInsert) {
+                                ChangedType.Insert
+                            } else {
+                                ChangedType.Modify
+                            }
+                        )
                     }
                     loadEnd()
                 }
