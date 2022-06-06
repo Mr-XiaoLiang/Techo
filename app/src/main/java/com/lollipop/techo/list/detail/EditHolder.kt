@@ -56,7 +56,7 @@ open class EditHolder<T : ViewBinding>(
 
     fun onEditModeChange(isInEditMode: Boolean) {
         this.isInEditMode = isInEditMode
-        optionBinding.dragHandlerView.isInvisible = !isInEditMode
+        optionBinding.dragHandlerView.isInvisible = canDrag
         optionBinding.moreOptionView.isInvisible = !isInEditMode
     }
 

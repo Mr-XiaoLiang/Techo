@@ -67,6 +67,11 @@ object TechoMode {
             return Detail(lis, findLifecycle(), context)
         }
 
+        fun buildEditMode(): Edit {
+            val lis = listener ?: EmptyListener()
+            return Edit(lis, findLifecycle(), context)
+        }
+
         fun buildListMode(): List {
             val lis = listener ?: EmptyListener()
             return List(lis, findLifecycle(), context)
@@ -105,6 +110,22 @@ object TechoMode {
             }
         }
 
+    }
+
+    class Edit(
+        listener: StateListener,
+        lifecycle: Lifecycle?,
+        context: Context,
+    ): BaseMode(listener, lifecycle), OnItemMoveCallback, OnItemSwipeCallback {
+        private val dbUtil = TechoDbUtil(context)
+
+        override fun onSwipe(adapterPosition: Int) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            TODO("Not yet implemented")
+        }
     }
 
     class Detail(
