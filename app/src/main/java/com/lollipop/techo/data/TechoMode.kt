@@ -116,8 +116,22 @@ object TechoMode {
         listener: StateListener,
         lifecycle: Lifecycle?,
         context: Context,
-    ): BaseMode(listener, lifecycle), OnItemMoveCallback, OnItemSwipeCallback {
+    ) : BaseMode(listener, lifecycle), OnItemMoveCallback, OnItemSwipeCallback {
+
         private val dbUtil = TechoDbUtil(context)
+
+        val itemList = ArrayList<TechoItem>()
+
+        var flag: TechoFlag = TechoFlag()
+
+        var infoId = NO_ID
+            private set
+
+        val keyWords = ArrayList<String>()
+        var createTime: Long = 0
+            private set
+        var updateTime: Long = 0
+            private set
 
         override fun onSwipe(adapterPosition: Int) {
             TODO("Not yet implemented")
@@ -126,6 +140,161 @@ object TechoMode {
         override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
             TODO("Not yet implemented")
         }
+
+        /**
+         * 尝试加载一个手帐，如果加载失败，那么会创建一个新的
+         */
+        fun loadOrCreate(id: Int) {
+            if (id != NO_ID) {
+                infoId = id
+                load()
+            } else {
+                new()
+            }
+        }
+
+        /**
+         * 加载手帐信息
+         */
+        private fun load() {
+            loadStart()
+            if (infoId == NO_ID) {
+                resetInfo()
+                infoChanged(0, itemList.size, ChangedType.Full)
+                loadEnd()
+                return
+            }
+            doAsync {
+                val newInfo = dbUtil.selectTechoById(infoId)
+                if (newInfo != null) {
+                    flag = newInfo.flag
+                    itemList.clear()
+                    itemList.add(TechoItem.Title().apply {
+                        value = newInfo.title
+                    })
+                    itemList.addAll(newInfo.items)
+                    keyWords.addAll(newInfo.keyWords)
+                    createTime = newInfo.createTime
+                    updateTime = newInfo.updateTime
+                } else {
+                    resetInfo()
+                }
+                initList()
+                formatData()
+                onUI {
+                    infoChanged(0, itemList.size, ChangedType.Full)
+                    loadEnd()
+                }
+            }
+        }
+
+        /**
+         * 创建一个新的手帐
+         */
+        private fun new() {
+            reset()
+        }
+
+        /**
+         * 重置
+         * 将会重置所有数据为新建状态
+         */
+        fun reset() {
+            loadStart()
+            resetInfo()
+            infoChanged(0, itemList.size, ChangedType.Full)
+            loadEnd()
+        }
+
+        private fun resetInfo() {
+            infoId = NO_ID
+            flag = TechoFlag()
+            itemList.clear()
+            keyWords.clear()
+            createTime = 0
+            updateTime = 0
+            initList()
+        }
+
+        private fun initList() {
+            if (itemList.isEmpty()) {
+                itemList.add(TechoItem.Title())
+                itemList.add(TechoItem.Text())
+            }
+        }
+
+        private fun formatData(): IntArray {
+            var number = 1
+            var updateStart = -1
+            var updateEnd = -1
+            itemList.forEachIndexed { index, info ->
+                when (info) {
+                    is TechoItem.Number -> {
+                        if (index < 0) {
+                            updateStart = index
+                        }
+                        if (updateEnd < index) {
+                            updateEnd = index
+                        }
+                        info.number = number
+                        number++
+                    }
+                    is TechoItem.Split -> {
+                        number = 1
+                    }
+                    is TechoItem.CheckBox -> {
+
+                    }
+                    is TechoItem.Photo -> {
+
+                    }
+                    is TechoItem.Text -> {
+
+                    }
+                    is TechoItem.Title -> {
+
+                    }
+                }
+            }
+            return intArrayOf(updateStart, updateEnd)
+        }
+
+        /**
+         * 更新
+         * 将会把当前数据更新并同步到数据库
+         */
+        fun update(callback: (() -> Unit)? = null) {
+            loadStart()
+            doAsync {
+                val info = TechoInfo()
+                itemList.forEach {
+                    if (it is TechoItem.Title) {
+                        info.title = it.value
+                    } else {
+                        info.items.add(it)
+                    }
+                }
+                info.flag = flag
+                val now = System.currentTimeMillis()
+                updateTime = now
+                if (infoId == NO_ID) {
+                    createTime = now
+                }
+                info.updateTime = updateTime
+                info.createTime = createTime
+                if (infoId == NO_ID) {
+                    // 插入后更新id
+                    infoId = dbUtil.insertTecho(info)
+                } else {
+                    dbUtil.updateTecho(info)
+                }
+                onUI {
+                    callback?.invoke()
+                    loadEnd()
+                }
+            }
+        }
+
     }
 
     class Detail(
@@ -235,6 +404,9 @@ object TechoMode {
 
                     }
                     is TechoItem.Text -> {
+
+                    }
+                    is TechoItem.Title -> {
 
                     }
                 }

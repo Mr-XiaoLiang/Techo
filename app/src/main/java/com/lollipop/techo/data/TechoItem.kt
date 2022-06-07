@@ -74,6 +74,8 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
         }
     }
 
+    class Title : TechoItem(TechoItemType.Text)
+
     class Text : TechoItem(TechoItemType.Text)
 
     class Number : TechoItem(TechoItemType.Number) {
