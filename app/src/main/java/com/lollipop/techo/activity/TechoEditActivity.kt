@@ -13,7 +13,6 @@ import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItemType.*
-import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
@@ -53,7 +52,7 @@ class TechoEditActivity : HeaderActivity(),
     }
 
     private val mode by lazy {
-        TechoMode.create(this).attach(this).buildDetailMode()
+        TechoMode.create(this).attach(this).buildEditMode()
     }
 
     override val optionsMenu: Int
@@ -96,7 +95,7 @@ class TechoEditActivity : HeaderActivity(),
             recyclerView.layoutManager = LinearLayoutManager(
                 this@TechoEditActivity, RecyclerView.VERTICAL, false
             )
-            val listAdapter = DetailListAdapter(mode.info.items, this).apply {
+            val listAdapter = DetailListAdapter(mode.itemList, this).apply {
                 changeEditMode(true)
             }
             recyclerView.adapter = listAdapter
@@ -168,7 +167,7 @@ class TechoEditActivity : HeaderActivity(),
             R.id.menuDone -> {
                 mode.update {
                     if (isCreated()) {
-                        resultOk { putResultTechoId(it, mode.info.id) }
+                        resultOk { putResultTechoId(it, mode.infoId) }
                         onBackPressed()
                     }
                 }
@@ -248,7 +247,7 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onItemEditButtonClick(holder: EditHolder<*>) {
         val adapterPosition = holder.adapterPosition
-        val item = mode.info.items[adapterPosition]
+        val item = mode.itemList[adapterPosition]
         editManager.openPanel(adapterPosition, item) { index, _ ->
             viewBinding.contentListView.adapter?.notifyItemChanged(index)
         }

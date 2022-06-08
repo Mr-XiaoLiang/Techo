@@ -144,6 +144,7 @@ class RichTextHelper {
         }
 
         val allStr = when (info) {
+            is TechoItem.Title,
             is TechoItem.CheckBox,
             is TechoItem.Number,
             is TechoItem.Text -> {

@@ -57,7 +57,7 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mode.loadOrCreate(techoId)
+        mode.load(techoId)
     }
 
     override fun onLoadStart() {
@@ -69,7 +69,7 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
     }
 
     override fun onInfoChanged(first: Int, second: Int, type: TechoMode.ChangedType) {
-        mode.onInfoChangedDefaultImpl(viewBinding.recyclerView.adapter, first, second, type)
+        TechoMode.onInfoChangedDefaultImpl(viewBinding.recyclerView.adapter, first, second, type)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -81,7 +81,7 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
                 }) { result ->
                     if (result.isOk) {
                         if (isCreated()) {
-                            mode.loadOrCreate(id)
+                            mode.load(id)
                             resultOk { setResultTechoId(it, id) }
                         }
                     }
