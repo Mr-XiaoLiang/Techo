@@ -50,6 +50,8 @@ dependencies {
     implementation project(path: ':recorder')
 
     implementation 'com.lollipop.plugin:bridge:1.0'
+    implementation project(path: ':renderScript')
+    implementation project(path: ':web')
 
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop

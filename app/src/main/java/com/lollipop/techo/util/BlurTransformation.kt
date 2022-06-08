@@ -1,12 +1,10 @@
 package com.lollipop.techo.util
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.renderscript.RenderScript
-import androidx.annotation.FloatRange
+import androidx.annotation.IntRange
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.lollipop.base.util.BlurUtil
+import com.google.android.renderscript.Toolkit
 import java.security.MessageDigest
 
 /**
@@ -14,23 +12,21 @@ import java.security.MessageDigest
  * @date 5/5/21 20:49
  */
 class BlurTransformation private constructor(
-    private val renderScript: RenderScript,
-    @FloatRange(from = 1.0, to = 25.0)
-    private val radius: Float = MAX_RADIUS
+    @IntRange(from = 1, to = 25)
+    private val radius: Int = MAX_RADIUS
 ) : BitmapTransformation() {
 
     companion object {
-        private const val MAX_RADIUS = 25F
+        private const val MAX_RADIUS = 25
 
         private const val VERSION = 1
         private const val ID = "com.lollipop.techo.util.BlurTransformation.$VERSION"
 
         fun create(
-            context: Context,
-            @FloatRange(from = 1.0, to = 25.0)
-            radius: Float = MAX_RADIUS
+            @IntRange(from = 1, to = 25)
+            radius: Int = MAX_RADIUS
         ): BlurTransformation {
-            return BlurTransformation(RenderScript.create(context), radius)
+            return BlurTransformation(radius)
         }
     }
 
@@ -40,15 +36,11 @@ class BlurTransformation private constructor(
         outWidth: Int,
         outHeight: Int
     ): Bitmap {
-        val bitmap = pool.getDirty(toTransform.width, toTransform.height, Bitmap.Config.ARGB_8888)
-        blurBitmap(toTransform, bitmap)
-        return bitmap
-//        return ThumbnailUtils.extractThumbnail(bitmap, outWidth, outHeight)
+        return blurBitmap(toTransform)
     }
 
-    private fun blurBitmap(src: Bitmap, bitmap: Bitmap): Bitmap {
-        BlurUtil.blurBitmap(renderScript, src, bitmap, radius)
-        return bitmap
+    private fun blurBitmap(src: Bitmap): Bitmap {
+        return Toolkit.blur(src, radius)
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {

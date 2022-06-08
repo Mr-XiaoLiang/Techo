@@ -98,7 +98,7 @@ abstract class HeaderActivity : BaseActivity() {
             .load(url)
             .apply(
                 RequestOptions().transform(
-                    BlurTransformation.create(this@HeaderActivity)
+                    BlurTransformation.create()
                 )
             ).into(viewBinding.headerBackground)
     }
