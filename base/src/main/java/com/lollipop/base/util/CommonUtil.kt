@@ -2,6 +2,7 @@ package com.lollipop.base.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
@@ -543,11 +544,17 @@ inline fun <reified T : ViewBinding> Fragment.lazyBind(): Lazy<T> = lazy { bind(
 
 inline fun <reified T : ViewBinding> View.lazyBind(): Lazy<T> = lazy { bind() }
 
+inline fun <reified T : ViewBinding> Dialog.lazyBind(): Lazy<T> = lazy { bind() }
+
 inline fun <reified T : ViewBinding> Activity.bind(): T {
     return this.layoutInflater.bind()
 }
 
 inline fun <reified T : ViewBinding> Fragment.bind(): T {
+    return this.layoutInflater.bind()
+}
+
+inline fun <reified T : ViewBinding> Dialog.bind(): T {
     return this.layoutInflater.bind()
 }
 
