@@ -19,7 +19,7 @@
 
     <style name="Theme.Techo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-<!--    <style name="Theme.Techo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
+    <!--    <style name="Theme.Techo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
 
     <style name="Theme.Techo.PopupOverlay" parent="Theme.Techo" />
 
@@ -55,5 +55,10 @@
         <item name="android:backgroundDimEnabled">true</item>
         <!-- 窗口样式Dialog -->
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
+
+    <style name="TopDialog" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_top_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_top_out</item>
     </style>
 </resources>

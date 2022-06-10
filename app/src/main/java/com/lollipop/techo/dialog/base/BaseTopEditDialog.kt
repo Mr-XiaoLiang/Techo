@@ -5,7 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.R
 import com.lollipop.techo.databinding.DialogTopEditBinding
 
 abstract class BaseTopEditDialog(context: Context) : Dialog(context) {
@@ -16,6 +19,7 @@ abstract class BaseTopEditDialog(context: Context) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window?.setWindowAnimations(R.style.TopDialog)
         setContentView(baseBinding.root.apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -27,6 +31,7 @@ abstract class BaseTopEditDialog(context: Context) : Dialog(context) {
             ViewGroup.LayoutParams.MATCH_PARENT,
             contentView.layoutParams?.height ?: ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        baseBinding.editCard.fixInsetsByMargin(WindowInsetsHelper.Edge.ALL)
     }
 
 }
