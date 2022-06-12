@@ -82,6 +82,15 @@ class PhotoEditDelegate : EditDelegate<TechoItem.Photo>() {
         }
     }
 
+    override fun onAnimationUpdate(progress: Float) {
+        super.onAnimationUpdate(progress)
+        binding?.apply {
+            animationAlpha(progress, backgroundView)
+            animationDown(progress, photoSelectCard)
+            animationAlpha(progress, doneBtn)
+        }
+    }
+
     private fun onPhotoClick(check: Boolean, position: Int) {
         if (check) {
             if (selectedPhotoList.indexOfKey(position) >= 0) {

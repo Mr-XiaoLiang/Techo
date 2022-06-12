@@ -42,6 +42,14 @@ class SplitEditDelegate : EditDelegate<TechoItem.Split>() {
         loadConfig()
     }
 
+    override fun onAnimationUpdate(progress: Float) {
+        super.onAnimationUpdate(progress)
+        binding?.apply {
+            animationAlpha(progress, backgroundView)
+            animationDown(progress, splitSelectCard)
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun loadConfig() {
         doAsync {
