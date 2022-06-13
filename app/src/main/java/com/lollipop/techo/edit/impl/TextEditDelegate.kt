@@ -64,5 +64,6 @@ abstract class BaseTextEditDelegate<T: TechoItem> : EditDelegate<T>() {
 
 }
 class TextEditDelegate: BaseTextEditDelegate<TechoItem.Text>()
+class TitleEditDelegate: BaseTextEditDelegate<TechoItem.Title>()
 class CheckBoxEditDelegate: BaseTextEditDelegate<TechoItem.CheckBox>()
 class NumberEditDelegate: BaseTextEditDelegate<TechoItem.Number>()

@@ -26,16 +26,21 @@ class EditManager(
     private var editInfo: TechoItem? = null
     private var onEditPanelCloseListener: OnEditPanelCloseListener? = null
 
-    fun openPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
+    fun openEditPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
         closePanel()
-        openByInfo(index, info, listener)
+        openEditByInfo(index, info, listener)
+    }
+
+    fun openOptionPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
+        closePanel()
+        openOptionByInfo(index, info, listener)
     }
 
     fun closePanel() {
         tryClosePanel(this.activeDelegate)
     }
 
-    private fun openByInfo(
+    private fun openEditByInfo(
         index: Int = 0,
         info: TechoItem,
         listener: OnEditPanelCloseListener?
@@ -56,7 +61,18 @@ class EditManager(
             is TechoItem.Split -> {
                 findDelegate<SplitEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+            is TechoItem.Title -> {
+                findDelegate<TitleEditDelegate>().applyDelegate(index, info, listener).open(info)
+            }
         }
+    }
+
+    private fun openOptionByInfo(
+        index: Int = 0,
+        info: TechoItem,
+        listener: OnEditPanelCloseListener?
+    ) {
+        // TODO
     }
 
     private inline fun <reified T : EditDelegate<*>> T.applyDelegate(

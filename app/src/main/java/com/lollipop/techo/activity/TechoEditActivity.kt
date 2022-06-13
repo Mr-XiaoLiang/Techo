@@ -13,6 +13,7 @@ import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
@@ -242,13 +243,16 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onItemOptionButtonClick(holder: EditHolder<*>) {
         val adapterPosition = holder.adapterPosition
-        // TODO("Not yet implemented")
+        val item = mode.itemList[adapterPosition]
+        editManager.openOptionPanel(adapterPosition, item) { index, _ ->
+            viewBinding.contentListView.adapter?.notifyItemChanged(index)
+        }
     }
 
     override fun onItemEditButtonClick(holder: EditHolder<*>) {
         val adapterPosition = holder.adapterPosition
         val item = mode.itemList[adapterPosition]
-        editManager.openPanel(adapterPosition, item) { index, _ ->
+        editManager.openEditPanel(adapterPosition, item) { index, _ ->
             viewBinding.contentListView.adapter?.notifyItemChanged(index)
         }
     }
