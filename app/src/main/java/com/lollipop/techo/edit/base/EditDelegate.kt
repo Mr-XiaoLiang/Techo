@@ -1,4 +1,4 @@
-package com.lollipop.techo.edit
+package com.lollipop.techo.edit.base
 
 import android.app.Activity
 import android.view.View
@@ -9,6 +9,7 @@ import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.edit.PanelController
 import com.lollipop.techo.util.AnimationHelper
 
 /**

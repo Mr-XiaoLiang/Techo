@@ -19,14 +19,15 @@ import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemPhotoEditBinding
 import com.lollipop.techo.databinding.PanelPhotoSelectBinding
-import com.lollipop.techo.edit.EditDelegate
+import com.lollipop.techo.edit.base.EditDelegate
+import com.lollipop.techo.edit.base.TopEditDelegate
 import com.lollipop.techo.util.load
 
 /**
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class PhotoEditDelegate : EditDelegate<TechoItem.Photo>() {
+class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
 
     private var binding: PanelPhotoSelectBinding? = null
 
@@ -37,6 +38,15 @@ class PhotoEditDelegate : EditDelegate<TechoItem.Photo>() {
     private val adapter by lazy {
         PhotoAdapter(photoManager, ::onPhotoClick, ::getSelectedIndex)
     }
+
+    override val contentGroup: View?
+        get() {
+            return binding?.backgroundView
+        }
+    override val backgroundView: View?
+        get() {
+            return binding?.photoSelectCard
+        }
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -85,8 +95,6 @@ class PhotoEditDelegate : EditDelegate<TechoItem.Photo>() {
     override fun onAnimationUpdate(progress: Float) {
         super.onAnimationUpdate(progress)
         binding?.apply {
-            animationAlpha(progress, backgroundView)
-            animationDown(progress, photoSelectCard)
             animationAlpha(progress, doneBtn)
         }
     }

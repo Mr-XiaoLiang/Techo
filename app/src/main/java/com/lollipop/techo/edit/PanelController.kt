@@ -2,6 +2,7 @@ package com.lollipop.techo.edit
 
 import android.app.Activity
 import com.lollipop.base.request.RequestLauncher
+import com.lollipop.techo.edit.base.EditDelegate
 
 /**
  * @author lollipop

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.view.ViewManager
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.edit.base.EditDelegate
 import com.lollipop.techo.edit.impl.*
 
 /**

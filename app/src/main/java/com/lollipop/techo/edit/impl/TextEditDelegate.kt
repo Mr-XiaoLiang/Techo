@@ -6,17 +6,24 @@ import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
-import com.lollipop.techo.edit.EditDelegate
+import com.lollipop.techo.edit.base.TopEditDelegate
 
 /**
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-abstract class BaseTextEditDelegate<T: TechoItem> : EditDelegate<T>() {
+open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
 
     private var binding: PanelTextEditBinding? = null
 
-    override val animationEnable = true
+    override val contentGroup: View?
+        get() {
+            return binding?.editCard
+        }
+    override val backgroundView: View?
+        get() {
+            return binding?.backgroundView
+        }
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -54,16 +61,9 @@ abstract class BaseTextEditDelegate<T: TechoItem> : EditDelegate<T>() {
         callClose()
     }
 
-    override fun onAnimationUpdate(progress: Float) {
-        super.onAnimationUpdate(progress)
-        binding?.apply {
-            animationAlpha(progress, backgroundView)
-            animationDown(progress, editCard)
-        }
-    }
-
 }
-class TextEditDelegate: BaseTextEditDelegate<TechoItem.Text>()
-class TitleEditDelegate: BaseTextEditDelegate<TechoItem.Title>()
-class CheckBoxEditDelegate: BaseTextEditDelegate<TechoItem.CheckBox>()
-class NumberEditDelegate: BaseTextEditDelegate<TechoItem.Number>()
+
+class TextEditDelegate : BaseTextEditDelegate<TechoItem.Text>()
+class TitleEditDelegate : BaseTextEditDelegate<TechoItem.Title>()
+class CheckBoxEditDelegate : BaseTextEditDelegate<TechoItem.CheckBox>()
+class NumberEditDelegate : BaseTextEditDelegate<TechoItem.Number>()

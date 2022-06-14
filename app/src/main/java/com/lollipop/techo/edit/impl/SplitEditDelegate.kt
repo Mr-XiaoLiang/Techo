@@ -12,20 +12,30 @@ import com.lollipop.base.util.onUI
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemSplitBinding
 import com.lollipop.techo.databinding.PanelSplitSelectBinding
-import com.lollipop.techo.edit.EditDelegate
+import com.lollipop.techo.edit.base.TopEditDelegate
 import com.lollipop.techo.split.SplitLoader
 
 /**
  * @author lollipop
  * @date 2021/12/23 22:36
  */
-class SplitEditDelegate : EditDelegate<TechoItem.Split>() {
+class SplitEditDelegate : TopEditDelegate<TechoItem.Split>() {
 
     private var binding: PanelSplitSelectBinding? = null
 
     private val dataList = ArrayList<TechoItem.Split>()
 
     private val adapter = Adapter(dataList, ::onSplitClick)
+
+
+    override val contentGroup: View?
+        get() {
+            return binding?.splitSelectCard
+        }
+    override val backgroundView: View?
+        get() {
+            return binding?.backgroundView
+        }
 
     override fun onCreateView(container: ViewGroup): View {
         val newBinding: PanelSplitSelectBinding = container.bind(false)
@@ -40,14 +50,6 @@ class SplitEditDelegate : EditDelegate<TechoItem.Split>() {
             rv.adapter = adapter
         }
         loadConfig()
-    }
-
-    override fun onAnimationUpdate(progress: Float) {
-        super.onAnimationUpdate(progress)
-        binding?.apply {
-            animationAlpha(progress, backgroundView)
-            animationDown(progress, splitSelectCard)
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
