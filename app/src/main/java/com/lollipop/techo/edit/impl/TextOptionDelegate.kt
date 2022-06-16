@@ -2,18 +2,31 @@ package com.lollipop.techo.edit.impl
 
 import android.view.View
 import android.view.ViewGroup
+import com.lollipop.base.util.bind
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.databinding.PanelTextOptionBinding
 import com.lollipop.techo.edit.base.BottomEditDelegate
 
 open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>() {
 
+    private var binding: PanelTextOptionBinding? = null
+
     override val contentGroup: View?
-        get() = TODO("Not yet implemented")
+        get() {
+            return binding?.editCard
+        }
     override val backgroundView: View?
-        get() = TODO("Not yet implemented")
+        get() {
+            return binding?.backgroundView
+        }
 
     override fun onCreateView(container: ViewGroup): View {
-        TODO("Not yet implemented")
+        binding?.let {
+            return it.root
+        }
+        val newBinding: PanelTextOptionBinding = container.bind(false)
+        binding = newBinding
+        return newBinding.root
     }
 
 }

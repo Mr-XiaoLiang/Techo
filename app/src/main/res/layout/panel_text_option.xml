@@ -68,7 +68,7 @@
                 app:layout_constraintTop_toBottomOf="@id/splitLine"
                 app:layout_constraintWidth_percent="0.3" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.lollipop.bigboom.BigBoomView
                 android:id="@+id/selectedTextView"
                 android:layout_width="0px"
                 android:layout_height="0px"
