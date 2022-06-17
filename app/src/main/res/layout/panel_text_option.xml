@@ -68,14 +68,20 @@
                 app:layout_constraintTop_toBottomOf="@id/splitLine"
                 app:layout_constraintWidth_percent="0.3" />
 
-            <com.lollipop.bigboom.BigBoomView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/selectedTextView"
                 android:layout_width="0px"
                 android:layout_height="0px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/stepListView"
-                app:layout_constraintTop_toBottomOf="@id/splitLine" />
+                app:layout_constraintTop_toBottomOf="@id/splitLine">
+
+                <com.lollipop.techo.view.SelectTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent" />
+            </androidx.core.widget.NestedScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
