@@ -68,14 +68,69 @@
                 app:layout_constraintTop_toBottomOf="@id/splitLine"
                 app:layout_constraintWidth_percent="0.3" />
 
+            <HorizontalScrollView
+                android:id="@+id/optionGroup"
+                android:layout_width="0px"
+                android:layout_height="36dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/stepListView"
+                app:layout_constraintTop_toTopOf="@id/stepListView">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/colorOptionBtn"
+                        style="@style/TextOptionPanelOptionBtn"
+                        tools:src="#f00" />
+
+                    <ImageView
+                        android:id="@+id/boldOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_format_bold_24" />
+
+                    <ImageView
+                        android:id="@+id/italicOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_format_italic_24" />
+
+                    <ImageView
+                        android:id="@+id/underlinedOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_format_underlined_24" />
+
+                    <ImageView
+                        android:id="@+id/strikethroughOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_format_strikethrough_24" />
+
+                    <ImageView
+                        android:id="@+id/superscriptOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_superscript_24" />
+
+                    <ImageView
+                        android:id="@+id/subscriptOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_subscript_24" />
+
+                    <ImageView
+                        android:id="@+id/blurOptionBtn"
+                        style="@style/TextOptionPanelOptionTintBtn"
+                        android:src="@drawable/ic_baseline_blur_linear_24" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/selectedTextView"
                 android:layout_width="0px"
                 android:layout_height="0px"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/stepListView"
-                app:layout_constraintTop_toBottomOf="@id/splitLine">
+                app:layout_constraintEnd_toEndOf="@id/optionGroup"
+                app:layout_constraintStart_toStartOf="@id/optionGroup"
+                app:layout_constraintTop_toBottomOf="@id/optionGroup">
 
                 <com.lollipop.techo.view.SelectTextView
                     android:layout_width="match_parent"
