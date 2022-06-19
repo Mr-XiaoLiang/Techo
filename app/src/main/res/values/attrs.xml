@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RecorderWaveView">
-        <attr name="lineWidth" format="dimension"/>
-        <attr name="lineSpace" format="dimension"/>
-        <attr name="lineColor" format="color"/>
+        <attr name="lineWidth" format="dimension" />
+        <attr name="lineSpace" format="dimension" />
+        <attr name="lineColor" format="color" />
     </declare-styleable>
     <declare-styleable name="CheckableView">
         <attr name="checkStyle" format="enum">
-            <enum name="circular" value="0"/>
-            <enum name="square" value="1"/>
+            <enum name="circular" value="0" />
+            <enum name="square" value="1" />
         </attr>
-        <attr name="android:checked" format="boolean"/>
+        <attr name="android:checked" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="OverflowScrollBar">
+        <attr name="android:color" format="color" />
+        <attr name="isHorizontal" format="boolean" />
     </declare-styleable>
 </resources>

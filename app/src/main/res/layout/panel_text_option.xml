@@ -123,14 +123,23 @@
                 </LinearLayout>
             </HorizontalScrollView>
 
+            <com.lollipop.techo.view.OverflowScrollBar
+                android:id="@+id/scrollBar"
+                android:layout_width="20dp"
+                android:layout_height="0px"
+                android:color="@color/teal_700"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/optionGroup"
+                app:layout_constraintTop_toBottomOf="@id/optionGroup" />
+
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/selectedTextView"
                 android:layout_width="0px"
                 android:layout_height="0px"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/optionGroup"
+                app:layout_constraintBottom_toBottomOf="@id/scrollBar"
+                app:layout_constraintEnd_toStartOf="@id/scrollBar"
                 app:layout_constraintStart_toStartOf="@id/optionGroup"
-                app:layout_constraintTop_toBottomOf="@id/optionGroup">
+                app:layout_constraintTop_toTopOf="@id/scrollBar">
 
                 <com.lollipop.techo.view.SelectTextView
                     android:layout_width="match_parent"
