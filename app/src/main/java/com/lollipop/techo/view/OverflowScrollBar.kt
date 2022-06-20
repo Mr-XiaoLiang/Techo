@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.techo.R
 import kotlin.math.max
@@ -50,6 +51,8 @@ class OverflowScrollBar(
             return progressDrawable.progress
         }
 
+    private val onScrollChangedListener = ArrayList<OnScrollChangedListener>()
+
     init {
         setImageDrawable(progressDrawable)
         attributeSet?.let { attrs ->
@@ -62,6 +65,31 @@ class OverflowScrollBar(
             contentWeight = 0.5F
             progress = 0.3F
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return super.onTouchEvent(event)
+    }
+
+    private fun dispatchScrollChanged(p: Float) {
+        progress = p
+        post {
+            onScrollChangedListener.forEach {
+                it.onScrollChanged(p)
+            }
+        }
+    }
+
+    fun addListener(listener: OnScrollChangedListener) {
+        onScrollChangedListener.add(listener)
+    }
+
+    fun removeListener(listener: OnScrollChangedListener) {
+        onScrollChangedListener.remove(listener)
+    }
+
+    interface OnScrollChangedListener {
+        fun onScrollChanged(progress: Float)
     }
 
     private class ProgressDrawable : Drawable() {
