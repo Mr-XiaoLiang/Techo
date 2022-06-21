@@ -1,5 +1,6 @@
 package com.lollipop.techo.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -53,6 +54,15 @@ class OverflowScrollBar(
 
     private val onScrollChangedListener = ArrayList<OnScrollChangedListener>()
 
+    private var lastTouchPoint = PointF()
+
+    private var activeTouchId = 0
+
+    private val barRange: RectF
+        get() {
+            return progressDrawable.barBounds
+        }
+
     init {
         setImageDrawable(progressDrawable)
         attributeSet?.let { attrs ->
@@ -67,8 +77,66 @@ class OverflowScrollBar(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return super.onTouchEvent(event)
+        event ?: return super.onTouchEvent(event)
+        return when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                onTouchDown(event)
+            }
+            else -> {
+                onTouchMove(event)
+            }
+        }
+    }
+
+    private fun onTouchDown(event: MotionEvent): Boolean {
+        activeTouchId = event.getPointerId(0)
+        val y = event.y
+        val x = event.x
+        lastTouchPoint.set(x, y)
+        if (isHorizontal) {
+            if (x >= barRange.left && x <= barRange.right) {
+                return true
+            }
+        } else {
+            if (y >= barRange.top && y <= barRange.bottom) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun onTouchMove(event: MotionEvent): Boolean {
+        val index = event.findPointerIndex(activeTouchId)
+        if (index < 0) {
+            return onTouchDown(event)
+        }
+        val x = event.getX(index)
+        val y = event.getY(index)
+        if (isHorizontal) {
+            val offsetX = x - lastTouchPoint.x
+            offsetByHorizontal(offsetX)
+        } else {
+            val offsetY = y - lastTouchPoint.y
+            offsetByVertical(offsetY)
+        }
+        lastTouchPoint.set(x, y)
+        return true
+    }
+
+    private fun offsetByHorizontal(offset: Float) {
+        val contentWidth = width - paddingLeft - paddingRight
+        val offsetMax = contentWidth * (1 - contentWeight)
+        val newProgress = offset / offsetMax + progress
+        dispatchScrollChanged(newProgress)
+    }
+
+    private fun offsetByVertical(offset: Float) {
+        val contentHeight = height - paddingTop - paddingBottom
+        val offsetMax = contentHeight * (1 - contentWeight)
+        val newProgress = offset / offsetMax + progress
+        dispatchScrollChanged(newProgress)
     }
 
     private fun dispatchScrollChanged(p: Float) {
@@ -126,7 +194,7 @@ class OverflowScrollBar(
                 onBarChanged()
             }
 
-        private val barBounds = RectF()
+        val barBounds = RectF()
 
         private var radius = 0F
 
