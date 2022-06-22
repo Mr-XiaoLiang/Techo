@@ -29,6 +29,9 @@ abstract class SplitDrawable(protected val context: Context) : Drawable() {
         paint.colorFilter = colorFilter
     }
 
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+    )
     override fun getOpacity(): Int {
         return PixelFormat.TRANSPARENT
     }

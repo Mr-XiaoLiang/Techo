@@ -439,6 +439,9 @@ class DefaultGuideProvider : GuideProvider() {
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated("Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }
@@ -487,6 +490,9 @@ class DefaultGuideProvider : GuideProvider() {
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated("Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }

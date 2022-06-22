@@ -156,7 +156,7 @@ class OverflowScrollBar(
         onScrollChangedListener.remove(listener)
     }
 
-    interface OnScrollChangedListener {
+    fun interface OnScrollChangedListener {
         fun onScrollChanged(progress: Float)
     }
 
