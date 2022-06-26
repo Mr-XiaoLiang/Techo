@@ -141,7 +141,7 @@
                 app:layout_constraintStart_toStartOf="@id/optionGroup"
                 app:layout_constraintTop_toTopOf="@id/scrollBar">
 
-                <com.lollipop.techo.view.SelectTextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent" />

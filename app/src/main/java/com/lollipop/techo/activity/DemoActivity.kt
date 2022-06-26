@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivityDemoBinding
+import com.lollipop.techo.util.TextSelectedHelper
 
 class DemoActivity : AppCompatActivity() {
 
@@ -16,14 +17,7 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.vScrollBar.contentWeight = 0.3F
-        binding.hScrollBar.contentWeight = 0.3F
-        binding.hScrollBar.addListener {
-            binding.hValueView.text = it.toString()
-        }
-        binding.vScrollBar.addListener {
-            binding.vValueView.text = it.toString()
-        }
+        TextSelectedHelper.create().bind(binding.valueView)
     }
 
 }
