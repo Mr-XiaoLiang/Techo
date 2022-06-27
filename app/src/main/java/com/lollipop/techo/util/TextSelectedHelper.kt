@@ -63,20 +63,38 @@ class TextSelectedHelper private constructor(
     }
 
     private fun onTouchWithOffset(offset: Int) {
+        log("onTouchWithOffset: $offset")
         val realOffset = max(0, min(offset, maxLength))
-        if (selectedStart < 0 || selectedEnd < 0) {
-            if (selectedStart < 0) {
-                selectedStart = offset
+        var start: Int = selectedStart
+        var end: Int = selectedEnd
+        if (start > end) {
+            val temp = end
+            end = start
+            start = temp
+        }
+        if (start < 0 || end < 0) {
+            if (start < 0) {
+                start = offset
             }
-            if (selectedEnd < 0) {
-                selectedEnd = offset
+            if (end < 0) {
+                end = offset
             }
         } else {
-            if (realOffset < selectedStart) {
-                TODO()
+            if (realOffset <= start) {
+                start = realOffset
+            } else if (realOffset >= end) {
+                end = realOffset
+            } else {
+                val startLength = realOffset - start
+                val endLength = end - realOffset
+                if (startLength > endLength) {
+                    end = realOffset
+                } else {
+                    start = realOffset
+                }
             }
         }
-        Log.d("TextSelectedHelper", "onTouchWithOffset: $offset")
+        onRangeChanged(start, end)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -135,4 +153,8 @@ class TextSelectedHelper private constructor(
         val resetWhenTextChanged: Boolean
 //        val textView: TextView
     )
+
+    private fun log(value: String) {
+        Log.d("TextSelectedHelper", value)
+    }
 }
