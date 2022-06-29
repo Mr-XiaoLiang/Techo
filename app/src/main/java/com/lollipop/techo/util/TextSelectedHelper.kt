@@ -1,9 +1,9 @@
 package com.lollipop.techo.util
 
 import android.annotation.SuppressLint
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.Layout
 import android.text.TextWatcher
@@ -12,8 +12,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.core.content.ContextCompat
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.SingleTouchHelper
+import com.lollipop.techo.util.TextSelectedHelper.TextLayoutProvider
 import kotlin.math.max
 import kotlin.math.min
 
@@ -25,9 +29,13 @@ object TextSelectedHelper {
         return Selector.Builder()
     }
 
+    fun printer(): Painter.Builder {
+        return Painter.Builder()
+    }
+
     class Painter private constructor(
         private val option: Option
-    ) {
+    ): Drawable() {
         private var selectedStart: Int = SELECTED_NONE
         private var selectedEnd: Int = SELECTED_NONE
 
@@ -46,6 +54,7 @@ object TextSelectedHelper {
         fun setSelectedRang(start: Int, end: Int) {
             selectedStart = start
             selectedEnd = end
+            log("setSelectedRang:$start, $end")
             requestLayout()
         }
 
@@ -56,11 +65,32 @@ object TextSelectedHelper {
                 rangePath.reset()
                 return
             }
-
-            // TODO
+            rangePath.reset()
+            val startLine = textLayout.getLineForOffset(selectedStart)
+            val endLine = textLayout.getLineForOffset(selectedEnd)
+            log("requestLayout:startLine = $startLine, endLine = $endLine")
+            val tempRect = RectF()
+            for (line in startLine..endLine) {
+                val left = if (line == startLine) {
+                    textLayout.getOffsetToLeftOf(selectedStart)
+                } else {
+                    textLayout.getLineLeft(line)
+                }
+                val top = textLayout.getLineTop(line)
+                val right = if (line == endLine) {
+                    textLayout.getOffsetToRightOf(selectedEnd)
+                } else {
+                    textLayout.getLineRight(line)
+                }
+                val bottom = textLayout.getLineBottom(line)
+                tempRect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+                rangePath.addRoundRect(tempRect, option.radius, option.radius, Path.Direction.CW)
+                log("requestLayout:$tempRect")
+            }
+            pendingLayout = false
         }
 
-        fun draw(canvas: Canvas) {
+        override fun draw(canvas: Canvas) {
             if (pendingLayout) {
                 requestLayout()
             }
@@ -70,10 +100,69 @@ object TextSelectedHelper {
             canvas.drawPath(rangePath, paint)
         }
 
+        override fun setAlpha(alpha: Int) {
+            paint.alpha = alpha
+        }
+
+        override fun setColorFilter(colorFilter: ColorFilter?) {
+            paint.colorFilter = colorFilter
+        }
+
+        @Deprecated("Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
+        override fun getOpacity(): Int {
+            return PixelFormat.TRANSPARENT
+        }
+
+        class Builder {
+            @ColorInt
+            private var color: Int = Color.BLACK
+            private var radius: Float = 0F
+            private var layoutProvider: TextLayoutProvider? = null
+
+            fun setColor(
+                @ColorInt
+                c: Int
+            ): Builder {
+                this.color = c
+                return this
+            }
+
+            fun setColor(context: Context, @ColorRes id: Int): Builder {
+                return setColor(ContextCompat.getColor(context, id))
+            }
+
+            fun setRadius(r: Float): Builder {
+                this.radius = r
+                return this
+            }
+
+            fun setRadius(context: Context, @DimenRes id: Int): Builder {
+                return setRadius(context.resources.getDimensionPixelSize(id).toFloat())
+            }
+
+            fun setLayoutProvider(provider: TextLayoutProvider): Builder {
+                this.layoutProvider = provider
+                return this
+            }
+
+            fun build(): Painter {
+                return Painter(
+                    Option(
+                        color = color,
+                        radius = radius,
+                        layoutProvider = layoutProvider ?: TextLayoutProvider { null }
+                    )
+                )
+            }
+
+        }
+
         private class Option(
             @ColorInt
             val color: Int,
-            val radius: Int,
+            val radius: Float,
             val layoutProvider: TextLayoutProvider
         )
     }
@@ -84,8 +173,6 @@ object TextSelectedHelper {
 
         private var selectedStart = SELECTED_NONE
         private var selectedEnd = SELECTED_NONE
-
-        private var maxLength = 0
 
         private val touchHelper = SingleTouchHelper()
 
@@ -111,11 +198,12 @@ object TextSelectedHelper {
             val realY = (y - view.totalPaddingTop + view.scrollY).toInt()
             val lineForVertical = textLayout.getLineForVertical(realY)
             val offsetForHorizontal = textLayout.getOffsetForHorizontal(lineForVertical, realX)
-            onTouchWithOffset(offsetForHorizontal)
+            val maxLength = textLayout.text.length
+            onTouchWithOffset(offsetForHorizontal, maxLength)
         }
 
-        private fun onTouchWithOffset(offset: Int) {
-            log("onTouchWithOffset: $offset")
+        private fun onTouchWithOffset(offset: Int, maxLength: Int) {
+            log("onTouchWithOffset: $offset, $maxLength")
             val realOffset = max(0, min(offset, maxLength))
             var start: Int = selectedStart
             var end: Int = selectedEnd
@@ -155,8 +243,15 @@ object TextSelectedHelper {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         }
 
+        fun addListener(listener: OnSelectedRangChangedListener) {
+            listenerManager.addListener(listener)
+        }
+
+        fun removeListener(listener: OnSelectedRangChangedListener) {
+            listenerManager.removeListener(listener)
+        }
+
         override fun afterTextChanged(s: Editable?) {
-            maxLength = s?.length ?: 0
             if (option.resetWhenTextChanged) {
                 reset()
             }
@@ -175,9 +270,15 @@ object TextSelectedHelper {
         class Builder {
 
             private var resetWhenTextChanged = true
+            private var rangChangedListener: OnSelectedRangChangedListener? = null
 
             fun resetWhenTextChanged(enable: Boolean): Builder {
                 resetWhenTextChanged = enable
+                return this
+            }
+
+            fun onSelectedChanged(listener: OnSelectedRangChangedListener): Builder {
+                rangChangedListener = listener
                 return this
             }
 
@@ -192,6 +293,9 @@ object TextSelectedHelper {
                 val selectedHelper = Selector(build(textView))
                 textView.setOnTouchListener(selectedHelper)
                 textView.addTextChangedListener(selectedHelper)
+                rangChangedListener?.let {
+                    selectedHelper.addListener(it)
+                }
                 return selectedHelper
             }
 

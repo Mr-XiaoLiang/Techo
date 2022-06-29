@@ -6,11 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".activity.DemoActivity">
 
+    <ImageView
+        android:id="@+id/backgroundView"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        app:layout_constraintBottom_toBottomOf="@id/valueView"
+        app:layout_constraintLeft_toLeftOf="@id/valueView"
+        app:layout_constraintRight_toRightOf="@id/valueView"
+        app:layout_constraintTop_toTopOf="@id/valueView" />
+
     <TextView
         android:id="@+id/valueView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="afgjasgfjsdgfjhsc uycweubc\nruqncwiuenrcyiwunryin\nrircbwrcniwn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
