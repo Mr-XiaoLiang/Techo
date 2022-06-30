@@ -17,6 +17,8 @@ import androidx.annotation.DimenRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.SingleTouchHelper
+import com.lollipop.techo.util.TextSelectedHelper.InvalidateCallback
+import com.lollipop.techo.util.TextSelectedHelper.SelectTarget.*
 import com.lollipop.techo.util.TextSelectedHelper.TextLayoutProvider
 import kotlin.math.max
 import kotlin.math.min
@@ -35,10 +37,15 @@ object TextSelectedHelper {
 
     class Painter private constructor(
         private val option: Option
-    ): Drawable() {
+    ) : Drawable(), OnSelectedRangChangedListener {
+
+        companion object {
+            const val RADIUS_MAX = -1
+            const val RADIUS_HALF = -2
+        }
+
         private var selectedStart: Int = SELECTED_NONE
         private var selectedEnd: Int = SELECTED_NONE
-
         private var pendingLayout = true
         private var rangePath = Path()
 
@@ -51,43 +58,70 @@ object TextSelectedHelper {
             }
         }
 
+        override fun onSelectedRangChanged(start: Int, end: Int) {
+            setSelectedRang(start, end)
+        }
+
         fun setSelectedRang(start: Int, end: Int) {
             selectedStart = start
             selectedEnd = end
             log("setSelectedRang:$start, $end")
             requestLayout()
+            option.invalidateCallback.invalidate()
         }
 
         private fun requestLayout() {
-            val textLayout = option.layoutProvider.getTextLayout()
-            if (textLayout == null) {
+            val textView = option.layoutProvider.getTextLayout()
+            val textLayout = textView?.layout
+            if (textView == null || textLayout == null) {
                 pendingLayout = true
                 rangePath.reset()
                 return
             }
             rangePath.reset()
+            if (selectedEnd - selectedStart < 1) {
+                return
+            }
             val startLine = textLayout.getLineForOffset(selectedStart)
             val endLine = textLayout.getLineForOffset(selectedEnd)
+            val leftOffset = (textView.totalPaddingLeft - textView.scrollX).toFloat()
+            val topOffset = (textView.totalPaddingTop - textView.scrollY).toFloat()
             log("requestLayout:startLine = $startLine, endLine = $endLine")
             val tempRect = RectF()
             for (line in startLine..endLine) {
                 val left = if (line == startLine) {
-                    textLayout.getOffsetToLeftOf(selectedStart)
+                    textLayout.getPrimaryHorizontal(selectedStart)
                 } else {
                     textLayout.getLineLeft(line)
                 }
                 val top = textLayout.getLineTop(line)
                 val right = if (line == endLine) {
-                    textLayout.getOffsetToRightOf(selectedEnd)
+                    textLayout.getPrimaryHorizontal(selectedEnd)
                 } else {
                     textLayout.getLineRight(line)
                 }
                 val bottom = textLayout.getLineBottom(line)
-                tempRect.set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
-                rangePath.addRoundRect(tempRect, option.radius, option.radius, Path.Direction.CW)
+                tempRect.set(left, top.toFloat(), right, bottom.toFloat())
+                tempRect.offset(leftOffset, topOffset)
+                val radius = getRadius(tempRect.width(), tempRect.height())
+                rangePath.addRoundRect(tempRect, radius, radius, Path.Direction.CW)
                 log("requestLayout:$tempRect")
             }
             pendingLayout = false
+        }
+
+        private fun getRadius(rectWidth: Float, rectHeight: Float): Float {
+            return when (option.radius) {
+                RADIUS_MAX -> {
+                    min(rectWidth, rectHeight) * 0.5F
+                }
+                RADIUS_HALF -> {
+                    min(rectWidth, rectHeight) * 0.3F
+                }
+                else -> {
+                    max(option.radius, 0).toFloat()
+                }
+            }
         }
 
         override fun draw(canvas: Canvas) {
@@ -108,7 +142,8 @@ object TextSelectedHelper {
             paint.colorFilter = colorFilter
         }
 
-        @Deprecated("Deprecated in Java",
+        @Deprecated(
+            "Deprecated in Java",
             ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
         )
         override fun getOpacity(): Int {
@@ -118,8 +153,9 @@ object TextSelectedHelper {
         class Builder {
             @ColorInt
             private var color: Int = Color.BLACK
-            private var radius: Float = 0F
+            private var radius: Int = 0
             private var layoutProvider: TextLayoutProvider? = null
+            private var invalidateCallback: InvalidateCallback? = null
 
             fun setColor(
                 @ColorInt
@@ -133,17 +169,30 @@ object TextSelectedHelper {
                 return setColor(ContextCompat.getColor(context, id))
             }
 
-            fun setRadius(r: Float): Builder {
+            fun setRadius(r: Int): Builder {
                 this.radius = r
                 return this
             }
 
+            fun maxRadius(): Builder {
+                return setRadius(RADIUS_MAX)
+            }
+
+            fun halfRadius(): Builder {
+                return setRadius(RADIUS_HALF)
+            }
+
             fun setRadius(context: Context, @DimenRes id: Int): Builder {
-                return setRadius(context.resources.getDimensionPixelSize(id).toFloat())
+                return setRadius(context.resources.getDimensionPixelSize(id))
             }
 
             fun setLayoutProvider(provider: TextLayoutProvider): Builder {
                 this.layoutProvider = provider
+                return this
+            }
+
+            fun notifyInvalidate(callback: InvalidateCallback): Builder {
+                this.invalidateCallback = callback
                 return this
             }
 
@@ -152,9 +201,16 @@ object TextSelectedHelper {
                     Option(
                         color = color,
                         radius = radius,
-                        layoutProvider = layoutProvider ?: TextLayoutProvider { null }
+                        layoutProvider = layoutProvider ?: TextLayoutProvider { null },
+                        invalidateCallback = invalidateCallback ?: InvalidateCallback { }
                     )
                 )
+            }
+
+            fun bindTo(selector: Selector): Painter {
+                return build().apply {
+                    selector.addListener(this)
+                }
             }
 
         }
@@ -162,8 +218,9 @@ object TextSelectedHelper {
         private class Option(
             @ColorInt
             val color: Int,
-            val radius: Float,
-            val layoutProvider: TextLayoutProvider
+            val radius: Int,
+            val layoutProvider: TextLayoutProvider,
+            val invalidateCallback: InvalidateCallback
         )
     }
 
@@ -177,6 +234,8 @@ object TextSelectedHelper {
         private val touchHelper = SingleTouchHelper()
 
         private val listenerManager = ListenerManager<OnSelectedRangChangedListener>()
+
+        var selectTarget = AUTO
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -220,19 +279,34 @@ object TextSelectedHelper {
                     end = offset
                 }
             } else {
-                if (realOffset <= start) {
-                    start = realOffset
-                } else if (realOffset >= end) {
-                    end = realOffset
-                } else {
-                    val startLength = realOffset - start
-                    val endLength = end - realOffset
-                    if (startLength > endLength) {
-                        end = realOffset
-                    } else {
-                        start = realOffset
+                when (selectTarget) {
+                    AUTO -> {
+                        if (realOffset <= start) {
+                            start = realOffset
+                        } else if (realOffset >= end) {
+                            end = realOffset
+                        } else {
+                            val startLength = realOffset - start
+                            val endLength = end - realOffset
+                            if (startLength > endLength) {
+                                end = realOffset
+                            } else {
+                                start = realOffset
+                            }
+                        }
+                    }
+                    START -> {
+                        start = offset
+                    }
+                    END -> {
+                        end = offset
                     }
                 }
+            }
+            if (start > end) {
+                val temp = end
+                end = start
+                start = temp
             }
             onRangeChanged(start, end)
         }
@@ -311,7 +385,17 @@ object TextSelectedHelper {
     }
 
     fun interface TextLayoutProvider {
-        fun getTextLayout(): Layout?
+        fun getTextLayout(): TextView?
+    }
+
+    fun interface InvalidateCallback {
+        fun invalidate()
+    }
+
+    enum class SelectTarget {
+        AUTO,
+        START,
+        END
     }
 
     private fun log(value: String) {
