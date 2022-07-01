@@ -71,6 +71,45 @@ object VectorHelper {
         }
     }
 
+    class VectorStack {
+
+        private val frameList = ArrayList<VectorInfo>()
+        private val path = Path()
+
+        fun addFrame(index: Int, frame: VectorInfo): VectorStack {
+            frameList.add(index, frame)
+            return this
+        }
+
+        fun addFrame(frame: VectorInfo): VectorStack {
+            frameList.add(frame)
+            return this
+        }
+
+        fun removeFrame(frame: VectorInfo): VectorStack {
+            frameList.remove(frame)
+            return this
+        }
+
+        fun removeAt(index: Int): VectorStack {
+            frameList.removeAt(index)
+            return this
+        }
+
+        fun addFrame(data: VectorData): VectorStack {
+            addFrame(parse(data))
+            return this
+        }
+
+        fun onBoundsChanged(width: Int, height: Int, offsetX: Int, offsetY: Int) {
+            path.reset()
+            frameList.forEach {
+                it.onBoundsChanged(width, height, offsetX, offsetY)
+                path.addPath(it.path)
+            }
+        }
+    }
+
     /**
      * 矢量图的解析数据
      */
@@ -84,14 +123,9 @@ object VectorHelper {
         private var lastHeight = viewportHeight
         private var lastOffsetX = 0
         private var lastOffsetY = 0
-        private val cachePath = Path().apply {
+        val path = Path().apply {
             addPath(srcPath)
         }
-
-        val path: Path
-            get() {
-                return cachePath
-            }
 
         fun onBoundsChanged(width: Int, height: Int, offsetX: Int, offsetY: Int) {
             if (width == lastWidth && height == lastHeight
@@ -99,13 +133,17 @@ object VectorHelper {
             ) {
                 return
             }
+            if (width == 0 || height == 0) {
+                path.reset()
+                return
+            }
             val widthWeight = width * 1F / viewportWidth
             val heightWeight = height * 1F / viewportHeight
             val matrix = Matrix()
             matrix.setScale(widthWeight, heightWeight)
             matrix.postTranslate(offsetX.toFloat(), offsetY.toFloat())
-            cachePath.reset()
-            cachePath.addPath(srcPath, matrix)
+            path.reset()
+            path.addPath(srcPath, matrix)
         }
 
     }

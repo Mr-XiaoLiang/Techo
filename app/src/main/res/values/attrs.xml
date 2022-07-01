@@ -17,4 +17,9 @@
         <attr name="android:color" format="color" />
         <attr name="isHorizontal" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="VectorClipLayout">
+        <attr name="viewportWidth" format="integer" />
+        <attr name="viewportHeight" format="integer" />
+        <attr name="pathData" format="string" />
+    </declare-styleable>
 </resources>
