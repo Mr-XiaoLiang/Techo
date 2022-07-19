@@ -24,6 +24,24 @@
             android:background="#F00" />
     </com.lollipop.techo.view.VectorClipLayout>
 
+    <com.lollipop.techo.view.RoundClipLayout
+        android:layout_width="168dp"
+        android:layout_height="168dp"
+        app:leftTop="84dp"
+        app:rightBottom="20dp"
+        app:rightTop="84dp"
+        app:leftBottom="84dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F00" />
+    </com.lollipop.techo.view.RoundClipLayout>
+
     <TextView
         android:id="@+id/valueView"
         android:layout_width="match_parent"
