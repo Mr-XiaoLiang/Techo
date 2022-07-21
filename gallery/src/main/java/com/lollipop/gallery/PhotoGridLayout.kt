@@ -1,7 +1,9 @@
 package com.lollipop.gallery
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
+import android.view.View
 import android.widget.FrameLayout
 
 /**
@@ -37,6 +39,11 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             val styleValue = typedValue.getInt(R.styleable.PhotoGridLayout_layoutStyle, Style.Playbill.ordinal)
             layoutStyle = Style.values()[styleValue % Style.values().size]
             typedValue.recycle()
+        }
+        if (isInEditMode) {
+            for (i in 0..4) {
+                addView(View(context).apply { setBackgroundColor(Color.RED) })
+            }
         }
     }
 

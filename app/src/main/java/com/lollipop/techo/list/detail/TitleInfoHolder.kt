@@ -26,10 +26,11 @@ class TitleInfoHolder(
         }
 
     init {
-        binding.content.textView.setHint(R.string.hint_text_input)
+        binding.content.textView.setHint(R.string.hint_title_input)
     }
 
-    fun bind(info: TechoItem.Text) {
+    fun bind(info: TechoItem.Title) {
+        update()
         updateContent(info)
     }
 

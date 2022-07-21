@@ -1,9 +1,10 @@
-<resources>
+<resources translatable="false">
     <string name="app_name">Techo</string>
     <string name="permission_rationale_read_external_storage">现在需要使用储存读取权限，用于读取本地相册图片。如果您拒绝了权限，那么将无法读取到图片。是否同意授权？</string>
     <string name="granted">同意授权</string>
     <string name="denied">拒绝授权</string>
     <string name="hint_text_input">请输入内容</string>
+    <string name="hint_title_input" >请输入标题</string>
     <string name="done">完成</string>
     <string name="new_techo">新手帐</string>
 

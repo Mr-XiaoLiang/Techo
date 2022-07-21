@@ -27,14 +27,15 @@ class PhotoInfoHolder(
         }
     }
 
-    init {
-        binding.content.photoGridLayout.clipToOutline = true
-        binding.content.photoGridLayout.outlineProvider = RoundOutline(7.dp2px.toFloat())
-    }
+//    init {
+//        binding.content.photoGridLayout.clipToOutline = true
+//        binding.content.photoGridLayout.outlineProvider = RoundOutline(7.dp2px.toFloat())
+//    }
 
     private val recycledViewPool = LinkedList<GridPhotoView>()
 
     fun bind(info: TechoItem.Photo) {
+        update()
         val photoSize = info.values.size
         val childCount = binding.content.photoGridLayout.childCount
         if (photoSize > childCount) {

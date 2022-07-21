@@ -26,17 +26,20 @@ class TextInfoHolder(
     }
 
     fun bind(info: TechoItem.Text) {
+        update()
         changedStyle(checkBox = false, number = false)
         updateContent(info)
     }
 
     fun bind(info: TechoItem.Number) {
+        update()
         changedStyle(checkBox = false, number = true)
         binding.content.numberView.text = info.number.toString()
         updateContent(info)
     }
 
     fun bind(info: TechoItem.CheckBox) {
+        update()
         changedStyle(checkBox = true, number = false)
         binding.content.checkBox.isChecked = info.isChecked
         updateContent(info)

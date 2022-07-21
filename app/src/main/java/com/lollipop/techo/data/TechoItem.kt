@@ -29,6 +29,9 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
 
         fun createItem(type: TechoItemType): TechoItem {
             return when (type) {
+                TechoItemType.Title -> {
+                    Title()
+                }
                 TechoItemType.Text -> {
                     Text()
                 }
@@ -74,7 +77,7 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
         }
     }
 
-    class Title : TechoItem(TechoItemType.Text)
+    class Title : TechoItem(TechoItemType.Title)
 
     class Text : TechoItem(TechoItemType.Text)
 

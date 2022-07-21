@@ -19,6 +19,7 @@ class DetailListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val holder = when (TechoItemType.values()[viewType]) {
+            TechoItemType.Title -> TitleInfoHolder.create(parent)
             TechoItemType.Text,
             TechoItemType.Number,
             TechoItemType.CheckBox -> TextInfoHolder.create(parent)
@@ -38,6 +39,11 @@ class DetailListAdapter(
                     is TechoItem.Number -> holder.bind(info)
                     is TechoItem.CheckBox -> holder.bind(info)
                     else -> {}
+                }
+            }
+            is TitleInfoHolder -> {
+                if (info is TechoItem.Title) {
+                    holder.bind(info)
                 }
             }
             is PhotoInfoHolder -> {

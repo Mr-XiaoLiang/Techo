@@ -19,6 +19,7 @@ class SplitInfoHolder(
     }
 
     fun bind(info: TechoItem.Split) {
+        update()
         binding.content.splitView.load(info)
     }
 

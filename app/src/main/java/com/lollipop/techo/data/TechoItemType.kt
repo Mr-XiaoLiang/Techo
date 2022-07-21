@@ -1,6 +1,7 @@
 package com.lollipop.techo.data
 
 enum class TechoItemType {
+    Title,
     Text,
     Number,
     CheckBox,

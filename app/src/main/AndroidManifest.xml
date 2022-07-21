@@ -14,7 +14,8 @@
         android:theme="@style/Theme.Techo">
         <activity
             android:name=".activity.DemoActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="TechoDemo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
