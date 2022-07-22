@@ -73,6 +73,20 @@ class EditManager(
         info: TechoItem,
         listener: OnEditPanelCloseListener?
     ) {
+        when (info) {
+            is TechoItem.Photo -> {
+            }
+            is TechoItem.Text -> {
+            }
+            is TechoItem.CheckBox -> {
+            }
+            is TechoItem.Number -> {
+            }
+            is TechoItem.Split -> {
+            }
+            is TechoItem.Title -> {
+            }
+        }
         // TODO
     }
 
