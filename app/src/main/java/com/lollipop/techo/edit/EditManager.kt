@@ -75,19 +75,24 @@ class EditManager(
     ) {
         when (info) {
             is TechoItem.Photo -> {
+                findDelegate<PhotoOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Text -> {
+                findDelegate<TextOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.CheckBox -> {
+                findDelegate<CheckBoxOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Number -> {
+                findDelegate<NumberOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Split -> {
+                findDelegate<SplitOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Title -> {
+                findDelegate<TitleOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
         }
-        // TODO
     }
 
     private inline fun <reified T : EditDelegate<*>> T.applyDelegate(
