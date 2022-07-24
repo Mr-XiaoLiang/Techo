@@ -23,6 +23,9 @@ class TextInfoHolder(
 
     init {
         binding.content.textView.setHint(R.string.hint_text_input)
+        binding.content.textView.setOnClickListener {
+            callOnEditClick()
+        }
     }
 
     fun bind(info: TechoItem.Text) {

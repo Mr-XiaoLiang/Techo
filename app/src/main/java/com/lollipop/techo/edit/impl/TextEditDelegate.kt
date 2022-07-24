@@ -2,7 +2,9 @@ package com.lollipop.techo.edit.impl
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.closeBoard
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
@@ -42,12 +44,20 @@ open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
             }
             clickToClose(backgroundView)
             keepWithClick(editCard)
+            editText.doAfterTextChanged {
+                notifyDataChanged()
+            }
         }
     }
 
     override fun onOpen(info: T) {
         super.onOpen(info)
         binding?.editText?.setText(info.value)
+    }
+
+    override fun onClose() {
+        super.onClose()
+        binding?.editText?.closeBoard()
     }
 
     private fun onDone() {

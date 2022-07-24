@@ -19,8 +19,8 @@ import kotlin.math.max
  * Window缩进的辅助工具
  */
 class WindowInsetsHelper(
-    val applyType: ApplyType,
-    val edge: Edge = Edge.ALL,
+    private val applyType: ApplyType,
+    private val edge: Edge = Edge.ALL,
     private val insetsListener: OnWindowInsetsChangedListener? = null,
     private val targetView: View? = null
 ) : View.OnApplyWindowInsetsListener {
@@ -60,13 +60,13 @@ class WindowInsetsHelper(
      * 基础的Margin值，它表示了最小的margin
      * 如果缩进尺寸小于此值，那么会保持在此值
      */
-    val baseMargin = Rect()
+    private val baseMargin = Rect()
 
     /**
      * 基础的padding值，它代表了最小的padding值
      * 如果缩进尺寸小于此值，那么将会保持在此值
      */
-    val basePadding = Rect()
+    private val basePadding = Rect()
 
     /**
      * 以快照的形式记录当前Margin值，并且以此为基础
@@ -281,7 +281,7 @@ private fun View.setWindowInsetsHelper(
     listener: WindowInsetsHelper.OnWindowInsetsChangedListener?,
     customTarget: View?
 ): WindowInsetsHelper {
-    val windowInsetsHelper = WindowInsetsHelper(type, edge, listener, customTarget)
+    val windowInsetsHelper = WindowInsetsHelper(type, edge, listener, customTarget ?: this)
     setOnApplyWindowInsetsListener(windowInsetsHelper)
 
     if (isAttachedToWindow) {

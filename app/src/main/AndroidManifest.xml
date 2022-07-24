@@ -13,19 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
-            android:name=".activity.DemoActivity"
-            android:exported="true"
-            android:label="TechoDemo">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activity.WebActivity"
             android:exported="false"
-            android:process=":Web"/>
+            android:process=":Web" />
         <activity
             android:name=".activity.RecorderActivity"
             android:exported="false"
@@ -39,6 +29,18 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DemoActivity"
+            android:exported="true"
+            android:label="TechoDemo"
+            android:launchMode="singleInstance"
+            android:process=":demo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

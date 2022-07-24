@@ -100,6 +100,7 @@ class EditManager(
         info: TechoItem,
         listener: OnEditPanelCloseListener?
     ): T {
+        setController(this@EditManager)
         updateContextInfo(this, index, info, listener)
         checkPanelView(this)
         return this

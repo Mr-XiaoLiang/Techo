@@ -36,6 +36,7 @@
                 android:background="@android:color/transparent"
                 tools:text="@string/app_name"
                 android:gravity="start|top"
+                android:textColor="@color/text_theme"
                 android:padding="10dp"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/doneBtn"

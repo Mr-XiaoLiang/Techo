@@ -41,19 +41,21 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
-        setContentView(viewBinding.root)
-        setSupportActionBar(viewBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(showBackArrow)
         viewBinding.contentRoot.addView(
             contentView,
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
         )
         floatingView?.let {
             viewBinding.floatingRoot.addView(
                 it,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
+        setContentView(viewBinding.root)
+        setSupportActionBar(viewBinding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(showBackArrow)
         viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER, viewBinding.toolbar)
         loadHeader()
         hideLoading()

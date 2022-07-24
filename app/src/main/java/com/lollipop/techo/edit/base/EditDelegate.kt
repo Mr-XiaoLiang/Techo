@@ -91,7 +91,9 @@ abstract class EditDelegate<T : TechoItem> {
         this.panelView = newView
         onViewCreated(newView)
         if (animationEnable) {
-            animationHelper.preload()
+            newView.post {
+                animationHelper.preload()
+            }
         }
         return newView
     }
