@@ -6,66 +6,83 @@
     android:layout_height="match_parent"
     tools:context=".activity.HeaderActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
+    <ImageView
+        android:id="@+id/headerBackground"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:theme="@style/Theme.Techo.AppBarOverlay">
+        android:background="?attr/colorPrimary"
+        android:scaleType="centerCrop" />
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:collapsedTitleTextColor="@color/titleColor"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleTextColor="@color/titleColor"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleCollapseMode="scale"
-            app:toolbarId="@+id/toolbar">
-
-            <ImageView
-                android:id="@+id/headerBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/colorPrimary"
-                android:scaleType="centerCrop" />
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/Theme.Techo.PopupOverlay"
-                app:title="@string/app_name"
-                app:titleCentered="true"
-                app:titleTextColor="@color/titleColor" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/contentRoot"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_back"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="@color/titleColor" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/contentLoadingView"
+        <TextView
+            android:id="@+id/titleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:indeterminate="true"
-            android:visibility="gone"
-            app:indicatorColor="@color/content_loading"
-            app:indicatorSize="24dp"
-            app:minHideDelay="300"
-            app:showDelay="300" />
-    </FrameLayout>
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/titleColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="@string/app_name" />
+    </LinearLayout>
+
+    <com.lollipop.techo.view.VerticalPageScrollView
+        android:id="@+id/contentScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <com.lollipop.techo.view.VerticalPageLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="200dp">
+
+            <com.lollipop.techo.view.RoundClipLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:leftTop="20dp"
+                app:rightTop="20dp"
+                android:background="@color/pageBackground">
+
+                <FrameLayout
+                    android:id="@+id/contentRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/contentLoadingView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="24dp"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/content_loading"
+                    app:indicatorSize="24dp"
+                    app:minHideDelay="300"
+                    app:showDelay="300" />
+
+            </com.lollipop.techo.view.RoundClipLayout>
+        </com.lollipop.techo.view.VerticalPageLayout>
+
+    </com.lollipop.techo.view.VerticalPageScrollView>
+
 
     <FrameLayout
         android:id="@+id/floatingRoot"

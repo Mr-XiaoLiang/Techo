@@ -35,5 +35,6 @@
     <color name="defaultSplit">#5E6565</color>
 
     <color name="text_theme" tools:ignore="MissingDefaultResource">#424343</color>
+    <color name="pageBackground">#FFF</color>
 
 </resources>

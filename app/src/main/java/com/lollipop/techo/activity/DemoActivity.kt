@@ -4,6 +4,8 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivityDemoBinding
 import com.lollipop.techo.util.TextSelectedHelper
@@ -18,6 +20,7 @@ class DemoActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         initView()
     }
@@ -35,6 +38,8 @@ class DemoActivity : AppCompatActivity(),
         selector.selectTarget = TextSelectedHelper.SelectTarget.START
 
         VectorHelper.outline(39,39, clipData).bindTo(binding.backgroundView)
+
+        binding.testView.fixInsetsByMargin(WindowInsetsHelper.Edge.ALL)
     }
 
     override fun onSelectedRangChanged(start: Int, end: Int) {

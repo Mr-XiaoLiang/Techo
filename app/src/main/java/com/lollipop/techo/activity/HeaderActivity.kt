@@ -41,6 +41,7 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
+        setContentView(viewBinding.root)
         viewBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -53,12 +54,24 @@ abstract class HeaderActivity : BaseActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        setContentView(viewBinding.root)
-        setSupportActionBar(viewBinding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(showBackArrow)
-        viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER, viewBinding.toolbar)
+        viewBinding.backButton.setOnClickListener {
+            onBackPressed()
+        }
+        viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
+        viewBinding.contentScrollView.fixInsetsByMargin(
+            WindowInsetsHelper.Edge(
+                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
+                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
+                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
+                WindowInsetsHelper.EdgeStrategy.ORIGINAL
+            )
+        )
         loadHeader()
         hideLoading()
+    }
+
+    override fun setTitle(title: CharSequence?) {
+        viewBinding.titleView.text = title ?: ""
     }
 
     protected fun showLoading() {

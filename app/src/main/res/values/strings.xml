@@ -22,4 +22,5 @@
     <string name="photo_permission_denied">由于权限原因，无法读取本地图片</string>
     <string name="photo_load_error">本地图片加载失败</string>
     <string name="edit">编辑</string>
+    <string name="description_back">back</string>
 </resources>

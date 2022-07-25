@@ -122,14 +122,14 @@ class RoundClipLayout(
         onRadiusChanged()
     }
 
-    override fun onDraw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         if (clipPath.isEmpty) {
-            super.onDraw(canvas)
+            super.draw(canvas)
             return
         }
         val saveCount = canvas.save()
         canvas.clipPath(clipPath)
-        super.onDraw(canvas)
+        super.draw(canvas)
         canvas.restoreToCount(saveCount)
     }
 
