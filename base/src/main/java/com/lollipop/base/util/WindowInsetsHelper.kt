@@ -5,9 +5,10 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.core.graphics.Insets
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.lollipop.base.util.WindowInsetsHelper.EdgeStrategy.*
@@ -23,14 +24,11 @@ class WindowInsetsHelper(
     private val edge: Edge = Edge.ALL,
     private val insetsListener: OnWindowInsetsChangedListener? = null,
     private val targetView: View? = null
-) : View.OnApplyWindowInsetsListener {
+) : OnApplyWindowInsetsListener {
 
     companion object {
-        fun getInsetsValue(insets: WindowInsets): InsetsValue {
-            return WindowInsetsCompat.toWindowInsetsCompat(insets)
-                .getInsets(WindowInsetsCompat.Type.systemBars()).let {
-                    InsetsValue(it)
-                }
+        fun getInsetsValue(insets: WindowInsetsCompat): InsetsValue {
+            return InsetsValue(insets.getInsets(WindowInsetsCompat.Type.systemBars()))
         }
 
         fun initWindowFlag(activity: Activity) {
@@ -96,7 +94,7 @@ class WindowInsetsHelper(
         )
     }
 
-    override fun onApplyWindowInsets(v: View, insets: WindowInsets): WindowInsets {
+    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         val listener = insetsListener
         if (listener != null) {
             return listener.onWindowInsetsChanged(v, this, insets)
@@ -168,8 +166,8 @@ class WindowInsetsHelper(
         fun onWindowInsetsChanged(
             v: View,
             helper: WindowInsetsHelper,
-            insets: WindowInsets
-        ): WindowInsets
+            insets: WindowInsetsCompat
+        ): WindowInsetsCompat
     }
 
     class Edge(
@@ -282,7 +280,7 @@ private fun View.setWindowInsetsHelper(
     customTarget: View?
 ): WindowInsetsHelper {
     val windowInsetsHelper = WindowInsetsHelper(type, edge, listener, customTarget ?: this)
-    setOnApplyWindowInsetsListener(windowInsetsHelper)
+    ViewCompat.setOnApplyWindowInsetsListener(this, windowInsetsHelper)
 
     if (isAttachedToWindow) {
         requestApplyInsets()
