@@ -1,190 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.TechoDetailActivity">
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/floatingMenuBtn"
-        style="@style/FloatingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:icon="@drawable/ic_baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/quickAddButton"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="0"
-        app:layout_constraintCircleRadius="80dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTextBtn"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_notes_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="270"
-        app:layout_constraintCircleRadius="80dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingNumberBtn"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_format_list_numbered_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="315"
-        app:layout_constraintCircleRadius="80dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingCheckboxBtn"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_outline_check_box_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="0"
-        app:layout_constraintCircleRadius="80dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingPhotoBtn"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_outline_insert_photo_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="270"
-        app:layout_constraintCircleRadius="150dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingSplitBtn"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_horizontal_split_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="292"
-        app:layout_constraintCircleRadius="150dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest6"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="315"
-        app:layout_constraintCircleRadius="150dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest7"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="337"
-        app:layout_constraintCircleRadius="150dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest8"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="0"
-        app:layout_constraintCircleRadius="150dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest9"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="270"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest10"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="288"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest11"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="306"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest12"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="324"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest13"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="342"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingTest14"
-        style="@style/FloatingSubButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintCircle="@id/floatingMenuBtn"
-        app:layout_constraintCircleAngle="0"
-        app:layout_constraintCircleRadius="220dp"
-        tools:ignore="ContentDescription,MissingConstraints" />
-
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/editContainer"
-        android:elevation="20dp"/>
+        android:id="@+id/floatingButtonPanel">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/floatingMenuBtn"
+            style="@style/FloatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:icon="@drawable/ic_baseline_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/quickAddButton"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="0"
+            app:layout_constraintCircleRadius="80dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTextBtn"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_notes_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="270"
+            app:layout_constraintCircleRadius="80dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingNumberBtn"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_format_list_numbered_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="315"
+            app:layout_constraintCircleRadius="80dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingCheckboxBtn"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_outline_check_box_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="0"
+            app:layout_constraintCircleRadius="80dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingPhotoBtn"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_outline_insert_photo_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="270"
+            app:layout_constraintCircleRadius="150dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingSplitBtn"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_horizontal_split_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="292"
+            app:layout_constraintCircleRadius="150dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest6"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="315"
+            app:layout_constraintCircleRadius="150dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest7"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="337"
+            app:layout_constraintCircleRadius="150dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest8"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="0"
+            app:layout_constraintCircleRadius="150dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest9"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="270"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest10"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="288"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest11"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="306"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest12"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="324"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest13"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="342"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingTest14"
+            style="@style/FloatingSubButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintCircle="@id/floatingMenuBtn"
+            app:layout_constraintCircleAngle="0"
+            app:layout_constraintCircleRadius="220dp"
+            tools:ignore="ContentDescription,MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <FrameLayout
+        android:id="@+id/editContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="20dp" />
+
+</FrameLayout>

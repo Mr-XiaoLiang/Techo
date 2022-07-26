@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.lollipop.base.request.PermissionFlow
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.request.startPermissionFlow
@@ -70,6 +71,7 @@ abstract class EditDelegate<T : TechoItem> {
         currentInfo = info
         isChangedValue = false
         panelView?.post {
+            panelView?.isVisible = true
             onOpen(info)
             doAnimation(true)
         }
@@ -90,6 +92,7 @@ abstract class EditDelegate<T : TechoItem> {
         val newView = onCreateView(container)
         this.panelView = newView
         onViewCreated(newView)
+        newView.isInvisible = true
         if (animationEnable) {
             newView.post {
                 animationHelper.preload()

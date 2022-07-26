@@ -85,7 +85,7 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        floatingView.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
+        floatingBinding.floatingButtonPanel.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
         initContentView()
         initMenuBtn()
         initData()

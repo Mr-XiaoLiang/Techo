@@ -3,9 +3,7 @@ package com.lollipop.techo.edit.impl
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
-import com.lollipop.base.util.bind
-import com.lollipop.base.util.closeBoard
-import com.lollipop.base.util.onClick
+import com.lollipop.base.util.*
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
 import com.lollipop.techo.edit.base.TopEditDelegate
@@ -33,6 +31,7 @@ open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
         }
         val newBinding: PanelTextEditBinding = container.bind(false)
         binding = newBinding
+        newBinding.editCard.fixInsetsByMargin(WindowInsetsHelper.Edge.ALL)
         return newBinding.root
     }
 
