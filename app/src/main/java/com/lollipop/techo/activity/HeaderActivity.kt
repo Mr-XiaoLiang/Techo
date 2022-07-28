@@ -2,14 +2,21 @@ package com.lollipop.techo.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentParse
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.BlurTransformation
@@ -26,6 +33,8 @@ abstract class HeaderActivity : BaseActivity() {
          * 每次启动都保持不变吧
          */
         private var headerImageUrl = ""
+
+        private var currentPigment: Pigment? = null
     }
 
     private val viewBinding: ActivityHeaderBinding by lazyBind()
@@ -78,6 +87,13 @@ abstract class HeaderActivity : BaseActivity() {
         viewBinding.contentLoadingView.show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        currentPigment?.let {
+            onDecorationChanged(it)
+        }
+    }
+
     protected fun hideLoading() {
         viewBinding.contentLoadingView.hide()
     }
@@ -96,12 +112,11 @@ abstract class HeaderActivity : BaseActivity() {
             onUrlLoaded(imageUrl)
         } else {
             doAsync {
-                RequestService.getHeaderImageInfo().let { imageInfo ->
-                    if (imageInfo.url.isNotEmpty()) {
-                        headerImageUrl = imageInfo.fullUrl
-                        onUI {
-                            onUrlLoaded(headerImageUrl)
-                        }
+                val imageInfo = RequestService.getHeaderImageInfo()
+                if (imageInfo.url.isNotEmpty()) {
+                    headerImageUrl = imageInfo.fullUrl
+                    onUI {
+                        onUrlLoaded(headerImageUrl)
                     }
                 }
             }
@@ -109,13 +124,37 @@ abstract class HeaderActivity : BaseActivity() {
     }
 
     private fun onUrlLoaded(url: String) {
-        Glide.with(viewBinding.headerBackground)
+        var builder = Glide.with(viewBinding.headerBackground)
+            .asBitmap()
             .load(url)
-            .apply(
-                RequestOptions().transform(
-                    BlurTransformation.create()
-                )
-            ).into(viewBinding.headerBackground)
+            .apply(RequestOptions().transform(BlurTransformation.create()))
+        if (currentPigment == null) {
+            builder = builder.addListener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    e?.printStackTrace()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    if (resource != null) {
+                        onHeaderLoaded(resource)
+                    }
+                    return false
+                }
+            })
+        }
+        builder.into(viewBinding.headerBackground)
     }
 
     fun resultOk(callback: (Intent) -> Unit) {
@@ -124,6 +163,15 @@ abstract class HeaderActivity : BaseActivity() {
 
     fun resultCanceled(callback: ((Intent) -> Unit)? = null) {
         setResult(Activity.RESULT_CANCELED, Intent().apply { callback?.invoke(this) })
+    }
+
+    private fun onHeaderLoaded(bitmap: Bitmap) {
+        if (currentPigment == null) {
+            PigmentParse.parse(bitmap) {
+                currentPigment = it
+                onDecorationChanged(it)
+            }
+        }
     }
 
 }

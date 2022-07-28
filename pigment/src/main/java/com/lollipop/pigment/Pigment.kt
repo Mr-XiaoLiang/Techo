@@ -20,7 +20,12 @@ class Pigment(
     /**
      * 在主题色之上的内容的颜色
      */
-    val onPrimary: Int,
+    val onPrimaryTitle: Int,
+
+    /**
+     * 在主题色之上的内容的颜色
+     */
+    val onPrimaryBody: Int,
 
     /**
      * 次要颜色
@@ -39,5 +44,10 @@ class Pigment(
     /**
      * 在次要颜色之上的内容的颜色
      */
-    val onSecondary: Int
+    val onSecondaryTitle: Int,
+
+    /**
+     * 在次要颜色之上的内容的颜色
+     */
+    val onSecondaryBody: Int,
 )

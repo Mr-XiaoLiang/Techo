@@ -1,7 +1,6 @@
 package com.lollipop.base.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -12,6 +11,10 @@ import com.lollipop.base.request.RequestCallback
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.util.BackPressProviderHelper
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentPage
+import com.lollipop.pigment.PigmentProvider
+import com.lollipop.pigment.PigmentProviderHelper
 
 /**
  * @author lollipop
@@ -19,9 +22,15 @@ import com.lollipop.base.util.BackPressProviderHelper
  * 基础的Activity
  * 提供基础的实现和能力
  */
-open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLauncher {
+open class BaseActivity : AppCompatActivity(),
+    BackPressProvider,
+    RequestLauncher,
+    PigmentPage,
+    PigmentProvider {
 
     private val backPressProviderHelper = BackPressProviderHelper()
+
+    override val pigmentProviderHelper = PigmentProviderHelper()
 
     override val requestHelper: RequestHelper by lazy {
         RequestHelper.with(this)
@@ -93,6 +102,10 @@ open class BaseActivity : AppCompatActivity(), BackPressProvider, RequestLaunche
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         requestHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        pigmentProviderHelper.onDecorationChanged(pigment)
     }
 
 }

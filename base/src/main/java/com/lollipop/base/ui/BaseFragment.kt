@@ -5,11 +5,13 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.provider.BackPressProvider
-import com.lollipop.base.request.PermissionCallback
-import com.lollipop.base.request.RequestCallback
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.util.BackPressProviderHelper
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentPage
+import com.lollipop.pigment.PigmentProvider
+import com.lollipop.pigment.PigmentProviderHelper
 
 /**
  * @author lollipop
@@ -17,15 +19,23 @@ import com.lollipop.base.util.BackPressProviderHelper
  * 基础的Fragment
  * 提供基础的实现和能力
  */
-open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, RequestLauncher {
+open class BaseFragment : Fragment(),
+    BackPressListener,
+    BackPressProvider,
+    RequestLauncher,
+    PigmentPage,
+    PigmentProvider {
 
     private val backPressProviderHelper = BackPressProviderHelper(getSelf())
+
+    override val pigmentProviderHelper = PigmentProviderHelper()
 
     override val requestHelper: RequestHelper by lazy {
         RequestHelper.with(this)
     }
 
     private var parentProvider: BackPressProvider? = null
+    private var parentPigmentProvider: PigmentProvider? = null
 
     private fun getSelf(): BaseFragment {
         return this
@@ -37,11 +47,17 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
             parentProvider = it
             it.addBackPressListener(backPressProviderHelper)
         }
+        check<PigmentProvider> {
+            it.registerPigment(this)
+            parentPigmentProvider = it
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         backPressProviderHelper.destroy()
+        parentPigmentProvider?.unregisterPigment(this)
+        parentPigmentProvider = null
     }
 
     override fun onDetach() {
@@ -62,9 +78,10 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
         backPressProviderHelper.removeBackPressListener(listener)
     }
 
-    protected inline fun <reified T: Any> check(
+    protected inline fun <reified T : Any> check(
         context: Context? = null,
-        callback: (T) -> Unit) {
+        callback: (T) -> Unit
+    ) {
         if (parentFragment?.check(callback) == true) {
             return
         }
@@ -76,7 +93,7 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
         }
     }
 
-    protected inline fun <reified T: Any> Any.check(callback: (T) -> Unit): Boolean {
+    protected inline fun <reified T : Any> Any.check(callback: (T) -> Unit): Boolean {
         if (this is T) {
             callback(this)
             return true
@@ -96,6 +113,10 @@ open class BaseFragment: Fragment(), BackPressListener, BackPressProvider, Reque
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         requestHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        pigmentProviderHelper.onDecorationChanged(pigment)
     }
 
 }
