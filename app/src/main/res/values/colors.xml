@@ -37,4 +37,13 @@
     <color name="text_theme" tools:ignore="MissingDefaultResource">#424343</color>
     <color name="pageBackground">#FFF</color>
 
+    <color name="pigmentPrimary">#FF018786</color>
+    <color name="pigmentPrimaryVariant">#00504F</color>
+    <color name="pigmentOnPrimaryTitle">#FFFFFF</color>
+    <color name="pigmentOnPrimaryBody">#D5D5D5</color>
+    <color name="pigmentSecondary">#C12F62</color>
+    <color name="pigmentSecondaryVariant">#95254B</color>
+    <color name="pigmentOnSecondaryTitle">#FFFFFF</color>
+    <color name="pigmentOnSecondaryBody">#D5D5D5</color>
+
 </resources>

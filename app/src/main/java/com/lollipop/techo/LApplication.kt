@@ -3,6 +3,8 @@ package com.lollipop.techo
 import android.app.Activity
 import android.app.Application
 import com.lollipop.base.request.PermissionFlow
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentParse
 import com.lollipop.techo.util.FontHelper
 import com.lollipop.techo.view.PermissionFeedbackDialog
 
@@ -16,6 +18,18 @@ class LApplication : Application() {
         super.onCreate()
         PermissionFlow.globalRationaleCallback = PermissionRationaleCallback()
         FontHelper.init(this)
+        PigmentParse.init(
+            Pigment(
+                primary = getColor(R.color.pigmentPrimary),
+                primaryVariant = getColor(R.color.pigmentPrimaryVariant),
+                onPrimaryTitle = getColor(R.color.pigmentOnPrimaryTitle),
+                onPrimaryBody = getColor(R.color.pigmentOnPrimaryBody),
+                secondary = getColor(R.color.pigmentSecondary),
+                secondaryVariant = getColor(R.color.pigmentSecondaryVariant),
+                onSecondaryTitle = getColor(R.color.pigmentOnSecondaryTitle),
+                onSecondaryBody = getColor(R.color.pigmentOnSecondaryBody)
+            )
+        )
     }
 
     class PermissionRationaleCallback : PermissionFlow.RationaleCallback {

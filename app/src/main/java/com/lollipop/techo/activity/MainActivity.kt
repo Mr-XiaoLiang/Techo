@@ -11,6 +11,8 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.tint
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoMode.ChangedType.*
@@ -124,6 +126,11 @@ class MainActivity : HeaderActivity(),
 
     private fun onLoadMore() {
         mode.loadNext()
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        floatingBinding.newTechoBtn.tint(pigment)
     }
 
 }

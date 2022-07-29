@@ -1,6 +1,6 @@
 package com.lollipop.pigment
 
-class PigmentProviderHelper : PigmentPage, PigmentProvider {
+class PigmentProviderHelper : PigmentPage {
 
     private val pageList = ArrayList<PigmentPage>()
 
@@ -8,11 +8,11 @@ class PigmentProviderHelper : PigmentPage, PigmentProvider {
         pageList.forEach { it.onDecorationChanged(pigment) }
     }
 
-    override fun registerPigment(page: PigmentPage) {
+    fun registerPigment(page: PigmentPage) {
         pageList.add(page)
     }
 
-    override fun unregisterPigment(page: PigmentPage) {
+    fun unregisterPigment(page: PigmentPage) {
         pageList.remove(page)
     }
 }

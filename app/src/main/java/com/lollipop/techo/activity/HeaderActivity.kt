@@ -17,6 +17,7 @@ import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentParse
+import com.lollipop.pigment.tintTitleIcon
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.BlurTransformation
@@ -77,6 +78,11 @@ abstract class HeaderActivity : BaseActivity() {
         )
         loadHeader()
         hideLoading()
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        viewBinding.backButton.tintTitleIcon(pigment)
     }
 
     override fun setTitle(title: CharSequence?) {

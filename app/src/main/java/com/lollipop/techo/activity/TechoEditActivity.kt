@@ -7,10 +7,13 @@ import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.tint
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItemType.*
 import com.lollipop.techo.data.TechoItemType.Number
@@ -161,6 +164,23 @@ class TechoEditActivity : HeaderActivity(),
         quickAddType = Text
         floatingBinding.quickAddButton.setImageDrawable(floatingBinding.floatingTextBtn.drawable)
         circleAnimationGroup.hide()
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        val fabCount = floatingBinding.floatingButtonPanel.childCount
+        for (index in 0 until fabCount) {
+            floatingBinding.floatingButtonPanel.getChildAt(index)?.let {
+                when (it) {
+                    is ExtendedFloatingActionButton -> {
+                        it.tint(pigment)
+                    }
+                    is FloatingActionButton -> {
+                        it.tint(pigment)
+                    }
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
