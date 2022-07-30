@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.ViewPropertyTransition
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
@@ -133,6 +135,7 @@ abstract class HeaderActivity : BaseActivity() {
         var builder = Glide.with(viewBinding.headerBackground)
             .asBitmap()
             .load(url)
+            .transition(GenericTransitionOptions.with(AlphaAnimator()))
             .apply(RequestOptions().transform(BlurTransformation.create()))
         if (currentPigment == null) {
             builder = builder.addListener(object : RequestListener<Bitmap> {
@@ -177,6 +180,14 @@ abstract class HeaderActivity : BaseActivity() {
                 currentPigment = it
                 onDecorationChanged(it)
             }
+        }
+    }
+
+    private class AlphaAnimator : ViewPropertyTransition.Animator {
+        override fun animate(view: View?) {
+            view?:return
+            view.alpha = 0F
+            view.animate()?.alphaBy(1F)?.start()
         }
     }
 

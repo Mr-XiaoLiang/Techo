@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.HeaderActivity">
+    tools:context=".activity.HeaderActivity"
+    android:background="@color/pageBackground">
 
     <ImageView
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:background="?attr/colorPrimary"
         android:scaleType="centerCrop" />
 
     <LinearLayout
