@@ -37,6 +37,10 @@ abstract class HeaderActivity : BaseActivity() {
          */
         private var headerImageUrl = ""
 
+        /**
+         * 当前的涂料颜色
+         * 主题元素的颜色需要用它来进行渲染
+         */
         private var currentPigment: Pigment? = null
     }
 
