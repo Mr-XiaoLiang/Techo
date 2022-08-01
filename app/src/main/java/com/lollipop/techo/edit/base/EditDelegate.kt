@@ -9,6 +9,9 @@ import com.lollipop.base.request.PermissionFlow
 import com.lollipop.base.request.RequestLauncher
 import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.onClick
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentPage
+import com.lollipop.pigment.PigmentProvider
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.edit.PanelController
 import com.lollipop.techo.util.AnimationHelper
@@ -17,7 +20,7 @@ import com.lollipop.techo.util.AnimationHelper
  * @author lollipop
  * @date 2021/12/18 20:15
  */
-abstract class EditDelegate<T : TechoItem> {
+abstract class EditDelegate<T : TechoItem> : PigmentPage {
 
     private var controller: PanelController? = null
 
@@ -64,6 +67,16 @@ abstract class EditDelegate<T : TechoItem> {
     protected open val animationEnable = false
 
     fun setController(controller: PanelController?) {
+        this.controller?.context?.let {
+            if (it is PigmentProvider) {
+                it.unregisterPigment(this)
+            }
+        }
+        controller?.context?.let {
+            if (it is PigmentProvider) {
+                it.registerPigment(this)
+            }
+        }
         this.controller = controller
     }
 
@@ -104,6 +117,9 @@ abstract class EditDelegate<T : TechoItem> {
     protected abstract fun onCreateView(container: ViewGroup): View
 
     protected open fun onViewCreated(view: View) {}
+
+    override fun onDecorationChanged(pigment: Pigment) {
+    }
 
     protected open fun onOpen(info: T) {}
 
