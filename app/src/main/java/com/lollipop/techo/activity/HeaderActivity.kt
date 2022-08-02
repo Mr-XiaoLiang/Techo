@@ -22,6 +22,7 @@ import com.lollipop.pigment.PigmentParse
 import com.lollipop.pigment.tintTitleIcon
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
+import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.BlurTransformation
 
 /**
@@ -42,6 +43,7 @@ abstract class HeaderActivity : BaseActivity() {
          * 主题元素的颜色需要用它来进行渲染
          */
         private var currentPigment: Pigment? = null
+
     }
 
     private val viewBinding: ActivityHeaderBinding by lazyBind()
@@ -53,6 +55,8 @@ abstract class HeaderActivity : BaseActivity() {
     protected open val showBackArrow = true
 
     protected open val optionsMenu = 0
+
+    private var isBlurHeader = AppUtil.isBlurHeader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +86,10 @@ abstract class HeaderActivity : BaseActivity() {
                 WindowInsetsHelper.EdgeStrategy.ORIGINAL
             )
         )
-        loadHeader()
+        viewBinding.headerBackground.onClick {
+            changeBlurState()
+        }
+        loadHeader(false)
         hideLoading()
     }
 
@@ -101,9 +108,19 @@ abstract class HeaderActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (isBlurHeader != AppUtil.isBlurHeader) {
+            isBlurHeader = AppUtil.isBlurHeader
+            loadHeader(true)
+        }
         currentPigment?.let {
             onDecorationChanged(it)
         }
+    }
+
+    private fun changeBlurState() {
+        isBlurHeader = !isBlurHeader
+        AppUtil.changeBlurHeader(this, isBlurHeader)
+        loadHeader(true)
     }
 
     protected fun hideLoading() {
@@ -118,30 +135,32 @@ abstract class HeaderActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun loadHeader() {
+    private fun loadHeader(refreshPigment: Boolean) {
         val imageUrl = headerImageUrl
         if (imageUrl.isNotEmpty()) {
-            onUrlLoaded(imageUrl)
+            onUrlLoaded(imageUrl, refreshPigment)
         } else {
             doAsync {
                 val imageInfo = RequestService.getHeaderImageInfo()
                 if (imageInfo.url.isNotEmpty()) {
                     headerImageUrl = imageInfo.fullUrl
                     onUI {
-                        onUrlLoaded(headerImageUrl)
+                        onUrlLoaded(headerImageUrl, refreshPigment)
                     }
                 }
             }
         }
     }
 
-    private fun onUrlLoaded(url: String) {
+    private fun onUrlLoaded(url: String, refreshPigment: Boolean) {
         var builder = Glide.with(viewBinding.headerBackground)
             .asBitmap()
             .load(url)
             .transition(GenericTransitionOptions.with(AlphaAnimator()))
-            .apply(RequestOptions().transform(BlurTransformation.create()))
-        if (currentPigment == null) {
+        if (isBlurHeader) {
+            builder = builder.apply(RequestOptions().transform(BlurTransformation.create()))
+        }
+        if (currentPigment == null || refreshPigment) {
             builder = builder.addListener(object : RequestListener<Bitmap> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -179,6 +198,7 @@ abstract class HeaderActivity : BaseActivity() {
     }
 
     private fun onHeaderLoaded(bitmap: Bitmap) {
+        log("onHeaderLoaded")
         if (currentPigment == null) {
             PigmentParse.parse(bitmap) {
                 currentPigment = it
@@ -189,7 +209,7 @@ abstract class HeaderActivity : BaseActivity() {
 
     private class AlphaAnimator : ViewPropertyTransition.Animator {
         override fun animate(view: View?) {
-            view?:return
+            view ?: return
             view.alpha = 0F
             view.animate()?.alphaBy(1F)?.start()
         }

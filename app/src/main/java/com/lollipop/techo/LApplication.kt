@@ -5,6 +5,8 @@ import android.app.Application
 import com.lollipop.base.request.PermissionFlow
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentParse
+import com.lollipop.techo.activity.HeaderActivity
+import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.FontHelper
 import com.lollipop.techo.view.PermissionFeedbackDialog
 
@@ -30,6 +32,7 @@ class LApplication : Application() {
                 onSecondaryBody = getColor(R.color.pigmentOnSecondaryBody)
             )
         )
+        AppUtil.init(this)
     }
 
     class PermissionRationaleCallback : PermissionFlow.RationaleCallback {

@@ -71,7 +71,7 @@ object TextSelectedHelper {
         }
 
         private fun requestLayout() {
-            val textView = option.layoutProvider.getTextLayout()
+            val textView = option.layoutProvider.getTextView()
             val textLayout = textView?.layout
             if (textView == null || textLayout == null) {
                 pendingLayout = true
@@ -385,7 +385,7 @@ object TextSelectedHelper {
     }
 
     fun interface TextLayoutProvider {
-        fun getTextLayout(): TextView?
+        fun getTextView(): TextView?
     }
 
     fun interface InvalidateCallback {
