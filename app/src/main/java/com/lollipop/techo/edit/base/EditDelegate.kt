@@ -66,18 +66,19 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
 
     protected open val animationEnable = false
 
+    private val pigmentProvider: PigmentProvider?
+        get() {
+            val context = controller?.context
+            if (context is PigmentProvider) {
+                return context
+            }
+            return null
+        }
+
     fun setController(controller: PanelController?) {
-        this.controller?.context?.let {
-            if (it is PigmentProvider) {
-                it.unregisterPigment(this)
-            }
-        }
-        controller?.context?.let {
-            if (it is PigmentProvider) {
-                it.registerPigment(this)
-            }
-        }
+        pigmentProvider?.unregisterPigment(this)
         this.controller = controller
+        pigmentProvider?.registerPigment(this)
     }
 
     fun open(info: T) {
@@ -85,6 +86,7 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
         isChangedValue = false
         panelView?.post {
             panelView?.isVisible = true
+            pigmentProvider?.requestPigment(this)
             onOpen(info)
             doAnimation(true)
         }

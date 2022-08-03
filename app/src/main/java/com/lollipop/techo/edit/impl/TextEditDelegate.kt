@@ -2,8 +2,13 @@ package com.lollipop.techo.edit.impl
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.*
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.tintByNotObvious
+import com.lollipop.pigment.tintBySelectState
+import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
 import com.lollipop.techo.edit.base.TopEditDelegate
@@ -68,6 +73,11 @@ open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
             }
         }
         callClose()
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding?.doneBtn?.tintByNotObvious(pigment)
     }
 
 }

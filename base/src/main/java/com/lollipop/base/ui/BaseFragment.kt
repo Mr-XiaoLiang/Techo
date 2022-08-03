@@ -41,6 +41,10 @@ open class BaseFragment : Fragment(),
         return this
     }
 
+    override fun requestPigment(page: PigmentPage) {
+        parentPigmentProvider?.requestPigment(page)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         check<BackPressProvider>(context) {

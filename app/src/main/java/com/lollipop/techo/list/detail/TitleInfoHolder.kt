@@ -27,6 +27,9 @@ class TitleInfoHolder(
 
     init {
         binding.content.textView.setHint(R.string.hint_title_input)
+        binding.content.textView.setOnClickListener {
+            callOnEditClick()
+        }
     }
 
     fun bind(info: TechoItem.Title) {

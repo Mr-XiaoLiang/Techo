@@ -18,6 +18,7 @@ import com.bumptech.glide.request.transition.ViewPropertyTransition
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentParse
 import com.lollipop.pigment.tintTitleIcon
 import com.lollipop.techo.data.RequestService
@@ -114,6 +115,12 @@ abstract class HeaderActivity : BaseActivity() {
         }
         currentPigment?.let {
             onDecorationChanged(it)
+        }
+    }
+
+    override fun requestPigment(page: PigmentPage) {
+        currentPigment?.let {
+            page.onDecorationChanged(it)
         }
     }
 

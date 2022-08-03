@@ -40,6 +40,9 @@ open class BaseActivity : AppCompatActivity(),
         return this
     }
 
+    override fun requestPigment(page: PigmentPage) {
+    }
+
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         event ?: return super.onKeyUp(keyCode, event)
         if (keyCode == KeyEvent.KEYCODE_BACK
