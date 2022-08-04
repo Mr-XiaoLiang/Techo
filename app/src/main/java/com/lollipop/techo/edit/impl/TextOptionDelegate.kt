@@ -34,6 +34,13 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>() {
         return newBinding.root
     }
 
+    override fun onViewCreated(view: View) {
+        super.onViewCreated(view)
+        binding?.apply {
+            clickToClose(backgroundView)
+        }
+    }
+
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         binding?.doneBtn?.tintByNotObvious(pigment)
