@@ -2,6 +2,7 @@ package com.lollipop.techo.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
@@ -20,7 +21,6 @@ import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentParse
-import com.lollipop.pigment.tintTitleIcon
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.AppUtil
@@ -96,7 +96,8 @@ abstract class HeaderActivity : BaseActivity() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        viewBinding.backButton.tintTitleIcon(pigment)
+        viewBinding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
+        viewBinding.backButtonBackground.setBackgroundColor(pigment.primary)
     }
 
     override fun setTitle(title: CharSequence?) {

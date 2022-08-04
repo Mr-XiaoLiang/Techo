@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.HeaderActivity"
-    android:background="@color/pageBackground">
+    android:background="@color/pageBackground"
+    tools:context=".activity.HeaderActivity">
 
     <ImageView
         android:id="@+id/headerBackground"
@@ -19,16 +19,33 @@
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal">
 
-        <ImageView
+        <FrameLayout
             android:id="@+id/backButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical|start"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/description_back"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_baseline_arrow_back_24"
-            app:tint="@color/titleColor" />
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackground">
+
+            <com.lollipop.techo.view.RoundClipLayout
+                android:id="@+id/backButtonBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:radius="18dp"
+                tools:background="#f00"/>
+
+            <ImageView
+                android:id="@+id/backButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/description_back"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@color/titleColor" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/titleView"
@@ -57,9 +74,9 @@
             <com.lollipop.techo.view.RoundClipLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/pageBackground"
                 app:leftTop="20dp"
-                app:rightTop="20dp"
-                android:background="@color/pageBackground">
+                app:rightTop="20dp">
 
                 <FrameLayout
                     android:id="@+id/contentRoot"
