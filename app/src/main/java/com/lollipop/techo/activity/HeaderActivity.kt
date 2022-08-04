@@ -98,6 +98,12 @@ abstract class HeaderActivity : BaseActivity() {
         super.onDecorationChanged(pigment)
         viewBinding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
         viewBinding.backButtonBackground.setBackgroundColor(pigment.primary)
+        viewBinding.contentLoadingView.setIndicatorColor(
+            pigment.primary,
+            pigment.secondary,
+            pigment.primaryVariant,
+            pigment.secondaryVariant
+        )
     }
 
     override fun setTitle(title: CharSequence?) {
