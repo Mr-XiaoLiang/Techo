@@ -684,7 +684,10 @@ fun interface SimpleViewClickCallback<V : View> {
     fun onClick(v: V)
 }
 
-inline fun <reified T : View> T.onClick(interval: Long = 300, callback: SimpleViewClickCallback<T>) {
+inline fun <reified T : View> T.onClick(
+    interval: Long = 300,
+    callback: SimpleViewClickCallback<T>
+) {
     setOnClickListener(SimpleIntervalClickListener(interval, this, callback))
 }
 
@@ -780,4 +783,12 @@ fun LifecycleOwner.isStarted() = lifecycle.currentState.isAtLeast(Lifecycle.Stat
  * 是否已经可见
  */
 fun LifecycleOwner.isResumed() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
+inline fun <reified T : Any> tryUse(info: T?, callback: (T) -> Unit) {
+    info?.let(callback)
+}
+
+inline fun <reified T : Any> tryWith(info: T?, callback: T.() -> Unit) {
+    info?.apply(callback)
+}
 

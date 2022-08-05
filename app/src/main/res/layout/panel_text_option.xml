@@ -141,8 +141,8 @@
                 app:layout_constraintEnd_toStartOf="@id/scrollBar"
                 app:layout_constraintStart_toStartOf="@id/optionGroup"
                 app:layout_constraintTop_toTopOf="@id/scrollBar">
-
                 <TextView
+                    android:id="@+id/textSelectorView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent" />
