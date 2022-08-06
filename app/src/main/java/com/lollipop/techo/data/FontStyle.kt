@@ -77,10 +77,18 @@ enum class FontStyle {
             return true
         }
 
-        fun build(base: Int = 0, vararg flag: FontStyle): Int {
+        fun add(base: Int = 0, vararg flag: FontStyle): Int {
             var value = base
             flag.forEach {
                 value = value or it.flag
+            }
+            return value
+        }
+
+        fun clear(base: Int = 0, vararg flag: FontStyle): Int {
+            var value = base
+            flag.forEach {
+                value = value and (it.flag.inv())
             }
             return value
         }

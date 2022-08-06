@@ -83,4 +83,12 @@ open class TextSpan : JsonInfo {
         return FontStyle.has(style, flag)
     }
 
+    fun addStyle(flag: FontStyle) {
+        style = FontStyle.add(style, flag)
+    }
+
+    fun clearStyle(flag: FontStyle) {
+        style = FontStyle.clear(style, flag)
+    }
+
 }

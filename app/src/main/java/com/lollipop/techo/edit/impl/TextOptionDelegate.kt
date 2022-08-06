@@ -10,7 +10,9 @@ import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
 import com.lollipop.pigment.tintBySelectState
 import com.lollipop.techo.R
+import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.data.TextSpan
 import com.lollipop.techo.databinding.PanelTextOptionBinding
 import com.lollipop.techo.edit.base.BottomEditDelegate
 import com.lollipop.techo.util.TextSelectedHelper
@@ -28,6 +30,10 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         get() {
             return binding?.backgroundView
         }
+
+    private var currentTextSpan = TextSpan()
+
+    private val fontStyleHolderList = ArrayList<OptionButtonHelper>(FontStyle.values().size)
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -51,7 +57,69 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 .setLayoutProvider { it.textSelectorView }
                 .notifyInvalidate { it.textSelectorView.invalidate() }
                 .bindTo(selector)
+            bindOptionButton(it)
         }
+    }
+
+    private fun bindOptionButton(b: PanelTextOptionBinding) {
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.blurOptionBtn,
+                FontStyle.Blur,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.boldOptionBtn,
+                FontStyle.Bold,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.strikethroughOptionBtn,
+                FontStyle.Strikethrough,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.subscriptOptionBtn,
+                FontStyle.Subscript,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.superscriptOptionBtn,
+                FontStyle.Superscript,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.italicOptionBtn,
+                FontStyle.Italic,
+                ::onFontStyleChanged
+            )
+        )
+        fontStyleHolderList.add(
+            OptionButtonHelper.bind(
+                b.underlinedOptionBtn,
+                FontStyle.Underline,
+                ::onFontStyleChanged
+            )
+        )
+    }
+
+    private fun onFontStyleChanged(style: FontStyle, has: Boolean) {
+        if (has) {
+            currentTextSpan.addStyle(style)
+        } else {
+            currentTextSpan.clearStyle(style)
+        }
+        updatePreview()
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -81,7 +149,45 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     override fun onSelectedRangChanged(start: Int, end: Int) {
-        // TODO("Not yet implemented")
+        currentTextSpan.start = start
+        currentTextSpan.end = end
+        updatePreview()
+    }
+
+    private fun updatePreview() {
+        // TODO
+    }
+
+    private class OptionButtonHelper(
+        private val button: View,
+        private val style: FontStyle,
+        private val onOptionChanged: (style: FontStyle, has: Boolean) -> Unit
+    ) : View.OnClickListener {
+
+        companion object {
+            fun bind(
+                btn: View,
+                style: FontStyle,
+                onOptionChanged: (style: FontStyle, has: Boolean) -> Unit
+            ): OptionButtonHelper {
+                return OptionButtonHelper(btn, style, onOptionChanged)
+            }
+        }
+
+        init {
+            button.setOnClickListener(this)
+        }
+
+        fun check(textSpan: TextSpan) {
+            button.isSelected = textSpan.hasStyle(style)
+        }
+
+        override fun onClick(v: View?) {
+            val selected = !button.isSelected
+            button.isSelected = selected
+            onOptionChanged(style, selected)
+        }
+
     }
 
 }
