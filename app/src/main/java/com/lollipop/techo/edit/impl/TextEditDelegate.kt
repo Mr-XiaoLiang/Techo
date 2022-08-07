@@ -1,14 +1,13 @@
 package com.lollipop.techo.edit.impl
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
-import com.lollipop.pigment.tintBySelectState
-import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.PanelTextEditBinding
 import com.lollipop.techo.edit.base.TopEditDelegate
@@ -56,7 +55,16 @@ open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
 
     override fun onOpen(info: T) {
         super.onOpen(info)
-        binding?.editText?.setText(info.value)
+        tryUse(binding?.editText) {
+            val value = info.value
+            it.setText(value)
+            it.requestFocus()
+            it.setSelection(value.length)
+            (it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showSoftInput(
+                it,
+                0
+            )
+        }
     }
 
     override fun onClose() {

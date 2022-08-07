@@ -58,6 +58,11 @@ object TextSelectedHelper {
             }
         }
 
+        fun setColor(color: Int) {
+            option.color = color
+            invalidateSelf()
+        }
+
         override fun onSelectedRangChanged(start: Int, end: Int) {
             setSelectedRang(start, end)
         }
@@ -217,7 +222,7 @@ object TextSelectedHelper {
 
         private class Option(
             @ColorInt
-            val color: Int,
+            var color: Int,
             val radius: Int,
             val layoutProvider: TextLayoutProvider,
             val invalidateCallback: InvalidateCallback

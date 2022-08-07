@@ -34,7 +34,7 @@
 
     <color name="defaultSplit">#5E6565</color>
 
-    <color name="text_theme" tools:ignore="MissingDefaultResource">#424343</color>
+    <color name="text_theme" tools:ignore="MissingDefaultResource">#373737</color>
     <color name="pageBackground">#FFF</color>
 
     <color name="pigmentPrimary">#FF018786</color>

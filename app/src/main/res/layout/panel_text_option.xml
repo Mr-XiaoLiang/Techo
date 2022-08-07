@@ -142,6 +142,9 @@
                 app:layout_constraintStart_toStartOf="@id/optionGroup"
                 app:layout_constraintTop_toTopOf="@id/scrollBar">
                 <TextView
+                    android:padding="16dp"
+                    android:textSize="16sp"
+                    tools:text="@string/app_name"
                     android:id="@+id/textSelectorView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

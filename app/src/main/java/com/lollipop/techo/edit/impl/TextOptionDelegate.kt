@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.setEmptyClick
 import com.lollipop.base.util.tryUse
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
@@ -35,6 +36,8 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private val fontStyleHolderList = ArrayList<OptionButtonHelper>(FontStyle.values().size)
 
+    private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
+
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
             return it.root
@@ -48,15 +51,18 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         super.onViewCreated(view)
         tryUse(binding) {
             clickToClose(it.backgroundView)
+            it.editCard.setEmptyClick()
             val selector = TextSelectedHelper.selector()
                 .onSelectedChanged(this@BaseOptionDelegate)
                 .bind(it.textSelectorView)
-            it.textSelectorView.background = TextSelectedHelper.printer()
+            val painter = TextSelectedHelper.printer()
                 .setColor(Color.RED)
                 .halfRadius()
                 .setLayoutProvider { it.textSelectorView }
                 .notifyInvalidate { it.textSelectorView.invalidate() }
                 .bindTo(selector)
+            it.textSelectorView.background = painter
+            selectedHelperPrinter = painter
             bindOptionButton(it)
         }
     }
@@ -138,7 +144,10 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 }
             }
             it.scrollBar.color = pigment.secondary
+            it.textSelectorView.setTextColor(pigment.onSecondaryBody)
+
         }
+        selectedHelperPrinter?.setColor(pigment.secondary)
     }
 
     override fun onOpen(info: T) {
