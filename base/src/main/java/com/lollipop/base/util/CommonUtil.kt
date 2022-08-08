@@ -231,6 +231,22 @@ fun EditText.closeBoard() {
 }
 
 /**
+ * 对一个输入框请求键盘
+ */
+fun EditText.requestBoard(selected: Int = -1) {
+    requestFocus()
+    if (selected < 0) {
+        setSelection(text.length)
+    } else {
+        setSelection(selected)
+    }
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE)
+    if (imm is InputMethodManager) {
+        imm.showSoftInput(this, 0)
+    }
+}
+
+/**
  * 对一个activity关闭键盘
  */
 fun Activity.closeBoard() {

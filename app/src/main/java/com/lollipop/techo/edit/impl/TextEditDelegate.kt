@@ -58,12 +58,7 @@ open class BaseTextEditDelegate<T : TechoItem> : TopEditDelegate<T>() {
         tryUse(binding?.editText) {
             val value = info.value
             it.setText(value)
-            it.requestFocus()
-            it.setSelection(value.length)
-            (it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.showSoftInput(
-                it,
-                0
-            )
+            it.requestBoard()
         }
     }
 
