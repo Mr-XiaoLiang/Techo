@@ -4,9 +4,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.lollipop.base.util.bind
-import com.lollipop.base.util.setEmptyClick
-import com.lollipop.base.util.tryUse
+import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
 import com.lollipop.pigment.tintBySelectState
@@ -16,6 +14,7 @@ import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
 import com.lollipop.techo.databinding.PanelTextOptionBinding
 import com.lollipop.techo.edit.base.BottomEditDelegate
+import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
 
 open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
@@ -38,12 +37,15 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
+    private var techoItemInfo: TechoItem.Text = TechoItem.Text()
+
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
             return it.root
         }
         val newBinding: PanelTextOptionBinding = container.bind(false)
         binding = newBinding
+        newBinding.editCard.fixInsetsByMargin(WindowInsetsHelper.Edge.ALL)
         return newBinding.root
     }
 
@@ -144,17 +146,25 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 }
             }
             it.scrollBar.color = pigment.secondary
-            it.textSelectorView.setTextColor(pigment.onSecondaryBody)
-
+//            it.textSelectorView.setTextColor(pigment.onSecondaryBody)
         }
-        selectedHelperPrinter?.setColor(pigment.secondary)
+        selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
     }
 
     override fun onOpen(info: T) {
         super.onOpen(info)
+        info.copyTo(techoItemInfo)
+        addFrame()
         tryUse(binding) {
             it.textSelectorView.text = info.value
         }
+        updatePreview()
+    }
+
+    private fun addFrame() {
+        val newSpan = TextSpan()
+        currentTextSpan = newSpan
+        techoItemInfo.spans.add(newSpan)
     }
 
     override fun onSelectedRangChanged(start: Int, end: Int) {
@@ -164,7 +174,9 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     private fun updatePreview() {
-        // TODO
+        tryUse(binding) {
+            RichTextHelper.startRichFlow().addRichInfo(techoItemInfo).into(it.previewView)
+        }
     }
 
     private class OptionButtonHelper(

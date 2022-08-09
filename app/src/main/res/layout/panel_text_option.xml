@@ -28,7 +28,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/editText"
+                android:id="@+id/previewView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:background="@android:color/transparent"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/done"
                 app:icon="@drawable/ic_baseline_done_24"
-                app:layout_constraintBottom_toBottomOf="@id/editText"
+                app:layout_constraintBottom_toBottomOf="@id/previewView"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <View
@@ -57,7 +57,7 @@
                 android:background="@color/defaultSplit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editText" />
+                app:layout_constraintTop_toBottomOf="@id/previewView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/stepListView"

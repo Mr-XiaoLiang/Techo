@@ -207,5 +207,22 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
         }
     }
 
+    inline fun <reified T : TechoItem> copyTo(target: T): T {
+        target.parse(toJson())
+        return target
+    }
+
+}
+
+inline fun <reified T : TechoItem> T.clone(): T {
+    val from = this
+    val target = T::class.java.newInstance()
+    return from.copyTo(target)
+}
+
+inline fun <reified T : TechoItem> TechoItem.convertTo(): T {
+    val from = this
+    val target = T::class.java.newInstance()
+    return from.copyTo(target)
 }
 

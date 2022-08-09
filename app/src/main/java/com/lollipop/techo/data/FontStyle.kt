@@ -58,8 +58,7 @@ enum class FontStyle {
         fun has(value: Int, vararg flag: FontStyle): Boolean {
             for (index in flag.indices) {
                 val style = flag[index]
-                val key = 1 shl style.flag
-                if (value and key != 0) {
+                if ((value and style.flag) != 0) {
                     return true
                 }
             }
@@ -69,8 +68,7 @@ enum class FontStyle {
         fun hasAll(value: Int, vararg flag: FontStyle): Boolean {
             for (index in flag.indices) {
                 val style = flag[index]
-                val key = 1 shl style.flag
-                if (value and key == 0) {
+                if ((value and style.flag) == 0) {
                     return false
                 }
             }
