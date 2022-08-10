@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/pageBackground">
+
+    <TextView
+        android:id="@+id/labelView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textColor="@color/text_theme"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp"
+        tools:text="@string/app_name"/>
+
+</FrameLayout>

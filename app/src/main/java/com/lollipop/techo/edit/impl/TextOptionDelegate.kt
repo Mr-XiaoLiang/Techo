@@ -1,9 +1,14 @@
 package com.lollipop.techo.edit.impl
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.lollipop.base.list.ItemTouchState
+import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
@@ -12,10 +17,12 @@ import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
+import com.lollipop.techo.databinding.ItemPanelTextOptionFrameBinding
 import com.lollipop.techo.databinding.PanelTextOptionBinding
 import com.lollipop.techo.edit.base.BottomEditDelegate
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
+import java.util.*
 
 open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     TextSelectedHelper.OnSelectedRangChangedListener {
@@ -37,7 +44,9 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
-    private var techoItemInfo: TechoItem.Text = TechoItem.Text()
+    private val techoItemInfo = TechoItem.Text()
+
+    private val frameAdapter = FontStyleFrameAdapter(techoItemInfo.spans, ::getSpanValue)
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -65,8 +74,60 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 .bindTo(selector)
             it.textSelectorView.background = painter
             selectedHelperPrinter = painter
+
+            it.stepListView.adapter = frameAdapter
+            it.stepListView.layoutManager = LinearLayoutManager(
+                it.stepListView.context, RecyclerView.VERTICAL, false
+            )
+            it.stepListView.attachTouchHelper()
+                .canDrag(true)
+                .canSwipe(true)
+                .onMove(::onFrameItemMove)
+                .onSwipe(::onFrameItemSwipe)
+                .onStatusChange(::onFrameItemTouchStateChanged)
+                .apply()
             bindOptionButton(it)
         }
+    }
+
+    private fun getSpanValue(span: TextSpan): CharSequence {
+        val start = span.start
+        val end = span.end
+        if (start < 0 || end < 0) {
+            return ""
+        }
+        if (start >= end) {
+            return ""
+        }
+        val value = techoItemInfo.value
+        if (start >= value.length || end > value.length) {
+            return ""
+        }
+        return value.substring(start, end)
+    }
+
+    private fun onFrameItemTouchStateChanged(
+        viewHolder: RecyclerView.ViewHolder?,
+        status: ItemTouchState
+    ) {
+        if (status == ItemTouchState.IDLE) {
+            updatePreview()
+        }
+    }
+
+    private fun onFrameItemMove(srcPosition: Int, targetPosition: Int): Boolean {
+        val list = techoItemInfo.spans
+        val indices = list.indices
+        return if (srcPosition in indices && targetPosition in indices) {
+            Collections.swap(list, srcPosition, targetPosition)
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun onFrameItemSwipe(adapterPosition: Int) {
+        // TODO
     }
 
     private fun bindOptionButton(b: PanelTextOptionBinding) {
@@ -151,12 +212,14 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onOpen(info: T) {
         super.onOpen(info)
         info.copyTo(techoItemInfo)
         addFrame()
         tryUse(binding) {
             it.textSelectorView.text = info.value
+            frameAdapter.notifyDataSetChanged()
         }
         updatePreview()
     }
@@ -207,6 +270,33 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             val selected = !button.isSelected
             button.isSelected = selected
             onOptionChanged(style, selected)
+        }
+
+    }
+
+    private class FontStyleFrameHolder(
+        private val binding: ItemPanelTextOptionFrameBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(text: CharSequence) {
+            binding.labelView.text = text
+        }
+    }
+
+    private class FontStyleFrameAdapter(
+        private val list: List<TextSpan>,
+        private val textProvider: (TextSpan) -> CharSequence
+    ) : RecyclerView.Adapter<FontStyleFrameHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FontStyleFrameHolder {
+            return FontStyleFrameHolder(parent.bind())
+        }
+
+        override fun onBindViewHolder(holder: FontStyleFrameHolder, position: Int) {
+            holder.bind(textProvider(list[position]))
+        }
+
+        override fun getItemCount(): Int {
+            return list.size
         }
 
     }
