@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/pageBackground">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/pageBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="6dp">
+
+    <com.lollipop.techo.view.RoundClipLayout
+        android:id="@+id/selectedIcon"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/text_theme"
+        android:radius="3dp"/>
 
     <TextView
         android:id="@+id/labelView"
@@ -13,8 +25,6 @@
         android:lines="1"
         android:maxLines="1"
         android:textColor="@color/text_theme"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="6dp"
-        tools:text="@string/app_name"/>
+        tools:text="@string/app_name" />
 
-</FrameLayout>
+</LinearLayout>

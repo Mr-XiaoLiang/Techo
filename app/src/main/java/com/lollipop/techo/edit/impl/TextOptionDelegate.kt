@@ -1,13 +1,18 @@
 package com.lollipop.techo.edit.impl
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lollipop.base.list.ItemTouchState
+import com.lollipop.base.list.OnItemMoveCallback
+import com.lollipop.base.list.OnItemSwipeCallback
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
@@ -17,6 +22,7 @@ import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
+import com.lollipop.techo.databinding.ItemPanelTextOptionFrameAddBinding
 import com.lollipop.techo.databinding.ItemPanelTextOptionFrameBinding
 import com.lollipop.techo.databinding.PanelTextOptionBinding
 import com.lollipop.techo.edit.base.BottomEditDelegate
@@ -38,15 +44,13 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             return binding?.backgroundView
         }
 
-    private var currentTextSpan = TextSpan()
-
     private val fontStyleHolderList = ArrayList<OptionButtonHelper>(FontStyle.values().size)
 
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
     private val techoItemInfo = TechoItem.Text()
 
-    private val frameAdapter = FontStyleFrameAdapter(techoItemInfo.spans, ::getSpanValue)
+    private val frameManager = FrameManager(techoItemInfo.spans)
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -75,35 +79,19 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             it.textSelectorView.background = painter
             selectedHelperPrinter = painter
 
-            it.stepListView.adapter = frameAdapter
+            it.stepListView.adapter = frameManager.frameAdapter
             it.stepListView.layoutManager = LinearLayoutManager(
-                it.stepListView.context, RecyclerView.VERTICAL, false
+                it.stepListView.context, RecyclerView.VERTICAL, true
             )
             it.stepListView.attachTouchHelper()
                 .canDrag(true)
                 .canSwipe(true)
-                .onMove(::onFrameItemMove)
+                .onMove(frameManager)
                 .onSwipe(::onFrameItemSwipe)
                 .onStatusChange(::onFrameItemTouchStateChanged)
                 .apply()
             bindOptionButton(it)
         }
-    }
-
-    private fun getSpanValue(span: TextSpan): CharSequence {
-        val start = span.start
-        val end = span.end
-        if (start < 0 || end < 0) {
-            return ""
-        }
-        if (start >= end) {
-            return ""
-        }
-        val value = techoItemInfo.value
-        if (start >= value.length || end > value.length) {
-            return ""
-        }
-        return value.substring(start, end)
     }
 
     private fun onFrameItemTouchStateChanged(
@@ -112,22 +100,37 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     ) {
         if (status == ItemTouchState.IDLE) {
             updatePreview()
-        }
-    }
-
-    private fun onFrameItemMove(srcPosition: Int, targetPosition: Int): Boolean {
-        val list = techoItemInfo.spans
-        val indices = list.indices
-        return if (srcPosition in indices && targetPosition in indices) {
-            Collections.swap(list, srcPosition, targetPosition)
-            true
-        } else {
-            false
+            updateFontStyleButton()
         }
     }
 
     private fun onFrameItemSwipe(adapterPosition: Int) {
-        // TODO
+
+    }
+
+    private fun removeFrame(adapterPosition: Int) {
+        techoItemInfo.spans.removeAt(adapterPosition)
+        frameAdapter.notifyItemRemoved(adapterPosition)
+        if (techoItemInfo.spans.indexOf(currentTextSpan) < 0) {
+            if (techoItemInfo.spans.isEmpty()) {
+                addFrame()
+            } else {
+                currentTextSpan = techoItemInfo.spans[techoItemInfo.spans.size - 1]
+                updateFontStyleButton()
+            }
+        }
+        updatePreview()
+    }
+
+    private fun onFrameClick(adapterPosition: Int) {
+        val span = techoItemInfo.spans[adapterPosition]
+        if (span == currentTextSpan) {
+            return
+        }
+        val lastIndex = techoItemInfo.spans.indexOf(currentTextSpan)
+        currentTextSpan = span
+        frameAdapter.notifyItemChanged(adapterPosition)
+        frameAdapter.notifyItemChanged(lastIndex)
     }
 
     private fun bindOptionButton(b: PanelTextOptionBinding) {
@@ -182,11 +185,18 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         )
     }
 
+    private fun updateFontStyleButton() {
+        val textSpan = currentTextSpan
+        fontStyleHolderList.forEach {
+            it.check(textSpan)
+        }
+    }
+
     private fun onFontStyleChanged(style: FontStyle, has: Boolean) {
         if (has) {
-            currentTextSpan.addStyle(style)
+            frameManager.currentTextSpan.addStyle(style)
         } else {
-            currentTextSpan.clearStyle(style)
+            frameManager.currentTextSpan.clearStyle(style)
         }
         updatePreview()
     }
@@ -216,23 +226,16 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     override fun onOpen(info: T) {
         super.onOpen(info)
         info.copyTo(techoItemInfo)
-        addFrame()
         tryUse(binding) {
             it.textSelectorView.text = info.value
-            frameAdapter.notifyDataSetChanged()
         }
+        frameManager.init(info.value)
         updatePreview()
     }
 
-    private fun addFrame() {
-        val newSpan = TextSpan()
-        currentTextSpan = newSpan
-        techoItemInfo.spans.add(newSpan)
-    }
-
     override fun onSelectedRangChanged(start: Int, end: Int) {
-        currentTextSpan.start = start
-        currentTextSpan.end = end
+        frameManager.currentTextSpan.start = start
+        frameManager.currentTextSpan.end = end
         updatePreview()
     }
 
@@ -275,28 +278,174 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     private class FontStyleFrameHolder(
-        private val binding: ItemPanelTextOptionFrameBinding
+        private val binding: ItemPanelTextOptionFrameBinding,
+        private val onItemClickListener: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(text: CharSequence) {
+
+        init {
+            itemView.setOnClickListener { onItemClickListener(adapterPosition) }
+        }
+
+        fun bind(text: CharSequence, isSelected: Boolean) {
             binding.labelView.text = text
+            binding.selectedIcon.isVisible = isSelected
+        }
+    }
+
+    private class AddFontStyleFrameHolder(
+        binding: ItemPanelTextOptionFrameAddBinding,
+        private val onItemClickListener: () -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener { onItemClickListener() }
         }
     }
 
     private class FontStyleFrameAdapter(
         private val list: List<TextSpan>,
-        private val textProvider: (TextSpan) -> CharSequence
-    ) : RecyclerView.Adapter<FontStyleFrameHolder>() {
+        private val textProvider: (TextSpan) -> CharSequence,
+        private val isSelected: (TextSpan) -> Boolean,
+        private val onAddButtonClick: () -> Unit,
+        private val onFrameClick: (Int) -> Unit
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FontStyleFrameHolder {
-            return FontStyleFrameHolder(parent.bind())
+        companion object {
+            private const val STYLE_ADD = 0
+            private const val STYLE_FRAME = 1
         }
 
-        override fun onBindViewHolder(holder: FontStyleFrameHolder, position: Int) {
-            holder.bind(textProvider(list[position]))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return when (viewType) {
+                STYLE_ADD -> {
+                    AddFontStyleFrameHolder(parent.bind(), onAddButtonClick)
+                }
+                else -> {
+                    FontStyleFrameHolder(parent.bind(), onFrameClick)
+                }
+            }
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is FontStyleFrameHolder) {
+                val textSpan = list[position]
+                holder.bind(textProvider(textSpan), isSelected(textSpan))
+            }
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            if (position >= list.size) {
+                return STYLE_ADD
+            }
+            return STYLE_FRAME
         }
 
         override fun getItemCount(): Int {
-            return list.size
+            return list.size + 1
+        }
+
+    }
+
+    private class FrameManager(
+        private val spanList: MutableList<TextSpan>,
+        private val notifyFrameChanged: () -> Unit,
+        private val onFrameClick: (Int) -> Unit,
+        private val contextProvider: () -> Activity?
+    ) : OnItemSwipeCallback, OnItemMoveCallback {
+
+        private var currentInfoValue = ""
+
+        var currentTextSpan = TextSpan()
+            private set
+
+        val frameAdapter = FontStyleFrameAdapter(
+            spanList,
+            ::getSpanValue,
+            ::isCurrentSpan,
+            { addFrame(true) },
+            onFrameClick
+        )
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun init(value: String) {
+            currentInfoValue = value
+            if (spanList.isEmpty()) {
+                addFrame(false)
+            }
+            frameAdapter.notifyDataSetChanged()
+            notifyFrameChanged()
+        }
+
+        private fun addFrame(update: Boolean) {
+            val newSpan = TextSpan()
+            currentTextSpan = newSpan
+            spanList.add(newSpan)
+            if (update) {
+                frameAdapter.notifyItemInserted(spanList.size - 1)
+                notifyFrameChanged()
+            }
+        }
+
+        private fun isCurrentSpan(span: TextSpan): Boolean {
+            return currentTextSpan == span
+        }
+
+        private fun getSpanValue(span: TextSpan): CharSequence {
+            val start = span.start
+            val end = span.end
+            if (start < 0 || end < 0) {
+                return ""
+            }
+            if (start >= end) {
+                return ""
+            }
+            val value = currentInfoValue
+            if (start >= value.length || end > value.length) {
+                return ""
+            }
+            return value.substring(start, end)
+        }
+
+        private fun removeFrame(adapterPosition: Int) {
+            spanList.removeAt(adapterPosition)
+            frameAdapter.notifyItemRemoved(adapterPosition)
+            if (spanList.indexOf(currentTextSpan) < 0) {
+                if (spanList.isEmpty()) {
+                    addFrame(false)
+                    frameAdapter.notifyItemInserted(0)
+                } else {
+                    val position = spanList.size - 1
+                    currentTextSpan = spanList[position]
+                    frameAdapter.notifyItemChanged(position)
+                }
+            }
+            notifyFrameChanged()
+        }
+
+        override fun onSwipe(adapterPosition: Int) {
+            val c = contextProvider() ?: return
+            MaterialAlertDialogBuilder(c)
+                .setTitle(R.string.title_remove_font_style_frame)
+                .setMessage(R.string.message_remove_font_style_frame)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                    frameAdapter.notifyItemChanged(adapterPosition)
+                }
+                .setPositiveButton(R.string.remove) { dialog, _ ->
+                    dialog.dismiss()
+                    removeFrame(adapterPosition)
+                }
+                .show()
+        }
+
+        override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+            val list = spanList
+            val indices = list.indices
+            return if (srcPosition in indices && targetPosition in indices) {
+                Collections.swap(list, srcPosition, targetPosition)
+                true
+            } else {
+                false
+            }
         }
 
     }
