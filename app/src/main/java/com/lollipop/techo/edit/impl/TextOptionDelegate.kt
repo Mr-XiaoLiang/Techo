@@ -36,8 +36,6 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             return binding?.backgroundView
         }
 
-    private val fontStyleHolderList = ArrayList<OptionButtonHelper>(FontStyle.values().size)
-
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
     private val techoItemInfo = TechoItem.Text()
@@ -48,6 +46,10 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         ::updatePreview,
         ::updateFontStyleButton
     )
+
+    private val optionButtonHelper = OptionButtonHelper { style, has ->
+        frameManager.changeCurrentStyle(style, has)
+    }
 
     override fun onCreateView(container: ViewGroup): View {
         binding?.let {
@@ -92,62 +94,19 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     private fun bindOptionButton(b: PanelTextOptionBinding) {
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.blurOptionBtn,
-                FontStyle.Blur,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.boldOptionBtn,
-                FontStyle.Bold,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.strikethroughOptionBtn,
-                FontStyle.Strikethrough,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.subscriptOptionBtn,
-                FontStyle.Subscript,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.superscriptOptionBtn,
-                FontStyle.Superscript,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.italicOptionBtn,
-                FontStyle.Italic,
-                ::onFontStyleChanged
-            )
-        )
-        fontStyleHolderList.add(
-            OptionButtonHelper.bind(
-                b.underlinedOptionBtn,
-                FontStyle.Underline,
-                ::onFontStyleChanged
-            )
+        optionButtonHelper.bind(
+            b.blurOptionBtn to FontStyle.Blur,
+            b.boldOptionBtn to FontStyle.Bold,
+            b.strikethroughOptionBtn to FontStyle.Strikethrough,
+            b.subscriptOptionBtn to FontStyle.Subscript,
+            b.superscriptOptionBtn to FontStyle.Superscript,
+            b.italicOptionBtn to FontStyle.Italic,
+            b.underlinedOptionBtn to FontStyle.Underline,
         )
     }
 
     private fun updateFontStyleButton() {
-        val textSpan = frameManager.currentTextSpan
-        fontStyleHolderList.forEach {
-            it.check(textSpan)
-        }
+        optionButtonHelper.check(frameManager.currentTextSpan)
     }
 
     private fun onFontStyleChanged(style: FontStyle, has: Boolean) {
