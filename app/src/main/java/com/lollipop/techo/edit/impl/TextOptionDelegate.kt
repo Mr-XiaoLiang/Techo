@@ -42,7 +42,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private val frameManager = FrameManager(
         techoItemInfo.spans,
-        { context },
+        ::context,
         ::updatePreview,
         ::updateFontStyleButton
     )
@@ -119,7 +119,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             it.doneBtn.tintByNotObvious(pigment)
             it.optionLinearLayout.let { group ->
                 val childCount = group.childCount
-                val optionColor = 0xFF333333.toInt()
+                val optionColor = it.root.context.getColor(R.color.text_theme)
                 for (index in 0 until childCount) {
                     group.getChildAt(index)?.let { child ->
                         if (child.id != R.id.colorOptionBtn && child is ImageView) {
