@@ -129,7 +129,6 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 }
             }
             it.scrollBar.color = pigment.secondary
-//            it.textSelectorView.setTextColor(pigment.onSecondaryBody)
         }
         selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
     }
