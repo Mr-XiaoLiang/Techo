@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.lollipop.base.util.onClick
 import kotlin.math.abs
 
 /**
@@ -13,7 +12,8 @@ import kotlin.math.abs
  * @date 2021/10/19 22:39
  * 圆形的展开动画管理组
  */
-class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
+class CircleAnimationGroup : Animator.AnimatorListener,
+    ValueAnimator.AnimatorUpdateListener {
 
     companion object {
         private const val MIN = 0F
@@ -24,10 +24,9 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
         private const val LENGTH = MAX - MIN
     }
 
-    private val inactiveViewList = ArrayList<T>()
-    private val activeViewList = ArrayList<T>()
+    private val holderList = ArrayList<Holder>()
     private var centerView: View? = null
-    private var listenerOption:ListenerOption? = null
+    private var listenerOption: ListenerOption? = null
 
     private var animationProgress = 0F
 
@@ -43,32 +42,9 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
             return animationProgress >= OPENED
         }
 
-    fun addPlanet(vararg views: T) {
-        activeViewList.addAll(views)
-    }
-
-    fun addPlanet(vararg views: Pair<T, Boolean>) {
-        views.forEach {
-            if (it.second) {
-                activeViewList.add(it.first)
-            } else {
-                inactiveViewList.add(it.first)
-            }
-        }
-    }
-
-    fun onPlanetClick(callback: (T) -> Unit) {
-        activeViewList.forEach { planet ->
-            (planet as View).onClick{
-                callback(planet)
-            }
-        }
-    }
-
-    fun removePlanet(vararg views: View) {
-        val elements = views.toSet()
-        activeViewList.removeAll(elements)
-        inactiveViewList.removeAll(elements)
+    fun reset(list: List<Holder>) {
+        holderList.clear()
+        holderList.addAll(list)
     }
 
     fun setCenterView(view: View) {
@@ -123,19 +99,17 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
 
     fun destroy() {
         listenerOption = null
-        inactiveViewList.clear()
-        activeViewList.clear()
+        holderList.clear()
         centerView = null
         valueAnimator.cancel()
     }
 
     private fun visibleChange(visible: Boolean) {
-        activeViewList.forEach {
-            it.isInvisible = !visible
-        }
-        if (!visible) {
-            inactiveViewList.forEach {
-                it.isVisible = false
+        holderList.forEach { holder ->
+            if (holder.isEnable) {
+                holder.view.isInvisible = !visible
+            } else {
+                holder.view.isVisible = false
             }
         }
     }
@@ -145,8 +119,10 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
         val center = centerView ?: return
         val centerX = half(center.left, center.right)
         val centerY = half(center.top, center.bottom)
-        activeViewList.forEach {
-            updateView(it, centerX, centerY, progress)
+        holderList.forEach { holder ->
+            if (holder.isEnable) {
+                updateView(holder.view, centerX, centerY, progress)
+            }
         }
         listenerOption?.onProgressUpdate?.invoke(progress)
     }
@@ -212,24 +188,34 @@ class CircleAnimationGroup<T: View> : Animator.AnimatorListener, ValueAnimator.A
         fun onShowCalled(callback: () -> Unit) {
             onShowCalled = callback
         }
+
         fun onShowStart(callback: () -> Unit) {
             onShowStart = callback
         }
+
         fun onShowEnd(callback: () -> Unit) {
             onShowEnd = callback
         }
+
         fun onHideCalled(callback: () -> Unit) {
             onHideCalled = callback
         }
+
         fun onHideStart(callback: () -> Unit) {
             onHideStart = callback
         }
+
         fun onHideEnd(callback: () -> Unit) {
             onHideEnd = callback
         }
+
         fun onProgressUpdate(callback: (Float) -> Unit) {
             onProgressUpdate = callback
         }
+    }
+
+    open class Holder(val view: View) {
+        open val isEnable: Boolean = true
     }
 
 }

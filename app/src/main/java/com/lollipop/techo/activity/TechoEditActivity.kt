@@ -15,8 +15,8 @@ import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
+import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.data.TechoItemType.*
-import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
@@ -73,8 +73,10 @@ class TechoEditActivity : HeaderActivity(),
         get() = floatingBinding.root
 
     private val circleAnimationGroup by lazy {
-        CircleAnimationGroup<FloatingActionButton>()
+        CircleAnimationGroup()
     }
+
+    private val floatingButtonManger = FloatingButtonManger()
 
     private val techoId by lazy {
         intent.getIntExtra(PARAMETER_TECHO_ID, 0)
@@ -121,23 +123,24 @@ class TechoEditActivity : HeaderActivity(),
 
     private fun initMenuBtn() {
         circleAnimationGroup.setCenterView(floatingBinding.floatingMenuBtn)
-        circleAnimationGroup.addPlanet(
-            floatingBinding.floatingTextBtn to true,
-            floatingBinding.floatingNumberBtn to true,
-            floatingBinding.floatingCheckboxBtn to true,
-            floatingBinding.floatingPhotoBtn to true,
-            floatingBinding.floatingSplitBtn to true,
-            floatingBinding.floatingTest6 to false,
-            floatingBinding.floatingTest7 to false,
-            floatingBinding.floatingTest8 to false,
-            floatingBinding.floatingTest9 to false,
-            floatingBinding.floatingTest10 to false,
-            floatingBinding.floatingTest11 to false,
-            floatingBinding.floatingTest12 to false,
-            floatingBinding.floatingTest13 to false,
-            floatingBinding.floatingTest14 to false,
+        floatingButtonManger.bind(
+            floatingBinding.floatingTextBtn to Text,
+            floatingBinding.floatingNumberBtn to Number,
+            floatingBinding.floatingCheckboxBtn to CheckBox,
+            floatingBinding.floatingPhotoBtn to Photo,
+            floatingBinding.floatingSplitBtn to Split,
+            floatingBinding.floatingTest6 to null,
+            floatingBinding.floatingTest7 to null,
+            floatingBinding.floatingTest8 to null,
+            floatingBinding.floatingTest9 to null,
+            floatingBinding.floatingTest10 to null,
+            floatingBinding.floatingTest11 to null,
+            floatingBinding.floatingTest12 to null,
+            floatingBinding.floatingTest13 to null,
+            floatingBinding.floatingTest14 to null,
         )
-        circleAnimationGroup.onPlanetClick(::onFloatBtnClick)
+        floatingButtonManger.setup(circleAnimationGroup)
+        floatingButtonManger.onClick(::onFloatBtnClick)
         circleAnimationGroup.bindListener {
             onProgressUpdate { progress ->
                 floatingBinding.floatingMenuBtn.rotation = progress * 135
@@ -198,25 +201,9 @@ class TechoEditActivity : HeaderActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    private fun onFloatBtnClick(btn: FloatingActionButton) {
+    private fun onFloatBtnClick(btn: FloatingActionButton,type: TechoItemType) {
         floatingBinding.quickAddButton.setImageDrawable(btn.drawable)
-        when (btn) {
-            floatingBinding.floatingTextBtn -> {
-                quickAddType = Text
-            }
-            floatingBinding.floatingNumberBtn -> {
-                quickAddType = Number
-            }
-            floatingBinding.floatingCheckboxBtn -> {
-                quickAddType = CheckBox
-            }
-            floatingBinding.floatingPhotoBtn -> {
-                quickAddType = Photo
-            }
-            floatingBinding.floatingSplitBtn -> {
-                quickAddType = Split
-            }
-        }
+        quickAddType = type
         circleAnimationGroup.close()
         addItemByType()
     }
@@ -275,6 +262,56 @@ class TechoEditActivity : HeaderActivity(),
         editManager.openEditPanel(adapterPosition, item) { index, _ ->
             viewBinding.contentListView.adapter?.notifyItemChanged(index)
         }
+    }
+
+    private class FloatingButtonManger {
+        private val holderList = ArrayList<FloatingButtonHolder>()
+
+        private var clickCallback: ((FloatingActionButton, TechoItemType) -> Unit) = { _, _ -> }
+
+        fun bind(vararg views: Pair<FloatingActionButton, TechoItemType?>) {
+            views.forEach {
+                holderList.add(FloatingButtonHolder(it.first, it.second, ::onHolderClick))
+            }
+        }
+
+        fun setup(group: CircleAnimationGroup) {
+            group.reset(holderList)
+        }
+
+        private fun onHolderClick(holder: FloatingButtonHolder) {
+            if (holder.isEnable && holder.type != null) {
+                this.clickCallback(holder.button, holder.type)
+            }
+        }
+
+        fun onClick(callback: (FloatingActionButton, TechoItemType) -> Unit) {
+            this.clickCallback = callback
+        }
+
+    }
+
+    private class FloatingButtonHolder(
+        val button: FloatingActionButton,
+        val type: TechoItemType?,
+        private val onClickCallback: (FloatingButtonHolder) -> Unit
+    ) : CircleAnimationGroup.Holder(button), View.OnClickListener {
+
+        init {
+            view.setOnClickListener(this)
+        }
+
+        override val isEnable: Boolean
+            get() {
+                return type != null
+            }
+
+        override fun onClick(v: View?) {
+            type?.let {
+                onClickCallback(this)
+            }
+        }
+
     }
 
 }
