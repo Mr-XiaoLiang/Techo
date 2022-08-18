@@ -19,7 +19,6 @@ import com.lollipop.techo.databinding.ItemPanelTextOptionFrameBinding
 import java.util.*
 
 internal class FrameManager(
-    private val spanList: MutableList<TextSpan>,
     private val contextProvider: () -> Activity?,
     private val updatePreview: () -> Unit,
     private val updateOptionButton: () -> Unit,
@@ -30,6 +29,8 @@ internal class FrameManager(
     var currentTextSpan = TextSpan()
         private set
 
+    private val spanList = ArrayList<TextSpan>()
+
     val frameAdapter = FontStyleFrameAdapter(
         spanList,
         ::getSpanValue,
@@ -39,8 +40,13 @@ internal class FrameManager(
     )
 
     @SuppressLint("NotifyDataSetChanged")
-    fun init(value: String) {
+    fun init(value: String, spans: List<TextSpan>) {
         currentInfoValue = value
+        spanList.clear()
+        spanList.trimToSize()
+        spans.forEach {
+            spanList.add(0, it)
+        }
         if (spanList.isEmpty()) {
             addFrame(false)
         }
@@ -49,12 +55,19 @@ internal class FrameManager(
         updateOptionButton()
     }
 
+    fun syncSpan(outList: MutableList<TextSpan>) {
+        outList.clear()
+        spanList.forEach {
+            outList.add(0, it)
+        }
+    }
+
     private fun addFrame(update: Boolean) {
         val newSpan = TextSpan()
         currentTextSpan = newSpan
-        spanList.add(newSpan)
+        spanList.add(0, newSpan)
         if (update) {
-            frameAdapter.notifyItemInserted(spanList.size - 1)
+            frameAdapter.notifyItemInserted(0)
             updatePreview()
             updateOptionButton()
         }
@@ -88,7 +101,7 @@ internal class FrameManager(
                 addFrame(false)
                 frameAdapter.notifyItemInserted(0)
             } else {
-                val position = spanList.size - 1
+                val position = 0
                 currentTextSpan = spanList[position]
                 frameAdapter.notifyItemChanged(position)
             }

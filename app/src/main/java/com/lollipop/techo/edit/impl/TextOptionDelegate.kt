@@ -41,7 +41,6 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     private val techoItemInfo = TechoItem.Text()
 
     private val frameManager = FrameManager(
-        techoItemInfo.spans,
         ::context,
         ::updatePreview,
         ::updateFontStyleButton
@@ -80,7 +79,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
             it.stepListView.adapter = frameManager.frameAdapter
             it.stepListView.layoutManager = LinearLayoutManager(
-                it.stepListView.context, RecyclerView.VERTICAL, true
+                it.stepListView.context, RecyclerView.VERTICAL, false
             )
             it.stepListView.attachTouchHelper()
                 .canDrag(true)
@@ -140,7 +139,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         tryUse(binding) {
             it.textSelectorView.text = info.value
         }
-        frameManager.init(info.value)
+        frameManager.init(info.value, techoItemInfo.spans)
         updatePreview()
     }
 
@@ -152,6 +151,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private fun updatePreview() {
         tryUse(binding) {
+            frameManager.syncSpan(techoItemInfo.spans)
             RichTextHelper.startRichFlow().addRichInfo(techoItemInfo).into(it.previewView)
         }
     }
