@@ -55,6 +55,17 @@ internal class FrameManager(
         updateOptionButton()
     }
 
+    fun onCurrentSpanRangeChanged(start: Int, end: Int) {
+        currentTextSpan.start = start
+        currentTextSpan.end = end
+        val index = spanList.indexOf(currentTextSpan)
+        if (index < 0) {
+            return
+        }
+        frameAdapter.notifyItemInserted(index)
+        updatePreview()
+    }
+
     fun syncSpan(outList: MutableList<TextSpan>) {
         outList.clear()
         spanList.forEach {

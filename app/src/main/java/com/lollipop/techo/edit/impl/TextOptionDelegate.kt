@@ -144,9 +144,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     override fun onSelectedRangChanged(start: Int, end: Int) {
-        frameManager.currentTextSpan.start = start
-        frameManager.currentTextSpan.end = end
-        updatePreview()
+        frameManager.onCurrentSpanRangeChanged(start, end)
     }
 
     private fun updatePreview() {
