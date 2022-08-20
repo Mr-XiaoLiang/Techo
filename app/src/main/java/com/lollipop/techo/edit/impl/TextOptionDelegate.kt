@@ -38,8 +38,6 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
-    private val techoItemInfo = TechoItem.Text()
-
     private val frameManager = FrameManager(
         ::context,
         ::updatePreview,
@@ -77,17 +75,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             it.textSelectorView.background = painter
             selectedHelperPrinter = painter
 
-            it.stepListView.adapter = frameManager.frameAdapter
-            it.stepListView.layoutManager = LinearLayoutManager(
-                it.stepListView.context, RecyclerView.VERTICAL, false
-            )
-            it.stepListView.attachTouchHelper()
-                .canDrag(true)
-                .canSwipe(true)
-                .onMove(frameManager)
-                .onSwipe(frameManager)
-                .onStatusChange(frameManager)
-                .apply()
+            frameManager.bindTo(it.stepListView)
             bindOptionButton(it)
         }
     }
@@ -135,12 +123,10 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     @SuppressLint("NotifyDataSetChanged")
     override fun onOpen(info: T) {
         super.onOpen(info)
-        info.copyTo(techoItemInfo)
         tryUse(binding) {
             it.textSelectorView.text = info.value
         }
-        frameManager.init(info.value, techoItemInfo.spans)
-        updatePreview()
+        frameManager.init(info)
     }
 
     override fun onSelectedRangChanged(start: Int, end: Int) {
@@ -149,8 +135,7 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
 
     private fun updatePreview() {
         tryUse(binding) {
-            frameManager.syncSpan(techoItemInfo.spans)
-            RichTextHelper.startRichFlow().addRichInfo(techoItemInfo).into(it.previewView)
+            RichTextHelper.startRichFlow().addRichInfo(frameManager.techoItemInfo).into(it.previewView)
         }
     }
 

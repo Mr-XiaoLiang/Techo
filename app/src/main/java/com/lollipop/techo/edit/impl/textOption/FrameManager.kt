@@ -4,15 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.lollipop.base.list.ItemTouchState
-import com.lollipop.base.list.OnItemMoveCallback
-import com.lollipop.base.list.OnItemSwipeCallback
-import com.lollipop.base.list.OnItemTouchStateChangedListener
+import com.lollipop.base.list.*
 import com.lollipop.base.util.bind
 import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
 import com.lollipop.techo.databinding.ItemPanelTextOptionFrameAddBinding
 import com.lollipop.techo.databinding.ItemPanelTextOptionFrameBinding
@@ -24,14 +23,19 @@ internal class FrameManager(
     private val updateOptionButton: () -> Unit,
 ) : OnItemSwipeCallback, OnItemMoveCallback, OnItemTouchStateChangedListener {
 
-    private var currentInfoValue = ""
+    val techoItemInfo = TechoItem.Text()
+
+    private val currentInfoValue: String
+        get() {
+            return techoItemInfo.value
+        }
 
     var currentTextSpan = TextSpan()
         private set
 
     private val spanList = ArrayList<TextSpan>()
 
-    val frameAdapter = FontStyleFrameAdapter(
+    private val frameAdapter = FontStyleFrameAdapter(
         spanList,
         ::getSpanValue,
         ::isCurrentSpan,
@@ -40,19 +44,35 @@ internal class FrameManager(
     )
 
     @SuppressLint("NotifyDataSetChanged")
-    fun init(value: String, spans: List<TextSpan>) {
-        currentInfoValue = value
+    fun init(info: TechoItem) {
+        info.copyTo(techoItemInfo)
+
         spanList.clear()
-        spanList.trimToSize()
-        spans.forEach {
+        techoItemInfo.spans.forEach {
             spanList.add(0, it)
         }
         if (spanList.isEmpty()) {
             addFrame(false)
         }
+
         frameAdapter.notifyDataSetChanged()
-        updatePreview()
+
+        callUpdatePreview(false)
         updateOptionButton()
+    }
+
+    fun bindTo(recyclerView: RecyclerView) {
+        recyclerView.adapter = frameAdapter
+        recyclerView.layoutManager = LinearLayoutManager(
+            recyclerView.context, RecyclerView.VERTICAL, false
+        )
+        recyclerView.attachTouchHelper()
+            .canDrag(true)
+            .canSwipe(true)
+            .onMove(this)
+            .onSwipe(this)
+            .onStatusChange(this)
+            .apply()
     }
 
     fun onCurrentSpanRangeChanged(start: Int, end: Int) {
@@ -63,10 +83,17 @@ internal class FrameManager(
             return
         }
         frameAdapter.notifyItemInserted(index)
+        callUpdatePreview(false)
+    }
+
+    private fun callUpdatePreview(sync: Boolean) {
+        if (sync) {
+            syncSpan(techoItemInfo.spans)
+        }
         updatePreview()
     }
 
-    fun syncSpan(outList: MutableList<TextSpan>) {
+    private fun syncSpan(outList: MutableList<TextSpan>) {
         outList.clear()
         spanList.forEach {
             outList.add(0, it)
@@ -79,7 +106,7 @@ internal class FrameManager(
         spanList.add(0, newSpan)
         if (update) {
             frameAdapter.notifyItemInserted(0)
-            updatePreview()
+            callUpdatePreview(true)
             updateOptionButton()
         }
     }
@@ -117,7 +144,7 @@ internal class FrameManager(
                 frameAdapter.notifyItemChanged(position)
             }
         }
-        updatePreview()
+        callUpdatePreview(true)
         updateOptionButton()
     }
 
@@ -139,7 +166,7 @@ internal class FrameManager(
         } else {
             currentTextSpan.clearStyle(style)
         }
-        updatePreview()
+        callUpdatePreview(false)
     }
 
     override fun onSwipe(adapterPosition: Int) {
@@ -167,7 +194,7 @@ internal class FrameManager(
         } else {
             false
         }
-        updatePreview()
+        callUpdatePreview(true)
         return result
     }
 
@@ -176,7 +203,7 @@ internal class FrameManager(
         status: ItemTouchState
     ) {
         if (status == ItemTouchState.IDLE) {
-            updatePreview()
+            callUpdatePreview(true)
             updateOptionButton()
         }
     }
