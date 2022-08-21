@@ -48,16 +48,14 @@ internal class FrameManager(
         info.copyTo(techoItemInfo)
 
         spanList.clear()
-        techoItemInfo.spans.forEach {
-            spanList.add(0, it)
-        }
         if (spanList.isEmpty()) {
             addFrame(false)
         }
-
         frameAdapter.notifyDataSetChanged()
 
-        callUpdatePreview(false)
+        syncSpan()
+
+        updatePreview()
         updateOptionButton()
     }
 
@@ -82,18 +80,12 @@ internal class FrameManager(
         if (index < 0) {
             return
         }
-        frameAdapter.notifyItemInserted(index)
-        callUpdatePreview(false)
-    }
-
-    private fun callUpdatePreview(sync: Boolean) {
-        if (sync) {
-            syncSpan(techoItemInfo.spans)
-        }
+        frameAdapter.callChanged(index)
         updatePreview()
     }
 
-    private fun syncSpan(outList: MutableList<TextSpan>) {
+    private fun syncSpan() {
+        val outList = techoItemInfo.spans
         outList.clear()
         spanList.forEach {
             outList.add(0, it)
@@ -104,9 +96,10 @@ internal class FrameManager(
         val newSpan = TextSpan()
         currentTextSpan = newSpan
         spanList.add(0, newSpan)
+        syncSpan()
         if (update) {
-            frameAdapter.notifyItemInserted(0)
-            callUpdatePreview(true)
+            frameAdapter.callInsert(0)
+            updatePreview()
             updateOptionButton()
         }
     }
@@ -132,31 +125,32 @@ internal class FrameManager(
     }
 
     private fun removeFrame(adapterPosition: Int) {
-        spanList.removeAt(adapterPosition)
+        spanList.removeAt(frameAdapter.positionOffset(adapterPosition))
         frameAdapter.notifyItemRemoved(adapterPosition)
         if (spanList.indexOf(currentTextSpan) < 0) {
             if (spanList.isEmpty()) {
                 addFrame(false)
-                frameAdapter.notifyItemInserted(0)
+                frameAdapter.callInsert(0)
             } else {
                 val position = 0
                 currentTextSpan = spanList[position]
-                frameAdapter.notifyItemChanged(position)
+                frameAdapter.callChanged(position)
             }
         }
-        callUpdatePreview(true)
+        syncSpan()
+        updatePreview()
         updateOptionButton()
     }
 
-    private fun onFrameClick(adapterPosition: Int) {
-        val span = spanList[adapterPosition]
+    private fun onFrameClick(dataPosition: Int) {
+        val span = spanList[dataPosition]
         if (span == currentTextSpan) {
             return
         }
         val lastIndex = spanList.indexOf(currentTextSpan)
         currentTextSpan = span
-        frameAdapter.notifyItemChanged(adapterPosition)
-        frameAdapter.notifyItemChanged(lastIndex)
+        frameAdapter.callChanged(dataPosition)
+        frameAdapter.callChanged(lastIndex)
         updateOptionButton()
     }
 
@@ -166,7 +160,7 @@ internal class FrameManager(
         } else {
             currentTextSpan.clearStyle(style)
         }
-        callUpdatePreview(false)
+        updatePreview()
     }
 
     override fun onSwipe(adapterPosition: Int) {
@@ -186,15 +180,18 @@ internal class FrameManager(
     }
 
     override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+        val dataSrc = srcPosition - 1
+        val dataTarget = targetPosition - 1
         val list = spanList
         val indices = list.indices
-        val result = if (srcPosition in indices && targetPosition in indices) {
-            Collections.swap(list, srcPosition, targetPosition)
+        val result = if (dataSrc in indices && dataTarget in indices) {
+            Collections.swap(list, dataSrc, dataTarget)
             true
         } else {
             false
         }
-        callUpdatePreview(true)
+        syncSpan()
+        updatePreview()
         return result
     }
 
@@ -203,7 +200,8 @@ internal class FrameManager(
         status: ItemTouchState
     ) {
         if (status == ItemTouchState.IDLE) {
-            callUpdatePreview(true)
+            syncSpan()
+            updatePreview()
             updateOptionButton()
         }
     }
@@ -227,20 +225,36 @@ internal class FrameManager(
                     AddFontStyleFrameHolder(parent.bind(), onAddButtonClick)
                 }
                 else -> {
-                    FontStyleFrameHolder(parent.bind(), onFrameClick)
+                    FontStyleFrameHolder(parent.bind(), ::onItemClick)
                 }
             }
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is FontStyleFrameHolder) {
-                val textSpan = list[position]
+                val textSpan = list[positionOffset(position)]
                 holder.bind(textProvider(textSpan), isSelected(textSpan))
             }
         }
 
+        private fun onItemClick(position: Int) {
+            onFrameClick(position - 1)
+        }
+
+        fun callInsert(dataPosition: Int) {
+            notifyItemInserted(dataPosition + 1)
+        }
+
+        fun callChanged(dataPosition: Int) {
+            notifyItemChanged(dataPosition + 1)
+        }
+
+        fun positionOffset(position: Int): Int {
+            return position - 1
+        }
+
         override fun getItemViewType(position: Int): Int {
-            if (position >= list.size) {
+            if (position == 0) {
                 return STYLE_ADD
             }
             return STYLE_FRAME

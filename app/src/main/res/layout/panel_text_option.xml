@@ -69,6 +69,15 @@
                 app:layout_constraintTop_toBottomOf="@id/splitLine"
                 app:layout_constraintWidth_percent="0.3" />
 
+            <View
+                android:id="@+id/splitLine2"
+                android:layout_width="1px"
+                android:layout_height="0px"
+                android:background="@color/defaultSplit"
+                app:layout_constraintEnd_toEndOf="@id/stepListView"
+                app:layout_constraintTop_toTopOf="@id/stepListView"
+                app:layout_constraintBottom_toBottomOf="@id/stepListView"/>
+
             <HorizontalScrollView
                 android:id="@+id/optionGroup"
                 android:layout_width="0px"
