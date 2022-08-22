@@ -1,7 +1,6 @@
 package com.lollipop.techo.activity
 
-import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.WindowInsetsHelper
@@ -12,7 +11,7 @@ import com.lollipop.techo.util.TextSelectedHelper
 import com.lollipop.techo.util.VectorHelper
 
 class DemoActivity : AppCompatActivity(),
-    TextSelectedHelper.OnSelectedRangChangedListener {
+    TextSelectedHelper.OnSelectedRangeChangedListener {
 
     private val binding: ActivityDemoBinding by lazyBind()
 
@@ -42,7 +41,7 @@ class DemoActivity : AppCompatActivity(),
         binding.testView.fixInsetsByMargin(WindowInsetsHelper.Edge.ALL)
     }
 
-    override fun onSelectedRangChanged(start: Int, end: Int) {
+    override fun onSelectedRangeChanged(start: Int, end: Int) {
 
     }
 

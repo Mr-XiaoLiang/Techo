@@ -73,6 +73,12 @@ internal class FrameManager(
             .apply()
     }
 
+    fun onCurrentSpanFontSizeChanged(size: Int) {
+        currentTextSpan.addStyle(FontStyle.FontSize)
+        currentTextSpan.fontSize = size
+        updatePreview()
+    }
+
     fun onCurrentSpanRangeChanged(start: Int, end: Int) {
         currentTextSpan.start = start
         currentTextSpan.end = end
@@ -94,11 +100,16 @@ internal class FrameManager(
 
     private fun addFrame(update: Boolean) {
         val newSpan = TextSpan()
+        val lastCurrent = currentTextSpan
         currentTextSpan = newSpan
         spanList.add(0, newSpan)
+        val lastSpanPosition = spanList.indexOf(lastCurrent)
         syncSpan()
         if (update) {
             frameAdapter.callInsert(0)
+            if (lastSpanPosition >= 0) {
+                frameAdapter.callChanged(lastSpanPosition)
+            }
             updatePreview()
             updateOptionButton()
         }
@@ -190,6 +201,7 @@ internal class FrameManager(
         } else {
             false
         }
+        frameAdapter.notifyItemMoved(srcPosition, targetPosition)
         syncSpan()
         updatePreview()
         return result

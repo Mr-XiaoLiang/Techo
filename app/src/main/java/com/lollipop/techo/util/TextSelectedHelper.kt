@@ -37,7 +37,7 @@ object TextSelectedHelper {
 
     class Painter private constructor(
         private val option: Option
-    ) : Drawable(), OnSelectedRangChangedListener {
+    ) : Drawable(), OnSelectedRangeChangedListener {
 
         companion object {
             const val RADIUS_MAX = -1
@@ -63,11 +63,11 @@ object TextSelectedHelper {
             invalidateSelf()
         }
 
-        override fun onSelectedRangChanged(start: Int, end: Int) {
-            setSelectedRang(start, end)
+        override fun onSelectedRangeChanged(start: Int, end: Int) {
+            setSelectedRange(start, end)
         }
 
-        fun setSelectedRang(start: Int, end: Int) {
+        fun setSelectedRange(start: Int, end: Int) {
             selectedStart = start
             selectedEnd = end
             log("setSelectedRang:$start, $end")
@@ -238,7 +238,7 @@ object TextSelectedHelper {
 
         private val touchHelper = SingleTouchHelper()
 
-        private val listenerManager = ListenerManager<OnSelectedRangChangedListener>()
+        private val listenerManager = ListenerManager<OnSelectedRangeChangedListener>()
 
         var selectTarget = AUTO
 
@@ -322,11 +322,11 @@ object TextSelectedHelper {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         }
 
-        fun addListener(listener: OnSelectedRangChangedListener) {
+        fun addListener(listener: OnSelectedRangeChangedListener) {
             listenerManager.addListener(listener)
         }
 
-        fun removeListener(listener: OnSelectedRangChangedListener) {
+        fun removeListener(listener: OnSelectedRangeChangedListener) {
             listenerManager.removeListener(listener)
         }
 
@@ -343,20 +343,20 @@ object TextSelectedHelper {
         private fun onRangeChanged(start: Int, end: Int) {
             selectedStart = start
             selectedEnd = end
-            listenerManager.invoke { it.onSelectedRangChanged(start, end) }
+            listenerManager.invoke { it.onSelectedRangeChanged(start, end) }
         }
 
         class Builder {
 
             private var resetWhenTextChanged = true
-            private var rangChangedListener: OnSelectedRangChangedListener? = null
+            private var rangChangedListener: OnSelectedRangeChangedListener? = null
 
             fun resetWhenTextChanged(enable: Boolean): Builder {
                 resetWhenTextChanged = enable
                 return this
             }
 
-            fun onSelectedChanged(listener: OnSelectedRangChangedListener): Builder {
+            fun onSelectedChanged(listener: OnSelectedRangeChangedListener): Builder {
                 rangChangedListener = listener
                 return this
             }
@@ -385,8 +385,8 @@ object TextSelectedHelper {
         )
     }
 
-    fun interface OnSelectedRangChangedListener {
-        fun onSelectedRangChanged(start: Int, end: Int)
+    fun interface OnSelectedRangeChangedListener {
+        fun onSelectedRangeChanged(start: Int, end: Int)
     }
 
     fun interface TextLayoutProvider {

@@ -1,13 +1,12 @@
 package com.lollipop.techo.edit.impl
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.lollipop.base.list.attachTouchHelper
+import com.google.android.material.slider.Slider
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
@@ -23,7 +22,7 @@ import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
 
 open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
-    TextSelectedHelper.OnSelectedRangChangedListener {
+    TextSelectedHelper.OnSelectedRangeChangedListener {
 
     private var binding: PanelTextOptionBinding? = null
 
@@ -75,6 +74,12 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
             it.textSelectorView.background = painter
             selectedHelperPrinter = painter
 
+            it.fontSizeSlider.addOnChangeListener(Slider.OnChangeListener { _, value, fromUser ->
+                if (fromUser) {
+                    frameManager.onCurrentSpanFontSizeChanged(value.toInt())
+                }
+            })
+
             frameManager.bindTo(it.stepListView)
             bindOptionButton(it)
         }
@@ -93,7 +98,11 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
     }
 
     private fun updateFontStyleButton() {
-        optionButtonHelper.check(frameManager.currentTextSpan)
+        tryUse(frameManager.currentTextSpan) {
+            optionButtonHelper.check(it)
+            binding?.fontSizeSlider?.value = it.fontSize.toFloat()
+            selectedHelperPrinter?.setSelectedRange(it.start, it.end)
+        }
     }
 
     private fun onFontStyleChanged(style: FontStyle, has: Boolean) {
@@ -109,13 +118,15 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
                 val optionColor = it.root.context.getColor(R.color.text_theme)
                 for (index in 0 until childCount) {
                     group.getChildAt(index)?.let { child ->
-                        if (child.id != R.id.colorOptionBtn && child is ImageView) {
+                        if (child is ImageView) {
                             child.tintBySelectState(pigment, optionColor)
                         }
                     }
                 }
             }
             it.scrollBar.color = pigment.secondary
+            it.fontSizeSlider.thumbTintList = ColorStateList.valueOf(pigment.secondary)
+            it.fontSizeSlider.trackTintList = ColorStateList.valueOf(pigment.secondaryVariant)
         }
         selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
     }
@@ -129,13 +140,15 @@ open class BaseOptionDelegate<T : TechoItem> : BottomEditDelegate<T>(),
         frameManager.init(info)
     }
 
-    override fun onSelectedRangChanged(start: Int, end: Int) {
+    override fun onSelectedRangeChanged(start: Int, end: Int) {
         frameManager.onCurrentSpanRangeChanged(start, end)
     }
 
     private fun updatePreview() {
         tryUse(binding) {
-            RichTextHelper.startRichFlow().addRichInfo(frameManager.techoItemInfo).into(it.previewView)
+            RichTextHelper.startRichFlow()
+                .addRichInfo(frameManager.techoItemInfo)
+                .into(it.previewView)
         }
     }
 
