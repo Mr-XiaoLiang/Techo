@@ -95,7 +95,7 @@ class CircularProgressDrawable : Drawable(), Animatable, ValueAnimator.AnimatorU
         return rotateAnimator.isRunning
     }
 
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
+    override fun onAnimationUpdate(animation: ValueAnimator) {
         if (animation == rotateAnimator) {
             degrees = animation.animatedValue as Float
             invalidateSelf()

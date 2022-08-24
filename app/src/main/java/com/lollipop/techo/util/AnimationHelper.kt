@@ -138,28 +138,28 @@ class AnimationHelper(
         onUpdate.invoke(progress)
     }
 
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
+    override fun onAnimationUpdate(animation: ValueAnimator) {
         if (animation == animator) {
             onProgressChange(animation.animatedValue as Float)
         }
     }
 
-    override fun onAnimationStart(animation: Animator?) {
+    override fun onAnimationStart(animation: Animator) {
         if (animation == animator) {
             onStartCallback?.invoke(progress)
         }
     }
 
-    override fun onAnimationEnd(animation: Animator?) {
+    override fun onAnimationEnd(animation: Animator) {
         if (animation == animator) {
             onEndCallback?.invoke(progress, false)
         }
     }
 
-    override fun onAnimationCancel(animation: Animator?) {
+    override fun onAnimationCancel(animation: Animator) {
     }
 
-    override fun onAnimationRepeat(animation: Animator?) {
+    override fun onAnimationRepeat(animation: Animator) {
     }
 
 

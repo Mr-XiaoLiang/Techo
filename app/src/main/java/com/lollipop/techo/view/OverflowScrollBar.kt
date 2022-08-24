@@ -210,7 +210,7 @@ class OverflowScrollBar(
             paint.colorFilter = colorFilter
         }
 
-        override fun onBoundsChange(bounds: Rect?) {
+        override fun onBoundsChange(bounds: Rect) {
             super.onBoundsChange(bounds)
             onBarChanged()
         }

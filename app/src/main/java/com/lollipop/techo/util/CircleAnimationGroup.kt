@@ -138,13 +138,13 @@ class CircleAnimationGroup : Animator.AnimatorListener,
         return (value1 + value2) / 2
     }
 
-    override fun onAnimationStart(animation: Animator?) {
+    override fun onAnimationStart(animation: Animator) {
         if (animation == valueAnimator) {
             visibleChange(true)
         }
     }
 
-    override fun onAnimationEnd(animation: Animator?) {
+    override fun onAnimationEnd(animation: Animator) {
         if (animation == valueAnimator) {
             val closed = animationProgress <= CLOSED
             if (closed) {
@@ -156,13 +156,13 @@ class CircleAnimationGroup : Animator.AnimatorListener,
         }
     }
 
-    override fun onAnimationCancel(animation: Animator?) {
+    override fun onAnimationCancel(animation: Animator) {
     }
 
-    override fun onAnimationRepeat(animation: Animator?) {
+    override fun onAnimationRepeat(animation: Animator) {
     }
 
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
+    override fun onAnimationUpdate(animation: ValueAnimator) {
         if (animation == valueAnimator) {
             animationProgress = animation.animatedValue as Float
             update()

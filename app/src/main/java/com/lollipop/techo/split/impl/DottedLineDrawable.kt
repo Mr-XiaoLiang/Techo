@@ -64,7 +64,7 @@ class DottedLineDrawable(context: Context) : SplitDrawable(context) {
         invalidateSelf()
     }
 
-    override fun onBoundsChange(bounds: Rect?) {
+    override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
         updatePath()
     }

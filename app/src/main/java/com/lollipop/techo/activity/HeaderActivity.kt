@@ -141,7 +141,7 @@ abstract class HeaderActivity : BaseActivity() {
         viewBinding.contentLoadingView.hide()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (optionsMenu != 0) {
             menuInflater.inflate(optionsMenu, menu)
             return true

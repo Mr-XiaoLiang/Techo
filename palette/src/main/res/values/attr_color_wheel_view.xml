@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorWheelView">
+        <attr name="slideBarWidth" format="dimension" />
+        <attr name="slideBarInterval" format="dimension" />
+        <attr name="valueSlideBarColor" format="color" />
+        <attr name="alphaSlideBarColor" format="color" />
+    </declare-styleable>
+</resources>
