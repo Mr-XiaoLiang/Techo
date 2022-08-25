@@ -1,8 +1,11 @@
 package com.lollipop.palette
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.MotionEvent
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import kotlin.math.max
 import kotlin.math.min
@@ -17,6 +20,13 @@ class ColorWheelView(
     constructor(context: Context) : this(context, null)
 
     companion object {
+
+        private const val VALUE_SLIDE_START_ANGLE = -45
+        private const val VALUE_SLIDE_END_ANGLE = 45
+
+        private const val ALPHA_SLIDE_START_ANGLE = 135
+        private const val ALPHA_SLIDE_END_ANGLE = 225
+
         private val hueColor by lazy {
             IntArray(361).apply {
                 for (i in indices) {
@@ -26,8 +36,9 @@ class ColorWheelView(
         }
     }
 
-    private var slideBarWidth = 1F
-    private var slideBarInterval = 1F
+    private var slideBarWidth = 0F
+    private var slideBarInterval = 0F
+    private var anchorRadius = 0F
 
     private var valueSlideBarColor = Color.BLACK
     private var alphaSlideBarColor = Color.BLACK
@@ -47,12 +58,16 @@ class ColorWheelView(
     private var hueShader: Shader? = null
     private var wheelShader: Shader? = null
 
+    private var touchTarget = TouchTarget.NONE
+
     private val wheelPaint by lazy {
         Paint().apply {
             isDither = true
             isAntiAlias = true
         }
     }
+
+    private val touchHelper = SingleTouchHelper(::onTouchDown, ::onTouchMove, ::onTouchUp)
 
     init {
         attributeSet?.let { attrs ->
@@ -69,6 +84,9 @@ class ColorWheelView(
             alphaSlideBarColor = typeArray.getColor(
                 R.styleable.ColorWheelView_alphaSlideBarColor, Color.BLACK
             )
+            anchorRadius = typeArray.getDimensionPixelSize(
+                R.styleable.ColorWheelView_anchorRadius, 0
+            ).toFloat()
             typeArray.recycle()
         }
         if (isInEditMode) {
@@ -78,9 +96,61 @@ class ColorWheelView(
         }
     }
 
+    fun reset(@ColorInt color: Int) {
+        hsv.set(color)
+        invalidate()
+    }
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         layoutWheel()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        event ?: return false
+        touchHelper.onTouchEvent(event)
+        return touchTarget != TouchTarget.NONE
+    }
+
+    private fun onTouchDown(x: Float, y: Float) {
+        val touchRadius = AngleCalculator.getLength(wheelCenter.x, wheelCenter.y, x, y)
+        if (touchRadius <= wheelRadius) {
+            touchTarget = TouchTarget.WHEEL
+            return
+        }
+        val angle = AngleCalculator.getCircumferential(wheelCenter.x, wheelCenter.y, x, y)
+        if (angle >= (VALUE_SLIDE_START_ANGLE + 360) || angle <= VALUE_SLIDE_END_ANGLE) {
+            touchTarget = TouchTarget.VALUE
+            return
+        }
+        if (alphaSlideBarEnable && angle >= ALPHA_SLIDE_START_ANGLE && angle <= ALPHA_SLIDE_END_ANGLE) {
+            touchTarget = TouchTarget.ALPHA
+            return
+        }
+        touchTarget = TouchTarget.NONE
+    }
+
+    private fun onTouchMove(offsetX: Float, offsetY: Float) {
+        when (touchTarget) {
+            TouchTarget.NONE -> {
+                return
+            }
+            TouchTarget.ALPHA -> {
+                // TODO()
+            }
+            TouchTarget.VALUE -> {
+                // TODO()
+            }
+            TouchTarget.WHEEL -> {
+                // TODO()
+            }
+        }
+        invalidate()
+    }
+
+    private fun onTouchUp(cancel: Boolean) {
+        touchTarget = TouchTarget.NONE
     }
 
     private fun layoutWheel() {
@@ -141,6 +211,8 @@ class ColorWheelView(
         drawValueBar(canvas)
         // 绘制透明度条
         drawAlphaBar(canvas)
+        // 绘制选中锚点
+        drawAnchor(canvas)
     }
 
     private fun drawHuePanel(canvas: Canvas) {
@@ -219,6 +291,25 @@ class ColorWheelView(
         )
     }
 
+    private fun drawAnchor(canvas: Canvas) {
+        wheelPaint.shader = null
+        wheelPaint.color = hsv.color
+        wheelPaint.style = Paint.Style.FILL
+        val angle = hsv.h / 360
+        val radius = hsv.s * wheelRadius
+        val saveCount = canvas.save()
+        canvas.translate(wheelCenter.x, wheelCenter.y)
+        canvas.rotate(angle)
+        canvas.drawOval(
+            radius - anchorRadius,
+            -anchorRadius,
+            radius + anchorRadius,
+            anchorRadius,
+            wheelPaint
+        )
+        canvas.restoreToCount(saveCount)
+    }
+
     private fun Int.alpha(float: Float): Int {
         val src = this
         val a = min(255, max(0, ((src ushr 24) * float).toInt()))
@@ -230,6 +321,28 @@ class ColorWheelView(
         var s: Float = 0F,
         var v: Float = 0F,
         var a: Float = 0F
-    )
+    ) {
+        fun set(color: Int) {
+            val hsvArray = FloatArray(3)
+            Color.colorToHSV(color, hsvArray)
+            h = hsvArray[0]
+            s = hsvArray[1]
+            v = hsvArray[2]
+            a = Color.alpha(color) / 255F
+        }
+
+        val color: Int
+            get() {
+                return Color.HSVToColor((a * 255).toInt(), floatArrayOf(h, s, v))
+            }
+
+    }
+
+    private enum class TouchTarget {
+        NONE,
+        ALPHA,
+        VALUE,
+        WHEEL;
+    }
 
 }
