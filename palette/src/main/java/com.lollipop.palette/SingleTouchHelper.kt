@@ -5,7 +5,7 @@ import android.view.MotionEvent
 
 internal class SingleTouchHelper(
     private val onTouchDown: (x: Float, y: Float) -> Unit,
-    private val onTouchMove: (offsetX: Float, offsetY: Float) -> Unit,
+    private val onTouchMove: (x: Float, y: Float, offsetX: Float, offsetY: Float) -> Unit,
     private var onTouchUp: (cancel: Boolean) -> Unit
 ) {
 
@@ -54,7 +54,7 @@ internal class SingleTouchHelper(
         val offsetX = x - lastPoint.x
         val offsetY = y - lastPoint.y
         lastPoint.set(x, y)
-        onTouchMove(offsetX, offsetY)
+        onTouchMove(x, y, offsetX, offsetY)
     }
 
     private fun MotionEvent.getPointIndex(): Int {

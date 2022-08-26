@@ -7,11 +7,15 @@
     tools:context=".activity.DemoActivity">
 
     <com.lollipop.palette.ColorWheelView
+        android:id="@+id/colorWheelView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:valueSlideBarColor="?attr/colorPrimary"
+        app:alphaSlideBarColor="?attr/colorSecondary"
         android:padding="30dp"
         app:slideBarWidth="5dp"
-        app:slideBarInterval="5dp"/>
+        app:slideBarInterval="5dp"
+        app:anchorRadius="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

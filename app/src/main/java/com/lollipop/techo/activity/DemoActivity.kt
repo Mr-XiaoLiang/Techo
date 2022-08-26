@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.WindowInsetsHelper
@@ -18,7 +19,10 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-
+        with(binding.colorWheelView) {
+            alphaSlideBarEnable = true
+            reset(Color.RED)
+        }
     }
 
 }

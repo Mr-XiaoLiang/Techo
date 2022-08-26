@@ -1,6 +1,8 @@
 package com.lollipop.palette
 
 import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 internal object AngleCalculator {
@@ -12,15 +14,24 @@ internal object AngleCalculator {
         return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
-//    /**
-//     * 通过圆心角计算位置信息
-//     */
-//    fun getCoordinate(cX: Float, cY: Float, radius: Float, angle: Float): FloatArray {
-//        val radians = Math.toRadians(angle.toDouble())
-//        val x = radius * cos(radians) + cX
-//        val y = radius * sin(radians) + cY
-//        return floatArrayOf(x.toFloat(), y.toFloat())
-//    }
+    /**
+     * 通过圆心角计算位置信息
+     * 数学坐标系中的[0~360]为逆时针旋转，绘图坐标系中是顺时针
+     * 所以这里以顺时针来计算
+     */
+    fun getCoordinate(cX: Float, cY: Float, radius: Float, angle: Float): FloatArray {
+        val radians = Math.toRadians((360 - angle).toDouble())
+        val x = radius * cos(radians) + cX
+        val y = radius * sin(radians) + cY
+        return floatArrayOf(x.toFloat(), y.toFloat())
+    }
+
+    /**
+     * 获取一段弧形的长度
+     */
+    fun getArcLength(radius: Float, angle: Float): Float {
+        return (radius * Math.PI * 2 * angle / 360).toFloat()
+    }
 
     /**
      * 计算圆周角，

@@ -5,6 +5,8 @@
         <attr name="slideBarInterval" format="dimension" />
         <attr name="valueSlideBarColor" format="color" />
         <attr name="alphaSlideBarColor" format="color" />
+        <attr name="alphaSlideBarEnable" format="boolean" />
         <attr name="anchorRadius" format="dimension" />
+        <attr name="color" format="color" />
     </declare-styleable>
 </resources>
