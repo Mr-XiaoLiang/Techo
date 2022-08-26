@@ -20,7 +20,7 @@ internal object AngleCalculator {
      * 所以这里以顺时针来计算
      */
     fun getCoordinate(cX: Float, cY: Float, radius: Float, angle: Float): FloatArray {
-        val radians = Math.toRadians((360 - angle).toDouble())
+        val radians = Math.toRadians(angle.toDouble())
         val x = radius * cos(radians) + cX
         val y = radius * sin(radians) + cY
         return floatArrayOf(x.toFloat(), y.toFloat())

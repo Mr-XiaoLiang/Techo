@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
@@ -71,36 +70,42 @@ class ColorWheelView(
 
     private val touchHelper = SingleTouchHelper(::onTouchDown, ::onTouchMove, ::onTouchUp)
 
+    private var colorChangedListener: OnColorChangedListener? = null
+
     init {
         attributeSet?.let { attrs ->
             val typeArray = context.obtainStyledAttributes(attrs, R.styleable.ColorWheelView)
-            slideBarWidth = typeArray.getDimensionPixelSize(
-                R.styleable.ColorWheelView_slideBarWidth, 0
-            ).toFloat()
-            slideBarInterval = typeArray.getDimensionPixelSize(
-                R.styleable.ColorWheelView_slideBarInterval, 0
-            ).toFloat()
-            valueSlideBarColor = typeArray.getColor(
-                R.styleable.ColorWheelView_valueSlideBarColor, Color.BLACK
+            setSlideBarWidth(
+                typeArray.getDimensionPixelSize(
+                    R.styleable.ColorWheelView_slideBarWidth, 0
+                ).toFloat()
             )
-            alphaSlideBarColor = typeArray.getColor(
-                R.styleable.ColorWheelView_alphaSlideBarColor, Color.BLACK
+            setSlideBarInterval(
+                typeArray.getDimensionPixelSize(
+                    R.styleable.ColorWheelView_slideBarInterval, 0
+                ).toFloat()
             )
-            anchorRadius = typeArray.getDimensionPixelSize(
-                R.styleable.ColorWheelView_anchorRadius, 0
-            ).toFloat()
+            setValueSlideBarColor(
+                typeArray.getColor(
+                    R.styleable.ColorWheelView_valueSlideBarColor, Color.BLACK
+                )
+            )
+            setAlphaSlideBarColor(
+                typeArray.getColor(
+                    R.styleable.ColorWheelView_alphaSlideBarColor, Color.BLACK
+                )
+            )
+            setAnchorRadius(
+                typeArray.getDimensionPixelSize(
+                    R.styleable.ColorWheelView_anchorRadius, 0
+                ).toFloat()
+            )
             alphaSlideBarEnable = typeArray.getBoolean(
                 R.styleable.ColorWheelView_alphaSlideBarEnable, false
             )
-            val color = typeArray.getColor(R.styleable.ColorWheelView_color, Color.RED)
-            hsv.set(color)
+            reset(typeArray.getColor(R.styleable.ColorWheelView_color, Color.RED))
             typeArray.recycle()
         }
-    }
-
-    fun reset(@ColorInt color: Int) {
-        hsv.set(color)
-        invalidate()
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -148,6 +153,7 @@ class ColorWheelView(
                 onWheelMove(x, y, offsetX, offsetY)
             }
         }
+        onColorChanged()
         invalidate()
     }
 
@@ -163,23 +169,24 @@ class ColorWheelView(
         val weight = max((radius - slideBarRadius) / slideBarWidth, 1F)
         val offsetValue = offsetY * -1 / slideBarLength / weight
         hsv.offsetV(offsetValue)
+        buildSaturation()
     }
 
     private fun onWheelMove(x: Float, y: Float, offsetX: Float, offsetY: Float) {
-        // 手指所在半径
-        val radius = getRadius(x, y)
-        // 通过半径计算手指距离圆盘的距离，然后得到移动距离的缩放权重
-        val weight = max((radius - wheelRadius) / slideBarWidth, 1F)
         // 通过当前参数计算当前的坐标
         val current = getLocation(wheelRadius * hsv.s, hsv.h)
+        // 手指所在半径
+        val radius = AngleCalculator.getLength(current[0], current[1], x, y)
+        // 通过半径计算手指距离圆盘的距离，然后得到移动距离的缩放权重
+        val weight = max((radius - (anchorRadius * 4)) / anchorRadius, 1F)
+//        Log.d("Lollipop", "onWheelMove: [$x, $y], [${current[0]}, ${current[1]}]")
         // 通过坐标叠加位置偏移量
-        current[0] += offsetX
-        current[1] += offsetY
+        current[0] += offsetX / weight
+        current[1] += offsetY / weight
         // 移动后的焦点半径
         val newRadius = getRadius(current[0], current[1])
         // 移动后的焦点角度
         val newAngle = getAngle(current[0], current[1])
-        Log.d("Lollipop", "onWheelMove: [$x, $y], $radius, $newRadius")
         // 设置HS的参数
         hsv.resetS(newRadius / wheelRadius)
         hsv.resetH(newAngle)
@@ -217,6 +224,7 @@ class ColorWheelView(
 
         hueShader = SweepGradient(wheelCenter.x, wheelCenter.y, hueColor, null)
         buildSaturation()
+        invalidate()
     }
 
     private fun buildSaturation() {
@@ -236,7 +244,6 @@ class ColorWheelView(
             Shader.TileMode.CLAMP
         )
         wheelShader = ComposeShader(hue, saturationShader, PorterDuff.Mode.MULTIPLY)
-        invalidate()
     }
 
     private fun getRadius(x: Float, y: Float): Float {
@@ -372,6 +379,50 @@ class ColorWheelView(
         return src and 0xFFFFFF or ((a % 256) shl 24)
     }
 
+    private fun onColorChanged() {
+        colorChangedListener?.onColorChanged(hsv.h, hsv.s, hsv.v, hsv.a)
+    }
+
+    fun setOnColorChangedListener(listener: OnColorChangedListener) {
+        this.colorChangedListener = listener
+    }
+
+    fun setSlideBarWidth(float: Float) {
+        this.slideBarWidth = float
+        notifyInfoChanged()
+    }
+
+    fun setSlideBarInterval(float: Float) {
+        this.slideBarInterval = float
+        notifyInfoChanged()
+    }
+
+    fun setValueSlideBarColor(color: Int) {
+        this.valueSlideBarColor = color
+        notifyInfoChanged()
+    }
+
+    fun setAlphaSlideBarColor(color: Int) {
+        this.alphaSlideBarColor = color
+        notifyInfoChanged()
+    }
+
+    fun setAnchorRadius(float: Float) {
+        this.anchorRadius = float
+        notifyInfoChanged()
+    }
+
+    fun reset(@ColorInt color: Int) {
+        hsv.set(color)
+        notifyInfoChanged()
+    }
+
+    private fun notifyInfoChanged() {
+        if (isAttachedToWindow) {
+            invalidate()
+        }
+    }
+
     private class HSV {
 
         var h: Float = 0F
@@ -445,6 +496,10 @@ class ColorWheelView(
         ALPHA,
         VALUE,
         WHEEL;
+    }
+
+    fun interface OnColorChangedListener {
+        fun onColorChanged(h: Float, s: Float, v: Float, a: Float)
     }
 
 }
