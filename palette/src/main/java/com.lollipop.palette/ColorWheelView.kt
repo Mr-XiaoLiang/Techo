@@ -383,7 +383,7 @@ class ColorWheelView(
         colorChangedListener?.onColorChanged(hsv.h, hsv.s, hsv.v, hsv.a)
     }
 
-    fun setOnColorChangedListener(listener: OnColorChangedListener) {
+    fun setOnColorChangedListener(listener: OnColorChangedListener?) {
         this.colorChangedListener = listener
     }
 
@@ -397,12 +397,12 @@ class ColorWheelView(
         notifyInfoChanged()
     }
 
-    fun setValueSlideBarColor(color: Int) {
+    fun setValueSlideBarColor(@ColorInt color: Int) {
         this.valueSlideBarColor = color
         notifyInfoChanged()
     }
 
-    fun setAlphaSlideBarColor(color: Int) {
+    fun setAlphaSlideBarColor(@ColorInt color: Int) {
         this.alphaSlideBarColor = color
         notifyInfoChanged()
     }
@@ -441,13 +441,6 @@ class ColorWheelView(
             s = hsvArray[1]
             v = hsvArray[2]
             a = Color.alpha(color) / 255F
-        }
-
-        fun set(hValue: Float, sValue: Float, vValue: Float, aValue: Float) {
-            resetS(hValue)
-            resetV(sValue)
-            resetA(vValue)
-            resetH(aValue)
         }
 
         val color: Int
