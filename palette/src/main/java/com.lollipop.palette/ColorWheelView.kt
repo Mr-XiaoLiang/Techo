@@ -144,10 +144,10 @@ class ColorWheelView(
                 return
             }
             TouchTarget.ALPHA -> {
-                onAlphaBarMove(x, y, offsetX, offsetY)
+                onAlphaBarMove(x, y, offsetY)
             }
             TouchTarget.VALUE -> {
-                onValueBarMove(x, y, offsetX, offsetY)
+                onValueBarMove(x, y, offsetY)
             }
             TouchTarget.WHEEL -> {
                 onWheelMove(x, y, offsetX, offsetY)
@@ -157,14 +157,14 @@ class ColorWheelView(
         invalidate()
     }
 
-    private fun onAlphaBarMove(x: Float, y: Float, offsetX: Float, offsetY: Float) {
+    private fun onAlphaBarMove(x: Float, y: Float, offsetY: Float) {
         val radius = getRadius(x, y)
         val weight = max((radius - slideBarRadius) / slideBarWidth, 1F)
         val offsetAlpha = offsetY * -1 / slideBarLength / weight
         hsv.offsetA(offsetAlpha)
     }
 
-    private fun onValueBarMove(x: Float, y: Float, offsetX: Float, offsetY: Float) {
+    private fun onValueBarMove(x: Float, y: Float, offsetY: Float) {
         val radius = getRadius(x, y)
         val weight = max((radius - slideBarRadius) / slideBarWidth, 1F)
         val offsetValue = offsetY * -1 / slideBarLength / weight
