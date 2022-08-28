@@ -16,6 +16,8 @@
         android:padding="30dp"
         app:slideBarWidth="5dp"
         app:slideBarInterval="5dp"
-        app:anchorRadius="10dp"/>
+        app:anchorRadius="10dp"
+        app:anchorStrokeWidth="1dp"
+        app:anchorStrokeColor="@color/white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

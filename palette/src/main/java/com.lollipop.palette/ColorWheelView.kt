@@ -38,7 +38,10 @@ class ColorWheelView(
 
     private var slideBarWidth = 0F
     private var slideBarInterval = 0F
+
     private var anchorRadius = 0F
+    private var anchorStrokeWidth = 0F
+    private var anchorStrokeColor = Color.BLACK
 
     private var valueSlideBarColor = Color.BLACK
     private var alphaSlideBarColor = Color.BLACK
@@ -99,6 +102,16 @@ class ColorWheelView(
                 typeArray.getDimensionPixelSize(
                     R.styleable.ColorWheelView_anchorRadius, 0
                 ).toFloat()
+            )
+            setAnchorStrokeWidth(
+                typeArray.getDimensionPixelSize(
+                    R.styleable.ColorWheelView_anchorStrokeWidth, 0
+                ).toFloat()
+            )
+            setAnchorStrokeColor(
+                typeArray.getColor(
+                    R.styleable.ColorWheelView_anchorStrokeColor, Color.WHITE
+                )
             )
             alphaSlideBarEnable = typeArray.getBoolean(
                 R.styleable.ColorWheelView_alphaSlideBarEnable, false
@@ -354,14 +367,14 @@ class ColorWheelView(
 
     private fun drawAnchor(canvas: Canvas) {
         wheelPaint.shader = null
-        wheelPaint.color = hsv.color
-        wheelPaint.style = Paint.Style.FILL
         val angle = hsv.h
         val radius = hsv.s * wheelRadius
         val saveCount = canvas.save()
         canvas.translate(wheelCenter.x, wheelCenter.y)
         canvas.rotate(angle)
         val xOffset = anchorRadius
+        wheelPaint.color = hsv.color
+        wheelPaint.style = Paint.Style.FILL
         canvas.drawOval(
             radius - xOffset,
             -xOffset,
@@ -369,6 +382,18 @@ class ColorWheelView(
             xOffset,
             wheelPaint
         )
+        if (anchorStrokeColor != 0) {
+            wheelPaint.color = anchorStrokeColor
+            wheelPaint.style = Paint.Style.STROKE
+            wheelPaint.strokeWidth = anchorStrokeWidth
+            canvas.drawOval(
+                radius - xOffset,
+                -xOffset,
+                radius + xOffset,
+                xOffset,
+                wheelPaint
+            )
+        }
         canvas.restoreToCount(saveCount)
         wheelPaint.alpha = 255
     }
@@ -409,6 +434,16 @@ class ColorWheelView(
 
     fun setAnchorRadius(float: Float) {
         this.anchorRadius = float
+        notifyInfoChanged()
+    }
+
+    fun setAnchorStrokeWidth(float: Float) {
+        this.anchorStrokeWidth = float
+        notifyInfoChanged()
+    }
+
+    fun setAnchorStrokeColor(@ColorInt color: Int) {
+        this.anchorStrokeColor = color
         notifyInfoChanged()
     }
 
