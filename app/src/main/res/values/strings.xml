@@ -4,7 +4,7 @@
     <string name="granted">同意授权</string>
     <string name="denied">拒绝授权</string>
     <string name="hint_text_input">请输入内容</string>
-    <string name="hint_title_input" >请输入标题</string>
+    <string name="hint_title_input">请输入标题</string>
     <string name="done">完成</string>
     <string name="new_techo">新手帐</string>
 

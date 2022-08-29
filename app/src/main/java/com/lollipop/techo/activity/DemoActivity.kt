@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivityDemoBinding
+import com.lollipop.techo.fragment.RichTextOptionFragment
 
 class DemoActivity : AppCompatActivity() {
 
@@ -22,6 +23,9 @@ class DemoActivity : AppCompatActivity() {
         with(binding.colorWheelView) {
             alphaSlideBarEnable = true
             reset(Color.RED)
+        }
+        binding.openButton.setOnClickListener {
+            SingleFragmentActivity.start<RichTextOptionFragment>(this) {}
         }
     }
 

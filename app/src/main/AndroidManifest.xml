@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
+            android:name=".activity.SingleFragmentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.WebActivity"
             android:exported="false"
             android:process=":Web" />
