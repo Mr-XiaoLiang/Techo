@@ -16,6 +16,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    
+    <liang.lollipop.ltabview.LTabView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/previewView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
