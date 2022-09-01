@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="#3f00">
 
     <TextView
         android:id="@+id/previewView"
@@ -16,10 +18,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <liang.lollipop.ltabview.LTabView
+    <View
+        android:id="@+id/previewAnchorView"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/tabLayout"
-        app:layout_constraintTop_toBottomOf="@id/previewView"/>
+        android:layout_height="0px"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/previewView" />
+
+    <com.lollipop.techo.view.RoundClipLayout
+        android:id="@+id/tabBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/pageBackground"
+        app:layout_constraintTop_toBottomOf="@id/previewAnchorView"
+        app:leftTop="12dp"
+        app:rightTop="12dp">
+
+        <liang.lollipop.ltabview.LTabView
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:layout_constraintTop_toBottomOf="@id/previewView" />
+    </com.lollipop.techo.view.RoundClipLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:background="@color/pageBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabBar">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
