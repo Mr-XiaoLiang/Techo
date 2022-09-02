@@ -50,6 +50,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabBar">
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/optionLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:columnCount="4"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/boldOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_format_bold_24"
+                    app:layout_constraintEnd_toStartOf="@id/italicOptionBtn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/italicOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_format_italic_24"
+                    app:layout_constraintEnd_toStartOf="@id/underlinedOptionBtn"
+                    app:layout_constraintStart_toEndOf="@id/boldOptionBtn"
+                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+
+                <ImageView
+                    android:id="@+id/underlinedOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_format_underlined_24"
+                    app:layout_constraintEnd_toStartOf="@id/strikethroughOptionBtn"
+                    app:layout_constraintStart_toEndOf="@id/italicOptionBtn"
+                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+
+                <ImageView
+                    android:id="@+id/strikethroughOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_format_strikethrough_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/underlinedOptionBtn"
+                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+
+                <ImageView
+                    android:id="@+id/superscriptOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_baseline_superscript_24"
+                    app:layout_constraintEnd_toEndOf="@id/boldOptionBtn"
+                    app:layout_constraintStart_toStartOf="@id/boldOptionBtn"
+                    app:layout_constraintTop_toBottomOf="@id/boldOptionBtn" />
+
+                <ImageView
+                    android:id="@+id/subscriptOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_subscript_24"
+                    app:layout_constraintEnd_toEndOf="@id/italicOptionBtn"
+                    app:layout_constraintStart_toStartOf="@id/italicOptionBtn"
+                    app:layout_constraintTop_toTopOf="@id/superscriptOptionBtn" />
+
+                <ImageView
+                    android:id="@+id/blurOptionBtn"
+                    style="@style/TextOptionPanelOptionBtn"
+                    android:src="@drawable/ic_baseline_blur_linear_24"
+                    app:layout_constraintEnd_toEndOf="@id/underlinedOptionBtn"
+                    app:layout_constraintStart_toStartOf="@id/underlinedOptionBtn"
+                    app:layout_constraintTop_toTopOf="@id/superscriptOptionBtn" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
