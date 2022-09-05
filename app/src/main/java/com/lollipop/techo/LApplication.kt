@@ -5,7 +5,6 @@ import android.app.Application
 import com.lollipop.base.request.PermissionFlow
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentParse
-import com.lollipop.techo.activity.HeaderActivity
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.FontHelper
 import com.lollipop.techo.view.PermissionFeedbackDialog
@@ -22,14 +21,14 @@ class LApplication : Application() {
         FontHelper.init(this)
         PigmentParse.init(
             Pigment(
-                primary = getColor(R.color.pigmentPrimary),
-                primaryVariant = getColor(R.color.pigmentPrimaryVariant),
-                onPrimaryTitle = getColor(R.color.pigmentOnPrimaryTitle),
-                onPrimaryBody = getColor(R.color.pigmentOnPrimaryBody),
-                secondary = getColor(R.color.pigmentSecondary),
-                secondaryVariant = getColor(R.color.pigmentSecondaryVariant),
-                onSecondaryTitle = getColor(R.color.pigmentOnSecondaryTitle),
-                onSecondaryBody = getColor(R.color.pigmentOnSecondaryBody)
+                primary = getColor(R.color.brand_4),
+                primaryVariant = getColor(R.color.brand_7),
+                onPrimaryTitle = getColor(R.color.gray_1),
+                onPrimaryBody = getColor(R.color.gray_2),
+                secondary = getColor(R.color.brand_4),
+                secondaryVariant = getColor(R.color.brand_7),
+                onSecondaryTitle = getColor(R.color.gray_1),
+                onSecondaryBody = getColor(R.color.gray_2)
             )
         )
         AppUtil.init(this)

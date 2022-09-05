@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/pageBackground"
+    android:background="@color/gray_0"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="8dp"
@@ -14,7 +14,7 @@
         android:layout_width="6dp"
         android:layout_height="6dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/text_theme"
+        android:background="@color/text_gray_10"
         android:radius="3dp"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:ellipsize="end"
         android:lines="1"
         android:maxLines="1"
-        android:textColor="@color/text_theme"
+        android:textColor="@color/text_gray_10"
         tools:text="@string/app_name" />
 
 </LinearLayout>

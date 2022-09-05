@@ -13,9 +13,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:text="@string/new_techo"
-        android:textColor="@color/fabIcon"
-        app:backgroundTint="@color/fabBackground"
+        android:textColor="@color/gray_1"
+        app:backgroundTint="@color/brand_4"
         app:icon="@drawable/ic_baseline_add_24"
-        app:iconTint="@color/fabIcon" />
+        app:iconTint="@color/gray_1" />
 
 </FrameLayout>

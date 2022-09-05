@@ -78,19 +78,19 @@ class EditManager(
                 findDelegate<PhotoOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Text -> {
-                findDelegate<TextOptionDelegate>().applyDelegate(index, info, listener).open(info)
+//                findDelegate<TextOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.CheckBox -> {
-                findDelegate<CheckBoxOptionDelegate>().applyDelegate(index, info, listener).open(info)
+//                findDelegate<CheckBoxOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Number -> {
-                findDelegate<NumberOptionDelegate>().applyDelegate(index, info, listener).open(info)
+//                findDelegate<NumberOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Split -> {
                 findDelegate<SplitOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
             is TechoItem.Title -> {
-                findDelegate<TitleOptionDelegate>().applyDelegate(index, info, listener).open(info)
+//                findDelegate<TitleOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
         }
     }

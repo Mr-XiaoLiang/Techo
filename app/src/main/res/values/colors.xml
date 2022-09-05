@@ -11,7 +11,17 @@
     <color name="brand_8">#004A32</color>
     <color name="brand_9">#003A27</color>
 
-    <color name="gray_white">#FFFFFF</color>
+    <color name="warn_1">#FF0066</color>
+    <color name="warn_2">#DF0059</color>
+    <color name="warn_3">#C5004E</color>
+    <color name="warn_4">#AC0044</color>
+    <color name="warn_5">#98003C</color>
+    <color name="warn_6">#810033</color>
+    <color name="warn_7">#680029</color>
+    <color name="warn_8">#4E001F</color>
+    <color name="warn_9">#350015</color>
+
+    <color name="gray_0">#FFFFFF</color>
     <color name="gray_1">#D6FFF2</color>
     <color name="gray_2">#BEE3D7</color>
     <color name="gray_3">#AACAC0</color>
@@ -21,7 +31,7 @@
     <color name="gray_7">#61716C</color>
     <color name="gray_8">#3F4945</color>
     <color name="gray_9">#2B322F</color>
-    <color name="gray_black">#121514</color>
+    <color name="gray_10">#121514</color>
 
     <color name="text_gray_1">#D6FFF2</color>
     <color name="text_gray_2">#BEE3D7</color>
@@ -32,53 +42,6 @@
     <color name="text_gray_7">#61716C</color>
     <color name="text_gray_8">#3F4945</color>
     <color name="text_gray_9">#2B322F</color>
-    <color name="text_gray_black">#121514</color>
-
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-
-    <color name="content_loading">#FF018786</color>
-
-    <color name="fabIcon">#FFFFFFFF</color>
-    <color name="fabBackground">#FF018786</color>
-
-    <color name="detailItemBackground">#FFFFFFFF</color>
-
-    <color name="editPanelBackground">#80000000</color>
-    <color name="editPanelCard">#FFFFFFFF</color>
-
-    <color name="optionDialogBackground">#FFFFFFFF</color>
-    <color name="optionDialogItemText">#333</color>
-    <color name="optionDialogItemIcon">#FFFFFFFF</color>
-
-    <color name="splashBackground">#FFF</color>
-    <color name="recorderBackground">#FFF</color>
-    <color name="recorderCancel">#C35656</color>
-
-    <color name="recorderWaveColor">#FF018786</color>
-
-    <color name="lightWarning">#C35656</color>
-
-    <color name="titleColor">#FFF</color>
-
-    <color name="defaultSplit">#5E6565</color>
-
-    <color name="text_theme" tools:ignore="MissingDefaultResource">#373737</color>
-    <color name="pageBackground">#FFF</color>
-
-    <color name="pigmentPrimary">#FF018786</color>
-    <color name="pigmentPrimaryVariant">#00504F</color>
-    <color name="pigmentOnPrimaryTitle">#FFFFFF</color>
-    <color name="pigmentOnPrimaryBody">#D5D5D5</color>
-    <color name="pigmentSecondary">#C12F62</color>
-    <color name="pigmentSecondaryVariant">#95254B</color>
-    <color name="pigmentOnSecondaryTitle">#FFFFFF</color>
-    <color name="pigmentOnSecondaryBody">#D5D5D5</color>
+    <color name="text_gray_10">#121514</color>
 
 </resources>

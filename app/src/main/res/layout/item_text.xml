@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.lollipop.techo.view.CheckableView
+        android:id="@+id/checkBox"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:padding="12dp"
-        android:id="@+id/checkBox"/>
+        android:padding="12dp" />
 
     <TextView
         android:id="@+id/numberView"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:minWidth="48dp"
-        tools:text="1"
         android:gravity="center"
+        android:minWidth="48dp"
+        android:paddingHorizontal="10dp"
         android:textSize="20sp"
-        android:paddingHorizontal="10dp"/>
+        tools:text="1" />
 
     <TextView
-        android:textColor="@color/text_theme"
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:text="@string/app_name"
         android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
-        android:textSize="14sp"
-        android:paddingHorizontal="10dp"/>
+        android:text="@string/app_name"
+        android:textColor="@color/text_gray_10"
+        android:textSize="14sp" />
 
 </LinearLayout>

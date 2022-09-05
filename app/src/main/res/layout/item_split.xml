@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <com.lollipop.techo.split.SplitView
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:id="@+id/splitView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/splitView"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
 
 </FrameLayout>

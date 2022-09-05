@@ -64,7 +64,7 @@ object SplitLoader {
         return SplitInfo(
             drawable = DottedLineRenderer(
                 color = color,
-                colorId = R.color.defaultSplit,
+                colorId = R.color.gray_7,
                 dottedArray = intArrayOf(
                     R.dimen.dotted_line_solid,
                     R.dimen.dotted_line_interval,

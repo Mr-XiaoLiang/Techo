@@ -18,7 +18,7 @@
         app:slideBarInterval="5dp"
         app:anchorRadius="10dp"
         app:anchorStrokeWidth="1dp"
-        app:anchorStrokeColor="@color/white"/>
+        app:anchorStrokeColor="@color/gray_0"/>
     
     <Button
         android:layout_width="wrap_content"

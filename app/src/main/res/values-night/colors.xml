@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
 
-    <color name="content_loading">#FF018786</color>
+    <color name="brand_1">#00FFAE</color>
+    <color name="brand_2">#00E199</color>
+    <color name="brand_3">#00C183</color>
+    <color name="brand_4">#00AA73</color>
+    <color name="brand_5">#009162</color>
+    <color name="brand_6">#007851</color>
+    <color name="brand_7">#006343</color>
+    <color name="brand_8">#004A32</color>
+    <color name="brand_9">#003A27</color>
 
-    <color name="fabIcon">#FFFFFFFF</color>
-    <color name="fabBackground">#FF018786</color>
+    <color name="warn_1">#FF0066</color>
+    <color name="warn_2">#DF0059</color>
+    <color name="warn_3">#C5004E</color>
+    <color name="warn_4">#AC0044</color>
+    <color name="warn_5">#98003C</color>
+    <color name="warn_6">#810033</color>
+    <color name="warn_7">#680029</color>
+    <color name="warn_8">#4E001F</color>
+    <color name="warn_9">#350015</color>
 
-    <color name="detailItemBackground">#000000</color>
+    <color name="gray_0">#FFFFFF</color>
+    <color name="gray_1">#D6FFF2</color>
+    <color name="gray_2">#BEE3D7</color>
+    <color name="gray_3">#AACAC0</color>
+    <color name="gray_4">#9AB6AD</color>
+    <color name="gray_5">#849C94</color>
+    <color name="gray_6">#738780</color>
+    <color name="gray_7">#61716C</color>
+    <color name="gray_8">#3F4945</color>
+    <color name="gray_9">#2B322F</color>
+    <color name="gray_10">#121514</color>
 
-    <color name="editPanelBackground">#80000000</color>
-    <color name="editPanelCard">#000000</color>
-
-    <color name="optionDialogBackground">#FFFFFFFF</color>
-    <color name="optionDialogItemText">#333</color>
-    <color name="optionDialogItemIcon">#FFFFFFFF</color>
-
-    <color name="splashBackground">#FFF</color>
-    <color name="recorderBackground">#FFF</color>
-    <color name="recorderCancel">#C35656</color>
-
-    <color name="recorderWaveColor">#FF018786</color>
-
-    <color name="lightWarning">#C35656</color>
-
-    <color name="titleColor">#FFF</color>
-
-    <color name="defaultSplit">#5E6565</color>
-
-    <color name="text_theme">#FFFFFF</color>
-    <color name="pageBackground">#000000</color>
+    <color name="text_gray_1">#D6FFF2</color>
+    <color name="text_gray_2">#BEE3D7</color>
+    <color name="text_gray_3">#AACAC0</color>
+    <color name="text_gray_4">#9AB6AD</color>
+    <color name="text_gray_5">#849C94</color>
+    <color name="text_gray_6">#738780</color>
+    <color name="text_gray_7">#61716C</color>
+    <color name="text_gray_8">#3F4945</color>
+    <color name="text_gray_9">#2B322F</color>
+    <color name="text_gray_10">#121514</color>
 
 </resources>

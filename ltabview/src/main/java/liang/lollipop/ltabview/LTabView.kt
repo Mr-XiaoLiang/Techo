@@ -16,14 +16,19 @@ import kotlin.math.min
  * @author: lollipop
  * TabView主体
  */
-class LTabView(context: Context, attr: AttributeSet?,
-               defStyleAttr: Int, defStyleRes: Int): FrameLayout(context, attr, defStyleAttr, defStyleRes),
-    ValueAnimator.AnimatorUpdateListener{
+class LTabView(
+    context: Context, attr: AttributeSet?,
+    defStyleAttr: Int, defStyleRes: Int
+) : FrameLayout(context, attr, defStyleAttr, defStyleRes),
+    ValueAnimator.AnimatorUpdateListener {
 
-    constructor(context: Context, attr: AttributeSet?,
-                defStyleAttr: Int): this(context, attr, defStyleAttr, 0)
-    constructor(context: Context, attr: AttributeSet?): this(context, attr, 0)
-    constructor(context: Context): this(context, null)
+    constructor(
+        context: Context, attr: AttributeSet?,
+        defStyleAttr: Int
+    ) : this(context, attr, defStyleAttr, 0)
+
+    constructor(context: Context, attr: AttributeSet?) : this(context, attr, 0)
+    constructor(context: Context) : this(context, null)
 
     companion object {
         private const val MIN_PROGRESS = 0F
@@ -408,7 +413,7 @@ class LTabView(context: Context, attr: AttributeSet?,
         updateLocation()
         for (i in 0 until childCount) {
             val child = getChildAt(i)
-            val helper = itemAnimators[child as LTabItem]?:continue
+            val helper = itemAnimators[child as LTabItem] ?: continue
             if (i == selectedIndex) {
                 helper.open()
             } else {
@@ -428,7 +433,7 @@ class LTabView(context: Context, attr: AttributeSet?,
         updateChildLocation()
     }
 
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
+    override fun onAnimationUpdate(animation: ValueAnimator) {
         if (animation == locationAnimator) {
             val value = locationAnimator.animatedValue as Float
             moveChildByOffset(value)
@@ -453,7 +458,8 @@ class LTabView(context: Context, attr: AttributeSet?,
         fun onTabSelected(index: Int)
     }
 
-    private class ItemAnimatorHelper(private val item: LTabItem, animationDuration: Long): ValueAnimator.AnimatorUpdateListener {
+    private class ItemAnimatorHelper(private val item: LTabItem, animationDuration: Long) :
+        ValueAnimator.AnimatorUpdateListener {
 
         private val tabAnimator = ValueAnimator().apply {
             addUpdateListener(this@ItemAnimatorHelper)
@@ -474,7 +480,8 @@ class LTabView(context: Context, attr: AttributeSet?,
                 return
             }
             tabAnimator.setFloatValues(progress, MIN_PROGRESS)
-            tabAnimator.duration = ((progress - MIN_PROGRESS) / (MAX_PROGRESS - MIN_PROGRESS) * duration).toLong()
+            tabAnimator.duration =
+                ((progress - MIN_PROGRESS) / (MAX_PROGRESS - MIN_PROGRESS) * duration).toLong()
             tabAnimator.start()
         }
 
@@ -485,11 +492,12 @@ class LTabView(context: Context, attr: AttributeSet?,
                 return
             }
             tabAnimator.setFloatValues(progress, MAX_PROGRESS)
-            tabAnimator.duration = ((MAX_PROGRESS - progress) / (MAX_PROGRESS - MIN_PROGRESS) * duration).toLong()
+            tabAnimator.duration =
+                ((MAX_PROGRESS - progress) / (MAX_PROGRESS - MIN_PROGRESS) * duration).toLong()
             tabAnimator.start()
         }
 
-        override fun onAnimationUpdate(animation: ValueAnimator?) {
+        override fun onAnimationUpdate(animation: ValueAnimator) {
             if (animation == tabAnimator) {
                 progress = animation.animatedValue as Float
             }
@@ -513,14 +521,17 @@ class LTabView(context: Context, attr: AttributeSet?,
          * 从头排列
          */
         Start(1),
+
         /**
          * 从尾排列
          */
         End(2),
+
         /**
          * 按照权重排列
          */
         Fit(3),
+
         /**
          * 居中排列
          */

@@ -9,7 +9,7 @@
 
     <item android:state_selected="true">
         <shape android:shape="oval">
-            <solid android:color="@color/pigmentPrimary" />
+            <solid android:color="@color/brand_4" />
         </shape>
     </item>
 
