@@ -18,108 +18,125 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/description_back"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_gray_10"/>
+
     <View
         android:id="@+id/previewAnchorView"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="28dp"
         app:layout_constraintBottom_toBottomOf="@id/previewView" />
 
     <com.lollipop.techo.view.RoundClipLayout
         android:id="@+id/tabBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray_0"
-        app:layout_constraintTop_toBottomOf="@id/previewAnchorView"
-        app:leftTop="12dp"
-        app:rightTop="12dp">
-
-        <liang.lollipop.ltabview.LTabView
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            app:layout_constraintTop_toBottomOf="@id/previewView" />
-    </com.lollipop.techo.view.RoundClipLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
         android:layout_height="0px"
         android:background="@color/gray_0"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabBar">
+        app:layout_constraintTop_toBottomOf="@id/previewAnchorView"
+        app:leftTop="28dp"
+        app:rightTop="28dp">
 
-        <androidx.core.widget.NestedScrollView
+        <com.google.android.material.navigationrail.NavigationRailView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:elevation="4dp"
+            app:labelVisibilityMode="selected"
+            app:menu="@menu/menu_edit_richtext_tab"
+            app:menuGravity="top" />
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/gray_0"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tabBar">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/optionLinearLayout"
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/richOptionPanel"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnCount="4"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/boldOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_format_bold_24"
-                    app:layout_constraintEnd_toStartOf="@id/italicOptionBtn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    app:checkedChip="@id/chip"
+                    app:chipSpacingHorizontal="24dp"
+                    app:chipSpacingVertical="12dp">
 
-                <ImageView
-                    android:id="@+id/italicOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_format_italic_24"
-                    app:layout_constraintEnd_toStartOf="@id/underlinedOptionBtn"
-                    app:layout_constraintStart_toEndOf="@id/boldOptionBtn"
-                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/boldOptionButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/app_name"
+                        android:textColor="@color/text_gray_9"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/gray_1"
+                        app:chipIcon="@drawable/ic_baseline_format_bold_24"
+                        app:chipIconTint="@color/gray_9"
+                        app:chipStrokeColor="@color/gray_9"
+                        app:chipSurfaceColor="@color/gray_2"
+                        app:rippleColor="@color/brand_3" />
 
-                <ImageView
-                    android:id="@+id/underlinedOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_format_underlined_24"
-                    app:layout_constraintEnd_toStartOf="@id/strikethroughOptionBtn"
-                    app:layout_constraintStart_toEndOf="@id/italicOptionBtn"
-                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Suggestion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
 
-                <ImageView
-                    android:id="@+id/strikethroughOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_format_strikethrough_24"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/underlinedOptionBtn"
-                    app:layout_constraintTop_toTopOf="@id/boldOptionBtn" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
 
-                <ImageView
-                    android:id="@+id/superscriptOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_baseline_superscript_24"
-                    app:layout_constraintEnd_toEndOf="@id/boldOptionBtn"
-                    app:layout_constraintStart_toStartOf="@id/boldOptionBtn"
-                    app:layout_constraintTop_toBottomOf="@id/boldOptionBtn" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
 
-                <ImageView
-                    android:id="@+id/subscriptOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_subscript_24"
-                    app:layout_constraintEnd_toEndOf="@id/italicOptionBtn"
-                    app:layout_constraintStart_toStartOf="@id/italicOptionBtn"
-                    app:layout_constraintTop_toTopOf="@id/superscriptOptionBtn" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
 
-                <ImageView
-                    android:id="@+id/blurOptionBtn"
-                    style="@style/TextOptionPanelOptionBtn"
-                    android:src="@drawable/ic_baseline_blur_linear_24"
-                    app:layout_constraintEnd_toEndOf="@id/underlinedOptionBtn"
-                    app:layout_constraintStart_toStartOf="@id/underlinedOptionBtn"
-                    app:layout_constraintTop_toTopOf="@id/superscriptOptionBtn" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
 
-    </FrameLayout>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
+                    <!-- Chips can be declared here, or added dynamically. -->
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </FrameLayout>
+
+    </com.lollipop.techo.view.RoundClipLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

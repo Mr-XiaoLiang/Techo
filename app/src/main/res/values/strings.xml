@@ -28,4 +28,8 @@
     <string name="message_remove_font_style_frame">确定要移除这个样式图层吗？</string>
     <string name="remove">移除</string>
     <string name="cancel">取消</string>
+    <string name="selector">范围</string>
+    <string name="font_size">大小</string>
+    <string name="rich_style">样式</string>
+    <string name="rich_palette">颜色</string>
 </resources>

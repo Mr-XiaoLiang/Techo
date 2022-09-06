@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuSelector"
+        android:icon="@drawable/ic_baseline_format_shapes_24"
+        android:title="@string/selector" />
+
+    <item
+        android:id="@+id/menuFontSize"
+        android:icon="@drawable/ic_baseline_format_size_24"
+        android:title="@string/font_size" />
+
+    <item
+        android:id="@+id/menuRichStyle"
+        android:icon="@drawable/ic_baseline_format_paint_24"
+        android:title="@string/rich_style" />
+
+    <item
+        android:id="@+id/menuPalette"
+        android:icon="@drawable/ic_baseline_palette_24"
+        android:title="@string/rich_palette" />
+
+</menu>
