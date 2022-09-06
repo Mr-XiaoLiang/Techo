@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.lollipop.base.ui.BaseFragment
+import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 
-class RichTextOptionFragment : BaseFragment() {
+class RichTextOptionFragment : PageFragment() {
 
     private val binding: FragmentRichTextOptionBinding by lazyBind()
 
@@ -18,6 +19,12 @@ class RichTextOptionFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.backButton.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
+        bindBackButton(binding.backButton)
     }
 
 }

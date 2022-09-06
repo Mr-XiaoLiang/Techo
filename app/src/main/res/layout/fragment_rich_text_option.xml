@@ -29,7 +29,7 @@
         android:src="@drawable/ic_baseline_arrow_back_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_gray_10"/>
+        app:tint="@color/text_gray_10" />
 
     <View
         android:id="@+id/previewAnchorView"
