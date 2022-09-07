@@ -32,4 +32,19 @@
     <string name="font_size">大小</string>
     <string name="rich_style">样式</string>
     <string name="rich_palette">颜色</string>
+    <string name="bold">粗体</string>
+    <string name="italic">意大利体</string>
+    <string name="superscript">上标</string>
+    <string name="subscript">下标</string>
+    <string name="blur">模糊</string>
+    <string name="underlined">下划线</string>
+    <string name="strikethrough">删除线</string>
+    <string name="layer">图层</string>
+    <string name="font_size_12">12SP</string>
+    <string name="font_size_14">14SP</string>
+    <string name="font_size_16">16SP</string>
+    <string name="font_size_18">18SP</string>
+    <string name="font_size_22">22SP</string>
+    <string name="font_size_24">24SP</string>
+    <string name="font_size_26">26SP</string>
 </resources>

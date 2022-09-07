@@ -48,94 +48,265 @@
         app:leftTop="28dp"
         app:rightTop="28dp">
 
-        <com.google.android.material.navigationrail.NavigationRailView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:elevation="4dp"
-            app:labelVisibilityMode="selected"
-            app:menu="@menu/menu_edit_richtext_tab"
-            app:menuGravity="top" />
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/gray_0"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabBar">
+            android:orientation="horizontal">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/richOptionPanel"
+            <com.google.android.material.navigationrail.NavigationRailView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:elevation="4dp"
+                app:labelVisibilityMode="selected"
+                app:menu="@menu/menu_edit_rich_text_tab"
+                app:menuGravity="top"
+                android:id="@+id/panelMenuBar"/>
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/gray_0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tabBar">
 
-                <com.google.android.material.chip.ChipGroup
+                <FrameLayout
+                    android:id="@+id/selectorPanel"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    app:checkedChip="@id/chip"
-                    app:chipSpacingHorizontal="24dp"
-                    app:chipSpacingVertical="12dp">
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/boldOptionButton"
-                        android:layout_width="wrap_content"
+                    <com.lollipop.techo.view.OverflowScrollBar
+                        android:id="@+id/textSelectorScrollBar"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:color="@color/gray_2" />
+
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/textSelectorView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:padding="16dp"
+                            android:textColor="@color/text_gray_10"
+                            android:textSize="16sp"
+                            tools:text="@string/app_name" />
+                    </androidx.core.widget.NestedScrollView>
+
+                </FrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/layerPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/richOptionPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/app_name"
-                        android:textColor="@color/text_gray_9"
-                        android:textSize="14sp"
-                        app:chipBackgroundColor="@color/gray_1"
-                        app:chipIcon="@drawable/ic_baseline_format_bold_24"
-                        app:chipIconTint="@color/gray_9"
-                        app:chipStrokeColor="@color/gray_9"
-                        app:chipSurfaceColor="@color/gray_2"
-                        app:rippleColor="@color/brand_3" />
+                        android:padding="16dp"
+                        app:checkedChip="@id/chip"
+                        app:chipSpacingHorizontal="24dp"
+                        app:chipSpacingVertical="12dp">
 
-                    <com.google.android.material.chip.Chip
-                        style="@style/Widget.Material3.Chip.Suggestion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/boldOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/bold"
+                            app:chipIcon="@drawable/ic_baseline_format_bold_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/italicOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/italic"
+                            app:chipIcon="@drawable/ic_baseline_format_italic_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/superscriptOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/superscript"
+                            app:chipIcon="@drawable/ic_baseline_superscript_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/subscriptOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/subscript"
+                            app:chipIcon="@drawable/ic_baseline_subscript_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/blurOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/blur"
+                            app:chipIcon="@drawable/ic_baseline_blur_linear_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/underlinedOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/underlined"
+                            app:chipIcon="@drawable/ic_baseline_format_underlined_24" />
 
-                    <com.google.android.material.chip.Chip
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_name" />
-                    <!-- Chips can be declared here, or added dynamically. -->
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/strikethroughOptionButton"
+                            style="@style/RichTextOptionChip"
+                            android:text="@string/strikethrough"
+                            app:chipIcon="@drawable/ic_baseline_format_strikethrough_24" />
 
-                </com.google.android.material.chip.ChipGroup>
+                    </com.google.android.material.chip.ChipGroup>
 
-            </androidx.core.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
 
-        </FrameLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/palettePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/palettePresetListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:layout_marginBottom="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <com.lollipop.techo.view.RoundClipLayout
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_margin="16dp"
+                        android:radius="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <View
+                            android:id="@+id/palettePreviewView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/brand_4" />
+                    </com.lollipop.techo.view.RoundClipLayout>
+
+                    <com.lollipop.palette.ColorWheelView
+                        android:id="@+id/colorWheelView"
+                        android:layout_width="match_parent"
+                        android:layout_height="0px"
+                        android:padding="30dp"
+                        app:alphaSlideBarColor="@color/brand_4"
+                        app:alphaSlideBarEnable="true"
+                        app:anchorRadius="10dp"
+                        app:anchorStrokeColor="@color/gray_0"
+                        app:anchorStrokeWidth="1dp"
+                        app:layout_constraintBottom_toTopOf="@id/palettePresetListView"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:slideBarInterval="5dp"
+                        app:slideBarWidth="5dp"
+                        app:valueSlideBarColor="@color/brand_4" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/textSizePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            app:checkedChip="@id/chip"
+                            app:chipSpacingHorizontal="24dp"
+                            app:chipSpacingVertical="12dp"
+                            app:singleLine="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize12Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_12"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize14Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_14"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize16Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_16"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize18Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_18"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize22Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_22"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize24Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_24"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize26Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_26"
+                                app:checkedIconEnabled="true"
+                                tools:checked="true" />
+
+                        </com.google.android.material.chip.ChipGroup>
+                    </HorizontalScrollView>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <com.google.android.material.slider.Slider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="16dp"
+                            android:stepSize="1"
+                            android:value="20"
+                            android:valueFrom="5"
+                            android:valueTo="100"
+                            app:tickVisible="false" />
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
 
     </com.lollipop.techo.view.RoundClipLayout>
 

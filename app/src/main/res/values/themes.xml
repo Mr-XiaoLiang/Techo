@@ -60,13 +60,23 @@
         <item name="android:windowExitAnimation">@anim/dialog_top_out</item>
     </style>
 
-    <style name="TextOptionPanelOptionBtn">
-        <item name="android:layout_width">0px</item>
-        <item name="android:layout_height">0px</item>
-        <item name="layout_constraintWidth_percent">0.2</item>
-        <item name="layout_constraintDimensionRatio">"1:1"</item>
-        <item name="android:padding">14dp</item>
-        <item name="android:background">@drawable/bg_text_option_panel_option_btn</item>
+    <style name="RichTextOptionChip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:checkable">true</item>
+        <item name="android:textColor">@color/text_gray_9</item>
+        <item name="android:textSize">14sp</item>
+        <item name="chipBackgroundColor">@color/color_rich_option_surface</item>
+        <item name="chipIconTint">@color/gray_9</item>
+        <item name="chipStrokeColor">@color/color_rich_option_stroke</item>
+        <item name="chipSurfaceColor">@color/color_rich_option_surface</item>
+        <item name="rippleColor">@color/brand_3</item>
+    </style>
+
+    <style name="RichTextFontSizeChip" parent="RichTextOptionChip">
+        <item name="checkedIcon">@drawable/ic_baseline_done_24</item>
+        <item name="checkedIconEnabled">true</item>
+        <item name="checkedIconTint">@color/brand_4</item>
     </style>
 
 </resources>

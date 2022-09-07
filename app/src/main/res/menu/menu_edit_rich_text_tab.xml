@@ -7,6 +7,11 @@
         android:title="@string/selector" />
 
     <item
+        android:id="@+id/menuLayer"
+        android:icon="@drawable/ic_baseline_format_line_spacing_24"
+        android:title="@string/layer" />
+
+    <item
         android:id="@+id/menuFontSize"
         android:icon="@drawable/ic_baseline_format_size_24"
         android:title="@string/font_size" />
