@@ -54,13 +54,13 @@
             android:orientation="horizontal">
 
             <com.google.android.material.navigationrail.NavigationRailView
+                android:id="@+id/panelMenuBar"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:elevation="4dp"
                 app:labelVisibilityMode="selected"
                 app:menu="@menu/menu_edit_rich_text_tab"
-                app:menuGravity="top"
-                android:id="@+id/panelMenuBar"/>
+                app:menuGravity="top" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -114,6 +114,7 @@
                     android:visibility="gone">
 
                     <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/richOptionGroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -200,8 +201,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0px"
                         android:padding="30dp"
-                        app:alphaSlideBarColor="@color/brand_4"
-                        app:alphaSlideBarEnable="true"
+                        app:alphaSlideBarEnable="false"
                         app:anchorRadius="10dp"
                         app:anchorStrokeColor="@color/gray_0"
                         app:anchorStrokeWidth="1dp"
@@ -218,89 +218,84 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <HorizontalScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.chip.ChipGroup
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="16dp"
-                            app:checkedChip="@id/chip"
-                            app:chipSpacingHorizontal="24dp"
-                            app:chipSpacingVertical="12dp"
-                            app:singleLine="true"
-                            app:singleSelection="true">
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize12Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_12"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize14Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_14"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize16Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_16"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize18Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_18"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize22Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_22"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize24Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_24"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                            <com.google.android.material.chip.Chip
-                                android:id="@+id/fontSize26Button"
-                                style="@style/RichTextFontSizeChip"
-                                android:text="@string/font_size_26"
-                                app:checkedIconEnabled="true"
-                                tools:checked="true" />
-
-                        </com.google.android.material.chip.ChipGroup>
-                    </HorizontalScrollView>
+                    android:visibility="gone"
+                    tools:visibility="gone">
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.slider.Slider
+                            android:id="@+id/fontSizeSlider"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_margin="16dp"
+                            android:layout_marginVertical="16dp"
                             android:stepSize="1"
                             android:value="20"
                             android:valueFrom="5"
                             android:valueTo="100"
                             app:tickVisible="false" />
                     </FrameLayout>
+
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/fontSizePresetGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            app:checkedChip="@id/chip"
+                            app:chipSpacingHorizontal="24dp"
+                            app:chipSpacingVertical="12dp"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize12Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_12"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize14Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_14"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize16Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_16"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize18Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_18"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize22Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_22"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize24Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_24"
+                                app:checkedIconEnabled="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/fontSize26Button"
+                                style="@style/RichTextFontSizeChip"
+                                android:text="@string/font_size_26"
+                                app:checkedIconEnabled="true" />
+
+                        </com.google.android.material.chip.ChipGroup>
+                    </androidx.core.widget.NestedScrollView>
 
                 </LinearLayout>
 

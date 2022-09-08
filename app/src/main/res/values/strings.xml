@@ -40,11 +40,11 @@
     <string name="underlined">下划线</string>
     <string name="strikethrough">删除线</string>
     <string name="layer">图层</string>
-    <string name="font_size_12">12SP</string>
-    <string name="font_size_14">14SP</string>
-    <string name="font_size_16">16SP</string>
-    <string name="font_size_18">18SP</string>
-    <string name="font_size_22">22SP</string>
-    <string name="font_size_24">24SP</string>
-    <string name="font_size_26">26SP</string>
+    <string name="font_size_12">12 SP</string>
+    <string name="font_size_14">14 SP</string>
+    <string name="font_size_16">16 SP</string>
+    <string name="font_size_18">18 SP</string>
+    <string name="font_size_22">22 SP</string>
+    <string name="font_size_24">24 SP</string>
+    <string name="font_size_26">26 SP</string>
 </resources>

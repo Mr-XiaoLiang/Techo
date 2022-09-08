@@ -98,4 +98,8 @@ enum class FontStyle {
             return 1 shl ordinal
         }
 
+    fun valueIn(value: Int): Boolean {
+        return has(value, this)
+    }
+
 }

@@ -165,12 +165,8 @@ internal class FrameManager(
         updateOptionButton()
     }
 
-    fun changeCurrentStyle(style: FontStyle, has: Boolean) {
-        if (has) {
-            currentTextSpan.addStyle(style)
-        } else {
-            currentTextSpan.clearStyle(style)
-        }
+    fun changeCurrentStyle(callback: (TextSpan) -> Unit) {
+        callback(currentTextSpan)
         updatePreview()
     }
 
