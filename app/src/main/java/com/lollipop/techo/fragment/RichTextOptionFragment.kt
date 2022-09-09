@@ -64,6 +64,7 @@ class RichTextOptionFragment : PageFragment() {
                 onFontSizeChanged(value.toInt())
             }
         })
+        frameManager.bindTo(binding.layerPanel)
         binding.fontSizePresetGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             onFontSizeCheckedIdsChanged(checkedIds)
         }
