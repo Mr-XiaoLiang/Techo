@@ -47,4 +47,5 @@
     <string name="font_size_22">22 SP</string>
     <string name="font_size_24">24 SP</string>
     <string name="font_size_26">26 SP</string>
+    <string name="select_empty">没有选中内容</string>
 </resources>
