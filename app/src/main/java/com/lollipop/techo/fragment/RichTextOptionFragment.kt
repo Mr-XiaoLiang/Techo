@@ -12,10 +12,22 @@ import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 
 class RichTextOptionFragment : PageFragment() {
+
+    companion object {
+
+        private const val ARG_INFO_JSON = "ARG_INFO_JSON"
+
+        fun createArguments(info: TechoItem): Bundle {
+            return Bundle().apply {
+                putString(ARG_INFO_JSON, info.toJson().toString())
+            }
+        }
+    }
 
     private val binding: FragmentRichTextOptionBinding by lazyBind()
 
@@ -50,6 +62,11 @@ class RichTextOptionFragment : PageFragment() {
         binding.backButton.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
         bindBackButton(binding.backButton)
         initView()
+        initInfo()
+    }
+
+    private fun initInfo() {
+        frameManager.init(arguments?.getString(ARG_INFO_JSON, "") ?: "")
     }
 
     private fun initView() {

@@ -15,6 +15,7 @@ import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
 import com.lollipop.techo.databinding.ItemPanelTextOptionFrameAddBinding
 import com.lollipop.techo.databinding.ItemPanelTextOptionFrameBinding
+import org.json.JSONObject
 import java.util.*
 
 internal class FrameManager(
@@ -43,10 +44,26 @@ internal class FrameManager(
         ::onFrameClick
     )
 
-    @SuppressLint("NotifyDataSetChanged")
+    fun init(infoJson: String) {
+        if (infoJson.isEmpty()) {
+            return
+        }
+        try {
+            val jsonObject = JSONObject(infoJson)
+            techoItemInfo.parse(jsonObject)
+            onInfoReset()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
+
     fun init(info: TechoItem) {
         info.copyTo(techoItemInfo)
+        onInfoReset()
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun onInfoReset() {
         spanList.clear()
         if (spanList.isEmpty()) {
             addFrame(false)
