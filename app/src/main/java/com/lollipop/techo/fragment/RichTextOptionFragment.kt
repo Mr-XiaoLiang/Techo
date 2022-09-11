@@ -1,6 +1,7 @@
 package com.lollipop.techo.fragment
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
 import com.lollipop.base.util.*
+import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
@@ -16,7 +18,7 @@ import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 
-class RichTextOptionFragment : PageFragment() {
+class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedListener {
 
     companion object {
 
@@ -85,6 +87,7 @@ class RichTextOptionFragment : PageFragment() {
         binding.fontSizePresetGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             onFontSizeCheckedIdsChanged(checkedIds)
         }
+        binding.colorWheelView.setOnColorChangedListener(this)
     }
 
     private fun onPreviewChanged() {
@@ -102,6 +105,7 @@ class RichTextOptionFragment : PageFragment() {
             binding.fontSizeSlider.value = span.fontSize.toFloat()
 //            selectedHelperPrinter?.setSelectedRange(it.start, it.end)
             binding.colorWheelView.reset(span.color)
+            binding.palettePreviewView.setBackgroundColor(span.color)
         }
     }
 
@@ -215,6 +219,12 @@ class RichTextOptionFragment : PageFragment() {
             }
         }
         return true
+    }
+
+    override fun onColorChanged(h: Float, s: Float, v: Float, a: Float) {
+        val color = Color.HSVToColor(floatArrayOf(h, s, v))
+        binding.palettePreviewView.setBackgroundColor(color)
+        frameManager.onCurrentSpanColorChanged(color)
     }
 
     private class RichOption(

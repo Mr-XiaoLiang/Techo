@@ -462,11 +462,11 @@ class ColorWheelView(
 
         var h: Float = 0F
             private set
-        var s: Float = 0F
+        var s: Float = 1F
             private set
-        var v: Float = 0F
+        var v: Float = 1F
             private set
-        var a: Float = 0F
+        var a: Float = 1F
             private set
 
         fun set(color: Int) {

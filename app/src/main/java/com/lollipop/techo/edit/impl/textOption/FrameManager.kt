@@ -96,6 +96,12 @@ internal class FrameManager(
         updatePreview()
     }
 
+    fun onCurrentSpanColorChanged(color: Int) {
+        currentTextSpan.addStyle(FontStyle.Color)
+        currentTextSpan.color = color
+        updatePreview()
+    }
+
     fun onCurrentSpanRangeChanged(start: Int, end: Int) {
         currentTextSpan.start = start
         currentTextSpan.end = end
