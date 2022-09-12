@@ -17,8 +17,12 @@ import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
+import com.lollipop.techo.util.RichTextHelper
+import com.lollipop.techo.util.TextSelectedHelper
 
-class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedListener {
+class RichTextOptionFragment : PageFragment(),
+    ColorWheelView.OnColorChangedListener,
+    TextSelectedHelper.OnSelectedRangeChangedListener {
 
     companion object {
 
@@ -50,6 +54,8 @@ class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedList
             RichOption(R.id.strikethroughOptionButton, FontStyle.Strikethrough),
         )
     }
+
+    private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,10 +94,25 @@ class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedList
             onFontSizeCheckedIdsChanged(checkedIds)
         }
         binding.colorWheelView.setOnColorChangedListener(this)
+        val selector = TextSelectedHelper.selector()
+            .onSelectedChanged(this)
+            .bind(binding.textSelectorView)
+        val painter = TextSelectedHelper.printer()
+            .setColor(Color.RED)
+            .halfRadius()
+            .setLayoutProvider { binding.textSelectorView }
+            .notifyInvalidate { binding.textSelectorView.invalidate() }
+            .bindTo(selector)
+        binding.textSelectorView.background = painter
+        selectedHelperPrinter = painter
     }
 
     private fun onPreviewChanged() {
-        // TODO
+        tryUse(binding) {
+            RichTextHelper.startRichFlow()
+                .addRichInfo(frameManager.techoItemInfo)
+                .into(it.previewView)
+        }
     }
 
     private fun onSelectedRichOptionChanged() {
@@ -103,9 +124,9 @@ class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedList
                 }
             }
             binding.fontSizeSlider.value = span.fontSize.toFloat()
-//            selectedHelperPrinter?.setSelectedRange(it.start, it.end)
             binding.colorWheelView.reset(span.color)
             binding.palettePreviewView.setBackgroundColor(span.color)
+            selectedHelperPrinter?.setSelectedRange(span.start, span.end)
         }
     }
 
@@ -128,7 +149,7 @@ class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedList
             it.fontSizeSlider.thumbTintList = ColorStateList.valueOf(pigment.secondary)
             it.fontSizeSlider.trackTintList = ColorStateList.valueOf(pigment.secondaryVariant)
         }
-//        selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
+        selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
     }
 
     private fun onStyleCheckedIdsChanged(checkedIds: List<Int>) {
@@ -225,6 +246,10 @@ class RichTextOptionFragment : PageFragment(), ColorWheelView.OnColorChangedList
         val color = Color.HSVToColor(floatArrayOf(h, s, v))
         binding.palettePreviewView.setBackgroundColor(color)
         frameManager.onCurrentSpanColorChanged(color)
+    }
+
+    override fun onSelectedRangeChanged(start: Int, end: Int) {
+        frameManager.onCurrentSpanRangeChanged(start, end)
     }
 
     private class RichOption(
