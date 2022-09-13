@@ -28,8 +28,8 @@ class RichTextOptionFragment : PageFragment(),
 
         private const val ARG_INFO_JSON = "ARG_INFO_JSON"
 
-        fun createArguments(info: TechoItem): Bundle {
-            return Bundle().apply {
+        fun createArguments(bundle: Bundle, info: TechoItem) {
+            bundle.apply {
                 putString(ARG_INFO_JSON, info.toJson().toString())
             }
         }
@@ -75,6 +75,7 @@ class RichTextOptionFragment : PageFragment(),
 
     private fun initInfo() {
         frameManager.init(arguments?.getString(ARG_INFO_JSON, "") ?: "")
+        binding.textSelectorView.text = frameManager.techoItemInfo.value
     }
 
     private fun initView() {
@@ -105,6 +106,8 @@ class RichTextOptionFragment : PageFragment(),
             .bindTo(selector)
         binding.textSelectorView.background = painter
         selectedHelperPrinter = painter
+
+        binding.panelMenuBar.selectedItemId = R.id.menuSelector
     }
 
     private fun onPreviewChanged() {

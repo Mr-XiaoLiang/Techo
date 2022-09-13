@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ActivityDemoBinding
 import com.lollipop.techo.fragment.RichTextOptionFragment
 
@@ -25,7 +26,11 @@ class DemoActivity : AppCompatActivity() {
             reset(Color.RED)
         }
         binding.openButton.setOnClickListener {
-            SingleFragmentActivity.start<RichTextOptionFragment>(this) {}
+            SingleFragmentActivity.start<RichTextOptionFragment>(this) {
+                RichTextOptionFragment.createArguments(this, TechoItem.Text().apply {
+                    value = "测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容"
+                })
+            }
         }
     }
 

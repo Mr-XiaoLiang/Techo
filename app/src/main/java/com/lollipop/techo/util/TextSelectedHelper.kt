@@ -93,6 +93,8 @@ object TextSelectedHelper {
             val topOffset = (textView.totalPaddingTop - textView.scrollY).toFloat()
             log("requestLayout:startLine = $startLine, endLine = $endLine")
             val tempRect = RectF()
+            val fontMetrics = textView.paint.fontMetrics
+            val fontHeight = fontMetrics.bottom - fontMetrics.top
             for (line in startLine..endLine) {
                 val left = if (line == startLine) {
                     textLayout.getPrimaryHorizontal(selectedStart)
@@ -105,8 +107,8 @@ object TextSelectedHelper {
                 } else {
                     textLayout.getLineRight(line)
                 }
-                val bottom = textLayout.getLineBottom(line)
-                tempRect.set(left, top.toFloat(), right, bottom.toFloat())
+                val bottom = top + fontHeight
+                tempRect.set(left, top.toFloat(), right, bottom)
                 tempRect.offset(leftOffset, topOffset)
                 val radius = getRadius(tempRect.width(), tempRect.height())
                 rangePath.addRoundRect(tempRect, radius, radius, Path.Direction.CW)
