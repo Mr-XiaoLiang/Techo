@@ -244,6 +244,8 @@ object TextSelectedHelper {
 
         var selectTarget = AUTO
 
+        private var currentSelectTarget = AUTO
+
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(v: View?, event: MotionEvent?): Boolean {
             // 拿不到View，放弃
@@ -254,6 +256,12 @@ object TextSelectedHelper {
             }
             // 拿不到Text Layout放弃
             val textLayout = v.layout ?: return false
+            when (event?.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    currentSelectTarget = selectTarget
+                }
+            }
+            Log.d("Lollipop", "onTouch: $event")
             touchHelper.onTouch(event)
             onTouchMove(v, textLayout, touchHelper.x, touchHelper.y)
             return true
@@ -279,6 +287,7 @@ object TextSelectedHelper {
                 start = temp
             }
             if (start < 0 || end < 0) {
+                currentSelectTarget = END
                 if (start < 0) {
                     start = offset
                 }
@@ -286,19 +295,23 @@ object TextSelectedHelper {
                     end = offset
                 }
             } else {
-                when (selectTarget) {
+                when (currentSelectTarget) {
                     AUTO -> {
                         if (realOffset <= start) {
                             start = realOffset
+                            currentSelectTarget = START
                         } else if (realOffset >= end) {
                             end = realOffset
+                            currentSelectTarget = END
                         } else {
                             val startLength = realOffset - start
                             val endLength = end - realOffset
                             if (startLength > endLength) {
                                 end = realOffset
+                                currentSelectTarget = END
                             } else {
                                 start = realOffset
+                                currentSelectTarget = START
                             }
                         }
                     }

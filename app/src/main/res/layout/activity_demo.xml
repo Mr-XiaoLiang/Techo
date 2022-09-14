@@ -6,20 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".activity.DemoActivity">
 
-    <com.lollipop.palette.ColorWheelView
-        android:id="@+id/colorWheelView"
+    <com.lollipop.techo.view.PassiveScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:valueSlideBarColor="?attr/colorPrimary"
-        app:alphaSlideBarColor="?attr/colorSecondary"
-        android:padding="30dp"
-        app:slideBarWidth="5dp"
-        app:slideBarInterval="5dp"
-        app:anchorRadius="10dp"
-        app:anchorStrokeWidth="1dp"
-        app:anchorStrokeColor="@color/gray_0"/>
-    
+        android:layout_height="200dp"
+        android:id="@+id/passiveScrollView"
+        app:layout_constraintTop_toTopOf="parent" >
+        <TextView
+            android:id="@+id/testTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.lollipop.techo.view.PassiveScrollView>
+
+    <com.google.android.material.slider.Slider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollSlider"
+        app:tickVisible="false"
+        android:stepSize="1"
+        app:layout_constraintTop_toBottomOf="@id/passiveScrollView"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -85,7 +85,7 @@
                         android:layout_gravity="end"
                         android:color="@color/gray_2" />
 
-                    <androidx.core.widget.NestedScrollView
+                    <com.lollipop.techo.view.PassiveScrollView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -99,7 +99,7 @@
                             android:textSize="18sp"
                             android:lineSpacingExtra="16sp"
                             tools:text="测试内容测试内容测试内容测试内容测试内容测试内容测试内容" />
-                    </androidx.core.widget.NestedScrollView>
+                    </com.lollipop.techo.view.PassiveScrollView>
 
                 </FrameLayout>
 
