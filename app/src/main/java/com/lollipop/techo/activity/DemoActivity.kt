@@ -20,26 +20,30 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.passiveScrollView.setOnContentChangedListener { contentHeight, height ->
-            binding.scrollSlider.valueFrom = 0F
-            binding.scrollSlider.valueTo = (contentHeight - height).toFloat()
+        binding.passiveScrollView.addListener { contentHeight, height ->
+            val offset = contentHeight - height
+            if (offset > 0) {
+                binding.scrollSlider.valueFrom = 0F
+                binding.scrollSlider.valueTo = offset.toFloat()
+            }
         }
         binding.scrollSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                binding.passiveScrollView.offsetTo(value.toInt())
+                binding.passiveScrollView.scrollTo(0, value.toInt())
             }
         }
         val stringBuilder = StringBuilder()
-        for (i in 0..500) {
-            stringBuilder.append(i)
-            stringBuilder.append("\n")
+        for (i in 0..20) {
+            stringBuilder.append("测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容")
         }
-        binding.testTextView.text = stringBuilder.toString()
+        val string = stringBuilder.toString()
+        binding.testTextView.text = string
+        binding.testTextView2.text = string
 
         binding.openButton.setOnClickListener {
             SingleFragmentActivity.start<RichTextOptionFragment>(this) {
                 RichTextOptionFragment.createArguments(this, TechoItem.Text().apply {
-                    value = "测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容测试内容"
+                    value = string
                 })
             }
         }

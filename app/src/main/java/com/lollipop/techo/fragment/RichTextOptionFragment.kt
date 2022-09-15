@@ -19,6 +19,8 @@ import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
+import kotlin.math.max
+import kotlin.math.min
 
 class RichTextOptionFragment : PageFragment(),
     ColorWheelView.OnColorChangedListener,
@@ -56,6 +58,9 @@ class RichTextOptionFragment : PageFragment(),
     }
 
     private var selectedHelperPrinter: TextSelectedHelper.Painter? = null
+
+    private var selectorContentHeight = 0
+    private var selectorGroupHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,6 +113,28 @@ class RichTextOptionFragment : PageFragment(),
         selectedHelperPrinter = painter
 
         binding.panelMenuBar.selectedItemId = R.id.menuSelector
+
+        binding.textSelectorScrollView.addListener(::onSelectorTextHeightChanged)
+        binding.textSelectorScrollBar.addListener(::scrollTextSelector)
+    }
+
+    private fun onSelectorTextHeightChanged(contentHeight: Int, height: Int) {
+        selectorContentHeight = contentHeight
+        selectorGroupHeight = height
+        if (contentHeight <= height) {
+            binding.textSelectorScrollBar.isVisible = false
+        } else {
+            binding.textSelectorScrollBar.isVisible = true
+            binding.textSelectorScrollBar.contentWeight = height * 1F / contentHeight
+            binding.textSelectorScrollBar.progress = 0F
+            scrollTextSelector(0F)
+        }
+    }
+
+    private fun scrollTextSelector(progress: Float) {
+        val p = max(0F, min(1F, progress))
+        val offsetY = ((selectorContentHeight - selectorGroupHeight) * p).toInt()
+        binding.textSelectorScrollView.scrollTo(0, offsetY)
     }
 
     private fun onPreviewChanged() {

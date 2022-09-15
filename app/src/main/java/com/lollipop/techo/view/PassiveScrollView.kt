@@ -2,88 +2,86 @@ package com.lollipop.techo.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.ViewGroup
+import android.view.View
+import android.widget.FrameLayout
+import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.log
 import kotlin.math.max
-import kotlin.math.min
 
 class PassiveScrollView(
     context: Context, attributeSet: AttributeSet?, style: Int
-) : ViewGroup(context, attributeSet, style) {
+) : FrameLayout(context, attributeSet, style) {
 
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
     constructor(context: Context) : this(context, null)
 
     private var maxContentHeight = 0
 
-    private var onContentHeightChangedListener: OnContentHeightChangedListener? = null
+    private val onContentHeightChangedListener = ListenerManager<OnContentHeightChangedListener>()
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        log("onLayout")
-        val offsetY = scrollY
-        val maxWidth = width - paddingLeft - paddingRight
-        val childTop = paddingTop - offsetY
-        val childLeft = paddingLeft
-        for (index in 0 until childCount) {
-            getChildAt(index)?.let { child ->
-                val childWidth = min(child.measuredWidth, maxWidth)
-                val childHeight = child.measuredHeight
-                child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight)
-            }
-        }
-    }
-
-//    override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
-//        super.onScrollChanged(l, t, oldl, oldt)
-//        val offsetY = t - oldt
-//        log("onScrollChanged: $offsetY")
-//        for (index in 0 until childCount) {
-//            getChildAt(index)?.offsetTopAndBottom(offsetY)
-//        }
-//    }
-
-    fun offsetTo(offsetY: Int) {
-        val newY = max(0, min(offsetY, maxContentHeight - height))
-        val offset = newY - scrollY
-        scrollY = newY
-        for (index in 0 until childCount) {
-            getChildAt(index)?.offsetTopAndBottom(offset)
-        }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-
+        super.onLayout(changed, l, t, r, b)
         var maxHeight = 0
-
-        val childWidthSpec = MeasureSpec.makeMeasureSpec(
-            widthSize - paddingLeft - paddingRight,
-            MeasureSpec.AT_MOST
-        )
-        val childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-
         for (index in 0 until childCount) {
             getChildAt(index)?.let { child ->
-                child.measure(childWidthSpec, childHeightSpec)
-                val measuredHeight = child.measuredHeight
-                if (measuredHeight > maxHeight) {
-                    maxHeight = measuredHeight
+                val childHeight = child.height
+                if (maxHeight < childHeight) {
+                    maxHeight = childHeight
+                    log("${child::class.java.simpleName}: $childHeight")
                 }
             }
         }
-
-        changeMaxOffset(max(0, maxHeight), heightSize)
-        setMeasuredDimension(widthSize, heightSize)
+        changeMaxOffset(max(0, maxHeight + paddingTop + paddingBottom), height)
     }
 
-    fun setOnContentChangedListener(listener: OnContentHeightChangedListener) {
-        this.onContentHeightChangedListener = listener
+    override fun measureChild(
+        child: View,
+        parentWidthMeasureSpec: Int,
+        parentHeightMeasureSpec: Int
+    ) {
+        val lp = child.layoutParams
+        val childWidthMeasureSpec = getChildMeasureSpec(
+            parentWidthMeasureSpec,
+            paddingLeft + paddingRight, lp.width
+        )
+        val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+    }
+
+    override fun measureChildWithMargins(
+        child: View,
+        parentWidthMeasureSpec: Int, widthUsed: Int,
+        parentHeightMeasureSpec: Int, heightUsed: Int
+    ) {
+        val lp = child.layoutParams as MarginLayoutParams
+        val childWidthMeasureSpec = getChildMeasureSpec(
+            parentWidthMeasureSpec,
+            (paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin + widthUsed),
+            lp.width
+        )
+        val childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+            lp.topMargin + lp.bottomMargin, MeasureSpec.UNSPECIFIED
+        )
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+    }
+
+    fun addListener(listener: OnContentHeightChangedListener) {
+        onContentHeightChangedListener.addListener(listener)
+    }
+
+    fun removeListener(listener: OnContentHeightChangedListener) {
+        onContentHeightChangedListener.removeListener(listener)
     }
 
     private fun changeMaxOffset(contentHeight: Int, height: Int) {
+        log("changeMaxOffset: $contentHeight")
         if (maxContentHeight != contentHeight) {
-            onContentHeightChangedListener?.onContentHeightChanged(contentHeight, height)
+            onContentHeightChangedListener.invoke {
+                it.onContentHeightChanged(
+                    contentHeight,
+                    height
+                )
+            }
         }
         maxContentHeight = contentHeight
     }

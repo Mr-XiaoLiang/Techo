@@ -12,9 +12,10 @@
         android:id="@+id/passiveScrollView"
         app:layout_constraintTop_toTopOf="parent" >
         <TextView
+            android:lineSpacingExtra="16sp"
             android:id="@+id/testTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="300dp" />
     </com.lollipop.techo.view.PassiveScrollView>
 
     <com.google.android.material.slider.Slider
@@ -24,6 +25,18 @@
         app:tickVisible="false"
         android:stepSize="1"
         app:layout_constraintTop_toBottomOf="@id/passiveScrollView"/>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/scrollSlider" >
+        <TextView
+            android:lineSpacingExtra="16sp"
+            android:id="@+id/testTextView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
     <Button
         android:layout_width="wrap_content"
