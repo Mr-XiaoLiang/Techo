@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
+import com.lollipop.base.util.log
 import com.lollipop.techo.R
 import kotlin.math.max
 import kotlin.math.min
@@ -92,19 +93,31 @@ class OverflowScrollBar(
 
     private fun onTouchDown(event: MotionEvent): Boolean {
         activeTouchId = event.getPointerId(0)
-        val y = event.y
-        val x = event.x
-        lastTouchPoint.set(x, y)
+        val x = event.getX(0).limit(width.toFloat())
+        val y = event.getY(0).limit(height.toFloat())
+
         if (isHorizontal) {
             if (x >= barRange.left && x <= barRange.right) {
+                lastTouchPoint.set(x, y)
                 return true
             }
         } else {
             if (y >= barRange.top && y <= barRange.bottom) {
+                lastTouchPoint.set(x, y)
                 return true
             }
         }
         return false
+    }
+
+    private fun Float.limit(max: Float): Float {
+        if (this < 0) {
+            return 0F
+        }
+        if (this > max) {
+            return max
+        }
+        return this
     }
 
     private fun onTouchMove(event: MotionEvent): Boolean {
@@ -112,8 +125,8 @@ class OverflowScrollBar(
         if (index < 0) {
             return onTouchDown(event)
         }
-        val x = event.getX(index)
-        val y = event.getY(index)
+        val x = event.getX(index).limit(width.toFloat())
+        val y = event.getY(index).limit(height.toFloat())
         if (isHorizontal) {
             val offsetX = x - lastTouchPoint.x
             offsetByHorizontal(offsetX)
@@ -121,6 +134,7 @@ class OverflowScrollBar(
             val offsetY = y - lastTouchPoint.y
             offsetByVertical(offsetY)
         }
+        log("onTouchMove: $x, $y")
         lastTouchPoint.set(x, y)
         return true
     }
@@ -136,6 +150,7 @@ class OverflowScrollBar(
         val contentHeight = height - paddingTop - paddingBottom
         val offsetMax = contentHeight * (1 - contentWeight)
         val newProgress = offset / offsetMax + progress
+        log("progress: $progress")
         dispatchScrollChanged(newProgress)
     }
 

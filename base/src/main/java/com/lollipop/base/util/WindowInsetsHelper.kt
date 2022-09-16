@@ -182,6 +182,17 @@ class WindowInsetsHelper(
             val HEADER = Edge(left = COMPARE, top = COMPARE, right = COMPARE, bottom = ORIGINAL)
 
             val CONTENT = Edge(left = COMPARE, top = ORIGINAL, right = COMPARE, bottom = COMPARE)
+
+            fun build(callback: Builder.() -> Unit): Edge {
+                val builder = Builder()
+                callback(builder)
+                return Edge(
+                    left = builder.left,
+                    right = builder.right,
+                    top = builder.top,
+                    bottom = builder.bottom
+                )
+            }
         }
 
         fun baseTo(
@@ -191,6 +202,13 @@ class WindowInsetsHelper(
             bottom: EdgeStrategy = this.bottom
         ): Edge {
             return Edge(left, top, right, bottom)
+        }
+
+        class Builder {
+            var left: EdgeStrategy = ORIGINAL
+            var top: EdgeStrategy = ORIGINAL
+            var right: EdgeStrategy = ORIGINAL
+            var bottom: EdgeStrategy = ORIGINAL
         }
 
     }

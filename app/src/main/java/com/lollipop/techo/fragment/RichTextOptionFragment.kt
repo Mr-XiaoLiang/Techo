@@ -116,6 +116,28 @@ class RichTextOptionFragment : PageFragment(),
 
         binding.textSelectorScrollView.addListener(::onSelectorTextHeightChanged)
         binding.textSelectorScrollBar.addListener(::scrollTextSelector)
+
+        initInsets()
+    }
+
+    private fun initInsets() {
+
+        val rightAndBottom = WindowInsetsHelper.Edge.build {
+            right = WindowInsetsHelper.EdgeStrategy.COMPARE
+            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        }
+
+        binding.textSelectorView.fixInsetsByPadding(
+            WindowInsetsHelper.Edge.build {
+                bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+            }
+        )
+        binding.textSelectorScrollBar.fixInsetsByPadding(rightAndBottom)
+        binding.layerPanel.fixInsetsByPadding(rightAndBottom)
+        binding.richOptionGroup.fixInsetsByPadding(rightAndBottom)
+        binding.palettePanel.fixInsetsByPadding(rightAndBottom)
+        binding.fontSizePresetGroup.fixInsetsByPadding(rightAndBottom)
+
     }
 
     private fun onSelectorTextHeightChanged(contentHeight: Int, height: Int) {

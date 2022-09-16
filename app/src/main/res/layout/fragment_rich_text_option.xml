@@ -91,7 +91,10 @@
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:lineSpacingExtra="16sp"
-                            android:padding="16dp"
+                            android:paddingStart="16dp"
+                            android:paddingTop="16dp"
+                            android:paddingEnd="0px"
+                            android:paddingBottom="16dp"
                             android:textColor="@color/text_gray_10"
                             android:textSize="18sp"
                             tools:text="测试内容测试内容测试内容测试内容测试内容测试内容测试内容" />
@@ -99,10 +102,12 @@
 
                     <com.lollipop.techo.view.OverflowScrollBar
                         android:id="@+id/textSelectorScrollBar"
-                        android:layout_width="20dp"
+                        android:layout_width="36dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="end"
-                        android:color="@color/gray_2" />
+                        android:color="@color/gray_2"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="10dp" />
 
                 </LinearLayout>
 
@@ -177,7 +182,8 @@
                     android:id="@+id/palettePanel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:visibility="gone">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/palettePresetListView"
@@ -245,7 +251,7 @@
 
                     <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/fontSizePresetGroup"
