@@ -36,6 +36,7 @@ android {
             path file('src/main/cpp/CMakeLists.txt')
         }
     }
+    namespace 'com.google.android.renderscript'
 }
 
 dependencies {

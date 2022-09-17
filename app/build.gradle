@@ -30,6 +30,7 @@ android {
     viewBinding {
         enabled = true
     }
+    namespace 'com.lollipop.techo'
 }
 
 dependencies {

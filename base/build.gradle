@@ -29,6 +29,7 @@ android {
     viewBinding {
         enabled = true
     }
+    namespace 'com.lollipop.base'
 }
 
 dependencies {
