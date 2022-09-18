@@ -72,7 +72,6 @@ class RichTextOptionFragment : PageFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backButton.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
         bindBackButton(binding.backButton)
         initView()
         initInfo()
@@ -137,6 +136,14 @@ class RichTextOptionFragment : PageFragment(),
         binding.richOptionGroup.fixInsetsByPadding(rightAndBottom)
         binding.palettePanel.fixInsetsByPadding(rightAndBottom)
         binding.fontSizePresetGroup.fixInsetsByPadding(rightAndBottom)
+
+        val header = WindowInsetsHelper.Edge.build {
+            top = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+            left = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+            right = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        }
+        binding.backButton.fixInsetsByMargin(header)
+        binding.previewView.fixInsetsByPadding(header)
 
     }
 
@@ -296,6 +303,7 @@ class RichTextOptionFragment : PageFragment(),
 
     override fun onColorChanged(h: Float, s: Float, v: Float, a: Float) {
         val color = Color.HSVToColor(floatArrayOf(h, s, v))
+        // TODO 颜色面板有问题
         binding.palettePreviewView.setBackgroundColor(color)
         frameManager.onCurrentSpanColorChanged(color)
     }

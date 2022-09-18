@@ -6,17 +6,23 @@
     android:layout_height="match_parent"
     tools:background="#3f00">
 
-    <TextView
-        android:id="@+id/previewView"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/previewScrollView"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:text="@string/app_name"
+            android:paddingVertical="48dp"/>
+    </androidx.core.widget.NestedScrollView>
 
     <ImageView
         android:id="@+id/backButton"
@@ -36,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_marginBottom="28dp"
-        app:layout_constraintBottom_toBottomOf="@id/previewView" />
+        app:layout_constraintBottom_toBottomOf="@id/previewScrollView" />
 
     <com.lollipop.techo.view.RoundClipLayout
         android:id="@+id/tabBar"
