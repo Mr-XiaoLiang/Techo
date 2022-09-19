@@ -52,12 +52,12 @@ class ColorWheelView(
             layoutWheel()
         }
     private var wheelRadius = 0F
-    private var wheelCenter = PointF()
+    private val wheelCenter = WheelPoint(0F, 0F)
 
     private var slideBarRadius: Float = 0F
     private var slideBarLength: Float = 0F
 
-    private var hsv = HSV()
+    private val hsv = HSV()
 
     private var hueShader: Shader? = null
     private var wheelShader: Shader? = null
@@ -182,7 +182,8 @@ class ColorWheelView(
         val weight = max((radius - slideBarRadius) / slideBarWidth, 1F)
         val offsetValue = offsetY * -1 / slideBarLength / weight
         hsv.offsetV(offsetValue)
-        buildSaturation()
+//        buildSaturation()
+        invalidate()
     }
 
     private fun onWheelMove(x: Float, y: Float, offsetX: Float, offsetY: Float) {
@@ -246,8 +247,7 @@ class ColorWheelView(
             wheelShader = null
             return
         }
-        val rgb = max(0, min(255, (hsv.v * 255).toInt()))
-        val color = Color.rgb(rgb, rgb, rgb)
+        val color = Color.WHITE
         val saturationShader = RadialGradient(
             wheelCenter.x,
             wheelCenter.y,
@@ -260,10 +260,16 @@ class ColorWheelView(
     }
 
     private fun getRadius(x: Float, y: Float): Float {
+        if (wheelCenter.equals(x, y)) {
+            return 0F
+        }
         return AngleCalculator.getLength(wheelCenter.x, wheelCenter.y, x, y)
     }
 
     private fun getAngle(x: Float, y: Float): Float {
+        if (wheelCenter.equals(x, y)) {
+            return 0F
+        }
         return AngleCalculator.getCircumferential(wheelCenter.x, wheelCenter.y, x, y)
     }
 
@@ -458,6 +464,19 @@ class ColorWheelView(
         }
     }
 
+    private class WheelPoint(
+        var x: Float,
+        var y: Float
+    ) {
+        var precision = 1000
+
+        fun equals(oX: Float, oY: Float): Boolean {
+            return (x * precision).toInt() == (oX * precision).toInt()
+                    && (y * precision).toInt() == (oY * precision).toInt()
+        }
+
+    }
+
     private class HSV {
 
         var h: Float = 0F
@@ -515,6 +534,10 @@ class ColorWheelView(
                 return max
             }
             return src
+        }
+
+        override fun toString(): String {
+            return "HSV{ h = $h, s = $s, v = $v, a = $a }"
         }
 
     }
