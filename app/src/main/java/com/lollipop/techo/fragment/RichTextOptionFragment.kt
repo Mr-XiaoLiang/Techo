@@ -62,6 +62,8 @@ class RichTextOptionFragment : PageFragment(),
     private var selectorContentHeight = 0
     private var selectorGroupHeight = 0
 
+    private val colorHistory = ArrayList<Int>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
