@@ -23,7 +23,6 @@ class DemoActivity : AppCompatActivity() {
         WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         initView()
-        test()
     }
 
     private fun initView() {
@@ -39,29 +38,6 @@ class DemoActivity : AppCompatActivity() {
                 })
             }
         }
-    }
-
-    private fun test() {
-        val srcList = ArrayList<Int>()
-        for (index in 0..9) {
-            srcList.add(index + 1000)
-        }
-        ColorHistoryHelper.colorHistory.clear()
-        ColorHistoryHelper.colorHistory.addAll(srcList)
-        log(Arrays.toString(ColorHistoryHelper.colorHistory.toArray()))
-
-        val outputStream = ByteArrayOutputStream()
-        ColorHistoryHelper.write(outputStream)
-        val value = outputStream.toString()
-        log(value)
-
-        ColorHistoryHelper.colorHistory.clear()
-        log(Arrays.toString(ColorHistoryHelper.colorHistory.toArray()))
-
-        val inputStream = ByteArrayInputStream(value.toByteArray())
-        ColorHistoryHelper.read(inputStream)
-        log(Arrays.toString(ColorHistoryHelper.colorHistory.toArray()))
-
     }
 
 }

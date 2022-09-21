@@ -26,4 +26,9 @@
         android:icon="@drawable/ic_baseline_palette_24"
         android:title="@string/rich_palette" />
 
+    <item
+        android:id="@+id/menuDone"
+        android:icon="@drawable/ic_baseline_done_24"
+        android:title="@string/done" />
+
 </menu>

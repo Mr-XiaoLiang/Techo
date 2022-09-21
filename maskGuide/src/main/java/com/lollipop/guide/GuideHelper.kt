@@ -63,7 +63,7 @@ class GuideHelper(private val option: Option) : GuideManager,
             } else {
                 null
             }
-            return with(findRootGroup(fragment.view!!), true, backPressProvider)
+            return with(findRootGroup(fragment.requireView()), true, backPressProvider)
         }
 
         fun with(
@@ -444,26 +444,26 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     }
 
-    override fun onAnimationStart(animation: Animator?) {
+    override fun onAnimationStart(animation: Animator) {
         if (animation == animator) {
             currentProvider?.onAnimationStart(animationForStart)
         }
     }
 
-    override fun onAnimationEnd(animation: Animator?) {
+    override fun onAnimationEnd(animation: Animator) {
         if (animation == animator) {
             currentProvider?.onAnimationEnd(animationForStart)
             onAnimationEnd()
         }
     }
 
-    override fun onAnimationCancel(animation: Animator?) {
+    override fun onAnimationCancel(animation: Animator) {
     }
 
-    override fun onAnimationRepeat(animation: Animator?) {
+    override fun onAnimationRepeat(animation: Animator) {
     }
 
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
+    override fun onAnimationUpdate(animation: ValueAnimator) {
         if (animation == animator) {
             animationProgress = animation.animatedValue as Float
             currentProvider?.onAnimation(animationForStart, animationProgress)

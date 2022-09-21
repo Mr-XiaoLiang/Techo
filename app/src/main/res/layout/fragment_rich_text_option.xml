@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="10dp"
-            android:text="@string/app_name"
-            android:paddingVertical="48dp"/>
+            android:paddingVertical="48dp"
+            android:text="@string/app_name" />
     </androidx.core.widget.NestedScrollView>
 
     <ImageView
@@ -315,6 +315,21 @@
                     </androidx.core.widget.NestedScrollView>
 
                 </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/donePanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                        android:id="@+id/doneBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/done"
+                        app:icon="@drawable/ic_baseline_done_24" />
+
+                </FrameLayout>
 
             </FrameLayout>
 

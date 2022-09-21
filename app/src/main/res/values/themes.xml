@@ -79,4 +79,10 @@
         <item name="checkedIconTint">@color/brand_4</item>
     </style>
 
+    <style name="SmoothRectangle">
+        <item name="pathData">@string/smooth_rectangle</item>
+        <item name="viewportWidth">24</item>
+        <item name="viewportHeight">24</item>
+    </style>
+
 </resources>

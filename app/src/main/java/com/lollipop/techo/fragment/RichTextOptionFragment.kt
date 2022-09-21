@@ -1,5 +1,6 @@
 package com.lollipop.techo.fragment
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -7,15 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
 import com.lollipop.base.util.*
+import com.lollipop.palette.ColorHistoryHelper
 import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.tintByNotObvious
 import com.lollipop.techo.R
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
+import com.lollipop.techo.databinding.ItemColorHistroyBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
@@ -62,7 +68,13 @@ class RichTextOptionFragment : PageFragment(),
     private var selectorContentHeight = 0
     private var selectorGroupHeight = 0
 
-    private val colorHistory = ArrayList<Int>()
+    private val colorHistory by lazy {
+        ColorHistoryHelper(requireContext())
+    }
+
+    private val colorHistoryAdapter by lazy {
+        ColorHistoryAdapter(::onColorSelected)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -118,6 +130,10 @@ class RichTextOptionFragment : PageFragment(),
         binding.textSelectorScrollView.addListener(::onSelectorTextHeightChanged)
         binding.textSelectorScrollBar.addListener(::scrollTextSelector)
 
+        with(binding.palettePresetListView) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = colorHistoryAdapter
+        }
         initInsets()
     }
 
@@ -147,6 +163,20 @@ class RichTextOptionFragment : PageFragment(),
         binding.backButton.fixInsetsByMargin(header)
         binding.previewView.fixInsetsByPadding(header)
 
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        colorHistory.load {
+            colorHistoryAdapter.reset(colorHistory.list)
+        }
+    }
+
+    private fun onColorSelected(color: Int) {
+        frameManager.onCurrentSpanColorChanged(color)
+        binding.colorWheelView.reset(color)
+        binding.palettePreviewView.setBackgroundColor(color)
     }
 
     private fun onSelectorTextHeightChanged(contentHeight: Int, height: Int) {
@@ -194,19 +224,8 @@ class RichTextOptionFragment : PageFragment(),
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         tryUse(binding) {
-//            it.doneBtn.tintByNotObvious(pigment)
-//            it.optionLinearLayout.let { group ->
-//                val childCount = group.childCount
-//                val optionColor = it.root.context.getColor(R.color.text_theme)
-//                for (index in 0 until childCount) {
-//                    group.getChildAt(index)?.let { child ->
-//                        if (child is ImageView) {
-//                            child.tintBySelectState(pigment, optionColor)
-//                        }
-//                    }
-//                }
-//            }
-//            it.scrollBar.color = pigment.secondary
+            it.doneBtn.tintByNotObvious(pigment)
+            it.textSelectorScrollBar.color = pigment.secondary
             it.fontSizeSlider.thumbTintList = ColorStateList.valueOf(pigment.secondary)
             it.fontSizeSlider.trackTintList = ColorStateList.valueOf(pigment.secondaryVariant)
         }
@@ -279,6 +298,7 @@ class RichTextOptionFragment : PageFragment(),
             richOptionPanel.isVisible = false
             palettePanel.isVisible = false
             textSizePanel.isVisible = false
+            donePanel.isVisible = false
         }
         when (itemId) {
             R.id.menuSelector -> {
@@ -296,6 +316,9 @@ class RichTextOptionFragment : PageFragment(),
             R.id.menuPalette -> {
                 binding.palettePanel.isVisible = true
             }
+            R.id.menuDone -> {
+                binding.donePanel.isVisible = true
+            }
             else -> {
                 return false
             }
@@ -305,7 +328,6 @@ class RichTextOptionFragment : PageFragment(),
 
     override fun onColorChanged(h: Float, s: Float, v: Float, a: Float) {
         val color = Color.HSVToColor(floatArrayOf(h, s, v))
-        // TODO 颜色面板有问题
         binding.palettePreviewView.setBackgroundColor(color)
         frameManager.onCurrentSpanColorChanged(color)
     }
@@ -318,5 +340,57 @@ class RichTextOptionFragment : PageFragment(),
         val viewId: Int,
         val fontStyle: FontStyle
     )
+
+    private class ColorHistoryAdapter(
+        private val onColorClick: (color: Int) -> Unit
+    ) : RecyclerView.Adapter<ColorHistoryHolder>() {
+
+        private val list = ArrayList<Int>()
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun reset(set: Set<Int>) {
+            list.clear()
+            list.addAll(set)
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorHistoryHolder {
+            return ColorHistoryHolder(parent.bind(), ::onHolderClick)
+        }
+
+        private fun onHolderClick(position: Int) {
+            onColorClick(list[position])
+        }
+
+        override fun onBindViewHolder(holder: ColorHistoryHolder, position: Int) {
+            holder.bind(list[position])
+        }
+
+        override fun getItemCount(): Int {
+            return list.size
+        }
+
+    }
+
+    private class ColorHistoryHolder(
+        private val binding: ItemColorHistroyBinding,
+        private val onClick: (Int) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.colorView.setOnClickListener {
+                onHolderClick()
+            }
+        }
+
+        private fun onHolderClick() {
+            onClick(adapterPosition)
+        }
+
+        fun bind(color: Int) {
+            binding.colorView.setBackgroundColor(color)
+        }
+
+    }
 
 }
