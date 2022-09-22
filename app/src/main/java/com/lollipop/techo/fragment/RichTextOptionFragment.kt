@@ -348,9 +348,9 @@ class RichTextOptionFragment : PageFragment(),
         private val list = ArrayList<Int>()
 
         @SuppressLint("NotifyDataSetChanged")
-        fun reset(set: Set<Int>) {
+        fun reset(value: List<Int>) {
             list.clear()
-            list.addAll(set)
+            list.addAll(value)
             notifyDataSetChanged()
         }
 

@@ -10,9 +10,9 @@ class ColorHistoryHelper(private val context: Context) {
 
     private var mode = Impl.DEFAULT_MODE
 
-    private val colorList = HashSet<Int>()
+    private val colorList = ArrayList<Int>((Impl.maxSize / 0.75F + 1).toInt())
 
-    val list: Set<Int>
+    val list: List<Int>
         get() {
             return colorList
         }
@@ -33,17 +33,25 @@ class ColorHistoryHelper(private val context: Context) {
     }
 
     fun add(color: Int) {
-        colorList.add(color)
+        // 先删掉再说
+        colorList.remove(color)
+        if (colorList.isNotEmpty() && colorList.size >= Impl.maxSize) {
+            colorList.subList(Impl.maxSize - 2, colorList.lastIndex).clear()
+        }
+        colorList.add(0, color)
     }
 
     private object Impl {
+
+        const val maxSize: Int = 100
+
         const val DEFAULT_MODE = -1
 
         private var changedMode = DEFAULT_MODE
 
         private const val HISTORY_FILE_NAME = "colorHistory"
 
-        val colorHistory = HashSet<Int>()
+        val colorHistory = ArrayList<Int>(maxSize * 2)
 
         private fun write(outputStream: OutputStream) {
             var inputStream: InputStream? = null
@@ -106,6 +114,9 @@ class ColorHistoryHelper(private val context: Context) {
                         val c = jsonArray.optInt(index)
                         if (c != 0) {
                             tempList.add(c)
+                            if (tempList.size >= maxSize) {
+                                break
+                            }
                         }
                     }
                 }
@@ -159,19 +170,22 @@ class ColorHistoryHelper(private val context: Context) {
             return File(context.filesDir, HISTORY_FILE_NAME)
         }
 
-        fun lockRead(context: Context, mode: Int, outList: MutableSet<Int>): Int {
+        fun lockRead(context: Context, mode: Int, outList: MutableList<Int>): Int {
             synchronized(ColorHistoryHelper::class.java) {
                 if (mode != changedMode || changedMode == DEFAULT_MODE) {
                     readFromFile(getFile(context))
                     changeMode()
                 }
                 outList.clear()
+                if (colorHistory.size > maxSize) {
+                    colorHistory.subList(maxSize - 1, colorHistory.lastIndex).clear()
+                }
                 outList.addAll(colorHistory)
                 return changedMode
             }
         }
 
-        fun lockSave(context: Context, mode: Int, inList: Set<Int>): Int {
+        fun lockSave(context: Context, mode: Int, inList: List<Int>): Int {
             synchronized(ColorHistoryHelper::class.java) {
                 if (mode != changedMode) {
                     return changedMode
