@@ -1,6 +1,7 @@
 package com.lollipop.techo.fragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.lollipop.techo.databinding.ItemColorHistroyBinding
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
+import org.json.JSONObject
 import kotlin.math.max
 import kotlin.math.min
 
@@ -36,10 +38,22 @@ class RichTextOptionFragment : PageFragment(),
 
         private const val ARG_INFO_JSON = "ARG_INFO_JSON"
 
+        private const val RESULT_INFO_JSON = "RESULT_INFO_JSON"
+
+        private const val RESULT_SRC_ARGUMENTS = "RESULT_SRC_ARGUMENTS"
+
         fun createArguments(bundle: Bundle, info: TechoItem) {
             bundle.apply {
                 putString(ARG_INFO_JSON, info.toJson().toString())
             }
+        }
+
+        fun getResult(data: Intent): String {
+            return data.getStringExtra(RESULT_INFO_JSON) ?: ""
+        }
+
+        fun getSrcArguments(data: Intent): Bundle? {
+            return data.getBundleExtra(RESULT_SRC_ARGUMENTS)
         }
     }
 
@@ -73,7 +87,7 @@ class RichTextOptionFragment : PageFragment(),
     }
 
     private val colorHistoryAdapter by lazy {
-        ColorHistoryAdapter(::onColorSelected)
+        ColorHistoryAdapter(colorHistory.list, ::onColorSelected)
     }
 
     override fun onCreateView(
@@ -92,7 +106,7 @@ class RichTextOptionFragment : PageFragment(),
     }
 
     private fun initInfo() {
-        frameManager.init(arguments?.getString(ARG_INFO_JSON, "") ?: "")
+        frameManager.init(getArgumentsInfoJson())
         binding.textSelectorView.text = frameManager.techoItemInfo.value
     }
 
@@ -129,7 +143,10 @@ class RichTextOptionFragment : PageFragment(),
 
         binding.textSelectorScrollView.addListener(::onSelectorTextHeightChanged)
         binding.textSelectorScrollBar.addListener(::scrollTextSelector)
-
+        binding.doneBtn.setOnClickListener {
+            setResult()
+            onBackPressed()
+        }
         with(binding.palettePresetListView) {
             layoutManager = LinearLayoutManager(context)
             adapter = colorHistoryAdapter
@@ -169,7 +186,7 @@ class RichTextOptionFragment : PageFragment(),
     override fun onResume() {
         super.onResume()
         colorHistory.load {
-            colorHistoryAdapter.reset(colorHistory.list)
+            colorHistoryAdapter.notifyDataSetChanged()
         }
     }
 
@@ -291,7 +308,9 @@ class RichTextOptionFragment : PageFragment(),
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun onPanelSelected(itemId: Int): Boolean {
+        val isPalettePanel = binding.palettePanel.isVisible
         with(binding) {
             selectorPanel.isVisible = false
             layerPanel.isVisible = false
@@ -315,6 +334,7 @@ class RichTextOptionFragment : PageFragment(),
             }
             R.id.menuPalette -> {
                 binding.palettePanel.isVisible = true
+                colorHistoryAdapter.notifyDataSetChanged()
             }
             R.id.menuDone -> {
                 binding.donePanel.isVisible = true
@@ -322,6 +342,10 @@ class RichTextOptionFragment : PageFragment(),
             else -> {
                 return false
             }
+        }
+        if (!binding.palettePanel.isVisible && isPalettePanel) {
+            colorHistory.add(frameManager.currentTextSpan.color)
+            colorHistory.save()
         }
         return true
     }
@@ -336,23 +360,36 @@ class RichTextOptionFragment : PageFragment(),
         frameManager.onCurrentSpanRangeChanged(start, end)
     }
 
+    private fun getArgumentsInfoJson(): String {
+        return arguments?.getString(ARG_INFO_JSON, "") ?: ""
+    }
+
+    private fun setResult() {
+        val inputJson = getArgumentsInfoJson()
+        val inputObj = try {
+            JSONObject(inputJson)
+        } catch (e: Throwable) {
+            JSONObject()
+        }
+        val resultObj = frameManager.techoItemInfo.toJson()
+        resultObj.keys().forEach { key ->
+            inputObj.put(key, resultObj.opt(key))
+        }
+        setResultSuccess(Intent().apply {
+            putExtra(RESULT_INFO_JSON, inputObj.toString())
+            putExtra(RESULT_SRC_ARGUMENTS, arguments)
+        })
+    }
+
     private class RichOption(
         val viewId: Int,
         val fontStyle: FontStyle
     )
 
     private class ColorHistoryAdapter(
+        private val list: List<Int>,
         private val onColorClick: (color: Int) -> Unit
     ) : RecyclerView.Adapter<ColorHistoryHolder>() {
-
-        private val list = ArrayList<Int>()
-
-        @SuppressLint("NotifyDataSetChanged")
-        fun reset(value: List<Int>) {
-            list.clear()
-            list.addAll(value)
-            notifyDataSetChanged()
-        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorHistoryHolder {
             return ColorHistoryHolder(parent.bind(), ::onHolderClick)
