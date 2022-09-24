@@ -1,6 +1,7 @@
 package com.lollipop.techo.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -19,6 +20,7 @@ import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
 import com.lollipop.techo.R
+import com.lollipop.techo.activity.SingleFragmentActivity
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
@@ -41,6 +43,12 @@ class RichTextOptionFragment : PageFragment(),
         private const val RESULT_INFO_JSON = "RESULT_INFO_JSON"
 
         private const val RESULT_SRC_ARGUMENTS = "RESULT_SRC_ARGUMENTS"
+
+        fun startForResult(activity: Activity, requestCode: Int, info: TechoItem) {
+            SingleFragmentActivity.startForResult<RichTextOptionFragment>(activity, requestCode) {
+                createArguments(this, info)
+            }
+        }
 
         fun createArguments(bundle: Bundle, info: TechoItem) {
             bundle.apply {

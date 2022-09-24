@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,20 +17,43 @@ class SingleFragmentActivity : AppCompatActivity() {
         private const val PARAMS_FRAGMENT_NAME = "PARAMS_FRAGMENT_NAME"
         private const val PARAMS_FRAGMENT_ARGUMENTS = "PARAMS_FRAGMENT_ARGUMENTS"
 
-        fun start(context: Context, clazz: Class<out Fragment>, arguments: Bundle) {
-            context.startActivity(
-                Intent(context, SingleFragmentActivity::class.java).apply {
-                    if (context !is AppCompatActivity) {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    putExtra(PARAMS_FRAGMENT_NAME, clazz.name)
-                    putExtra(PARAMS_FRAGMENT_ARGUMENTS, arguments)
+        private fun createIntent(
+            context: Context,
+            clazz: Class<out Fragment>,
+            arguments: Bundle
+        ): Intent {
+            return Intent(context, SingleFragmentActivity::class.java).apply {
+                if (context !is AppCompatActivity) {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
-            )
+                putExtra(PARAMS_FRAGMENT_NAME, clazz.name)
+                putExtra(PARAMS_FRAGMENT_ARGUMENTS, arguments)
+            }
+        }
+
+        fun start(context: Context, clazz: Class<out Fragment>, arguments: Bundle) {
+            context.startActivity(createIntent(context, clazz, arguments))
         }
 
         inline fun <reified T : Fragment> start(context: Context, builder: Bundle.() -> Unit) {
             start(context, T::class.java, Bundle().apply(builder))
+        }
+
+        fun startForResult(
+            context: Activity,
+            requestCode: Int,
+            clazz: Class<out Fragment>,
+            builder: Bundle
+        ) {
+            context.startActivityForResult(createIntent(context, clazz, builder), requestCode)
+        }
+
+        inline fun <reified T : Fragment> startForResult(
+            context: Activity,
+            requestCode: Int,
+            builder: Bundle.() -> Unit
+        ) {
+            startForResult(context, requestCode, T::class.java, Bundle().apply(builder))
         }
 
     }
