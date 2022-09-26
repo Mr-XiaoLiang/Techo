@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.lollipop.base.util.WindowInsetsHelper
@@ -94,6 +95,24 @@ class SingleFragmentActivity : AppCompatActivity() {
         val transaction = fragmentManager.beginTransaction()
         transaction.add(binding.fragmentContainerView.id, fragment)
         transaction.commit()
+    }
+
+    abstract class LaunchContract<I, O> : ActivityResultContract<I, O>() {
+
+        override fun createIntent(context: Context, input: I): Intent {
+            return Intent(context, SingleFragmentActivity::class.java).apply {
+                if (context !is AppCompatActivity) {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                putExtra(PARAMS_FRAGMENT_NAME, getTarget(input).name)
+                putExtra(PARAMS_FRAGMENT_ARGUMENTS, createArguments(input))
+            }
+        }
+
+        abstract fun createArguments(input: I): Bundle
+
+        abstract fun getTarget(input: I): Class<out Fragment>
+
     }
 
 }

@@ -15,15 +15,19 @@ import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
+import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
+import com.lollipop.techo.fragment.RichTextOptionFragment
 import com.lollipop.techo.list.detail.DetailListAdapter
 import com.lollipop.techo.list.detail.EditHolder
 import com.lollipop.techo.util.CircleAnimationGroup
+import org.json.JSONObject
 
 /**
  * 编辑 & 添加页
@@ -87,6 +91,11 @@ class TechoEditActivity : HeaderActivity(),
     private val editManager by lazy {
         EditManager(this, this, floatingBinding.editContainer)
     }
+
+    private val richTextOptionLauncher = registerResult(
+        RichTextOptionFragment.LAUNCHER,
+        ::onRichTextOptionResult
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -201,7 +210,7 @@ class TechoEditActivity : HeaderActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    private fun onFloatBtnClick(btn: FloatingActionButton,type: TechoItemType) {
+    private fun onFloatBtnClick(btn: FloatingActionButton, type: TechoItemType) {
         floatingBinding.quickAddButton.setImageDrawable(btn.drawable)
         quickAddType = type
         circleAnimationGroup.close()
@@ -250,9 +259,47 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onItemOptionButtonClick(holder: EditHolder<*>) {
         val adapterPosition = holder.adapterPosition
-        val item = mode.itemList[adapterPosition]
-        editManager.openOptionPanel(adapterPosition, item) { index, _ ->
-            viewBinding.contentListView.adapter?.notifyItemChanged(index)
+        when (val item = mode.itemList[adapterPosition]) {
+            is TechoItem.Text,
+            is TechoItem.CheckBox,
+            is TechoItem.Number -> {
+                richTextOptionLauncher.launch(RichTextOptionFragment.Request(adapterPosition, item))
+            }
+            is TechoItem.Photo -> {
+                // TODO()
+            }
+            is TechoItem.Split -> {
+                // TODO()
+            }
+            is TechoItem.Title -> {
+                // TODO()
+            }
+        }
+    }
+
+    private fun onRichTextOptionResult(result: RichTextOptionFragment.Result) {
+        if (!result.success) {
+            return
+        }
+        if (result.input.isEmpty()) {
+            return
+        }
+        try {
+            val position = result.key
+            if (position in mode.itemList.indices) {
+                val item = mode.itemList[position]
+//                val input = JSONObject(result.input)
+//                val srcInfo = TechoItem.createItem(item.itemType)
+//                srcInfo.parse(input)
+//                if (srcInfo.value == item.value) {
+//                    item.parse(JSONObject(result.info))
+//                    viewBinding.contentListView.adapter?.notifyItemChanged(position)
+//                }
+                item.parse(JSONObject(result.info))
+                viewBinding.contentListView.adapter?.notifyItemChanged(position)
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 

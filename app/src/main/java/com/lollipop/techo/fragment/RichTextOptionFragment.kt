@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
@@ -38,31 +39,46 @@ class RichTextOptionFragment : PageFragment(),
 
     companion object {
 
+        val LAUNCHER: Class<out SingleFragmentActivity.LaunchContract<Request, Result>> = ActivityLauncherImpl::class.java
+
         private const val ARG_INFO_JSON = "ARG_INFO_JSON"
+
+        private const val ARG_KEY = "ARG_KEY"
 
         private const val RESULT_INFO_JSON = "RESULT_INFO_JSON"
 
         private const val RESULT_SRC_ARGUMENTS = "RESULT_SRC_ARGUMENTS"
 
-        fun startForResult(activity: Activity, requestCode: Int, info: TechoItem) {
-            SingleFragmentActivity.startForResult<RichTextOptionFragment>(activity, requestCode) {
-                createArguments(this, info)
+        private fun createFragmentArguments(result: Request): Bundle {
+            return Bundle().apply {
+                putInt(ARG_KEY, result.key)
+                putString(ARG_INFO_JSON, result.info.toJson().toString())
             }
         }
 
-        fun createArguments(bundle: Bundle, info: TechoItem) {
-            bundle.apply {
-                putString(ARG_INFO_JSON, info.toJson().toString())
+        private fun getResult(data: Intent): Result {
+            val info = data.getStringExtra(RESULT_INFO_JSON) ?: ""
+            return Result(
+                info.isNotEmpty(),
+                data.getIntExtra(ARG_KEY, 0),
+                data.getStringExtra(RESULT_SRC_ARGUMENTS) ?: "",
+                info,
+            )
+        }
+
+        private fun createResultData(fragment: RichTextOptionFragment, info: String): Intent {
+            val arguments = fragment.arguments
+            return Intent().apply {
+                putExtra(ARG_KEY, arguments?.getInt(ARG_KEY, 0))
+                putExtra(RESULT_SRC_ARGUMENTS, arguments?.getString(ARG_INFO_JSON))
+                putExtra(RESULT_INFO_JSON, info)
             }
         }
 
-        fun getResult(data: Intent): String {
-            return data.getStringExtra(RESULT_INFO_JSON) ?: ""
+        private fun getInputInfo(fragment: RichTextOptionFragment): String {
+            return fragment.arguments?.getString(ARG_INFO_JSON) ?: ""
         }
 
-        fun getSrcArguments(data: Intent): Bundle? {
-            return data.getBundleExtra(RESULT_SRC_ARGUMENTS)
-        }
     }
 
     private val binding: FragmentRichTextOptionBinding by lazyBind()
@@ -114,7 +130,7 @@ class RichTextOptionFragment : PageFragment(),
     }
 
     private fun initInfo() {
-        frameManager.init(getArgumentsInfoJson())
+        frameManager.init(getInputInfo(this))
         binding.textSelectorView.text = frameManager.techoItemInfo.value
     }
 
@@ -368,12 +384,8 @@ class RichTextOptionFragment : PageFragment(),
         frameManager.onCurrentSpanRangeChanged(start, end)
     }
 
-    private fun getArgumentsInfoJson(): String {
-        return arguments?.getString(ARG_INFO_JSON, "") ?: ""
-    }
-
     private fun setResult() {
-        val inputJson = getArgumentsInfoJson()
+        val inputJson = getInputInfo(this)
         val inputObj = try {
             JSONObject(inputJson)
         } catch (e: Throwable) {
@@ -383,10 +395,7 @@ class RichTextOptionFragment : PageFragment(),
         resultObj.keys().forEach { key ->
             inputObj.put(key, resultObj.opt(key))
         }
-        setResultSuccess(Intent().apply {
-            putExtra(RESULT_INFO_JSON, inputObj.toString())
-            putExtra(RESULT_SRC_ARGUMENTS, arguments)
-        })
+        setResultSuccess(createResultData(this, inputObj.toString()))
     }
 
     private class RichOption(
@@ -437,5 +446,28 @@ class RichTextOptionFragment : PageFragment(),
         }
 
     }
+
+    private class ActivityLauncherImpl : SingleFragmentActivity.LaunchContract<Request, Result>() {
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Result {
+            if (resultCode != Activity.RESULT_OK || intent == null) {
+                return Result(false, 0, "", "")
+            }
+            return getResult(intent)
+        }
+
+        override fun createArguments(input: Request): Bundle {
+            return createFragmentArguments(input)
+        }
+
+        override fun getTarget(input: Request): Class<out Fragment> {
+            return RichTextOptionFragment::class.java
+        }
+
+    }
+
+    class Request(val key: Int, val info: TechoItem)
+
+    class Result(val success: Boolean, val key: Int, val input: String, val info: String)
 
 }

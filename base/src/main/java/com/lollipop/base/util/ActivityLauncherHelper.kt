@@ -59,11 +59,17 @@ class ActivityLauncherHelper<I, O>(
 
 }
 
+inline fun <reified I, reified O> ComponentActivity.registerResult(
+    clazz: Class<out ActivityResultContract<I, O>>,
+    noinline callback: (O) -> Unit
+): ActivityLauncherHelper<I, O> {
+    return ActivityLauncherHelper(this, clazz, callback)
+}
+
 fun ComponentActivity.registerSimpleResult(
     callback: (ActivityResult) -> Unit
 ): ActivityLauncherHelper<Intent, ActivityResult> {
-    return ActivityLauncherHelper(
-        this,
+    return registerResult(
         ActivityResultContracts.StartActivityForResult::class.java,
         callback
     )

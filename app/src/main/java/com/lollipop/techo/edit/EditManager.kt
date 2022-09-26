@@ -32,11 +32,6 @@ class EditManager(
         openEditByInfo(index, info, listener)
     }
 
-    fun openOptionPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
-        closePanel()
-        openOptionByInfo(index, info, listener)
-    }
-
     fun closePanel() {
         tryClosePanel(this.activeDelegate)
     }
@@ -64,33 +59,6 @@ class EditManager(
             }
             is TechoItem.Title -> {
                 findDelegate<TitleEditDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-        }
-    }
-
-    private fun openOptionByInfo(
-        index: Int = 0,
-        info: TechoItem,
-        listener: OnEditPanelCloseListener?
-    ) {
-        when (info) {
-            is TechoItem.Photo -> {
-                findDelegate<PhotoOptionDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-            is TechoItem.Text -> {
-//                findDelegate<TextOptionDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-            is TechoItem.CheckBox -> {
-//                findDelegate<CheckBoxOptionDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-            is TechoItem.Number -> {
-//                findDelegate<NumberOptionDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-            is TechoItem.Split -> {
-                findDelegate<SplitOptionDelegate>().applyDelegate(index, info, listener).open(info)
-            }
-            is TechoItem.Title -> {
-//                findDelegate<TitleOptionDelegate>().applyDelegate(index, info, listener).open(info)
             }
         }
     }
