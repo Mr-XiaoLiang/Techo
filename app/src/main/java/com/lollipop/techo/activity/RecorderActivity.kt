@@ -6,16 +6,13 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
-import com.lollipop.recorder.*
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.drawable.CircularProgressDrawable
 import com.lollipop.techo.util.AnimationHelper
 import java.io.File
 
-class RecorderActivity : BaseActivity(),
-    RecordStatusListener,
-    RecordSaveListener {
+class RecorderActivity : BaseActivity() {
 
     companion object {
 
@@ -50,10 +47,6 @@ class RecorderActivity : BaseActivity(),
         get() {
             return intent.getBooleanExtra(PARAMS_AUTO_RECORD, false)
         }
-
-    private val recorder by lazy {
-        AudioRecorder(RecorderConfig.create(), cacheDir)
-    }
 
     private val audioDir: File by lazy {
         File(filesDir, "recorder")
@@ -101,27 +94,22 @@ class RecorderActivity : BaseActivity(),
     }
 
     private fun initRecorder() {
-        recorder.wave.apply {
-            waveListener = binding.recorderWaveView
-            enable = true
-        }
-        recorder.addRecordSaveListener(this)
-        recorder.addRecordStatusListener(this)
+        // TODO
     }
 
     private fun cancel() {
-        recorder.pause()
-        recorder.cleanCache()
+        // TODO
         dismiss()
     }
 
     private fun onRecordButtonClick() {
-        if (recorder.isRunning) {
-            recorder.save(audioFile)
-        } else {
-            recorder.start()
-        }
+        // TODO
         updateRecordButton()
+    }
+
+    private fun isRunning(): Boolean {
+        // TODO
+        return false
     }
 
     private fun updateRecordButton() {
@@ -138,7 +126,7 @@ class RecorderActivity : BaseActivity(),
                     binding.recorderMicView.icon = progressDrawable
                     progressDrawable?.start()
                 }
-                recorder.isRunning -> {
+                isRunning() -> {
                     binding.recorderMicView.setText(R.string.stop)
                     binding.recorderMicView.setIconResource(R.drawable.ic_baseline_stop_24)
                 }
@@ -183,110 +171,7 @@ class RecorderActivity : BaseActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        recorder.pause()
-        recorder.cleanCache()
-        recorder.destroy()
-    }
-
-    override fun onSaveStart() {
-        isSaving = true
-        if (isDestroyed || isFinishing) {
-            return
-        }
-        tryUI {
-            progressDrawable?.start()
-        }
-    }
-
-    override fun onSaveProgressChanged(progress: Float) {
-        if (isDestroyed || isFinishing) {
-            return
-        }
-        tryUI {
-            progressDrawable?.progress = progress
-        }
-    }
-
-    override fun onSaveEnd(result: RecordResult) {
-        isSaving = false
-        if (isDestroyed || isFinishing) {
-            return
-        }
-        tryUI {
-            progressDrawable?.stop()
-            updateStatusView(result)
-            when (result) {
-                is RecordResult.Success -> {
-                    setResult(
-                        RESULT_OK,
-                        Intent().apply {
-                            putAudioFile(this, audioFile.path)
-                        }
-                    )
-                    dismiss()
-                }
-                else -> {
-                }
-            }
-        }
-    }
-
-    override fun onRecordStart() {
-        tryUI {
-            updateRecordButton()
-        }
-    }
-
-    override fun onRecordStop(result: RecordResult) {
-        tryUI {
-            updateRecordButton()
-            updateStatusView(result)
-        }
-    }
-
-    private fun updateStatusView(result: RecordResult) {
-        val isSuccess = result is RecordResult.Success
-        binding.statusPanel.isVisible = !isSuccess
-        if (isSuccess) {
-            return
-        }
-        val errorType: Int
-        val errorCode: Int
-        val errorMsg: String
-        when (result) {
-            is RecordResult.BadValueError -> {
-                errorCode = result.code
-                errorMsg = result.msg
-                errorType = R.string.record_result_error_bad_value
-            }
-            is RecordResult.DeadObjectError -> {
-                errorCode = result.code
-                errorMsg = result.msg
-                errorType = R.string.record_result_error_dead_object
-            }
-            is RecordResult.GenericError -> {
-                errorCode = result.code
-                errorMsg = result.msg
-                errorType = R.string.record_result_error_generic
-            }
-            is RecordResult.InvalidOperationError -> {
-                errorCode = result.code
-                errorMsg = result.msg
-                errorType = R.string.record_result_error_invalid_operation
-            }
-            is RecordResult.Success -> {
-                errorCode = 0
-                errorMsg = ""
-                errorType = 0
-                // do nothing
-            }
-        }
-        binding.statusMsgView.text = getString(
-            R.string.record_result_error,
-            getString(errorType),
-            errorCode,
-            errorMsg
-        )
+        // TODO
     }
 
 }
