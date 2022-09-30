@@ -52,6 +52,21 @@ class RecorderHelper(
         recorder.setOutputFile(outFile.path)
     }
 
+    /**
+     * 通过getMaxAmplitude()方法获得最近的最大振幅，然后除以振幅的最大值32767
+     * 得到振幅的百分比
+     * @return 返回振幅的百分比[0.0, 1.0]
+     */
+    fun getAmplitude(): Float {
+        try {
+            val maxAmplitude = mediaRecorder?.maxAmplitude ?: return 0F
+            return maxAmplitude / 32767F
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return 0F
+    }
+
     private fun init() {
         if (mediaRecorder != null) {
             return

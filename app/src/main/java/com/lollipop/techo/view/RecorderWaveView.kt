@@ -7,17 +7,14 @@ import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.getColor
-import com.lollipop.recorder.wave.WaveInfo
-import com.lollipop.recorder.wave.WaveListener
 import com.lollipop.techo.R
-import kotlin.math.min
 
 /**
  * 录音是波纹显示组件
  */
 class RecorderWaveView(
     context: Context, attributeSet: AttributeSet?, style: Int
-) : AppCompatImageView(context, attributeSet, style), WaveListener {
+) : AppCompatImageView(context, attributeSet, style) {
 
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
 
@@ -37,16 +34,7 @@ class RecorderWaveView(
         }
 
         if (isInEditMode) {
-            addData(
-                listOf(
-                    WaveInfo.new(0.5F),
-                    WaveInfo.new(0.4F),
-                    WaveInfo.new(0.2F),
-                    WaveInfo.new(0.5F),
-                    WaveInfo.new(0.7F),
-                    WaveInfo.new(0.8F),
-                )
-            )
+            addData(listOf(0.5F, 0.7F, 0.4F, 0.9F, 0.3F, 0.4F, 0.5F))
         }
     }
 
@@ -74,17 +62,16 @@ class RecorderWaveView(
             waveDrawable.color = value
         }
 
-    fun addData(list: List<WaveInfo>) {
-        waveDrawable.addData(list)
+    fun addData(maxAmplitude: Float) {
+        waveDrawable.addData(maxAmplitude)
+    }
+
+    fun addData(data: List<Float>) {
+        waveDrawable.addData(data)
     }
 
     fun setColorByResource(@ColorRes id: Int) {
         color = getColor(id)
-    }
-
-
-    override fun onWaveChanged(info: List<WaveInfo>, stereo: Boolean) {
-        addData(info)
     }
 
     private class WaveDrawable : Drawable() {
@@ -106,63 +93,77 @@ class RecorderWaveView(
                 paint.color = value
             }
 
-        private var dateSize = 1
+        private var dateSize = Int.MAX_VALUE
 
         private val waveList = ArrayList<Wave>()
-        private val tempList = ArrayList<Wave>()
 
         private val lineRect = RectF()
 
-        fun addData(list: List<WaveInfo>) {
+        fun addData(list: List<Float>) {
             if (list.size > dateSize) {
                 waveList.clear()
-                reversal(list, waveList)
+                val start = list.size - dateSize
+                val subList = list.subList(start, list.size - 1)
+                subList.forEach {
+                    waveList.add(createWave(it))
+                }
             } else {
-                tempList.clear()
-                tempList.addAll(waveList)
-                waveList.clear()
-                val vacancy = dateSize - tempList.size
-                reversal(list, waveList)
-                accumulate(vacancy, tempList, waveList)
+                val allSize = waveList.size + list.size
+                if (allSize > dateSize && waveList.isNotEmpty()) {
+                    val start = allSize - dateSize
+                    if (start < waveList.size) {
+                        waveList.subList(0, start).clear()
+                    }
+                }
+                list.forEach {
+                    waveList.add(createWave(it))
+                }
             }
             invalidateSelf()
         }
 
-        private fun reversal(from: List<WaveInfo>, to: MutableList<Wave>) {
-            for (index in from.size - 1 downTo 0) {
-                to.add(createWave(from[index], to.size))
+        fun addData(info: Float) {
+            waveList.add(createWave(info))
+            // 超出10个就清理一次，不要太频繁了
+            if (waveList.size > (dateSize + 10)) {
+                val start = waveList.size - dateSize
+                if (start < waveList.size) {
+                    waveList.subList(0, start).clear()
+                }
             }
+            invalidateSelf()
         }
 
-        private fun accumulate(limit: Int, from: List<Wave>, to: MutableList<Wave>) {
-            val end = min(limit, from.size)
-            for (i in 0 until end) {
-                val wave = from[i]
-                wave.offset(bounds, to.size, lineWidth, lineSpace)
-                to.add(wave)
-            }
-        }
-
-        private fun createWave(info: WaveInfo, index: Int): Wave {
-            return Wave(info).apply {
-                update(bounds, index, lineWidth, lineSpace)
-            }
+        private fun createWave(info: Float): Wave {
+            return Wave(info)
         }
 
         override fun onBoundsChange(bounds: Rect) {
             super.onBoundsChange(bounds)
             val allLength = bounds.width() / 2 + lineWidth
             dateSize = allLength / (lineWidth + lineSpace) + 1
-            waveList.forEachIndexed { index, info ->
-                info.update(bounds, index, lineWidth, lineSpace)
-            }
+            invalidateSelf()
         }
 
         override fun draw(canvas: Canvas) {
             val r = lineWidth * 0.5F
-            waveList.forEach { wave ->
-                lineRect.set(wave.left, wave.top, wave.right, wave.bottom)
+            var left = 1F * bounds.exactCenterX() - r
+            val centerY = bounds.centerY()
+            val maxLength = bounds.height() * 0.5F
+            for (wave in waveList) {
+                val right = left + lineWidth
+                if (right < 0) {
+                    break
+                }
+                lineRect.set(
+                    left,
+                    centerY - maxLength * wave.top,
+                    right,
+                    centerY + maxLength * wave.bottom
+                )
                 canvas.drawRoundRect(lineRect, r, r, paint)
+                left -= lineWidth
+                left -= lineSpace
             }
         }
 
@@ -182,53 +183,11 @@ class RecorderWaveView(
             return PixelFormat.TRANSPARENT
         }
 
-        private class Wave(val info: WaveInfo) {
-            var top: Float = 0F
+        private class Wave(amplitude: Float) {
+            var top: Float = amplitude
                 private set
-            var bottom: Float = 0F
+            var bottom: Float = amplitude
                 private set
-
-            var left: Float = 0F
-                private set
-
-            var right: Float = 0F
-                private set
-
-            fun update(bounds: Rect, index: Int, lineWidth: Int, lineSpace: Int) {
-                if (bounds.isEmpty) {
-                    return
-                }
-                val height = bounds.height()
-                val maxLength = height / 2
-                val lineY = bounds.exactCenterY()
-                top = lineY - getOffset(maxLength, info.left)
-                bottom = lineY + getOffset(maxLength, info.right)
-                offset(bounds, index, lineWidth, lineSpace)
-            }
-
-            fun offset(bounds: Rect, index: Int, lineWidth: Int, lineSpace: Int) {
-                if (bounds.isEmpty) {
-                    return
-                }
-                val centerX = bounds.exactCenterX()
-                left = centerX - ((lineWidth + lineSpace) * index) - lineWidth
-                right = left + lineWidth
-            }
-
-            private fun getOffset(max: Int, weight: Float): Float {
-                val w = weight.rangeTo(0F, 1F)
-                return max * w
-            }
-
-            private fun Float.rangeTo(min: Float, max: Float): Float {
-                if (this < min) {
-                    return min
-                }
-                if (this > max) {
-                    return max
-                }
-                return this
-            }
         }
 
     }
