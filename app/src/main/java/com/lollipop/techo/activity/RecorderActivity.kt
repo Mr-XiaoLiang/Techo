@@ -6,6 +6,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.recorder.RecorderHelper
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.drawable.CircularProgressDrawable
@@ -52,9 +53,7 @@ class RecorderActivity : BaseActivity() {
         File(filesDir, "recorder")
     }
 
-    private val audioFile: File by lazy {
-        File(audioDir, "audio_${System.currentTimeMillis()}")
-    }
+    private val recorderHelper = RecorderHelper(this)
 
     private var isSaving = false
 
@@ -80,8 +79,6 @@ class RecorderActivity : BaseActivity() {
             onRecordButtonClick()
         }
 
-        initRecorder()
-
         dialogAnimationHelper.open(true)
 
         updateRecordButton()
@@ -93,23 +90,27 @@ class RecorderActivity : BaseActivity() {
         }
     }
 
-    private fun initRecorder() {
-        // TODO
-    }
-
     private fun cancel() {
-        // TODO
+        recorderHelper.stop()
         dismiss()
     }
 
     private fun onRecordButtonClick() {
-        // TODO
+        if (isRunning()) {
+            recorderHelper.stop()
+            save()
+        } else {
+            recorderHelper.start()
+        }
         updateRecordButton()
     }
 
     private fun isRunning(): Boolean {
-        // TODO
-        return false
+        return recorderHelper.isRunning
+    }
+
+    private fun save() {
+        // TODO()
     }
 
     private fun updateRecordButton() {
@@ -171,7 +172,7 @@ class RecorderActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // TODO
+        recorderHelper.stop()
     }
 
 }

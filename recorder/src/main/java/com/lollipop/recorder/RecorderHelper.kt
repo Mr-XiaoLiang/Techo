@@ -35,6 +35,8 @@ class RecorderHelper(
         File(globalCacheDir ?: context.cacheDir, "recorder")
     }
 
+    private var isRecording: Boolean = false
+
     private fun buildConfig(recorder: MediaRecorder) {
         val builder = recorderBuilder
         if (builder != null) {
@@ -84,14 +86,17 @@ class RecorderHelper(
     fun start() {
         init()
         mediaRecorder?.start()
+        isRecording = true
     }
 
     fun resume() {
         mediaRecorder?.resume()
+        isRecording = true
     }
 
     fun pause() {
         mediaRecorder?.pause()
+        isRecording = false
     }
 
     fun stop() {
@@ -99,7 +104,13 @@ class RecorderHelper(
         mediaRecorder?.reset()
         mediaRecorder?.release()
         mediaRecorder = null
+        isRecording = false
     }
+
+    val isRunning: Boolean
+        get() {
+            return mediaRecorder != null && isRecording
+        }
 
     fun setRecorderBuilder(builder: RecorderBuilder?) {
         this.recorderBuilder = builder
