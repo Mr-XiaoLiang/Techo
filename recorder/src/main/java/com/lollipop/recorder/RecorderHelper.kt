@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Build
 import androidx.core.app.ActivityCompat
-import java.io.File
+import java.io.*
 
 class RecorderHelper(
     private val context: Context
@@ -22,6 +22,55 @@ class RecorderHelper(
         }
 
         var globalCacheDir: File? = null
+
+        private fun copy(fromFile: File, toFile: File): Boolean {
+            if (!fromFile.exists()) {
+                return false
+            }
+            if (!fromFile.isFile) {
+                return false
+            }
+            if (toFile.exists()) {
+                toFile.delete()
+            }
+            try {
+                toFile.parentFile?.mkdirs()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                return false
+            }
+            var inputSteam: InputStream? = null
+            var outputSteam: OutputStream? = null
+            try {
+                val input = BufferedInputStream(FileInputStream(fromFile))
+                inputSteam = input
+                val output = BufferedOutputStream(FileOutputStream(toFile))
+                outputSteam = output
+
+                val buffer = ByteArray(1024 * 4)
+                do {
+                    val read = input.read(buffer)
+                    if (read < 0) {
+                        break
+                    }
+                    output.write(buffer, 0, read)
+                } while (true)
+                output.flush()
+                return true
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            } finally {
+                try {
+                    outputSteam?.close()
+                } catch (_: Throwable) {
+                }
+                try {
+                    inputSteam?.close()
+                } catch (_: Throwable) {
+                }
+            }
+            return false
+        }
     }
 
     private var mediaRecorder: MediaRecorder? = null
@@ -52,6 +101,7 @@ class RecorderHelper(
             java.lang.Long.toHexString(System.currentTimeMillis()) + ".aac"
         )
         recorder.setOutputFile(outFile.path)
+        currentCacheFile = outFile
     }
 
     /**
@@ -105,6 +155,15 @@ class RecorderHelper(
         mediaRecorder?.release()
         mediaRecorder = null
         isRecording = false
+    }
+
+    /**
+     * 这是一个同步的方法
+     * 需要在子线程中执行
+     */
+    fun saveTo(file: File): Boolean {
+        val cache = currentCacheFile ?: return false
+        return copy(cache, file)
     }
 
     val isRunning: Boolean

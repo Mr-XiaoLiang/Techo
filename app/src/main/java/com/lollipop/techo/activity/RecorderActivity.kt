@@ -96,6 +96,9 @@ class RecorderActivity : BaseActivity() {
     }
 
     private fun onRecordButtonClick() {
+        if (isSaving) {
+            return
+        }
         if (isRunning()) {
             recorderHelper.stop()
             save()
