@@ -1,7 +1,9 @@
 package com.lollipop.techo.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
@@ -88,6 +90,8 @@ class RecorderActivity : BaseActivity() {
                 binding.recorderMicView.callOnClick()
             }
         }
+
+        setResult(Activity.RESULT_CANCELED)
     }
 
     private fun cancel() {
@@ -114,6 +118,29 @@ class RecorderActivity : BaseActivity() {
 
     private fun save() {
         // TODO()
+        doAsync {
+            val fileName =
+                java.lang.Long.toHexString(System.currentTimeMillis()) + recorderHelper.suffix
+            val file = File(audioDir, fileName)
+            val saveResult = recorderHelper.saveTo(file)
+            onUI {
+                saveEnd(saveResult, file)
+            }
+        }
+    }
+
+    private fun saveEnd(success: Boolean, audioFile: File) {
+        if (isFinishing || isDestroyed) {
+            return
+        }
+        if (success) {
+            setResult(Activity.RESULT_OK, Intent().apply {
+                putAudioFile(this, audioFile.path)
+            })
+            dismiss()
+        } else {
+            Toast.makeText(this, R.string.recorder_error, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun updateRecordButton() {

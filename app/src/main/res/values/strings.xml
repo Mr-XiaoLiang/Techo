@@ -48,4 +48,6 @@
     <string name="font_size_24">24 SP</string>
     <string name="font_size_26">26 SP</string>
     <string name="select_empty">没有选中内容</string>
+
+    <string name="recorder_error">录制失败</string>
 </resources>

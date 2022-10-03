@@ -86,6 +86,9 @@ class RecorderHelper(
 
     private var isRecording: Boolean = false
 
+    var suffix: String = ".acc"
+        private set
+
     private fun buildConfig(recorder: MediaRecorder) {
         val builder = recorderBuilder
         if (builder != null) {
@@ -98,7 +101,7 @@ class RecorderHelper(
         recorder.setAudioChannels(2)
         val outFile = File(
             recorderCacheDir,
-            java.lang.Long.toHexString(System.currentTimeMillis()) + ".aac"
+            java.lang.Long.toHexString(System.currentTimeMillis()) + suffix
         )
         recorder.setOutputFile(outFile.path)
         currentCacheFile = outFile
