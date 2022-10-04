@@ -117,7 +117,6 @@ class RecorderActivity : BaseActivity() {
     }
 
     private fun save() {
-        // TODO()
         doAsync {
             val fileName =
                 java.lang.Long.toHexString(System.currentTimeMillis()) + recorderHelper.suffix
@@ -133,6 +132,7 @@ class RecorderActivity : BaseActivity() {
         if (isFinishing || isDestroyed) {
             return
         }
+        isSaving = false
         if (success) {
             setResult(Activity.RESULT_OK, Intent().apply {
                 putAudioFile(this, audioFile.path)
@@ -140,6 +140,7 @@ class RecorderActivity : BaseActivity() {
             dismiss()
         } else {
             Toast.makeText(this, R.string.recorder_error, Toast.LENGTH_SHORT).show()
+            updateRecordButton()
         }
     }
 
