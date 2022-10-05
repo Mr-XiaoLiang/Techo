@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.registerResult
-import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ActivityDemoBinding
 import com.lollipop.techo.fragment.RichTextOptionFragment
 
@@ -15,6 +14,12 @@ class DemoActivity : AppCompatActivity() {
 
     private val richTextOptionLauncher = registerResult(
         RichTextOptionFragment.LAUNCHER
+    ) {
+
+    }
+
+    private val recorderLauncher = registerResult(
+        RecorderActivity.LAUNCHER
     ) {
 
     }
@@ -33,14 +38,15 @@ class DemoActivity : AppCompatActivity() {
         }
         val string = stringBuilder.toString()
         binding.openButton.setOnClickListener {
-            richTextOptionLauncher.launch(
-                RichTextOptionFragment.Request(
-                    1,
-                    TechoItem.Text().apply {
-                        value = string
-                    }
-                )
-            )
+//            richTextOptionLauncher.launch(
+//                RichTextOptionFragment.Request(
+//                    1,
+//                    TechoItem.Text().apply {
+//                        value = string
+//                    }
+//                )
+//            )
+            recorderLauncher.launch(false)
         }
     }
 

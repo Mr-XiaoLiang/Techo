@@ -1,9 +1,11 @@
 package com.lollipop.techo.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.ui.BaseActivity
@@ -23,7 +25,9 @@ class RecorderActivity : BaseActivity() {
 
         private const val PARAMS_AUTO_RECORD = "AUTO_RECORD"
 
-        fun autoRecord(intent: Intent) {
+        val LAUNCHER: Class<out ActivityResultContract<Boolean, File?>> = ResultContract::class.java
+
+        private fun autoRecord(intent: Intent) {
             intent.putExtra(PARAMS_AUTO_RECORD, true)
         }
 
@@ -204,6 +208,34 @@ class RecorderActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         recorderHelper.stop()
+    }
+
+    private class ResultContract : ActivityResultContract<Boolean, File?>() {
+
+        override fun createIntent(context: Context, input: Boolean): Intent {
+            return Intent(context, RecorderActivity::class.java).apply {
+                if (input) {
+                    autoRecord(this)
+                }
+            }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): File? {
+            intent ?: return null
+            if (resultCode != Activity.RESULT_OK) {
+                return null
+            }
+            val audioFile = getAudioFile(intent)
+            if (audioFile.isEmpty()) {
+                return null
+            }
+            val file = File(audioFile)
+            if (!file.exists()) {
+                return null
+            }
+            return file
+        }
+
     }
 
 }
