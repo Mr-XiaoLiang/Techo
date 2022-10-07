@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -79,7 +80,7 @@ class RecorderActivity : BaseActivity() {
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
 
-        binding.recorderWaveView.setWaveProvider(recorderHelper::getAmplitude)
+        binding.recorderWaveView.setWaveProvider(::getAmplitude)
 
         binding.recorderCloseBtn.onClick {
             cancel()
@@ -100,6 +101,32 @@ class RecorderActivity : BaseActivity() {
         }
 
         setResult(Activity.RESULT_CANCELED)
+    }
+
+    private fun getAmplitude(): Float {
+        updateDuration()
+        return recorderHelper.getAmplitude()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateDuration() {
+        val duration = recorderHelper.getDuration()
+        val sAll = duration / 1000
+        val m = sAll / 60
+        val s = sAll % 60
+        val builder = StringBuilder()
+        if (m < 10) {
+            builder.append("0")
+        }
+        builder.append(m)
+        builder.append(":")
+        if (s < 10) {
+            builder.append("0")
+        }
+        builder.append(s)
+        tryUI {
+            binding.durationView.text = builder.toString()
+        }
     }
 
     private fun cancel() {

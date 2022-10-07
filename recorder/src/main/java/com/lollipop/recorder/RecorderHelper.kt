@@ -92,6 +92,10 @@ class RecorderHelper(
     var state = State.INITIALIZED
         private set
 
+    private var duration = 0L
+
+    private var lastTime = 0L
+
     private var listenerListener = ArrayList<OnStateChangedListener>()
 
     private fun buildConfig(recorder: MediaRecorder) {
@@ -141,6 +145,7 @@ class RecorderHelper(
         } else {
             MediaRecorder()
         }
+        duration = 0L
         mediaRecorder = recorder
         buildConfig(recorder)
         mediaRecorder?.prepare()
@@ -149,6 +154,11 @@ class RecorderHelper(
 
     fun start() {
         init()
+        if (state.isAtLeast(State.RESUMED)) {
+            updateDuration()
+        } else {
+            lastTime = System.currentTimeMillis()
+        }
         changeState(State.STARTED)
         changeState(State.RESUMED)
         mediaRecorder?.start()
@@ -156,15 +166,38 @@ class RecorderHelper(
     }
 
     fun resume() {
+        if (state.isAtLeast(State.RESUMED)) {
+            updateDuration()
+        } else {
+            lastTime = System.currentTimeMillis()
+        }
         changeState(State.RESUMED)
         mediaRecorder?.resume()
         isRecording = true
     }
 
     fun pause() {
+        if (state.isAtLeast(State.RESUMED)) {
+            updateDuration()
+        }
         changeState(State.STARTED)
         mediaRecorder?.pause()
         isRecording = false
+    }
+
+    private fun updateDuration() {
+        if (lastTime > 0L) {
+            val now = System.currentTimeMillis()
+            duration += now - lastTime
+            lastTime = now
+        }
+    }
+
+    fun getDuration(): Long {
+        if (state.isAtLeast(State.RESUMED)) {
+            updateDuration()
+        }
+        return duration
     }
 
     fun tryPause() {
@@ -180,6 +213,9 @@ class RecorderHelper(
     }
 
     fun stop() {
+        if (state.isAtLeast(State.RESUMED)) {
+            updateDuration()
+        }
         changeState(State.INITIALIZED)
         mediaRecorder?.stop()
         mediaRecorder?.reset()

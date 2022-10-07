@@ -33,7 +33,21 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_baseline_close_24"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/gray_5" />
+
+            <TextView
+                android:id="@+id/durationView"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:gravity="center"
+                android:textColor="@color/text_gray_9"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/recorderCloseBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/recorderCloseBtn"
+                tools:text="12:00" />
 
             <com.lollipop.techo.view.RecorderWaveView
                 android:id="@+id/recorderWaveView"
@@ -43,8 +57,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recorderCloseBtn"
                 app:lineColor="@color/brand_4"
-                app:lineSpace="5dp"
-                app:lineWidth="5dp" />
+                app:lineSpace="2dp"
+                app:lineWidth="2dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/recorderMicView"
