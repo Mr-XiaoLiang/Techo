@@ -8,6 +8,7 @@ import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.getColor
 import com.lollipop.techo.R
+import kotlin.math.max
 
 /**
  * 录音是波纹显示组件
@@ -21,6 +22,14 @@ class RecorderWaveView(
     constructor(context: Context) : this(context, null)
 
     private val waveDrawable = WaveDrawable()
+
+    private var waveProvider: WaveProvider? = null
+
+    var waveUpdateDuration = 50L
+
+    private val updateTask = Runnable {
+        updateWave()
+    }
 
     init {
         setImageDrawable(waveDrawable)
@@ -62,6 +71,22 @@ class RecorderWaveView(
             waveDrawable.color = value
         }
 
+    private fun updateWave() {
+        val lastWave = waveProvider?.getLastWave() ?: return
+        addData(lastWave)
+        start()
+    }
+
+    fun start() {
+        stop()
+        waveProvider ?: return
+        postDelayed(updateTask, waveUpdateDuration)
+    }
+
+    fun stop() {
+        handler?.removeCallbacks(updateTask)
+    }
+
     fun addData(maxAmplitude: Float) {
         waveDrawable.addData(maxAmplitude)
     }
@@ -72,6 +97,14 @@ class RecorderWaveView(
 
     fun setColorByResource(@ColorRes id: Int) {
         color = getColor(id)
+    }
+
+    fun setWaveProvider(provider: WaveProvider?) {
+        this.waveProvider = provider
+    }
+
+    fun interface WaveProvider {
+        fun getLastWave(): Float
     }
 
     private class WaveDrawable : Drawable() {
@@ -99,6 +132,8 @@ class RecorderWaveView(
 
         private val lineRect = RectF()
 
+        private val option = DrawOption()
+
         fun addData(list: List<Float>) {
             if (list.size > dateSize) {
                 waveList.clear()
@@ -124,8 +159,13 @@ class RecorderWaveView(
 
         fun addData(info: Float) {
             waveList.add(createWave(info))
-            // 超出10个就清理一次，不要太频繁了
-            if (waveList.size > (dateSize + 10)) {
+            // 超出一倍就清理一次，不要太频繁了
+            val maxSize = if (dateSize > Int.MAX_VALUE / 2) {
+                Int.MAX_VALUE
+            } else {
+                dateSize * 2
+            }
+            if (waveList.size > maxSize) {
                 val start = waveList.size - dateSize
                 if (start < waveList.size) {
                     waveList.subList(0, start).clear()
@@ -142,29 +182,52 @@ class RecorderWaveView(
             super.onBoundsChange(bounds)
             val allLength = bounds.width() / 2 + lineWidth
             dateSize = allLength / (lineWidth + lineSpace) + 1
+            option.check(bounds, lineWidth, lineSpace)
             invalidateSelf()
         }
 
         override fun draw(canvas: Canvas) {
-            val r = lineWidth * 0.5F
-            var left = 1F * bounds.exactCenterX() - r
-            val centerY = bounds.centerY()
-            val maxLength = bounds.height() * 0.5F
-            for (wave in waveList) {
+            val r = option.radius
+            val centerY = option.centerY
+            val maxLength = option.maxLength
+            val maxDotCount = option.maxDotCount
+
+            var left = 1F * bounds.exactCenterX() + r + lineSpace
+
+            for (index in 0..maxDotCount) {
+                drawDefaultWave(canvas, left, centerY, r)
+                left += lineWidth
+                left += lineSpace
+            }
+
+            left = 1F * bounds.exactCenterX() - r
+            for (index in waveList.size - 1 downTo 0) {
+                val wave = waveList[index]
                 val right = left + lineWidth
                 if (right < 0) {
                     break
                 }
                 lineRect.set(
                     left,
-                    centerY - maxLength * wave.top,
+                    centerY - max(maxLength * wave.top, r),
                     right,
-                    centerY + maxLength * wave.bottom
+                    centerY + max(maxLength * wave.bottom, r)
                 )
                 canvas.drawRoundRect(lineRect, r, r, paint)
                 left -= lineWidth
                 left -= lineSpace
             }
+            if (waveList.size < maxDotCount) {
+                for (index in waveList.size..maxDotCount) {
+                    drawDefaultWave(canvas, left, centerY, r)
+                    left -= lineWidth
+                    left -= lineSpace
+                }
+            }
+        }
+
+        private fun drawDefaultWave(canvas: Canvas, left: Float, centerY: Float, r: Float) {
+            canvas.drawOval(left, centerY - r, left + lineWidth, centerY + r, paint)
         }
 
         override fun setAlpha(alpha: Int) {
@@ -188,6 +251,25 @@ class RecorderWaveView(
                 private set
             var bottom: Float = amplitude
                 private set
+        }
+
+        private class DrawOption {
+
+            var radius: Float = 0F
+                private set
+            var centerY: Float = 0F
+                private set
+            var maxLength: Float = 0F
+                private set
+            var maxDotCount: Int = 0
+                private set
+
+            fun check(bounds: Rect, lineWidth: Int, lineSpace: Int) {
+                radius = lineWidth * 0.5F
+                centerY = bounds.exactCenterY()
+                maxLength = bounds.height() * 0.5F
+                maxDotCount = ((bounds.width() / 2) / (lineWidth + lineSpace) + 1)
+            }
         }
 
     }

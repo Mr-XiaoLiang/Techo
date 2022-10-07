@@ -7,14 +7,13 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.registerResult
 import com.lollipop.techo.databinding.ActivityDemoBinding
+import kotlin.random.Random
 
 class DemoActivity : AppCompatActivity() {
 
     private val binding: ActivityDemoBinding by lazyBind()
 
-    private val recorderLauncher = registerResult(
-        RecorderActivity.LAUNCHER
-    ) {
+    private val recorderLauncher = registerResult(RecorderActivity.LAUNCHER) {
         Toast.makeText(this, it?.path ?: "null", Toast.LENGTH_SHORT).show()
     }
 
@@ -26,6 +25,19 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        binding.waveView.setWaveProvider {
+            val fl = Random.nextFloat()
+            fl - fl.toInt()
+        }
+
+        binding.startBtn.setOnClickListener {
+            binding.waveView.start()
+        }
+
+        binding.stopBtn.setOnClickListener {
+            binding.waveView.stop()
+        }
+
         binding.openButton.setOnClickListener {
             recorderLauncher.launch(false)
         }

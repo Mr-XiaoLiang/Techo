@@ -59,7 +59,9 @@ class RecorderActivity : BaseActivity() {
         File(filesDir, "recorder")
     }
 
-    private val recorderHelper = RecorderHelper(this)
+    private val recorderHelper = RecorderHelper(this).apply {
+        addStateListener(::onRecorderStateChanged)
+    }
 
     private var isSaving = false
 
@@ -76,6 +78,8 @@ class RecorderActivity : BaseActivity() {
         binding.dialogRootView.setEmptyClick()
         dialogAnimationHelper.preload()
         dialogAnimationHelper.isNeedPost = true
+
+        binding.recorderWaveView.setWaveProvider(recorderHelper::getAmplitude)
 
         binding.recorderCloseBtn.onClick {
             cancel()
@@ -116,6 +120,16 @@ class RecorderActivity : BaseActivity() {
         updateRecordButton()
     }
 
+    override fun onPause() {
+        super.onPause()
+        recorderHelper.tryPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        recorderHelper.tryResume()
+    }
+
     private fun isRunning(): Boolean {
         return recorderHelper.isRunning
     }
@@ -129,6 +143,14 @@ class RecorderActivity : BaseActivity() {
             onUI {
                 saveEnd(saveResult, file)
             }
+        }
+    }
+
+    private fun onRecorderStateChanged(recorder: RecorderHelper, state: RecorderHelper.State) {
+        if (state.isAtLeast(RecorderHelper.State.RESUMED)) {
+            binding.recorderWaveView.start()
+        } else {
+            binding.recorderWaveView.stop()
         }
     }
 
@@ -206,11 +228,12 @@ class RecorderActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
+        binding.recorderWaveView.stop()
         super.onDestroy()
         recorderHelper.stop()
     }
 
-    private class ResultContract : ActivityResultContract<Boolean, File?>() {
+    class ResultContract : ActivityResultContract<Boolean, File?>() {
 
         override fun createIntent(context: Context, input: Boolean): Intent {
             return Intent(context, RecorderActivity::class.java).apply {

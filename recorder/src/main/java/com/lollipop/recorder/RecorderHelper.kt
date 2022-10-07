@@ -1,11 +1,11 @@
 package com.lollipop.recorder
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import java.io.*
 
@@ -14,9 +14,9 @@ class RecorderHelper(
 ) {
 
     companion object {
-        fun checkPermission(activity: Activity): Boolean {
+        fun checkPermission(context: Context): Boolean {
             return ActivityCompat.checkSelfPermission(
-                activity,
+                context,
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED
         }
@@ -86,8 +86,13 @@ class RecorderHelper(
 
     private var isRecording: Boolean = false
 
-    var suffix: String = ".acc"
+    var suffix: String = ".AAC"
         private set
+
+    var state = State.INITIALIZED
+        private set
+
+    private var listenerListener = ArrayList<OnStateChangedListener>()
 
     private fun buildConfig(recorder: MediaRecorder) {
         val builder = recorderBuilder
@@ -95,10 +100,15 @@ class RecorderHelper(
             builder.setRecorderConfig(recorder)
             return
         }
+        if (!checkPermission()) {
+            mediaRecorder = null
+            return
+        }
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD)
         recorder.setAudioChannels(2)
+        recorderCacheDir.mkdirs()
         val outFile = File(
             recorderCacheDir,
             java.lang.Long.toHexString(System.currentTimeMillis()) + suffix
@@ -133,31 +143,75 @@ class RecorderHelper(
         }
         mediaRecorder = recorder
         buildConfig(recorder)
-        recorder.prepare()
+        mediaRecorder?.prepare()
+        changeState(State.CREATED)
     }
 
     fun start() {
         init()
+        changeState(State.STARTED)
+        changeState(State.RESUMED)
         mediaRecorder?.start()
         isRecording = true
     }
 
     fun resume() {
+        changeState(State.RESUMED)
         mediaRecorder?.resume()
         isRecording = true
     }
 
     fun pause() {
+        changeState(State.STARTED)
         mediaRecorder?.pause()
         isRecording = false
     }
 
+    fun tryPause() {
+        if (state.isAtLeast(State.STARTED)) {
+            pause()
+        }
+    }
+
+    fun tryResume() {
+        if (state.isAtLeast(State.STARTED)) {
+            resume()
+        }
+    }
+
     fun stop() {
+        changeState(State.INITIALIZED)
         mediaRecorder?.stop()
         mediaRecorder?.reset()
         mediaRecorder?.release()
         mediaRecorder = null
         isRecording = false
+    }
+
+    fun addStateListener(listener: OnStateChangedListener) {
+        listenerListener.add(listener)
+    }
+
+    fun removeListener(listener: OnStateChangedListener) {
+        listenerListener.remove(listener)
+    }
+
+    private fun checkPermission(): Boolean {
+        val result = checkPermission(context)
+        if (!result) {
+            Log.e(
+                "RecorderHelper",
+                "Manifest.permission.RECORD_AUDIO != PackageManager.PERMISSION_GRANTED "
+            )
+        }
+        return result
+    }
+
+    private fun changeState(newState: State) {
+        this.state = newState
+        listenerListener.forEach {
+            it.onRecorderStateChanged(this, newState)
+        }
     }
 
     /**
@@ -180,6 +234,22 @@ class RecorderHelper(
 
     fun interface RecorderBuilder {
         fun setRecorderConfig(recorder: MediaRecorder)
+    }
+
+    enum class State {
+        INITIALIZED,
+        CREATED,
+        STARTED,
+        RESUMED;
+
+        fun isAtLeast(state: State): Boolean {
+            return this.ordinal >= state.ordinal
+        }
+
+    }
+
+    fun interface OnStateChangedListener {
+        fun onRecorderStateChanged(recorder: RecorderHelper, state: State)
     }
 
 }
