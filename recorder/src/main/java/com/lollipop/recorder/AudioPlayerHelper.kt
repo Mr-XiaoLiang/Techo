@@ -336,7 +336,12 @@ class AudioPlayerHelper : MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionL
         /**
          * 已开始
          */
-        STARTED
+        STARTED;
+
+        fun isAtLeast(o: Lifecycle): Boolean {
+            val t = this
+            return t.ordinal >= o.ordinal
+        }
     }
 
     enum class SeekMode(val flag: Int) {
@@ -375,11 +380,6 @@ class AudioPlayerHelper : MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionL
          * @see .seekTo
          */
         SEEK_CLOSEST(MediaPlayer.SEEK_CLOSEST)
-    }
-
-    private inline fun <reified T : Enum<*>> T.isAtLeast(o: T): Boolean {
-        val t = this
-        return t.ordinal >= o.ordinal
     }
 
 }
