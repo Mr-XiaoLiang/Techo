@@ -52,7 +52,7 @@ class VisualizerHelper(
          *       }
          *
          */
-        fun getFrequency(fft: Fft): Frequency {
+        private fun getFrequency(fft: Fft): Frequency {
             val data = fft.data
             val n = data.size
             val magnitudes = FloatArray(n / 2 + 1)
@@ -78,6 +78,8 @@ class VisualizerHelper(
     var wave: Wave? = null
         private set
     var fft: Fft? = null
+        private set
+    var frequency: Frequency? = null
         private set
 
     var visualizer: Visualizer? = null
@@ -123,7 +125,12 @@ class VisualizerHelper(
         release()
         val audioSessionId = helper.mediaPlayer?.audioSessionId ?: return
         val newVisualizer = Visualizer(audioSessionId)
-        newVisualizer.setDataCaptureListener(this, rate, capture.hasWave, capture.hasFft)
+        newVisualizer.setDataCaptureListener(
+            this,
+            rate,
+            capture.wave,
+            capture.fft || capture.frequency
+        )
         newVisualizer.captureSize = captureSize
     }
 
@@ -170,10 +177,18 @@ class VisualizerHelper(
     override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
         if (fft == null) {
             this.fft = null
+            this.frequency = null
         } else {
             val newFft = Fft(fft, samplingRate)
             this.fft = newFft
-            rendererList.forEach { it.onRender(newFft) }
+            val newFrequency = getFrequency(newFft)
+            this.frequency = newFrequency
+            if (capture.fft) {
+                rendererList.forEach { it.onRender(newFft) }
+            }
+            if (capture.frequency) {
+                rendererList.forEach { it.onRender(newFrequency) }
+            }
         }
     }
 
@@ -205,20 +220,10 @@ class VisualizerHelper(
 
     }
 
-    enum class Capture {
-        WAVE,
-        FFT,
-        BOTH;
-
-        val hasWave: Boolean
-            get() {
-                return this == WAVE || this == BOTH
-            }
-
-        val hasFft: Boolean
-            get() {
-                return this == FFT || this == BOTH
-            }
-    }
+    class Capture(
+        val wave: Boolean = false,
+        val fft: Boolean = false,
+        val frequency: Boolean = false,
+    )
 
 }
