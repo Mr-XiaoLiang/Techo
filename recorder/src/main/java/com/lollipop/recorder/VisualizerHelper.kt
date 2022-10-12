@@ -1,7 +1,7 @@
 package com.lollipop.recorder
 
 import android.media.audiofx.Visualizer
-import com.lollipop.recorder.visualizer.Renderer
+import com.lollipop.recorder.visualizer.VisualizerRenderer
 import kotlin.math.*
 
 class VisualizerHelper(
@@ -73,7 +73,7 @@ class VisualizerHelper(
 
     }
 
-    private val rendererList = ArrayList<Renderer>()
+    private val rendererList = ArrayList<VisualizerRenderer>()
 
     var wave: Wave? = null
         private set
@@ -85,11 +85,11 @@ class VisualizerHelper(
     var visualizer: Visualizer? = null
         private set
 
-    fun addRenderer(renderer: Renderer) {
+    fun addRenderer(renderer: VisualizerRenderer) {
         rendererList.add(renderer)
     }
 
-    fun removeRenderer(renderer: Renderer) {
+    fun removeRenderer(renderer: VisualizerRenderer) {
         rendererList.remove(renderer)
     }
 

@@ -2,7 +2,7 @@ package com.lollipop.recorder.visualizer
 
 import com.lollipop.recorder.VisualizerHelper
 
-interface Renderer {
+interface VisualizerRenderer {
 
     fun onRender(data: VisualizerHelper.Wave) {}
 
