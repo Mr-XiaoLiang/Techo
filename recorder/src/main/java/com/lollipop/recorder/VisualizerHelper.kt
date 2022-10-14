@@ -215,7 +215,7 @@ class VisualizerHelper(
              * sqrt(x^2 + y^2)
              * max = 179.605122421383071
              */
-            const val MAX = 180
+            const val MAX = 180F
         }
 
     }

@@ -29,4 +29,13 @@
         <attr name="rightTop" format="dimension" />
         <attr name="rightBottom" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="AudioVisualizerView">
+        <attr name="barCount" format="integer" />
+        <attr name="intervalWeight" format="float" />
+        <attr name="baseLineHeight" format="dimension" />
+        <attr name="baseLineInterval" format="dimension" />
+        <attr name="selectedColor" format="color" />
+        <attr name="defaultColor" format="color" />
+    </declare-styleable>
 </resources>

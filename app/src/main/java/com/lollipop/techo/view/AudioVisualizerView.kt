@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.recorder.VisualizerHelper
 import com.lollipop.recorder.visualizer.VisualizerRenderer
+import com.lollipop.techo.R
 import kotlin.math.min
 
 class AudioVisualizerView(
@@ -40,17 +41,83 @@ class AudioVisualizerView(
             visualizerDrawable.intervalWeight = value
         }
 
-    var color: Int
+    var baseLineHeight: Float
         get() {
-            return visualizerDrawable.color
+            return visualizerDrawable.baseLineHeight
         }
         set(value) {
-            visualizerDrawable.color = value
+            visualizerDrawable.baseLineHeight = value
         }
+
+    var baseLineInterval: Float
+        get() {
+            return visualizerDrawable.baseLineInterval
+        }
+        set(value) {
+            visualizerDrawable.baseLineInterval = value
+        }
+
+    var selectedColor: Int
+        get() {
+            return visualizerDrawable.selectedColor
+        }
+        set(value) {
+            visualizerDrawable.selectedColor = value
+        }
+
+    var defaultColor: Int
+        get() {
+            return visualizerDrawable.defaultColor
+        }
+        set(value) {
+            visualizerDrawable.defaultColor = value
+        }
+
+    init {
+        setImageDrawable(visualizerDrawable)
+        attributeSet?.let { a ->
+            val typeArray = context.obtainStyledAttributes(a, R.styleable.AudioVisualizerView)
+            barCount = typeArray.getInt(R.styleable.AudioVisualizerView_barCount, DEFAULT_BAR_COUNT)
+            intervalWeight = typeArray.getFloat(
+                R.styleable.AudioVisualizerView_intervalWeight,
+                DEFAULT_INTERVAL_WEIGHT
+            )
+            baseLineHeight = typeArray.getDimensionPixelSize(
+                R.styleable.AudioVisualizerView_baseLineHeight,
+                0
+            ).toFloat()
+            baseLineInterval = typeArray.getDimensionPixelSize(
+                R.styleable.AudioVisualizerView_baseLineInterval,
+                0
+            ).toFloat()
+            selectedColor = typeArray.getColor(
+                R.styleable.AudioVisualizerView_selectedColor,
+                Color.BLUE
+            )
+            defaultColor = typeArray.getColor(
+                R.styleable.AudioVisualizerView_selectedColor,
+                Color.GRAY
+            )
+            typeArray.recycle()
+        }
+        if (isInEditMode) {
+            onValueChanged(listOf(0.5F, 0.6F, 0.7F, 0.8F, 0.9F, 1F, 0.8F))
+            onProgressChanged(0.4F)
+        }
+    }
 
     override fun onRender(data: VisualizerHelper.Frequency) {
         super.onRender(data)
+        val values = data.magnitudes.map { it / VisualizerHelper.Frequency.MAX }
+        onValueChanged(values)
+    }
 
+    fun onValueChanged(newValue: List<Float>) {
+        visualizerDrawable.onValueChanged(newValue)
+    }
+
+    fun onProgressChanged(progress: Float) {
+        visualizerDrawable.onProgressChanged(progress)
     }
 
     private class AudioVisualizerDrawable : Drawable() {
@@ -77,17 +144,29 @@ class AudioVisualizerView(
         private var barArray = FloatArray(0)
         private var baseLineArray = FloatArray(0)
 
-        var color: Int
-            set(value) {
-                paint.color = value
-            }
-            get() {
-                return paint.color
-            }
+        private var progress = 0F
+
+        var selectedColor: Int = Color.BLUE
+
+        var defaultColor: Int = Color.GRAY
 
         private val valueList = ArrayList<Float>()
 
+        private val progressClipBounds = Rect()
+
         override fun draw(canvas: Canvas) {
+            // 背景
+            drawLines(canvas, defaultColor)
+
+            val saveCount = canvas.save()
+            canvas.clipRect(progressClipBounds)
+            // 前景
+            drawLines(canvas, selectedColor)
+            canvas.restoreToCount(saveCount)
+        }
+
+        private fun drawLines(canvas: Canvas, color: Int) {
+            paint.color = color
             paint.strokeWidth = barWidth
             canvas.drawLines(barArray, paint)
             paint.strokeWidth = baseLineHeight
@@ -99,11 +178,13 @@ class AudioVisualizerView(
             if (bounds.isEmpty) {
                 return
             }
-            barMaxHeight = (bounds.height() - baseLineHeight - baseLineInterval).toFloat()
+            barMaxHeight = (bounds.height() - baseLineHeight - baseLineInterval)
             barBottom = barMaxHeight
             val width = bounds.width()
             barWidth = width / (barCount * (1 + intervalWeight) - intervalWeight)
             intervalWidth = barWidth * intervalWeight
+
+            updateClipBounds()
         }
 
         fun onValueChanged(newValue: List<Float>) {
@@ -111,6 +192,17 @@ class AudioVisualizerView(
             valueList.addAll(newValue)
             buildLines()
             invalidateSelf()
+        }
+
+        fun onProgressChanged(progress: Float) {
+            this.progress = progress.coerceAtLeast(0F).coerceAtMost(1F)
+            updateClipBounds()
+            invalidateSelf()
+        }
+
+        private fun updateClipBounds() {
+            val right = ((bounds.width() * progress) + bounds.left).toInt()
+            progressClipBounds.set(bounds.left, bounds.top, right, bounds.bottom)
         }
 
         private fun buildLines() {
@@ -154,6 +246,10 @@ class AudioVisualizerView(
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated(
+            "Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }
