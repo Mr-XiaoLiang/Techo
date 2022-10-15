@@ -95,7 +95,7 @@ class AudioVisualizerView(
                 Color.BLUE
             )
             defaultColor = typeArray.getColor(
-                R.styleable.AudioVisualizerView_selectedColor,
+                R.styleable.AudioVisualizerView_defaultColor,
                 Color.GRAY
             )
             typeArray.recycle()
@@ -178,12 +178,12 @@ class AudioVisualizerView(
             if (bounds.isEmpty) {
                 return
             }
+            barWidth = bounds.width() / (barCount * (1 + intervalWeight) - intervalWeight)
             barMaxHeight = (bounds.height() - baseLineHeight - baseLineInterval)
             barBottom = barMaxHeight
-            val width = bounds.width()
-            barWidth = width / (barCount * (1 + intervalWeight) - intervalWeight)
             intervalWidth = barWidth * intervalWeight
 
+            buildLines()
             updateClipBounds()
         }
 
@@ -216,10 +216,11 @@ class AudioVisualizerView(
             for (index in 0 until min(barCount, valueList.size)) {
                 val value = valueList[index].coerceAtLeast(0F).coerceAtMost(1F)
                 val bottomX = index * barXStep + halfBarWidth
-                barArray[index] = bottomX
-                barArray[index + 1] = barBottom - halfBarWidth
-                barArray[index + 2] = bottomX
-                barArray[index + 3] = barBottom - (barMaxHeight * value) + halfBarWidth
+                val i = index * 4
+                barArray[i] = bottomX
+                barArray[i + 1] = barBottom - halfBarWidth
+                barArray[i + 2] = bottomX
+                barArray[i + 3] = barBottom - (barMaxHeight * value) + halfBarWidth
             }
 
             val pointCount = barCount * 4
@@ -231,10 +232,11 @@ class AudioVisualizerView(
             val baseLineY = bounds.bottom - halfBaseLineHeight
             for (index in 0 until barCount) {
                 val left = index * barXStep + halfBaseLineHeight
-                baseLineArray[index] = left
-                baseLineArray[index + 1] = baseLineY
-                baseLineArray[index + 2] = left + barWidth - halfBaseLineHeight
-                baseLineArray[index + 3] = baseLineY
+                val i = index * 4
+                baseLineArray[i] = left
+                baseLineArray[i + 1] = baseLineY
+                baseLineArray[i + 2] = left + barWidth - baseLineHeight
+                baseLineArray[i + 3] = baseLineY
             }
         }
 
