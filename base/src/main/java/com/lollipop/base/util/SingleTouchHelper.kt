@@ -5,10 +5,11 @@ import android.view.MotionEvent
 class SingleTouchHelper {
 
     companion object {
-        private const val POINT_ID_NONE = -1
+        const val POINT_ID_NONE = -1
     }
 
-    private var touchPointId = POINT_ID_NONE
+    var touchPointId = POINT_ID_NONE
+        private set
 
     private var touchX = 0F
     private var touchY = 0F

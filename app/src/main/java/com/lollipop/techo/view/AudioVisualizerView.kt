@@ -1,10 +1,17 @@
 package com.lollipop.techo.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.ViewUtils
+import androidx.core.view.ViewCompat
+import com.lollipop.base.util.SingleTouchHelper
 import com.lollipop.recorder.VisualizerHelper
 import com.lollipop.recorder.visualizer.VisualizerRenderer
 import com.lollipop.techo.R
@@ -24,6 +31,8 @@ class AudioVisualizerView(
     constructor(context: Context) : this(context, null)
 
     private val visualizerDrawable = AudioVisualizerDrawable()
+
+    private val touchHelper = SingleTouchHelper()
 
     var barCount: Int
         get() {
@@ -104,6 +113,12 @@ class AudioVisualizerView(
             onValueChanged(listOf(0.5F, 0.6F, 0.7F, 0.8F, 0.9F, 1F, 0.8F))
             onProgressChanged(0.4F)
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        return true
     }
 
     override fun onRender(data: VisualizerHelper.Frequency) {
