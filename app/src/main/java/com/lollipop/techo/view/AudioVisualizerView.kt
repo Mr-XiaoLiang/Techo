@@ -6,12 +6,8 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.ViewUtils
-import androidx.core.view.ViewCompat
-import com.lollipop.base.util.SingleTouchHelper
+import com.lollipop.base.util.SingleTouchSlideHelper
 import com.lollipop.recorder.VisualizerHelper
 import com.lollipop.recorder.visualizer.VisualizerRenderer
 import com.lollipop.techo.R
@@ -19,7 +15,10 @@ import kotlin.math.min
 
 class AudioVisualizerView(
     context: Context, attributeSet: AttributeSet?, style: Int
-) : AppCompatImageView(context, attributeSet, style), VisualizerRenderer {
+) : AppCompatImageView(context, attributeSet, style),
+    VisualizerRenderer,
+    SingleTouchSlideHelper.OnTouchMoveListener,
+    SingleTouchSlideHelper.OnTouchEndListener {
 
     companion object {
         const val DEFAULT_BAR_COUNT = 64
@@ -32,7 +31,10 @@ class AudioVisualizerView(
 
     private val visualizerDrawable = AudioVisualizerDrawable()
 
-    private val touchHelper = SingleTouchHelper()
+    private val touchHelper = SingleTouchSlideHelper(
+        context,
+        SingleTouchSlideHelper.Slider.Horizontally
+    )
 
     var barCount: Int
         get() {
@@ -109,6 +111,10 @@ class AudioVisualizerView(
             )
             typeArray.recycle()
         }
+
+        touchHelper.addMoveListener(this)
+        touchHelper.addEndListener(this)
+
         if (isInEditMode) {
             onValueChanged(listOf(0.5F, 0.6F, 0.7F, 0.8F, 0.9F, 1F, 0.8F))
             onProgressChanged(0.4F)
@@ -117,8 +123,7 @@ class AudioVisualizerView(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-        return true
+        return touchHelper.onTouch(event) || super.onTouchEvent(event)
     }
 
     override fun onRender(data: VisualizerHelper.Frequency) {
@@ -133,6 +138,14 @@ class AudioVisualizerView(
 
     fun onProgressChanged(progress: Float) {
         visualizerDrawable.onProgressChanged(progress)
+    }
+
+    override fun onTouchMoved(x: Float, y: Float) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTouchEnd(isCancel: Boolean) {
+        TODO("Not yet implemented")
     }
 
     private class AudioVisualizerDrawable : Drawable() {
