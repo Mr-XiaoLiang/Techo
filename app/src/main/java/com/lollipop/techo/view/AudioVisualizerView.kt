@@ -84,6 +84,12 @@ class AudioVisualizerView(
             visualizerDrawable.defaultColor = value
         }
 
+    private var dragProgress = 0F
+
+    private var dragMode = false
+
+    private var onSeekChangedCallback: OnSeekChangedCallback? = null
+
     init {
         setImageDrawable(visualizerDrawable)
         attributeSet?.let { a ->
@@ -137,15 +143,30 @@ class AudioVisualizerView(
     }
 
     fun onProgressChanged(progress: Float) {
-        visualizerDrawable.onProgressChanged(progress)
+        if (!dragMode) {
+            visualizerDrawable.onProgressChanged(progress)
+        }
+    }
+
+    fun onSeekChanged(callback: OnSeekChangedCallback?) {
+        this.onSeekChangedCallback = callback
     }
 
     override fun onTouchMoved(x: Float, y: Float) {
-        TODO("Not yet implemented")
+        dragMode = true
+        val progress = (x - paddingLeft) / (width - paddingLeft - paddingRight)
+        dragProgress = progress.coerceAtLeast(0F).coerceAtMost(1F)
+        visualizerDrawable.onProgressChanged(dragProgress)
     }
 
     override fun onTouchEnd(isCancel: Boolean) {
-        TODO("Not yet implemented")
+        if (!isCancel) {
+            onSeekChangedCallback?.onSeekChanged(dragProgress)
+        }
+    }
+
+    fun interface OnSeekChangedCallback {
+        fun onSeekChanged(progress: Float)
     }
 
     private class AudioVisualizerDrawable : Drawable() {
