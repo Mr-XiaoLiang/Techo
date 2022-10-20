@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.SingleTouchSlideHelper
 import com.lollipop.recorder.VisualizerHelper
-import com.lollipop.recorder.visualizer.VisualizerRenderer
+import com.lollipop.recorder.VisualizerRenderer
 import com.lollipop.techo.R
 import kotlin.math.min
 
@@ -134,8 +134,18 @@ class AudioVisualizerView(
 
     override fun onRender(data: VisualizerHelper.Frequency) {
         super.onRender(data)
-        val values = data.magnitudes.map { it / VisualizerHelper.Frequency.MAX }
-        onValueChanged(values)
+        val dataSize = data.magnitudes.size
+        if (dataSize == 0) {
+            onValueChanged(emptyList())
+        } else {
+            val step = dataSize * 1F / barCount
+            val values = ArrayList<Float>()
+            for (index in 0 until barCount) {
+                val dataIndex = (index * step).toInt().coerceAtMost(dataSize - 1).coerceAtLeast(0)
+                values.add(data.magnitudes[dataIndex] / VisualizerHelper.Frequency.MAX)
+            }
+            onValueChanged(values)
+        }
     }
 
     fun onValueChanged(newValue: List<Float>) {

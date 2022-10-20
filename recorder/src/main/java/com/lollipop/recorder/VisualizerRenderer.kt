@@ -1,6 +1,4 @@
-package com.lollipop.recorder.visualizer
-
-import com.lollipop.recorder.VisualizerHelper
+package com.lollipop.recorder
 
 interface VisualizerRenderer {
 

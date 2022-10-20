@@ -1,10 +1,9 @@
 package com.lollipop.recorder
 
 import android.media.audiofx.Visualizer
-import com.lollipop.recorder.visualizer.VisualizerRenderer
 import kotlin.math.*
 
-class VisualizerHelper(
+class VisualizerHelper private constructor(
     private val capture: Capture,
     private val rate: Int = maxRate,
     private val captureSize: Int = captureSizeRange.last
@@ -12,6 +11,18 @@ class VisualizerHelper(
     Visualizer.OnDataCaptureListener {
 
     companion object {
+
+        fun createWith(
+            playerHelper: AudioPlayerHelper,
+            capture: Capture,
+            rate: Int = maxRate,
+            captureSize: Int = captureSizeRange.last
+        ): VisualizerHelper {
+            val visualizerHelper = VisualizerHelper(capture, rate, captureSize)
+            playerHelper.addStateChangedListener(visualizerHelper)
+            return visualizerHelper
+        }
+
         val maxRate: Int
             get() {
                 return Visualizer.getMaxCaptureRate()
