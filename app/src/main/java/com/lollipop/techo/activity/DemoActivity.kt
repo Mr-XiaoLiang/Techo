@@ -7,6 +7,7 @@ import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.registerResult
 import com.lollipop.techo.databinding.ActivityDemoBinding
+import com.lollipop.techo.dialog.AudioPlayerDialog
 import kotlin.random.Random
 
 class DemoActivity : AppCompatActivity() {
@@ -15,6 +16,9 @@ class DemoActivity : AppCompatActivity() {
 
     private val recorderLauncher = registerResult(RecorderActivity.LAUNCHER) {
         Toast.makeText(this, it?.path ?: "null", Toast.LENGTH_SHORT).show()
+        if (it != null) {
+            AudioPlayerDialog(this, it.path).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
