@@ -143,6 +143,8 @@ class VisualizerHelper private constructor(
             capture.fft || capture.frequency
         )
         newVisualizer.captureSize = captureSize
+        newVisualizer.enabled = true
+        visualizer = newVisualizer
     }
 
     override fun onWaveFormDataCapture(

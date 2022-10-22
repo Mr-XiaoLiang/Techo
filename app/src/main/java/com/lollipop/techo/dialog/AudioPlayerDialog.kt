@@ -3,11 +3,14 @@ package com.lollipop.techo.dialog
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.view.View
+import android.view.ViewParent
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lollipop.base.util.lazyBind
 import com.lollipop.recorder.AudioPlayerHelper
 import com.lollipop.recorder.AudioPlayerHelper.State.*
 import com.lollipop.recorder.VisualizerHelper
+import com.lollipop.techo.R
 import com.lollipop.techo.databinding.DialogAudioPlayBinding
 import com.lollipop.techo.view.AudioVisualizerView
 import kotlin.math.max
@@ -16,7 +19,8 @@ import kotlin.math.min
 class AudioPlayerDialog(
     context: Context,
     private val filePath: String
-) : BottomSheetDialog(context), AudioPlayerHelper.OnPlayerStateChangedListener,
+) : BottomSheetDialog(context, R.style.Theme_Techo_BottomSheetDialog),
+    AudioPlayerHelper.OnPlayerStateChangedListener,
     AudioVisualizerView.OnSeekChangedCallback {
 
     companion object {
@@ -85,6 +89,9 @@ class AudioPlayerDialog(
     }
 
     private fun initPlayer() {
+        if (filePath.isEmpty()) {
+            return
+        }
         player.addStateChangedListener(this)
         player.setDataSource {
             it.setDataSource(filePath)

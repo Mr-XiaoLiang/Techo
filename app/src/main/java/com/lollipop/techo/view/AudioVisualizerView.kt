@@ -170,6 +170,7 @@ class AudioVisualizerView(
     }
 
     override fun onTouchEnd(isCancel: Boolean) {
+        dragMode = false
         if (!isCancel) {
             onSeekChangedCallback?.onSeekChanged(dragProgress)
         }
@@ -276,10 +277,12 @@ class AudioVisualizerView(
                 val value = valueList[index].coerceAtLeast(0F).coerceAtMost(1F)
                 val bottomX = index * barXStep + halfBarWidth
                 val i = index * 4
+                val bottomY = barBottom - halfBarWidth
                 barArray[i] = bottomX
-                barArray[i + 1] = barBottom - halfBarWidth
+                barArray[i + 1] = bottomY
                 barArray[i + 2] = bottomX
-                barArray[i + 3] = barBottom - (barMaxHeight * value) + halfBarWidth
+                barArray[i + 3] =
+                    (barBottom - (barMaxHeight * value) + halfBarWidth).coerceAtMost(bottomY)
             }
 
             val pointCount = barCount * 4
