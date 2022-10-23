@@ -43,8 +43,8 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.openButton.setOnClickListener {
-//            recorderLauncher.launch(false)
-            AudioPlayerDialog(this, "").show()
+            recorderLauncher.launch(false)
+//            AudioPlayerDialog(this, "").show()
         }
     }
 
