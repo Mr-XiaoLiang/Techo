@@ -6,7 +6,9 @@ enum class TechoItemType {
     Number,
     CheckBox,
     Photo,
-    Split;
+    Split,
+    Recorder,
+    Vcr;
 
     companion object {
         fun opt(name: String): TechoItemType {

@@ -18,7 +18,6 @@ import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TechoItemType
 import com.lollipop.techo.data.TechoItemType.*
-import com.lollipop.techo.data.TechoItemType.Number
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
@@ -138,8 +137,8 @@ class TechoEditActivity : HeaderActivity(),
             floatingBinding.floatingCheckboxBtn to CheckBox,
             floatingBinding.floatingPhotoBtn to Photo,
             floatingBinding.floatingSplitBtn to Split,
-            floatingBinding.floatingTest6 to null,
-            floatingBinding.floatingTest7 to null,
+            floatingBinding.floatingRecorderBtn to Recorder,
+            floatingBinding.floatingVcrBtn to Vcr,
             floatingBinding.floatingTest8 to null,
             floatingBinding.floatingTest9 to null,
             floatingBinding.floatingTest10 to null,

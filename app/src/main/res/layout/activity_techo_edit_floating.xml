@@ -88,22 +88,22 @@
             tools:ignore="ContentDescription,MissingConstraints" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingTest6"
+            android:id="@+id/floatingRecorderBtn"
             style="@style/FloatingSubButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_add_24"
+            android:src="@drawable/ic_baseline_mic_24"
             app:layout_constraintCircle="@id/floatingMenuBtn"
             app:layout_constraintCircleAngle="315"
             app:layout_constraintCircleRadius="150dp"
             tools:ignore="ContentDescription,MissingConstraints" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingTest7"
+            android:id="@+id/floatingVcrBtn"
             style="@style/FloatingSubButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_add_24"
+            android:src="@drawable/ic_baseline_video_call_24"
             app:layout_constraintCircle="@id/floatingMenuBtn"
             app:layout_constraintCircleAngle="337"
             app:layout_constraintCircleRadius="150dp"
