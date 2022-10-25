@@ -7,7 +7,7 @@ enum class TechoItemType {
     CheckBox,
     Photo,
     Split,
-    Recorder,
+    Recording,
     Vcr;
 
     companion object {

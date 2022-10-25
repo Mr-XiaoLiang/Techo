@@ -47,6 +47,12 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
                 TechoItemType.Split -> {
                     Split()
                 }
+                TechoItemType.Recording -> {
+                    Recording()
+                }
+                TechoItemType.Vcr -> {
+                    Vcr()
+                }
             }
         }
     }
@@ -149,6 +155,76 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
             super.parse(json)
             color = json.optInt(KEY_COLOR, Color.BLACK)
         }
+    }
+
+    class Recording : TechoItem(TechoItemType.Recording) {
+        companion object {
+            private const val KEY_AUDIO = "audio"
+            private const val KEY_DURATION = "duration"
+
+            fun create(value: String, audio: String, duration: Int): Recording {
+                val recording = Recording()
+                recording.value = value
+                recording.audio = audio
+                recording.duration = duration
+                return recording
+            }
+        }
+
+        override val spanEnable: Boolean = false
+
+        var audio: String = ""
+
+        var duration = 0
+
+        override fun toJson(): JSONObject {
+            return super.toJson().apply {
+                put(KEY_AUDIO, audio)
+                put(KEY_DURATION, duration)
+            }
+        }
+
+        override fun parse(json: JSONObject) {
+            super.parse(json)
+            audio = json.optString(KEY_AUDIO) ?: ""
+            duration = json.optInt(KEY_DURATION, 0)
+        }
+
+    }
+
+    class Vcr : TechoItem(TechoItemType.Vcr) {
+        companion object {
+            private const val KEY_VIDEO = "video"
+            private const val KEY_DURATION = "duration"
+
+            fun create(value: String, video: String, duration: Int): Vcr {
+                val vcr = Vcr()
+                vcr.value = value
+                vcr.video = video
+                vcr.duration = duration
+                return vcr
+            }
+        }
+
+        override val spanEnable: Boolean = false
+
+        var video: String = ""
+
+        var duration = 0
+
+        override fun toJson(): JSONObject {
+            return super.toJson().apply {
+                put(KEY_VIDEO, video)
+                put(KEY_DURATION, duration)
+            }
+        }
+
+        override fun parse(json: JSONObject) {
+            super.parse(json)
+            video = json.optString(KEY_VIDEO) ?: ""
+            duration = json.optInt(KEY_DURATION, 0)
+        }
+
     }
 
     class Photo : TechoItem(TechoItemType.Photo) {
