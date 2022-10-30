@@ -60,6 +60,12 @@ class EditManager(
             is TechoItem.Title -> {
                 findDelegate<TitleEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+            is TechoItem.Recording -> {
+                // TODO()
+            }
+            is TechoItem.Vcr -> {
+                // TODO()
+            }
         }
     }
 

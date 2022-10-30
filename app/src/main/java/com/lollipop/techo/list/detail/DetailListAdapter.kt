@@ -25,6 +25,12 @@ class DetailListAdapter(
             TechoItemType.CheckBox -> TextInfoHolder.create(parent)
             TechoItemType.Photo -> PhotoInfoHolder.create(parent)
             TechoItemType.Split -> SplitInfoHolder.create(parent)
+            TechoItemType.Recording -> {
+                TODO()
+            }
+            TechoItemType.Vcr -> {
+                TODO()
+            }
         }
         holder.setOnItemOptionButtonClickListener(onItemOptionButtonClickListener)
         return holder

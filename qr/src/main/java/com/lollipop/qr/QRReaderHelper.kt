@@ -1,5 +1,6 @@
 package com.lollipop.qr
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
@@ -8,10 +9,7 @@ import android.util.Size
 import android.view.ViewManager
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
@@ -21,7 +19,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executor
 
-@ExperimentalGetImage class QRReaderHelper(
+class QRReaderHelper(
     private val lifecycleOwner: LifecycleOwner
 ) {
 
@@ -46,16 +44,14 @@ import java.util.concurrent.Executor
     private val mainExecutor = MainExecutor()
     private var analyzerExecutor: SingleExecutor? = null
 
+    private var camera: Camera? = null
+
+    private var torch: Boolean = false
+
+    @SuppressLint("UnsafeOptInUsageError")
     private val codeAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         try {
-            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-            // insert your code here.
-            val mediaImage = imageProxy.image
-            if (mediaImage != null) {
-                val image = InputImage.fromMediaImage(mediaImage, rotationDegrees)
-                // Pass image to an ML Kit Vision API
-                scan(image)
-            }
+            scan(imageProxy)
             // after done, release the ImageProxy object
             imageProxy.close()
         } catch (e: Throwable) {
@@ -99,13 +95,18 @@ import java.util.concurrent.Executor
 
         preview.setSurfaceProvider(view.surfaceProvider)
 
-        val camera = cameraProvider.bindToLifecycle(
+        camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
-            buildImageAnalysis(),
+//            buildImageAnalysis(),
             preview
         )
+        camera?.cameraControl?.enableTorch(torch)
+    }
 
+    fun enableTorch(value: Boolean) {
+        torch = value
+        camera?.cameraControl?.enableTorch(value)
     }
 
     private fun buildImageAnalysis(): ImageAnalysis {
@@ -147,7 +148,12 @@ import java.util.concurrent.Executor
         return view == oldPreview
     }
 
-    private fun scan(inputImage: InputImage) {
+    @ExperimentalGetImage
+    private fun scan(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image ?: return
+        // Pass image to an ML Kit Vision API
+        val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
         val array = scanFormat.map { it.code }.toIntArray()
         val first = if (array.isEmpty()) {
             Barcode.FORMAT_ALL_FORMATS

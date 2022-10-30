@@ -134,7 +134,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        app:checkedChip="@id/chip"
                         app:chipSpacingHorizontal="24dp"
                         app:chipSpacingVertical="12dp">
 
@@ -264,7 +263,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="16dp"
-                            app:checkedChip="@id/chip"
                             app:chipSpacingHorizontal="24dp"
                             app:chipSpacingVertical="12dp"
                             app:singleSelection="true">

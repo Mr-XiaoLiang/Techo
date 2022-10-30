@@ -1,5 +1,6 @@
 package com.lollipop.techo.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -43,8 +44,9 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.openButton.setOnClickListener {
-            recorderLauncher.launch(false)
+//            recorderLauncher.launch(false)
 //            AudioPlayerDialog(this, "").show()
+            startActivity(Intent(this, QrScanningActivity::class.java))
         }
     }
 

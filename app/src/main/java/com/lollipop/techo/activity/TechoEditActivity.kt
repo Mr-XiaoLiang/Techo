@@ -273,6 +273,12 @@ class TechoEditActivity : HeaderActivity(),
             is TechoItem.Title -> {
                 // TODO()
             }
+            is TechoItem.Recording -> {
+                // TODO()
+            }
+            is TechoItem.Vcr -> {
+                // TODO()
+            }
         }
     }
 

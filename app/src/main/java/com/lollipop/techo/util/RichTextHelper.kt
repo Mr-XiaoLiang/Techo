@@ -156,6 +156,12 @@ class RichTextHelper {
             is TechoItem.Split -> {
                 "[---]"
             }
+            is TechoItem.Recording -> {
+                info.value
+            }
+            is TechoItem.Vcr -> {
+                info.value
+            }
         }.let {
             if (option.font.isText) {
                 it.replace("\n", "")

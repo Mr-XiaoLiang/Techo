@@ -331,6 +331,12 @@ sealed class TechoMode private constructor(
                     is TechoItem.Title -> {
 
                     }
+                    is TechoItem.Recording -> {
+                        // TODO()
+                    }
+                    is TechoItem.Vcr -> {
+                        // TODO()
+                    }
                 }
             }
             return intArrayOf(updateStart, updateEnd)
@@ -480,6 +486,12 @@ sealed class TechoMode private constructor(
                     }
                     is TechoItem.Title -> {
 
+                    }
+                    is TechoItem.Recording -> {
+                        // TODO()
+                    }
+                    is TechoItem.Vcr -> {
+                        // TODO()
                     }
                 }
             }

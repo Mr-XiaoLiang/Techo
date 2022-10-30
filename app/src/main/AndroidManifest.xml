@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
+            android:name=".activity.QrScanningActivity"
+            android:exported="false"/>
+        <activity
             android:name=".activity.SingleFragmentActivity"
             android:exported="false" />
         <activity
