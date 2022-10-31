@@ -113,11 +113,6 @@ class QRReaderHelper(
         }, mainExecutor)
     }
 
-    fun onDestroy() {
-        analyzerExecutor?.destroy()
-        // TODO
-    }
-
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
         val view = previewView ?: return
         val preview = Preview.Builder().build()

@@ -18,9 +18,4 @@ class QrScanningActivity : AppCompatActivity() {
         qrReaderHelper.bindContainer(binding.previewContainer)
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-        qrReaderHelper.onDestroy()
-    }
 }
