@@ -100,6 +100,8 @@ class QRReaderHelper(
         findFocus()
     }
 
+    private val onFocusChangedListenerList = ArrayList<OnCameraFocusChangedListener>()
+
     fun bindContainer(layout: FrameLayout) {
         // 更换容器
         if (switchContainer(layout)) {
@@ -111,6 +113,14 @@ class QRReaderHelper(
             val cameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider)
         }, mainExecutor)
+    }
+
+    fun addOnFocusChangedListener(listener: OnCameraFocusChangedListener) {
+        this.onFocusChangedListenerList.add(listener)
+    }
+
+    fun removeOnFocusChangedListener(listener: OnCameraFocusChangedListener) {
+        this.onFocusChangedListenerList.remove(listener)
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
@@ -159,7 +169,7 @@ class QRReaderHelper(
     }
 
     private fun onFocusResult(isSuccessful: Boolean, x: Float, y: Float) {
-        // TODO
+        onFocusChangedListenerList.forEach { it.onCameraFocusChanged(isSuccessful, x, y) }
     }
 
     private fun getFocusLocation(view: View): FloatArray {
