@@ -108,7 +108,7 @@ class QRReaderHelper(
             return
         }
         // 将Camera的生命周期和Activity绑定在一起（设定生命周期所有者），这样就不用手动控制相机的启动和关闭。
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(layout.context);
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(layout.context)
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider)
@@ -136,7 +136,7 @@ class QRReaderHelper(
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
-//            buildImageAnalysis(),
+            buildImageAnalysis(),
             preview
         )
         camera?.cameraControl?.enableTorch(torch)
@@ -249,8 +249,25 @@ class QRReaderHelper(
             .build()
 
         val scanner = BarcodeScanning.getClient(options)
-        scanner.process(inputImage).addOnSuccessListener {
-            // TODO
+        scanner.process(inputImage).addOnSuccessListener { list ->
+            list.forEach {  code ->
+                code.valueType
+                code.boundingBox
+                code.calendarEvent
+                code.contactInfo
+                code.cornerPoints
+                code.displayValue
+                code.driverLicense
+                code.email
+                code.format
+                code.geoPoint
+                code.phone
+                code.rawBytes
+                code.sms
+                code.url
+                code.wifi
+            }
+            // TODO 包装一个结果
         }
     }
 
