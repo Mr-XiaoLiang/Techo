@@ -85,10 +85,14 @@ class QRReaderHelper(
             }
         }
 
+    var analyzerEnable = true
+
     @SuppressLint("UnsafeOptInUsageError")
     private val codeAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         try {
-            scan(imageProxy)
+            if (analyzerEnable) {
+                scan(imageProxy)
+            }
             // after done, release the ImageProxy object
             imageProxy.close()
         } catch (e: Throwable) {
@@ -253,16 +257,16 @@ class QRReaderHelper(
             list.forEach {  code ->
                 code.valueType
                 code.boundingBox
-                code.calendarEvent
                 code.contactInfo
                 code.cornerPoints
                 code.displayValue
                 code.driverLicense
-                code.email
+                code.calendarEvent
+                code.rawBytes
                 code.format
+                code.email
                 code.geoPoint
                 code.phone
-                code.rawBytes
                 code.sms
                 code.url
                 code.wifi
