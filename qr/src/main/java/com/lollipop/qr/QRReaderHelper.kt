@@ -136,7 +136,7 @@ class QRReaderHelper(
             .build()
 
         preview.setSurfaceProvider(view.surfaceProvider)
-
+        cameraProvider.unbindAll()
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
@@ -257,19 +257,22 @@ class QRReaderHelper(
             list.forEach {  code ->
                 code.valueType
                 code.boundingBox
-                code.contactInfo
                 code.cornerPoints
                 code.displayValue
+                code.format
+
+                code.rawBytes
+
+                code.contactInfo
                 code.driverLicense
                 code.calendarEvent
-                code.rawBytes
-                code.format
                 code.email
                 code.geoPoint
                 code.phone
                 code.sms
                 code.url
                 code.wifi
+
             }
             // TODO 包装一个结果
         }
