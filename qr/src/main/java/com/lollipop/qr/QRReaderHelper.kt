@@ -3,6 +3,7 @@ package com.lollipop.qr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
+import android.graphics.Rect
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -23,6 +24,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.lollipop.qr.BarcodeType.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
@@ -92,9 +94,10 @@ class QRReaderHelper(
         try {
             if (analyzerEnable) {
                 scan(imageProxy)
+            } else {
+                // after done, release the ImageProxy object
+                imageProxy.close()
             }
-            // after done, release the ImageProxy object
-            imageProxy.close()
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -253,29 +256,77 @@ class QRReaderHelper(
             .build()
 
         val scanner = BarcodeScanning.getClient(options)
-        scanner.process(inputImage).addOnSuccessListener { list ->
-            list.forEach {  code ->
-                code.valueType
-                code.boundingBox
-                code.cornerPoints
-                code.displayValue
-                code.format
-
-                code.rawBytes
-
-                code.contactInfo
-                code.driverLicense
-                code.calendarEvent
-                code.email
-                code.geoPoint
-                code.phone
-                code.sms
-                code.url
-                code.wifi
-
+        scanner.process(inputImage)
+            .addOnSuccessListener { list ->
+                onDecodeSuccess(list)
+            }.addOnCompleteListener {
+                imageProxy.close()
+            }.addOnCanceledListener {
+                imageProxy.close()
             }
-            // TODO 包装一个结果
+    }
+
+    private fun onDecodeSuccess(list: List<Barcode>) {
+        list.forEach { code ->
+            code.valueType
+            code.boundingBox
+            code.cornerPoints
+            code.displayValue
+            code.format
+
+            code.rawBytes
+
+            code.contactInfo
+            code.driverLicense
+            code.calendarEvent
+            code.email
+            code.geoPoint
+            code.phone
+            code.sms
+            code.url
+            code.wifi
         }
+    }
+
+    private fun parseBarcode(code: Barcode): BarcodeResult {
+        return when (findBarcodeType(code.valueType)) {
+            UNKNOWN -> {
+                BarcodeResult.Unknown
+            }
+            CONTACT_INFO -> {
+                BarcodeResultBuilder.createContactInfoBy(code)
+            }
+            EMAIL -> {
+                BarcodeResultBuilder.createEmailBy(code)
+            }
+            ISBN -> {
+                BarcodeResult.Isbn
+            }
+            PHONE -> {
+                BarcodeResultBuilder.createPhoneBy(code)
+            }
+            PRODUCT -> {
+                BarcodeResult.Product
+            }
+            SMS -> TODO()
+            TEXT -> {
+                BarcodeResult.Text
+            }
+            URL -> TODO()
+            WIFI -> TODO()
+            GEO -> TODO()
+            CALENDAR_EVENT -> TODO()
+            DRIVER_LICENSE -> TODO()
+        }
+    }
+
+    private fun findBarcodeType(code: Int): BarcodeType {
+        values().forEach {
+            if (it.code == code) {
+                return it
+            }
+        }
+        return UNKNOWN
     }
 
     private fun createPreviewView(context: Context): PreviewView {
