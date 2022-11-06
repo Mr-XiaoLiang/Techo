@@ -6,14 +6,6 @@ import com.google.mlkit.vision.barcode.common.Barcode
 
 sealed class BarcodeResult {
 
-    class CodeInfo(
-        val boundingBox: Rect,
-        val cornerPoints: Array<Point>,
-        val displayValue: String,
-        val format: BarcodeFormat,
-        val bytes: ByteArray,
-    )
-
     object Unknown : BarcodeResult()
 
     class ContactInfo(
@@ -151,9 +143,22 @@ sealed class BarcodeResult {
 
 }
 
+class CodeInfo(
+    val boundingBox: Rect,
+    val cornerPoints: Array<Point>,
+    val displayValue: String,
+    val format: BarcodeFormat,
+    val bytes: ByteArray,
+)
+
+class BarcodeResultWrapper(
+    val result: BarcodeResult,
+    val codeInfo: CodeInfo
+)
+
 internal object BarcodeResultBuilder {
-    fun createCodeInfoBy(code: Barcode): BarcodeResult.CodeInfo {
-        return BarcodeResult.CodeInfo(
+    fun createCodeInfoBy(code: Barcode): CodeInfo {
+        return CodeInfo(
             code.boundingBox ?: Rect(),
             code.cornerPoints ?: emptyArray(),
             code.displayValue ?: "",
@@ -184,6 +189,111 @@ internal object BarcodeResultBuilder {
         )
     }
 
+    fun createPhoneBy(code: Barcode): BarcodeResult.Phone {
+        return createPhoneBy(code.phone)
+    }
+
+    fun createEmailBy(
+        code: Barcode,
+    ): BarcodeResult.Email {
+        return createEmailBy(code.email)
+    }
+
+    fun createWifiBy(
+        code: Barcode
+    ): BarcodeResult.Wifi {
+        val wifi = code.wifi
+        return BarcodeResult.Wifi(
+            encryptionType = BarcodeResult.Wifi.EncryptionType.values()
+                .findByCode(wifi?.encryptionType) {
+                    BarcodeResult.Wifi.EncryptionType.OPEN
+                },
+            password = wifi?.password ?: "",
+            ssid = wifi?.ssid ?: ""
+        )
+    }
+
+    fun createUrlBy(
+        code: Barcode
+    ): BarcodeResult.Url {
+        val url = code.url
+        return BarcodeResult.Url(
+            title = url?.title ?: "",
+            url = url?.url ?: ""
+        )
+    }
+
+    fun createSmsBy(
+        code: Barcode
+    ): BarcodeResult.Sms {
+        val sms = code.sms
+        return BarcodeResult.Sms(
+            message = sms?.message ?: "",
+            phoneNumber = sms?.phoneNumber ?: ""
+        )
+    }
+
+    fun createGeoBy(
+        code: Barcode
+    ): BarcodeResult.GeoPoint {
+        val geoPoint = code.geoPoint
+        return BarcodeResult.GeoPoint(
+            lat = geoPoint?.lat ?: 0.0,
+            lng = geoPoint?.lng ?: 0.0
+        )
+    }
+
+    fun createCalendarEventBy(
+        code: Barcode
+    ): BarcodeResult.CalendarEvent {
+        val calendarEvent = code.calendarEvent
+        return BarcodeResult.CalendarEvent(
+            end = createCalendarDateTime(calendarEvent?.end),
+            start = createCalendarDateTime(calendarEvent?.start),
+            description = calendarEvent?.description ?: "",
+            location = calendarEvent?.location ?: "",
+            organizer = calendarEvent?.organizer ?: "",
+            status = calendarEvent?.status ?: "",
+            summary = calendarEvent?.summary ?: ""
+        )
+    }
+
+    fun createDriverLicenseBy(
+        code: Barcode
+    ): BarcodeResult.DriverLicense {
+        val license = code.driverLicense
+        return BarcodeResult.DriverLicense(
+            addressCity = license?.addressCity ?: "",
+            addressState = license?.addressState ?: "",
+            addressStreet = license?.addressStreet ?: "",
+            addressZip = license?.addressZip ?: "",
+            birthDate = license?.birthDate ?: "",
+            documentType = license?.documentType ?: "",
+            expiryDate = license?.expiryDate ?: "",
+            firstName = license?.firstName ?: "",
+            gender = license?.gender ?: "",
+            issueDate = license?.issueDate ?: "",
+            issuingCountry = license?.issuingCountry ?: "",
+            lastName = license?.lastName ?: "",
+            licenseNumber = license?.licenseNumber ?: "",
+            middleName = license?.middleName ?: ""
+        )
+    }
+
+    private fun createCalendarDateTime(
+        value: Barcode.CalendarDateTime?
+    ): BarcodeResult.CalendarDateTime {
+        return BarcodeResult.CalendarDateTime(
+            year = value?.year ?: 0,
+            month = value?.month ?: 0,
+            day = value?.day ?: 0,
+            hours = value?.hours ?: 0,
+            minutes = value?.minutes ?: 0,
+            seconds = value?.seconds ?: 0,
+            rawValue = value?.rawValue ?: ""
+        )
+    }
+
     private fun formatPhones(
         list: List<Barcode.Phone?>?
     ): List<BarcodeResult.Phone> {
@@ -196,10 +306,6 @@ internal object BarcodeResultBuilder {
         return result
     }
 
-    fun createPhoneBy(code: Barcode): BarcodeResult.Phone {
-        return createPhoneBy(code.phone)
-    }
-
     private fun createPhoneBy(phone: Barcode.Phone?): BarcodeResult.Phone {
         return BarcodeResult.Phone(
             type = BarcodeResult.Phone.Type.values().findByCode(phone?.type) {
@@ -207,12 +313,6 @@ internal object BarcodeResultBuilder {
             },
             number = phone?.number ?: ""
         )
-    }
-
-    fun createEmailBy(
-        code: Barcode,
-    ): BarcodeResult.Email {
-        return createEmailBy(code.email)
     }
 
     private fun formatEmail(

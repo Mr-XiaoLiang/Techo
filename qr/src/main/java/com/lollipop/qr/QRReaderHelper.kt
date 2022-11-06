@@ -3,7 +3,6 @@ package com.lollipop.qr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
-import android.graphics.Rect
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -109,6 +108,8 @@ class QRReaderHelper(
 
     private val onFocusChangedListenerList = ArrayList<OnCameraFocusChangedListener>()
 
+    private val onBarcodeScanResultListener = ArrayList<OnBarcodeScanResultListener>()
+
     fun bindContainer(layout: FrameLayout) {
         // 更换容器
         if (switchContainer(layout)) {
@@ -128,6 +129,14 @@ class QRReaderHelper(
 
     fun removeOnFocusChangedListener(listener: OnCameraFocusChangedListener) {
         this.onFocusChangedListenerList.remove(listener)
+    }
+
+    fun addOnBarcodeScanResultListener(listener: OnBarcodeScanResultListener) {
+        this.onBarcodeScanResultListener.add(listener)
+    }
+
+    fun removeOnBarcodeScanResultListener(listener: OnBarcodeScanResultListener) {
+        this.onBarcodeScanResultListener.remove(listener)
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
@@ -267,24 +276,14 @@ class QRReaderHelper(
     }
 
     private fun onDecodeSuccess(list: List<Barcode>) {
-        list.forEach { code ->
-            code.valueType
-            code.boundingBox
-            code.cornerPoints
-            code.displayValue
-            code.format
-
-            code.rawBytes
-
-            code.contactInfo
-            code.driverLicense
-            code.calendarEvent
-            code.email
-            code.geoPoint
-            code.phone
-            code.sms
-            code.url
-            code.wifi
+        val resultList = list.map { code ->
+            BarcodeResultWrapper(
+                parseBarcode(code),
+                BarcodeResultBuilder.createCodeInfoBy(code)
+            )
+        }
+        mainExecutor.execute {
+            onBarcodeScanResultListener.forEach { it.onBarcodeScanResult(ArrayList(resultList)) }
         }
     }
 
@@ -308,15 +307,27 @@ class QRReaderHelper(
             PRODUCT -> {
                 BarcodeResult.Product
             }
-            SMS -> TODO()
+            SMS -> {
+                BarcodeResultBuilder.createSmsBy(code)
+            }
             TEXT -> {
                 BarcodeResult.Text
             }
-            URL -> TODO()
-            WIFI -> TODO()
-            GEO -> TODO()
-            CALENDAR_EVENT -> TODO()
-            DRIVER_LICENSE -> TODO()
+            URL -> {
+                BarcodeResultBuilder.createUrlBy(code)
+            }
+            WIFI -> {
+                BarcodeResultBuilder.createWifiBy(code)
+            }
+            GEO -> {
+                BarcodeResultBuilder.createGeoBy(code)
+            }
+            CALENDAR_EVENT -> {
+                BarcodeResultBuilder.createCalendarEventBy(code)
+            }
+            DRIVER_LICENSE -> {
+                BarcodeResultBuilder.createDriverLicenseBy(code)
+            }
         }
     }
 
