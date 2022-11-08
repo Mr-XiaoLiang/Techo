@@ -18,9 +18,12 @@ class QrScanningActivity : AppCompatActivity() {
         setContentView(binding.root)
         qrReaderHelper.bindContainer(binding.previewContainer)
         qrReaderHelper.addOnBarcodeScanResultListener {
-            qrReaderHelper.analyzerEnable = false
-            it.forEach { result ->
-                log(result.codeInfo.displayValue + ", " + result.result::class.java)
+            log("OnBarcodeScanResult: ${it.size}")
+            if (it.isNotEmpty()) {
+                qrReaderHelper.analyzerEnable = false
+                it.forEach { result ->
+                    log(result.codeInfo.displayValue + ", " + result.result::class.java)
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.util.Log
 import android.util.Size
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -26,6 +27,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.lollipop.qr.BarcodeType.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 
 class QRReaderHelper(
@@ -88,13 +90,17 @@ class QRReaderHelper(
 
     var analyzerEnable = true
 
+    private val isResumed: Boolean
+        get() {
+            return currentStatus.isAtLeast(Lifecycle.State.RESUMED)
+        }
+
     @SuppressLint("UnsafeOptInUsageError")
     private val codeAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         try {
-            if (analyzerEnable) {
+            if (analyzerEnable && isResumed) {
                 scan(imageProxy)
             } else {
-                // after done, release the ImageProxy object
                 imageProxy.close()
             }
         } catch (e: Throwable) {
@@ -102,24 +108,33 @@ class QRReaderHelper(
         }
     }
 
+    private var currentStatus = Lifecycle.State.DESTROYED
+
     private val autoFocusTask = Runnable {
         findFocus()
+    }
+
+    private val lifecycleObserver = LifecycleEventObserver { source, _ ->
+        currentStatus = source.lifecycle.currentState
+        onLifecycleStateChanged()
     }
 
     private val onFocusChangedListenerList = ArrayList<OnCameraFocusChangedListener>()
 
     private val onBarcodeScanResultListener = ArrayList<OnBarcodeScanResultListener>()
 
+    init {
+        currentStatus = lifecycleOwner.lifecycle.currentState
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+    }
+
     fun bindContainer(layout: FrameLayout) {
         // 更换容器
-        if (switchContainer(layout)) {
-            return
-        }
+        switchContainer(layout)
         // 将Camera的生命周期和Activity绑定在一起（设定生命周期所有者），这样就不用手动控制相机的启动和关闭。
         val cameraProviderFuture = ProcessCameraProvider.getInstance(layout.context)
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            bindPreview(cameraProvider)
+            bindPreview(cameraProviderFuture.get())
         }, mainExecutor)
     }
 
@@ -142,12 +157,12 @@ class QRReaderHelper(
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
         val view = previewView ?: return
         val preview = Preview.Builder().build()
+        preview.setSurfaceProvider(view.surfaceProvider)
 
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-        preview.setSurfaceProvider(view.surfaceProvider)
         cameraProvider.unbindAll()
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
@@ -161,8 +176,23 @@ class QRReaderHelper(
         }
     }
 
+    private fun onLifecycleStateChanged() {
+        if (isResumed) {
+            onResumed()
+        }
+    }
+
+    private fun onResumed() {
+        if (autoFocus) {
+            findFocus()
+        }
+    }
+
     private fun findFocus() {
-        mainExecutor.cache(autoFocusTask)
+        mainExecutor.cancel(autoFocusTask)
+        if (!currentStatus.isAtLeast(Lifecycle.State.RESUMED)) {
+            return
+        }
         mainExecutor.delay(AUTO_FOCUS_DURATION, autoFocusTask)
         val view = previewView ?: return
         val cameraControl = camera?.cameraControl ?: return
@@ -176,8 +206,13 @@ class QRReaderHelper(
         )
         future.addListener({
             try {
-                val result = future.get()
-                onFocusResult(result.isFocusSuccessful, focusLocation[0], focusLocation[1])
+                if (future.isCancelled) {
+                    return@addListener
+                }
+                if (future.isDone) {
+                    val result = future.get()
+                    onFocusResult(result.isFocusSuccessful, focusLocation[0], focusLocation[1])
+                }
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
@@ -264,18 +299,24 @@ class QRReaderHelper(
             .setBarcodeFormats(first, *array)
             .build()
 
-        val scanner = BarcodeScanning.getClient(options)
-        scanner.process(inputImage)
+        val mode = Random.nextInt(10000)
+        BarcodeScanning.getClient(options).process(inputImage)
             .addOnSuccessListener { list ->
+                Log.d("QRReaderHelper", "${mode}: OnSuccess")
                 onDecodeSuccess(list)
             }.addOnCompleteListener {
+                Log.d("QRReaderHelper", "${mode}: OnComplete")
                 imageProxy.close()
             }.addOnCanceledListener {
+                Log.d("QRReaderHelper", "${mode}: OnCanceled")
                 imageProxy.close()
             }
     }
 
     private fun onDecodeSuccess(list: List<Barcode>) {
+        if (list.isEmpty()) {
+            return
+        }
         val resultList = list.map { code ->
             BarcodeResultWrapper(
                 parseBarcode(code),
@@ -449,7 +490,7 @@ class QRReaderHelper(
             handler.postDelayed(command, delay)
         }
 
-        fun cache(command: Runnable) {
+        fun cancel(command: Runnable) {
             handler.removeCallbacks(command)
         }
 
