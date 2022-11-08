@@ -98,7 +98,7 @@ class QRReaderHelper(
     @SuppressLint("UnsafeOptInUsageError")
     private val codeAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         try {
-            if (analyzerEnable && isResumed) {
+            if (analyzerEnable) {
                 scan(imageProxy)
             } else {
                 imageProxy.close()
