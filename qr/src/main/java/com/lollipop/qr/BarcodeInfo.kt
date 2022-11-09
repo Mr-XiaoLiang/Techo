@@ -4,11 +4,11 @@ import android.graphics.Point
 import android.graphics.Rect
 import com.google.mlkit.vision.barcode.common.Barcode
 
-sealed class BarcodeResult {
+sealed class BarcodeInfo {
 
-    object Unknown : BarcodeResult()
+    object Unknown : BarcodeInfo()
 
-    class ContactInfo(
+    class Contact(
         val name: PersonName,
         val organization: String,
         val title: String,
@@ -16,7 +16,7 @@ sealed class BarcodeResult {
         val emails: List<Email>,
         val phones: List<Phone>,
         val urls: List<String>
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class DriverLicense(
         val addressCity: String,
@@ -33,7 +33,7 @@ sealed class BarcodeResult {
         val lastName: String,
         val licenseNumber: String,
         val middleName: String
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class CalendarEvent(
         val end: CalendarDateTime,
@@ -43,14 +43,14 @@ sealed class BarcodeResult {
         val organizer: String,
         val status: String,
         val summary: String
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class Email(
         val type: Type,
         val address: String,
         val body: String,
         val subject: String
-    ) : BarcodeResult() {
+    ) : BarcodeInfo() {
         enum class Type(override val key: Int) : KeyEnum {
             UNKNOWN(Barcode.Email.TYPE_UNKNOWN),
             WORK(Barcode.Email.TYPE_WORK),
@@ -61,12 +61,12 @@ sealed class BarcodeResult {
     class GeoPoint(
         val lat: Double,
         val lng: Double
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class Phone(
         val type: Type,
         val number: String
-    ) : BarcodeResult() {
+    ) : BarcodeInfo() {
         enum class Type(override val key: Int) : KeyEnum {
             UNKNOWN(Barcode.Phone.TYPE_UNKNOWN),
             WORK(Barcode.Phone.TYPE_WORK),
@@ -79,18 +79,18 @@ sealed class BarcodeResult {
     class Sms(
         val message: String,
         val phoneNumber: String
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class Url(
         val title: String,
         val url: String
-    ) : BarcodeResult()
+    ) : BarcodeInfo()
 
     class Wifi(
         val encryptionType: EncryptionType,
         val password: String,
         val ssid: String
-    ) : BarcodeResult() {
+    ) : BarcodeInfo() {
         enum class EncryptionType(override val key: Int) : KeyEnum {
             OPEN(Barcode.WiFi.TYPE_OPEN),
             WEP(Barcode.WiFi.TYPE_WEP),
@@ -98,11 +98,11 @@ sealed class BarcodeResult {
         }
     }
 
-    object Isbn : BarcodeResult()
+    object Isbn : BarcodeInfo()
 
-    object Text : BarcodeResult()
+    object Text : BarcodeInfo()
 
-    object Product : BarcodeResult()
+    object Product : BarcodeInfo()
 
     class PersonName(
         val first: String,
@@ -143,7 +143,7 @@ sealed class BarcodeResult {
 
 }
 
-class CodeInfo(
+class CodeDescribe(
     val boundingBox: Rect,
     val cornerPoints: Array<Point>,
     val displayValue: String,
@@ -151,14 +151,28 @@ class CodeInfo(
     val bytes: ByteArray,
 )
 
-class BarcodeResultWrapper(
-    val result: BarcodeResult,
-    val codeInfo: CodeInfo
+class BarcodeWrapper(
+    val info: BarcodeInfo,
+    val describe: CodeDescribe
 )
 
+class BarcodeResult(
+    val list: List<BarcodeWrapper>,
+    val tag: String
+) {
+
+    val isEmpty: Boolean
+        get() {
+            return list.isEmpty()
+        }
+
+
+
+}
+
 internal object BarcodeResultBuilder {
-    fun createCodeInfoBy(code: Barcode): CodeInfo {
-        return CodeInfo(
+    fun createCodeDescribeBy(code: Barcode): CodeDescribe {
+        return CodeDescribe(
             code.boundingBox ?: Rect(),
             code.cornerPoints ?: emptyArray(),
             code.displayValue ?: "",
@@ -167,11 +181,11 @@ internal object BarcodeResultBuilder {
         )
     }
 
-    fun createContactInfoBy(code: Barcode): BarcodeResult.ContactInfo {
+    fun createContactBy(code: Barcode): BarcodeInfo.Contact {
         val info = code.contactInfo
         val name = info?.name
-        return BarcodeResult.ContactInfo(
-            name = BarcodeResult.PersonName(
+        return BarcodeInfo.Contact(
+            name = BarcodeInfo.PersonName(
                 first = name?.first ?: "",
                 formattedName = name?.formattedName ?: "",
                 last = name?.last ?: "",
@@ -189,24 +203,24 @@ internal object BarcodeResultBuilder {
         )
     }
 
-    fun createPhoneBy(code: Barcode): BarcodeResult.Phone {
+    fun createPhoneBy(code: Barcode): BarcodeInfo.Phone {
         return createPhoneBy(code.phone)
     }
 
     fun createEmailBy(
         code: Barcode,
-    ): BarcodeResult.Email {
+    ): BarcodeInfo.Email {
         return createEmailBy(code.email)
     }
 
     fun createWifiBy(
         code: Barcode
-    ): BarcodeResult.Wifi {
+    ): BarcodeInfo.Wifi {
         val wifi = code.wifi
-        return BarcodeResult.Wifi(
-            encryptionType = BarcodeResult.Wifi.EncryptionType.values()
+        return BarcodeInfo.Wifi(
+            encryptionType = BarcodeInfo.Wifi.EncryptionType.values()
                 .findByCode(wifi?.encryptionType) {
-                    BarcodeResult.Wifi.EncryptionType.OPEN
+                    BarcodeInfo.Wifi.EncryptionType.OPEN
                 },
             password = wifi?.password ?: "",
             ssid = wifi?.ssid ?: ""
@@ -215,9 +229,9 @@ internal object BarcodeResultBuilder {
 
     fun createUrlBy(
         code: Barcode
-    ): BarcodeResult.Url {
+    ): BarcodeInfo.Url {
         val url = code.url
-        return BarcodeResult.Url(
+        return BarcodeInfo.Url(
             title = url?.title ?: "",
             url = url?.url ?: ""
         )
@@ -225,9 +239,9 @@ internal object BarcodeResultBuilder {
 
     fun createSmsBy(
         code: Barcode
-    ): BarcodeResult.Sms {
+    ): BarcodeInfo.Sms {
         val sms = code.sms
-        return BarcodeResult.Sms(
+        return BarcodeInfo.Sms(
             message = sms?.message ?: "",
             phoneNumber = sms?.phoneNumber ?: ""
         )
@@ -235,9 +249,9 @@ internal object BarcodeResultBuilder {
 
     fun createGeoBy(
         code: Barcode
-    ): BarcodeResult.GeoPoint {
+    ): BarcodeInfo.GeoPoint {
         val geoPoint = code.geoPoint
-        return BarcodeResult.GeoPoint(
+        return BarcodeInfo.GeoPoint(
             lat = geoPoint?.lat ?: 0.0,
             lng = geoPoint?.lng ?: 0.0
         )
@@ -245,9 +259,9 @@ internal object BarcodeResultBuilder {
 
     fun createCalendarEventBy(
         code: Barcode
-    ): BarcodeResult.CalendarEvent {
+    ): BarcodeInfo.CalendarEvent {
         val calendarEvent = code.calendarEvent
-        return BarcodeResult.CalendarEvent(
+        return BarcodeInfo.CalendarEvent(
             end = createCalendarDateTime(calendarEvent?.end),
             start = createCalendarDateTime(calendarEvent?.start),
             description = calendarEvent?.description ?: "",
@@ -260,9 +274,9 @@ internal object BarcodeResultBuilder {
 
     fun createDriverLicenseBy(
         code: Barcode
-    ): BarcodeResult.DriverLicense {
+    ): BarcodeInfo.DriverLicense {
         val license = code.driverLicense
-        return BarcodeResult.DriverLicense(
+        return BarcodeInfo.DriverLicense(
             addressCity = license?.addressCity ?: "",
             addressState = license?.addressState ?: "",
             addressStreet = license?.addressStreet ?: "",
@@ -282,8 +296,8 @@ internal object BarcodeResultBuilder {
 
     private fun createCalendarDateTime(
         value: Barcode.CalendarDateTime?
-    ): BarcodeResult.CalendarDateTime {
-        return BarcodeResult.CalendarDateTime(
+    ): BarcodeInfo.CalendarDateTime {
+        return BarcodeInfo.CalendarDateTime(
             year = value?.year ?: 0,
             month = value?.month ?: 0,
             day = value?.day ?: 0,
@@ -296,8 +310,8 @@ internal object BarcodeResultBuilder {
 
     private fun formatPhones(
         list: List<Barcode.Phone?>?
-    ): List<BarcodeResult.Phone> {
-        val result = ArrayList<BarcodeResult.Phone>()
+    ): List<BarcodeInfo.Phone> {
+        val result = ArrayList<BarcodeInfo.Phone>()
         list?.forEach {
             if (it != null) {
                 result.add(createPhoneBy(it))
@@ -306,10 +320,10 @@ internal object BarcodeResultBuilder {
         return result
     }
 
-    private fun createPhoneBy(phone: Barcode.Phone?): BarcodeResult.Phone {
-        return BarcodeResult.Phone(
-            type = BarcodeResult.Phone.Type.values().findByCode(phone?.type) {
-                BarcodeResult.Phone.Type.UNKNOWN
+    private fun createPhoneBy(phone: Barcode.Phone?): BarcodeInfo.Phone {
+        return BarcodeInfo.Phone(
+            type = BarcodeInfo.Phone.Type.values().findByCode(phone?.type) {
+                BarcodeInfo.Phone.Type.UNKNOWN
             },
             number = phone?.number ?: ""
         )
@@ -317,8 +331,8 @@ internal object BarcodeResultBuilder {
 
     private fun formatEmail(
         list: List<Barcode.Email?>?,
-    ): List<BarcodeResult.Email> {
-        val result = ArrayList<BarcodeResult.Email>()
+    ): List<BarcodeInfo.Email> {
+        val result = ArrayList<BarcodeInfo.Email>()
         list?.forEach {
             if (it != null) {
                 result.add(createEmailBy(it))
@@ -329,10 +343,10 @@ internal object BarcodeResultBuilder {
 
     private fun createEmailBy(
         email: Barcode.Email?,
-    ): BarcodeResult.Email {
-        return BarcodeResult.Email(
-            type = BarcodeResult.Email.Type.values().findByCode(email?.type) {
-                BarcodeResult.Email.Type.UNKNOWN
+    ): BarcodeInfo.Email {
+        return BarcodeInfo.Email(
+            type = BarcodeInfo.Email.Type.values().findByCode(email?.type) {
+                BarcodeInfo.Email.Type.UNKNOWN
             },
             address = email?.address ?: "",
             body = email?.body ?: "",
@@ -340,14 +354,14 @@ internal object BarcodeResultBuilder {
         )
     }
 
-    private fun formatAddress(list: List<Barcode.Address?>?): List<BarcodeResult.Address> {
-        val result = ArrayList<BarcodeResult.Address>()
+    private fun formatAddress(list: List<Barcode.Address?>?): List<BarcodeInfo.Address> {
+        val result = ArrayList<BarcodeInfo.Address>()
         list?.forEach {
             if (it != null) {
                 result.add(
-                    BarcodeResult.Address(
-                        BarcodeResult.Address.Type.values()
-                            .findByCode(it.type) { BarcodeResult.Address.Type.UNKNOWN },
+                    BarcodeInfo.Address(
+                        BarcodeInfo.Address.Type.values()
+                            .findByCode(it.type) { BarcodeInfo.Address.Type.UNKNOWN },
                         it.addressLines
                     )
                 )
@@ -356,7 +370,7 @@ internal object BarcodeResultBuilder {
         return result
     }
 
-    private inline fun <reified T : BarcodeResult.KeyEnum> Array<T>.findByCode(
+    private inline fun <reified T : BarcodeInfo.KeyEnum> Array<T>.findByCode(
         code: Int?,
         def: () -> T
     ): T {

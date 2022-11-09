@@ -3,9 +3,6 @@ package com.lollipop.qr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
 import android.util.Log
 import android.util.Size
 import android.view.GestureDetector
@@ -13,26 +10,20 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewManager
 import android.widget.FrameLayout
-import android.widget.FrameLayout.LayoutParams
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.lollipop.qr.BarcodeType.*
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-
-class QRReaderHelper(
-    private val lifecycleOwner: LifecycleOwner
-) {
+class CameraBarcodeReader(
+    lifecycleOwner: LifecycleOwner
+) : BarcodeReader(lifecycleOwner) {
 
     companion object {
         private const val AUTO_FOCUS_DURATION = 3 * 1000L
@@ -45,6 +36,10 @@ class QRReaderHelper(
 
     private var previewView: PreviewView? = null
 
+    private val resultTag: String by lazy {
+        System.identityHashCode(this@CameraBarcodeReader).toString(16)
+    }
+
     var previewMode = QrPreviewMode.PERFORMANCE
         set(value) {
             field = value
@@ -56,11 +51,6 @@ class QRReaderHelper(
             field = value
             previewView?.scaleType = value.type
         }
-
-    var scanFormat = BarcodeFormat.values()
-
-    private val mainExecutor = MainExecutor()
-    private var analyzerExecutor: SingleExecutor? = null
 
     private var camera: Camera? = null
 
@@ -90,11 +80,6 @@ class QRReaderHelper(
 
     var analyzerEnable = true
 
-    private val isResumed: Boolean
-        get() {
-            return currentStatus.isAtLeast(Lifecycle.State.RESUMED)
-        }
-
     @SuppressLint("UnsafeOptInUsageError")
     private val codeAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         try {
@@ -108,25 +93,11 @@ class QRReaderHelper(
         }
     }
 
-    private var currentStatus = Lifecycle.State.DESTROYED
-
     private val autoFocusTask = Runnable {
         findFocus()
     }
 
-    private val lifecycleObserver = LifecycleEventObserver { source, _ ->
-        currentStatus = source.lifecycle.currentState
-        onLifecycleStateChanged()
-    }
-
     private val onFocusChangedListenerList = ArrayList<OnCameraFocusChangedListener>()
-
-    private val onBarcodeScanResultListener = ArrayList<OnBarcodeScanResultListener>()
-
-    init {
-        currentStatus = lifecycleOwner.lifecycle.currentState
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-    }
 
     fun bindContainer(layout: FrameLayout) {
         // 更换容器
@@ -144,14 +115,6 @@ class QRReaderHelper(
 
     fun removeOnFocusChangedListener(listener: OnCameraFocusChangedListener) {
         this.onFocusChangedListenerList.remove(listener)
-    }
-
-    fun addOnBarcodeScanResultListener(listener: OnBarcodeScanResultListener) {
-        this.onBarcodeScanResultListener.add(listener)
-    }
-
-    fun removeOnBarcodeScanResultListener(listener: OnBarcodeScanResultListener) {
-        this.onBarcodeScanResultListener.remove(listener)
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
@@ -176,7 +139,7 @@ class QRReaderHelper(
         }
     }
 
-    private fun onLifecycleStateChanged() {
+    override fun onLifecycleStateChanged() {
         if (isResumed) {
             onResumed()
         }
@@ -190,7 +153,7 @@ class QRReaderHelper(
 
     private fun findFocus() {
         mainExecutor.cancel(autoFocusTask)
-        if (!currentStatus.isAtLeast(Lifecycle.State.RESUMED)) {
+        if (!isResumed) {
             return
         }
         mainExecutor.delay(AUTO_FOCUS_DURATION, autoFocusTask)
@@ -239,18 +202,8 @@ class QRReaderHelper(
             // 只取最后一帧
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
-        imageAnalysis.setAnalyzer(getAnalyzerExecutor(), codeAnalyzer)
+        imageAnalysis.setAnalyzer(analyzerExecutor, codeAnalyzer)
         return imageAnalysis
-    }
-
-    private fun getAnalyzerExecutor(): Executor {
-        val executor = analyzerExecutor
-        if (executor != null && !executor.isDestroy) {
-            return executor
-        }
-        val newExecutor = SingleExecutor(lifecycleOwner, "AnalyzerExecutor")
-        analyzerExecutor = newExecutor
-        return newExecutor
     }
 
     private fun switchContainer(layout: FrameLayout): Boolean {
@@ -266,7 +219,11 @@ class QRReaderHelper(
         val view = oldPreview ?: createPreviewView(layout.context)
         previewView = view
         container = layout
-        layout.addView(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        layout.addView(
+            view,
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
         return view == oldPreview
     }
 
@@ -299,86 +256,14 @@ class QRReaderHelper(
             .setBarcodeFormats(first, *array)
             .build()
 
-        val mode = Random.nextInt(10000)
         BarcodeScanning.getClient(options).process(inputImage)
             .addOnSuccessListener { list ->
-                Log.d("QRReaderHelper", "${mode}: OnSuccess")
-                onDecodeSuccess(list)
+                onDecodeSuccess(list, resultTag)
             }.addOnCompleteListener {
-                Log.d("QRReaderHelper", "${mode}: OnComplete")
                 imageProxy.close()
             }.addOnCanceledListener {
-                Log.d("QRReaderHelper", "${mode}: OnCanceled")
                 imageProxy.close()
             }
-    }
-
-    private fun onDecodeSuccess(list: List<Barcode>) {
-        if (list.isEmpty()) {
-            return
-        }
-        val resultList = list.map { code ->
-            BarcodeResultWrapper(
-                parseBarcode(code),
-                BarcodeResultBuilder.createCodeInfoBy(code)
-            )
-        }
-        mainExecutor.execute {
-            onBarcodeScanResultListener.forEach { it.onBarcodeScanResult(ArrayList(resultList)) }
-        }
-    }
-
-    private fun parseBarcode(code: Barcode): BarcodeResult {
-        return when (findBarcodeType(code.valueType)) {
-            UNKNOWN -> {
-                BarcodeResult.Unknown
-            }
-            CONTACT_INFO -> {
-                BarcodeResultBuilder.createContactInfoBy(code)
-            }
-            EMAIL -> {
-                BarcodeResultBuilder.createEmailBy(code)
-            }
-            ISBN -> {
-                BarcodeResult.Isbn
-            }
-            PHONE -> {
-                BarcodeResultBuilder.createPhoneBy(code)
-            }
-            PRODUCT -> {
-                BarcodeResult.Product
-            }
-            SMS -> {
-                BarcodeResultBuilder.createSmsBy(code)
-            }
-            TEXT -> {
-                BarcodeResult.Text
-            }
-            URL -> {
-                BarcodeResultBuilder.createUrlBy(code)
-            }
-            WIFI -> {
-                BarcodeResultBuilder.createWifiBy(code)
-            }
-            GEO -> {
-                BarcodeResultBuilder.createGeoBy(code)
-            }
-            CALENDAR_EVENT -> {
-                BarcodeResultBuilder.createCalendarEventBy(code)
-            }
-            DRIVER_LICENSE -> {
-                BarcodeResultBuilder.createDriverLicenseBy(code)
-            }
-        }
-    }
-
-    private fun findBarcodeType(code: Int): BarcodeType {
-        values().forEach {
-            if (it.code == code) {
-                return it
-            }
-        }
-        return UNKNOWN
     }
 
     private fun createPreviewView(context: Context): PreviewView {
@@ -439,60 +324,4 @@ class QRReaderHelper(
 
     }
 
-    private class SingleExecutor(lifecycleOwner: LifecycleOwner, threadName: String) : Executor {
-
-        private val thread = HandlerThread(threadName).apply {
-            start()
-        }
-
-        private val handler = Handler(thread.looper)
-
-        var isDestroy = false
-            private set
-
-        init {
-            lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if (event.targetState == Lifecycle.State.DESTROYED) {
-                        destroy()
-                    }
-                }
-            })
-        }
-
-        override fun execute(command: Runnable?) {
-            if (isDestroy) {
-                return
-            }
-            command ?: return
-            handler.post(command)
-        }
-
-        fun destroy() {
-            if (isDestroy) {
-                return
-            }
-            isDestroy = true
-            thread.quitSafely()
-        }
-    }
-
-    private class MainExecutor : Executor {
-
-        private val handler = Handler(Looper.getMainLooper())
-
-        override fun execute(command: Runnable?) {
-            command ?: return
-            handler.post(command)
-        }
-
-        fun delay(delay: Long, command: Runnable) {
-            handler.postDelayed(command, delay)
-        }
-
-        fun cancel(command: Runnable) {
-            handler.removeCallbacks(command)
-        }
-
-    }
 }
