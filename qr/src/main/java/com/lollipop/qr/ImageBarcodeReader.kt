@@ -13,7 +13,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.nio.ByteBuffer
 
-class BitmapBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecycleOwner) {
+class ImageBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecycleOwner) {
 
     override val resultByEmpty: Boolean = true
 
@@ -95,7 +95,7 @@ class BitmapBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecy
                 onDecodeSuccess(list, protocol.tag)
             }.addOnFailureListener {
                 onDecodeSuccess(emptyList(), protocol.tag)
-                // TODO 确定是否会和Complete重复
+                it.printStackTrace()
                 protocol.close()
             }.addOnCompleteListener {
                 protocol.close()
