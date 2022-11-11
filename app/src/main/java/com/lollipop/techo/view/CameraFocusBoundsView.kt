@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.Paint
+import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
@@ -47,15 +48,15 @@ class CameraFocusBoundsView @JvmOverloads constructor(
         }
 
         override fun setAlpha(alpha: Int) {
-            TODO("Not yet implemented")
+            paint.alpha = alpha
         }
 
         override fun setColorFilter(colorFilter: ColorFilter?) {
-            TODO("Not yet implemented")
+            paint.colorFilter = colorFilter
         }
 
         override fun getOpacity(): Int {
-            TODO("Not yet implemented")
+            return PixelFormat.TRANSPARENT
         }
 
     }
