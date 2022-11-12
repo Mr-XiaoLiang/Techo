@@ -38,4 +38,11 @@
         <attr name="selectedColor" format="color" />
         <attr name="defaultColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="CameraFocusBoundsView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="spaceWeight" format="float" />
+    </declare-styleable>
 </resources>
