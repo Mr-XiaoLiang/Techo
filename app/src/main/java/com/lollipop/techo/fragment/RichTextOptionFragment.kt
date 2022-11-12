@@ -447,7 +447,7 @@ class RichTextOptionFragment : PageFragment(),
 
     }
 
-    private class ActivityLauncherImpl : SingleFragmentActivity.LaunchContract<Request, Result>() {
+    class ActivityLauncherImpl : SingleFragmentActivity.LaunchContract<Request, Result>() {
 
         override fun parseResult(resultCode: Int, intent: Intent?): Result {
             if (resultCode != Activity.RESULT_OK || intent == null) {
