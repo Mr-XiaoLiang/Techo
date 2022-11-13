@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.QrScanningActivity">
 
     <FrameLayout
@@ -12,11 +12,13 @@
         android:layout_height="match_parent" />
 
     <com.lollipop.techo.view.CameraFocusBoundsView
+        android:id="@+id/focusView"
         android:layout_width="56dp"
         android:layout_height="36dp"
-        app:strokeWidth="2dp"
-        android:layout_gravity="center"
+        android:color="@color/brand_4"
         android:radius="5dp"
-        android:color="@color/brand_4"/>
+        android:visibility="gone"
+        app:strokeWidth="2dp"
+        tools:visibility="visible" />
 
 </FrameLayout>
