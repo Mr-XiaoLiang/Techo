@@ -11,6 +11,11 @@
             <enum name="square" value="1" />
         </attr>
         <attr name="android:checked" format="boolean" />
+        <attr name="defaultDrawable" format="reference" />
+        <attr name="checkedDrawable" format="reference" />
+        <attr name="iconTint" format="color" />
+
+        <attr name="replaceMode" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="OverflowScrollBar">

@@ -2,9 +2,10 @@ package com.lollipop.techo.view
 
 import android.animation.Animator
 import android.content.Context
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateInterpolator
 import android.widget.Checkable
@@ -13,6 +14,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.addListener
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.lollipop.base.util.onClick
 import com.lollipop.techo.R
 import kotlin.math.sqrt
@@ -41,9 +43,11 @@ class CheckableView(
 
     private var isCheckStatus = false
 
-    private var lastAnimation: Animator? = null
+    private val lastAnimation = ArrayList<Animator>()
 
     private var onCheckedChangeListener: OnCheckedChangeListener? = null
+
+    var isReplaceMode = false
 
     init {
         addView(defaultStatusView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -51,22 +55,48 @@ class CheckableView(
         onClick {
             onClick()
         }
-        checkStatus()
-        setStyle(CheckStyle.SQUARE)
-        attributeSet?.let { attrs ->
-            val typeArray = context.obtainStyledAttributes(attrs, R.styleable.CheckableView)
-            var defStyle = CheckStyle.CIRCULAR
-            val index = typeArray.getInt(
-                R.styleable.CheckableView_checkStyle,
-                CheckStyle.CIRCULAR.ordinal
-            )
-            if (index in CheckStyle.values().indices) {
-                defStyle = CheckStyle.values()[index]
+        if (attributeSet != null) {
+            val typeArray = context.obtainStyledAttributes(attributeSet, R.styleable.CheckableView)
+            val defDrawable = typeArray.getDrawable(R.styleable.CheckableView_defaultDrawable)
+            val cheDrawable = typeArray.getDrawable(R.styleable.CheckableView_checkedDrawable)
+            if (defDrawable != null && cheDrawable != null) {
+                setDefaultDrawable(defDrawable)
+                setCheckedDrawable(cheDrawable)
+            } else {
+                var defStyle = CheckStyle.CIRCULAR
+                val index = typeArray.getInt(
+                    R.styleable.CheckableView_checkStyle,
+                    CheckStyle.CIRCULAR.ordinal
+                )
+                if (index in CheckStyle.values().indices) {
+                    defStyle = CheckStyle.values()[index]
+                }
+                setStyle(defStyle)
             }
-            setStyle(defStyle)
+
+            val stateList = typeArray.getColorStateList(R.styleable.CheckableView_iconTint)
+            if (stateList != null) {
+                tint(stateList)
+            } else {
+                val color = typeArray.getColor(R.styleable.CheckableView_iconTint, 0)
+                if (color != 0) {
+                    tint(ColorStateList.valueOf(color))
+                }
+            }
+
+            isReplaceMode = typeArray.getBoolean(R.styleable.CheckableView_replaceMode, false)
+
             isChecked = typeArray.getBoolean(R.styleable.CheckableView_android_checked, false)
             typeArray.recycle()
+        } else {
+            setStyle(CheckStyle.SQUARE)
+            checkStatus()
         }
+    }
+
+    fun tint(colorStateList: ColorStateList?) {
+        defaultStatusView.imageTintList = colorStateList
+        checkedStatusView.imageTintList = colorStateList
     }
 
     fun setDefaultDrawable(drawable: Drawable?) {
@@ -90,6 +120,8 @@ class CheckableView(
     }
 
     fun setStyle(style: CheckStyle) {
+        isReplaceMode = false
+        tint(null)
         when (style) {
             CheckStyle.CIRCULAR -> {
                 setDefaultDrawable(R.drawable.bg_checkbox_circular)
@@ -124,31 +156,44 @@ class CheckableView(
     }
 
     private fun checkStatus(animation: Boolean = false) {
-        lastAnimation?.cancel()
-        lastAnimation = null
-        if (!animation) {
+        lastAnimation.forEach { it.cancel() }
+        lastAnimation.clear()
+        if (!animation || isInEditMode) {
             checkedStatusView.isInvisible = !isChecked
+            if (isReplaceMode) {
+                defaultStatusView.isInvisible = isChecked
+            } else {
+                defaultStatusView.isVisible = true
+            }
             return
         }
+        lastAnimation.add(doCircularRevealAnimation(checkedStatusView, isChecked))
+        if (isReplaceMode) {
+            lastAnimation.add(doCircularRevealAnimation(defaultStatusView, !isChecked))
+        } else {
+            defaultStatusView.isVisible = true
+        }
+    }
+
+    private fun doCircularRevealAnimation(view: View, isOpen: Boolean): Animator {
         val w = (width - paddingLeft - paddingRight) * 0.5
         val h = (height - paddingTop - paddingBottom) * 0.5
         val radius = sqrt(w * w + h * h).toFloat()
         val newAnimator = ViewAnimationUtils.createCircularReveal(
-            checkedStatusView,
+            view,
             w.toInt() + paddingLeft,
             h.toInt() + paddingTop,
-            if (isChecked) {
+            if (isOpen) {
                 0F
             } else {
                 radius
             },
-            if (isChecked) {
+            if (isOpen) {
                 radius
             } else {
                 0F
             }
         )
-        lastAnimation = newAnimator
         newAnimator.addListener(
             onStart = {
                 checkedStatusView.isInvisible = false
@@ -162,6 +207,7 @@ class CheckableView(
         newAnimator.duration = 150L
         newAnimator.interpolator = AccelerateInterpolator()
         newAnimator.start()
+        return newAnimator
     }
 
     private fun onCheckedCheng() {
