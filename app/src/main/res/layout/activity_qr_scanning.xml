@@ -11,6 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.lollipop.techo.view.CheckableView
+        android:id="@+id/flashBtn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:padding="16dp"
+        app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
+        app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
+        app:iconTint="@color/brand_4"
+        app:replaceMode="true" />
+
     <com.lollipop.techo.view.CameraFocusBoundsView
         android:id="@+id/focusView"
         android:layout_width="56dp"

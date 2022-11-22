@@ -37,6 +37,7 @@ class QrScanningActivity : AppCompatActivity() {
                 }
             }
         }
+        qrReaderHelper.torch
     }
 
     private class FocusAnimationHelper(
