@@ -9,6 +9,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.registerResult
 import com.lollipop.techo.databinding.ActivityDemoBinding
 import com.lollipop.techo.dialog.AudioPlayerDialog
+import com.lollipop.techo.qr.QrScanningActivity
 import kotlin.random.Random
 
 class DemoActivity : AppCompatActivity() {
