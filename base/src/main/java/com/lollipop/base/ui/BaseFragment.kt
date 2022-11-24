@@ -24,8 +24,7 @@ open class BaseFragment : Fragment(),
     BackPressListener,
     RequestLauncher,
     PigmentPage,
-    PigmentProvider,
-    OnBackPressedDispatcherOwner {
+    PigmentProvider {
 
     override val pigmentProviderHelper = PigmentProviderHelper()
 
@@ -33,11 +32,7 @@ open class BaseFragment : Fragment(),
         RequestHelper.with(this)
     }
 
-    private val backPressedDispatcher = OnBackPressedDispatcher {
-        onBackPressed()
-    }
-
-//    private val backPressHandler = BackPressHandler()
+    protected val backPressHandler = BackPressHandler(false, getSelf())
 
     private var parentPigmentProvider: PigmentProvider? = null
 
@@ -60,6 +55,11 @@ open class BaseFragment : Fragment(),
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        backPressHandler.remove()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         parentPigmentProvider?.unregisterPigment(this)
@@ -67,6 +67,10 @@ open class BaseFragment : Fragment(),
     }
 
     override fun onBackPressed() {
+    }
+
+    fun notifyBackPress() {
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     protected inline fun <reified T : Any> check(
@@ -108,10 +112,6 @@ open class BaseFragment : Fragment(),
 
     override fun onDecorationChanged(pigment: Pigment) {
         pigmentProviderHelper.onDecorationChanged(pigment)
-    }
-
-    override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher {
-        return backPressedDispatcher
     }
 
 }

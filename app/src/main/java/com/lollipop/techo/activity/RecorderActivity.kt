@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.recorder.RecorderHelper
@@ -68,9 +69,14 @@ class RecorderActivity : BaseActivity() {
 
     private var progressDrawable: CircularProgressDrawable? = null
 
+    private val backPressHandler = BackPressHandler(true) {
+        dismiss()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
+        backPressHandler.bindTo(this)
         setContentView(binding.root)
         binding.dialogRootView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
         binding.backgroundView.onClick {
@@ -248,10 +254,6 @@ class RecorderActivity : BaseActivity() {
         super.onNewIntent(intent)
         // 更新intent
         setIntent(intent)
-    }
-
-    override fun onBackPressed() {
-        dismiss()
     }
 
     override fun onDestroy() {

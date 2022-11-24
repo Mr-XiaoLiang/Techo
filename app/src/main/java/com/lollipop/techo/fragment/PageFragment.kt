@@ -10,7 +10,7 @@ open class PageFragment : BaseFragment() {
 
     protected fun bindBackButton(view: View) {
         view.onClick {
-            activity?.onBackPressed()
+            notifyBackPress()
         }
     }
 

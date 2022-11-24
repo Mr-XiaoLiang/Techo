@@ -39,7 +39,7 @@ class QrScanningActivity : BaseActivity() {
         }
 
         binding.backButton.setOnClickListener {
-            onBackPressed()
+            notifyBackPress()
         }
         binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
     }

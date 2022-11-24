@@ -169,7 +169,7 @@ class RichTextOptionFragment : PageFragment(),
         binding.textSelectorScrollBar.addListener(::scrollTextSelector)
         binding.doneBtn.setOnClickListener {
             setResult()
-            onBackPressed()
+            notifyBackPress()
         }
         with(binding.palettePresetListView) {
             layoutManager = LinearLayoutManager(context)

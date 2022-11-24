@@ -11,6 +11,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
+import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.*
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
@@ -96,6 +97,10 @@ class TechoEditActivity : HeaderActivity(),
         ::onRichTextOptionResult
     )
 
+    private val backPressHandler = BackPressHandler {
+        closeCircle()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         floatingBinding.floatingButtonPanel.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
@@ -164,10 +169,10 @@ class TechoEditActivity : HeaderActivity(),
             addItemByType()
         }
         floatingBinding.floatingMenuBtn.onClick {
-            if (circleAnimationGroup.isOpened) {
-                circleAnimationGroup.close()
+            if (!circleAnimationGroup.isOpened) {
+                openCircle()
             } else {
-                circleAnimationGroup.open()
+                closeCircle()
             }
         }
 
@@ -175,6 +180,16 @@ class TechoEditActivity : HeaderActivity(),
         quickAddType = Text
         floatingBinding.quickAddButton.setImageDrawable(floatingBinding.floatingTextBtn.drawable)
         circleAnimationGroup.hide()
+    }
+
+    private fun closeCircle() {
+        circleAnimationGroup.close()
+        backPressHandler.isEnabled = false
+    }
+
+    private fun openCircle() {
+        circleAnimationGroup.open()
+        backPressHandler.isEnabled = true
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -200,7 +215,7 @@ class TechoEditActivity : HeaderActivity(),
                 mode.update {
                     if (isCreated()) {
                         resultOk { putResultTechoId(it, mode.infoId) }
-                        onBackPressed()
+                        notifyBackPress()
                     }
                 }
                 return true
@@ -212,7 +227,7 @@ class TechoEditActivity : HeaderActivity(),
     private fun onFloatBtnClick(btn: FloatingActionButton, type: TechoItemType) {
         floatingBinding.quickAddButton.setImageDrawable(btn.drawable)
         quickAddType = type
-        circleAnimationGroup.close()
+        closeCircle()
         addItemByType()
     }
 
@@ -240,14 +255,6 @@ class TechoEditActivity : HeaderActivity(),
     @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(first: Int, second: Int, type: TechoMode.ChangedType) {
         mode.onInfoChangedDefaultImpl(viewBinding.contentListView.adapter, first, second, type)
-    }
-
-    override fun onBackPressed() {
-        if (circleAnimationGroup.isOpened) {
-            circleAnimationGroup.close()
-            return
-        }
-        super.onBackPressed()
     }
 
     override fun onDestroy() {

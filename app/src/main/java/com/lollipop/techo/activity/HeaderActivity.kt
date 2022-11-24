@@ -76,7 +76,7 @@ abstract class HeaderActivity : BaseActivity() {
             )
         }
         viewBinding.backButton.setOnClickListener {
-            onBackPressed()
+            notifyBackPress()
         }
         viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
         viewBinding.contentScrollView.fixInsetsByMargin(

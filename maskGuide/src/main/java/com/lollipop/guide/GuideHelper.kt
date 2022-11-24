@@ -13,6 +13,7 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.listener.BackPressListener
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.cleanWindowInsetHelper
@@ -48,37 +49,36 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
 
         fun with(activity: Activity): Builder {
-            val backPressProvider = if (activity is BackPressProvider) {
-                activity
-            } else {
-                null
-            }
-            return with(activity.window.decorView as ViewGroup, false, backPressProvider)
+            return with(
+                activity.window.decorView as ViewGroup,
+                false,
+                BackPressHandler.findDispatcher(activity)
+            )
         }
 
         fun with(fragment: Fragment): Builder {
-            val backPressProvider = if (fragment is BackPressProvider) {
-                fragment
-            } else {
-                null
-            }
-            return with(findRootGroup(fragment.requireView()), true, backPressProvider)
+            return with(
+                findRootGroup(fragment.requireView()),
+                true,
+                BackPressHandler.findDispatcher(fragment)
+            )
         }
 
         fun with(
             viewGroup: ViewGroup,
             isFindRoot: Boolean,
-            backPressProvider: BackPressProvider?
+            backPressProvider: BackPressHandler.Dispatcher?
         ): Builder {
+            val provider = backPressProvider ?: BackPressHandler.findDispatcher(viewGroup)
             return if (isFindRoot) {
-                Builder(findRootGroup(viewGroup), backPressProvider)
+                Builder(findRootGroup(viewGroup), provider)
             } else {
-                Builder(viewGroup, backPressProvider)
+                Builder(viewGroup, provider)
             }
         }
 
-        fun with(view: View, backPressProvider: BackPressProvider?): Builder {
-            return with(findRootGroup(view), false, backPressProvider)
+        fun with(view: View): Builder {
+            return with(findRootGroup(view), false, null)
         }
 
         private fun findRootGroup(view: View): ViewGroup {
@@ -107,6 +107,8 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
 
     }
+
+    private val backPressHandler = BackPressHandler(false, this)
 
     private val defaultProviderList = ArrayList<GuideProvider>()
 
@@ -144,10 +146,8 @@ class GuideHelper(private val option: Option) : GuideManager,
 
     fun show() {
         val rootGroup = option.rootGroup
-        option.backPressProvider?.let {
-            it.removeBackPressListener(this)
-            it.addBackPressListener(this)
-        }
+        option.backPressProvider.bind(backPressHandler)
+        backPressHandler.isEnabled = true
         if (guideRoot.parent != rootGroup
             || rootGroup.indexOfChild(guideRoot) != rootGroup.childCount - 1
         ) {
@@ -209,7 +209,8 @@ class GuideHelper(private val option: Option) : GuideManager,
     fun destroy() {
         animator.cancel()
         guideRoot.cleanWindowInsetHelper()
-        option.backPressProvider?.removeBackPressListener(this)
+        backPressHandler.isEnabled = false
+        backPressHandler.remove()
         guideRoot.parent?.let {
             if (it is ViewManager) {
                 it.removeView(guideRoot)
@@ -415,12 +416,12 @@ class GuideHelper(private val option: Option) : GuideManager,
         val rootGroup: ViewGroup,
         val stepList: List<GuideStep>,
         val providerLis: List<GuideProvider>,
-        val backPressProvider: BackPressProvider?
+        val backPressProvider: BackPressHandler.Dispatcher
     )
 
     class Builder(
         private val rootGroup: ViewGroup,
-        val backPressProvider: BackPressProvider?
+        val backPressProvider: BackPressHandler.Dispatcher
     ) {
 
         private val stepList = ArrayList<GuideStep>()
@@ -469,12 +470,10 @@ class GuideHelper(private val option: Option) : GuideManager,
         }
     }
 
-    override fun onBackPressed(): Boolean {
+    override fun onBackPressed() {
         if (stepIndex < option.stepList.size) {
             nextStep()
-            return true
         }
-        return false
     }
 
 }
