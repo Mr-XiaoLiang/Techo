@@ -2,15 +2,11 @@ package com.lollipop.base.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.request.RequestCallback
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
-import com.lollipop.base.util.BackPressProviderHelper
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentProvider
@@ -23,12 +19,9 @@ import com.lollipop.pigment.PigmentProviderHelper
  * 提供基础的实现和能力
  */
 open class BaseActivity : AppCompatActivity(),
-    BackPressProvider,
     RequestLauncher,
     PigmentPage,
     PigmentProvider {
-
-    private val backPressProviderHelper = BackPressProviderHelper()
 
     override val pigmentProviderHelper = PigmentProviderHelper()
 
@@ -41,19 +34,6 @@ open class BaseActivity : AppCompatActivity(),
     }
 
     override fun requestPigment(page: PigmentPage) {
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        event ?: return super.onKeyUp(keyCode, event)
-        if (keyCode == KeyEvent.KEYCODE_BACK
-            && event.isTracking
-            && !event.isCanceled
-        ) {
-            if (dispatchBackEvent()) {
-                return true
-            }
-        }
-        return super.onKeyUp(keyCode, event)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -76,21 +56,8 @@ open class BaseActivity : AppCompatActivity(),
         )
     }
 
-    private fun dispatchBackEvent(): Boolean {
-        return backPressProviderHelper.onBackPressed()
-    }
-
-    override fun addBackPressListener(listener: BackPressListener) {
-        backPressProviderHelper.addBackPressListener(listener)
-    }
-
-    override fun removeBackPressListener(listener: BackPressListener) {
-        backPressProviderHelper.removeBackPressListener(listener)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        backPressProviderHelper.destroy()
+    fun notifyBackPress() {
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

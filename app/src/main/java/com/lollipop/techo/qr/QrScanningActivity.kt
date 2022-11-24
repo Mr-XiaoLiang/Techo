@@ -2,15 +2,13 @@ package com.lollipop.techo.qr
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.log
-import com.lollipop.base.util.onClick
+import com.lollipop.base.ui.BaseActivity
+import com.lollipop.base.util.*
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.BarcodeResult
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 
-class QrScanningActivity : AppCompatActivity() {
+class QrScanningActivity : BaseActivity() {
 
     private val binding: ActivityQrScanningBinding by lazyBind()
 
@@ -22,6 +20,7 @@ class QrScanningActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         initCamera()
         initView()
@@ -38,6 +37,11 @@ class QrScanningActivity : AppCompatActivity() {
         binding.galleryBtn.onClick {
             Toast.makeText(this, "打开相册", Toast.LENGTH_SHORT).show()
         }
+
+        binding.backButton.setOnClickListener {
+            onBackPressed()
+        }
+        binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
     }
 
     private fun initCamera() {

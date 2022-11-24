@@ -11,6 +11,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackground">
+
+            <com.lollipop.techo.view.RoundClipLayout
+                android:id="@+id/backButtonBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:radius="18dp"
+                tools:background="#f00" />
+
+            <ImageView
+                android:id="@+id/backButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/description_back"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@color/text_gray_10" />
+        </FrameLayout>
+
+    </LinearLayout>
+
     <com.lollipop.techo.view.CheckableView
         android:id="@+id/flashBtn"
         android:layout_width="56dp"

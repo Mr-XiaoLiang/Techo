@@ -2,12 +2,13 @@ package com.lollipop.base.ui
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
+import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.request.RequestHelper
 import com.lollipop.base.request.RequestLauncher
-import com.lollipop.base.util.BackPressProviderHelper
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentProvider
@@ -21,12 +22,10 @@ import com.lollipop.pigment.PigmentProviderHelper
  */
 open class BaseFragment : Fragment(),
     BackPressListener,
-    BackPressProvider,
     RequestLauncher,
     PigmentPage,
-    PigmentProvider {
-
-    private val backPressProviderHelper = BackPressProviderHelper(getSelf())
+    PigmentProvider,
+    OnBackPressedDispatcherOwner {
 
     override val pigmentProviderHelper = PigmentProviderHelper()
 
@@ -34,7 +33,12 @@ open class BaseFragment : Fragment(),
         RequestHelper.with(this)
     }
 
-    private var parentProvider: BackPressProvider? = null
+    private val backPressedDispatcher = OnBackPressedDispatcher {
+        onBackPressed()
+    }
+
+//    private val backPressHandler = BackPressHandler()
+
     private var parentPigmentProvider: PigmentProvider? = null
 
     private fun getSelf(): BaseFragment {
@@ -47,39 +51,22 @@ open class BaseFragment : Fragment(),
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        check<BackPressProvider>(context) {
-            parentProvider = it
-            it.addBackPressListener(backPressProviderHelper)
-        }
-        check<PigmentProvider> {
+        check<PigmentProvider>(context) {
             it.registerPigment(this)
             parentPigmentProvider = it
+        }
+        check<OnBackPressedDispatcherOwner>(context) {
+            backPressHandler.bindTo(it, this)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        backPressProviderHelper.destroy()
         parentPigmentProvider?.unregisterPigment(this)
         parentPigmentProvider = null
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        parentProvider?.removeBackPressListener(backPressProviderHelper)
-        parentProvider = null
-    }
-
-    override fun onBackPressed(): Boolean {
-        return false
-    }
-
-    override fun addBackPressListener(listener: BackPressListener) {
-        backPressProviderHelper.addBackPressListener(listener)
-    }
-
-    override fun removeBackPressListener(listener: BackPressListener) {
-        backPressProviderHelper.removeBackPressListener(listener)
+    override fun onBackPressed() {
     }
 
     protected inline fun <reified T : Any> check(
@@ -121,6 +108,10 @@ open class BaseFragment : Fragment(),
 
     override fun onDecorationChanged(pigment: Pigment) {
         pigmentProviderHelper.onDecorationChanged(pigment)
+    }
+
+    override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher {
+        return backPressedDispatcher
     }
 
 }

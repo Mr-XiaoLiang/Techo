@@ -14,7 +14,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.provider.BackPressProvider
 import com.lollipop.base.util.WindowInsetsHelper
 import com.lollipop.base.util.cleanWindowInsetHelper
 import com.lollipop.base.util.fixInsetsByPadding
