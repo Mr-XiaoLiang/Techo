@@ -1,9 +1,11 @@
 package com.lollipop.techo.qr
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.Toast
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.BarcodeResult
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
@@ -42,6 +44,18 @@ class QrScanningActivity : BaseActivity() {
             notifyBackPress()
         }
         binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
+        binding.flashBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
+            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        })
+        binding.galleryBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
+            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        })
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
+        binding.backButtonBackground.setBackgroundColor(pigment.primary)
     }
 
     private fun initCamera() {
