@@ -1,5 +1,6 @@
 package com.lollipop.qr
 
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -7,11 +8,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executor
 
 abstract class BarcodeReader(
     protected val lifecycleOwner: LifecycleOwner
 ) {
+
+    companion object {
+        @JvmStatic
+        fun yuv420888ToBitmap(inputImage: InputImage): Bitmap? {
+            if (inputImage.format == ImageFormat.YUV_420_888.code) {
+                val image = inputImage.mediaImage ?: return null
+                return YuvToRgbConverter.yuv420888ToRgb(image)
+            }
+            return null
+        }
+    }
 
     protected var currentStatus = Lifecycle.State.DESTROYED
         private set

@@ -3,7 +3,6 @@ package com.lollipop.qr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
-import android.util.Log
 import android.util.Size
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -19,7 +18,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 class CameraBarcodeReader(
     lifecycleOwner: LifecycleOwner
@@ -53,6 +51,9 @@ class CameraBarcodeReader(
         }
 
     private var camera: Camera? = null
+
+    var imageCapture: ImageCapture? = null
+        private set
 
     var torch: Boolean = false
         set(value) {
@@ -126,10 +127,17 @@ class CameraBarcodeReader(
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
+        // ImageCapture
+        imageCapture = ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .setTargetRotation(view.display.rotation)
+            .setTargetResolution(Size(1280, 720))
+            .build()
         cameraProvider.unbindAll()
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
+            imageCapture,
             buildImageAnalysis(),
             preview
         )
