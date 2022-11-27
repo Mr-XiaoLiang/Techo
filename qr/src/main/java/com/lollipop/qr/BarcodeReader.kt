@@ -1,6 +1,7 @@
 package com.lollipop.qr
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -20,7 +21,22 @@ abstract class BarcodeReader(
         fun yuv420888ToBitmap(inputImage: InputImage): Bitmap? {
             if (inputImage.format == ImageFormat.YUV_420_888.code) {
                 val image = inputImage.mediaImage ?: return null
-                return YuvToRgbConverter.yuv420888ToRgb(image)
+                val rotationDegrees = inputImage.rotationDegrees
+                val bitmap = YuvToRgbConverter.yuv420888ToRgb(image)
+                if (rotationDegrees == 0) {
+                    return bitmap
+                }
+                // 旋转图片 动作
+                val matrix = Matrix()
+                matrix.postRotate(rotationDegrees.toFloat())
+                // 创建新的图片
+                val resizedBitmap = Bitmap.createBitmap(
+                    bitmap, 0, 0,
+                    bitmap.width, bitmap.height, matrix, true)
+                if (resizedBitmap != bitmap && !bitmap.isRecycled) {
+                    bitmap.recycle()
+                }
+                return resizedBitmap
             }
             return null
         }
@@ -86,10 +102,8 @@ abstract class BarcodeReader(
             BarcodeWrapper(parseBarcode(code), BarcodeResultBuilder.createCodeDescribeBy(code))
         }
 
-        onUI {
-            onBarcodeScanResultListener.forEach {
-                it.onBarcodeScanResult(BarcodeResult(ArrayList(resultList), tag))
-            }
+        onBarcodeScanResultListener.forEach {
+            it.onBarcodeScanResult(BarcodeResult(ArrayList(resultList), tag))
         }
     }
 

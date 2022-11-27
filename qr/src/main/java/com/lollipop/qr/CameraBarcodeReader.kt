@@ -2,6 +2,7 @@ package com.lollipop.qr
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.util.Size
 import android.view.GestureDetector
@@ -54,6 +55,8 @@ class CameraBarcodeReader(
 
     var imageCapture: ImageCapture? = null
         private set
+
+    var analyzerBitmap: Bitmap? = null
 
     var torch: Boolean = false
         set(value) {
@@ -129,8 +132,11 @@ class CameraBarcodeReader(
 
         // ImageCapture
         imageCapture = ImageCapture.Builder()
-            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-            .setTargetRotation(view.display.rotation)
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY).apply {
+                view.display?.let { display ->
+                    setTargetRotation(display.rotation)
+                }
+            }
             .setTargetResolution(Size(1280, 720))
             .build()
         cameraProvider.unbindAll()
@@ -263,6 +269,10 @@ class CameraBarcodeReader(
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(first, *array)
             .build()
+
+        analyzerBitmap?.recycle()
+        analyzerBitmap = null
+        analyzerBitmap = yuv420888ToBitmap(inputImage)
 
         BarcodeScanning.getClient(options).process(inputImage)
             .addOnSuccessListener { list ->

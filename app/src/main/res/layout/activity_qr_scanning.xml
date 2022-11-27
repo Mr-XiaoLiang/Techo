@@ -11,6 +11,56 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.lollipop.techo.view.CheckableView
+        android:id="@+id/flashBtn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="16dp"
+        app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
+        app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
+        app:iconTint="@color/brand_4"
+        app:replaceMode="true" />
+
+    <ImageView
+        android:id="@+id/galleryBtn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="16dp"
+        android:src="@drawable/ic_outline_insert_photo_24"
+        app:tint="@color/brand_4" />
+
+    <com.lollipop.techo.view.CameraFocusBoundsView
+        android:id="@+id/focusView"
+        android:layout_width="56dp"
+        android:layout_height="36dp"
+        android:color="@color/brand_4"
+        android:radius="5dp"
+        android:visibility="gone"
+        app:strokeWidth="2dp"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/resultPanel">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/resultImageView"
+            android:scaleType="centerCrop"
+            />
+
+
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
@@ -46,39 +96,5 @@
         </FrameLayout>
 
     </LinearLayout>
-
-    <com.lollipop.techo.view.CheckableView
-        android:id="@+id/flashBtn"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="16dp"
-        app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
-        app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
-        app:iconTint="@color/brand_4"
-        app:replaceMode="true" />
-
-    <ImageView
-        android:id="@+id/galleryBtn"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="16dp"
-        android:src="@drawable/ic_outline_insert_photo_24"
-        app:tint="@color/brand_4" />
-
-    <com.lollipop.techo.view.CameraFocusBoundsView
-        android:id="@+id/focusView"
-        android:layout_width="56dp"
-        android:layout_height="36dp"
-        android:color="@color/brand_4"
-        android:radius="5dp"
-        android:visibility="gone"
-        app:strokeWidth="2dp"
-        tools:visibility="visible" />
 
 </FrameLayout>
