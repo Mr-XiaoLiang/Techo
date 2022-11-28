@@ -2,6 +2,7 @@ package com.lollipop.techo.qr
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Size
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
@@ -82,14 +83,19 @@ class QrScanningActivity : BaseActivity() {
                 if (!it.isRecycled) {
                     onUI {
                         binding.resultImageView.setImageBitmap(it)
-                        binding.resultImageView.isVisible = true
+                        binding.codeSelectionView.onCodeResult(
+                            Size(it.width, it.height),
+                            result.list
+                        )
+                        binding.resultPanel.isVisible = true
                     }
                 }
             }
             resultBackPressHandler.isEnabled = true
-
-            result.list.forEach {
-                log(it.describe.displayValue + ", " + it.info::class.java)
+            if (com.lollipop.techo.BuildConfig.DEBUG) {
+                result.list.forEach {
+                    log(it.describe.displayValue + ", " + it.info::class.java)
+                }
             }
         }
     }
@@ -97,7 +103,7 @@ class QrScanningActivity : BaseActivity() {
     private fun resumeScan() {
         resultBackPressHandler.isEnabled = false
         binding.resultImageView.setImageDrawable(null)
-        binding.resultImageView.isVisible = false
+        binding.resultPanel.isVisible = false
         qrReaderHelper.analyzerEnable = true
     }
 
