@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.DemoActivity">
 
-    <com.lollipop.techo.view.RecorderWaveView
+    <com.lollipop.techo.recorder.RecorderWaveView
         android:layout_width="match_parent"
         android:layout_height="200dp"
         app:layout_constraintTop_toTopOf="parent"

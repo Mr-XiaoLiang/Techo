@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.RecorderActivity">
+    tools:context=".recorder.RecorderActivity">
 
     <View
         android:id="@+id/backgroundView"
@@ -49,7 +49,7 @@
                 app:layout_constraintTop_toTopOf="@id/recorderCloseBtn"
                 tools:text="12:00" />
 
-            <com.lollipop.techo.view.RecorderWaveView
+            <com.lollipop.techo.recorder.RecorderWaveView
                 android:id="@+id/recorderWaveView"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"

@@ -10,6 +10,7 @@ import com.lollipop.base.util.registerResult
 import com.lollipop.techo.databinding.ActivityDemoBinding
 import com.lollipop.techo.dialog.AudioPlayerDialog
 import com.lollipop.techo.qr.QrScanningActivity
+import com.lollipop.techo.recorder.RecorderActivity
 import kotlin.random.Random
 
 class DemoActivity : AppCompatActivity() {

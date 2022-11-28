@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.techo.recorder
 
 import android.content.Context
 import android.graphics.Color

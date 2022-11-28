@@ -1,4 +1,4 @@
-package com.lollipop.techo.activity
+package com.lollipop.techo.recorder
 
 import android.annotation.SuppressLint
 import android.app.Activity

@@ -22,7 +22,7 @@
             android:exported="false"
             android:process=":Web" />
         <activity
-            android:name=".activity.RecorderActivity"
+            android:name=".recorder.RecorderActivity"
             android:exported="false"
             android:theme="@style/DialogActivity" />
         <activity
