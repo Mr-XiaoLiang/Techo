@@ -35,7 +35,7 @@
         android:src="@drawable/ic_outline_insert_photo_24"
         app:tint="@color/brand_4" />
 
-    <com.lollipop.techo.view.CameraFocusBoundsView
+    <com.lollipop.techo.qr.CameraFocusBoundsView
         android:id="@+id/focusView"
         android:layout_width="56dp"
         android:layout_height="36dp"
