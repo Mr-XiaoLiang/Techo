@@ -7,6 +7,8 @@ import android.util.AttributeSet
 import android.util.Size
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.qr.BarcodeWrapper
+import com.lollipop.techo.R
+import kotlin.math.max
 
 class CodeSelectionView @JvmOverloads constructor(
     context: Context,
@@ -14,11 +16,86 @@ class CodeSelectionView @JvmOverloads constructor(
     style: Int = 0
 ) : AppCompatImageView(context, attributeSet, style) {
 
-    fun onCodeResult(size: Size, list: List<BarcodeWrapper>) {
-        // TODO
+    private val boundsDrawable = BoundsDrawable()
+
+    init {
+        setImageDrawable(boundsDrawable)
+        attributeSet?.let { attr ->
+            val typeArray = context.obtainStyledAttributes(attr, R.styleable.CodeSelectionView)
+            color = typeArray.getColor(R.styleable.CodeSelectionView_android_color, Color.BLACK)
+            radius = typeArray.getDimensionPixelSize(
+                R.styleable.CodeSelectionView_android_radius, 0
+            ).toFloat()
+            strokeWidth = typeArray.getDimensionPixelSize(
+                R.styleable.CodeSelectionView_strokeWidth, 0
+            ).toFloat()
+            spaceWeight = typeArray.getFloat(R.styleable.CodeSelectionView_spaceWeight, 0.5F)
+            typeArray.recycle()
+        }
     }
 
-    private class BoundsDrawable: Drawable() {
+    var color: Int
+        get() {
+            return boundsDrawable.color
+        }
+        set(value) {
+            boundsDrawable.color = value
+        }
+
+    var strokeWidth: Float
+        get() {
+            return boundsDrawable.strokeWidth
+        }
+        set(value) {
+            boundsDrawable.strokeWidth = value
+        }
+
+    var radius: Float
+        get() {
+            return boundsDrawable.radius
+        }
+        set(value) {
+            boundsDrawable.radius = value
+        }
+
+    var spaceWeight: Float
+        get() {
+            return boundsDrawable.spaceWeight
+        }
+        set(value) {
+            boundsDrawable.spaceWeight = value
+        }
+
+    fun onCodeResult(size: Size, list: List<BarcodeWrapper>) {
+        val viewWidth = width
+        val viewHeight = height
+        val srcWidth = size.width
+        val srcHeight = size.height
+        val weight = max(viewWidth * 1F / srcWidth, viewHeight * 1F / srcHeight)
+        val offsetX = (viewWidth - srcWidth * weight) / 2
+        val offsetY = (viewHeight - srcHeight * weight) / 2
+
+        val boundsList = list.map { it.describe.boundingBox.copyOf(weight, offsetX, offsetY) }
+
+        boundsDrawable.setRectList(boundsList)
+    }
+
+    private fun Rect.copyOf(weight: Float, offsetX: Float, offsetY: Float): Rect {
+        val src = this
+        return Rect(
+            src.left.offset(weight, offsetX),
+            src.top.offset(weight, offsetY),
+            src.right.offset(weight, offsetX),
+            src.bottom.offset(weight, offsetY),
+        )
+    }
+
+    private fun Int.offset(weight: Float, offset: Float): Int {
+        val value = this
+        return (value * weight + offset).toInt()
+    }
+
+    private class BoundsDrawable : Drawable() {
 
         private val paint = Paint().apply {
             isAntiAlias = true
@@ -55,7 +132,7 @@ class CodeSelectionView @JvmOverloads constructor(
             buildPath()
         }
 
-        fun addRectList(list: List<Rect>) {
+        fun setRectList(list: List<Rect>) {
             rectList.clear()
             rectList.addAll(list)
             buildPath()
@@ -141,6 +218,9 @@ class CodeSelectionView @JvmOverloads constructor(
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated("Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }

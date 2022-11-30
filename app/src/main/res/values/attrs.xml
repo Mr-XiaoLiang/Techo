@@ -50,4 +50,11 @@
         <attr name="strokeWidth" format="dimension" />
         <attr name="spaceWeight" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="CodeSelectionView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="spaceWeight" format="float" />
+    </declare-styleable>
 </resources>
