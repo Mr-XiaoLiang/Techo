@@ -1,6 +1,5 @@
 package com.lollipop.techo.qr
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Size
 import android.widget.Toast
@@ -8,12 +7,12 @@ import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
-import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.BarcodeResult
+import com.lollipop.qr.BarcodeWrapper
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 
-class QrScanningActivity : BaseActivity() {
+class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListener {
 
     private val binding: ActivityQrScanningBinding by lazyBind()
 
@@ -52,7 +51,7 @@ class QrScanningActivity : BaseActivity() {
             notifyBackPress()
         }
 
-        binding.resultImageView.setEmptyTouch()
+        binding.resultImageView.addOnCodeSelectedListener(this)
 
         binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
         binding.flashBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
@@ -61,12 +60,6 @@ class QrScanningActivity : BaseActivity() {
         binding.galleryBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
             bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
         })
-    }
-
-    override fun onDecorationChanged(pigment: Pigment) {
-        super.onDecorationChanged(pigment)
-        binding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
-        binding.backButtonBackground.setBackgroundColor(pigment.primary)
     }
 
     private fun initCamera() {
@@ -83,7 +76,7 @@ class QrScanningActivity : BaseActivity() {
                 if (!it.isRecycled) {
                     onUI {
                         binding.resultImageView.setImageBitmap(it)
-                        binding.codeSelectionView.onCodeResult(
+                        binding.resultImageView.onCodeResult(
                             Size(it.width, it.height),
                             result.list
                         )
@@ -105,6 +98,10 @@ class QrScanningActivity : BaseActivity() {
         binding.resultImageView.setImageDrawable(null)
         binding.resultPanel.isVisible = false
         qrReaderHelper.analyzerEnable = true
+    }
+
+    override fun onCodeSelected(code: BarcodeWrapper) {
+        Toast.makeText(this, code.describe.displayValue, Toast.LENGTH_SHORT).show()
     }
 
 }

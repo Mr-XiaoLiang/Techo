@@ -46,21 +46,21 @@
         tools:visibility="visible" />
 
     <FrameLayout
+        android:id="@+id/resultPanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/resultPanel">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/resultImageView"
-            android:scaleType="centerCrop"
-            />
+        android:layout_height="match_parent">
 
         <com.lollipop.techo.qr.CodeSelectionView
+            android:id="@+id/resultImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/codeSelectionView"/>
+            android:color="@color/brand_4"
+            android:radius="5dp"
+            app:codeSpaceWeight="0.5"
+            app:codeStrokeWidth="2dp"
+            app:codeNavigationIcon="@drawable/ic_baseline_arrow_circle_right_24"
+            app:codeNavigationIconTint="@color/brand_4"
+            app:codeNavigationIconSize="36dp"/>
 
     </FrameLayout>
 
@@ -85,7 +85,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
                 android:radius="18dp"
-                tools:background="#f00" />
+                android:background="@color/gray_4" />
 
             <ImageView
                 android:id="@+id/backButtonIcon"
@@ -95,7 +95,7 @@
                 android:contentDescription="@string/description_back"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_baseline_arrow_back_24"
-                app:tint="@color/text_gray_10" />
+                app:tint="@color/gray_0" />
         </FrameLayout>
 
     </LinearLayout>
