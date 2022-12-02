@@ -5,7 +5,7 @@ import android.animation.ValueAnimator
 import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.lollipop.qr.OnCameraFocusChangedListener
+import com.lollipop.qr.reader.OnCameraFocusChangedListener
 
 class FocusAnimationHelper(
     val view: () -> View?

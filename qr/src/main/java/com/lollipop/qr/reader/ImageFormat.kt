@@ -1,4 +1,4 @@
-package com.lollipop.qr
+package com.lollipop.qr.reader
 
 import com.google.mlkit.vision.common.InputImage
 

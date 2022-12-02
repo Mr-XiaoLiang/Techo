@@ -8,8 +8,8 @@ import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.qr.BarcodeHelper
-import com.lollipop.qr.BarcodeResult
-import com.lollipop.qr.BarcodeWrapper
+import com.lollipop.qr.reader.BarcodeResult
+import com.lollipop.qr.reader.BarcodeWrapper
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 
 class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListener {

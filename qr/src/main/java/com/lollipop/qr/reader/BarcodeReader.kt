@@ -1,20 +1,17 @@
-package com.lollipop.qr
+package com.lollipop.qr.reader
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import java.util.concurrent.Executor
+import com.lollipop.qr.BarcodeFormat
+import com.lollipop.qr.BarcodeType
+import com.lollipop.qr.comm.BarcodeExecutor
 
 abstract class BarcodeReader(
-    protected val lifecycleOwner: LifecycleOwner
-) {
+    lifecycleOwner: LifecycleOwner
+) : BarcodeExecutor(lifecycleOwner) {
 
     companion object {
         @JvmStatic
@@ -32,7 +29,8 @@ abstract class BarcodeReader(
                 // 创建新的图片
                 val resizedBitmap = Bitmap.createBitmap(
                     bitmap, 0, 0,
-                    bitmap.width, bitmap.height, matrix, true)
+                    bitmap.width, bitmap.height, matrix, true
+                )
                 if (resizedBitmap != bitmap && !bitmap.isRecycled) {
                     bitmap.recycle()
                 }
@@ -42,49 +40,11 @@ abstract class BarcodeReader(
         }
     }
 
-    protected var currentStatus = Lifecycle.State.DESTROYED
-        private set
-
-    protected val isResumed: Boolean
-        get() {
-            return currentStatus.isAtLeast(Lifecycle.State.RESUMED)
-        }
-
-    private val lifecycleObserver = LifecycleEventObserver { source, _ ->
-        currentStatus = source.lifecycle.currentState
-        onLifecycleStateChanged()
-    }
-
     var scanFormat = BarcodeFormat.values()
 
     protected open val resultByEmpty = true
 
     private val onBarcodeScanResultListener = ArrayList<OnBarcodeScanResultListener>()
-
-    protected val mainExecutor = MainExecutor()
-    private var analyzerExecutorImpl: SingleExecutor? = null
-
-    protected val analyzerExecutor: Executor
-        get() {
-            return getOrCreateAnalyzerExecutor()
-        }
-
-    init {
-        currentStatus = lifecycleOwner.lifecycle.currentState
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-    }
-
-    protected open fun onLifecycleStateChanged() {}
-
-    private fun getOrCreateAnalyzerExecutor(): Executor {
-        val executor = analyzerExecutorImpl
-        if (executor != null && !executor.isDestroy) {
-            return executor
-        }
-        val newExecutor = SingleExecutor(lifecycleOwner, "AnalyzerExecutor")
-        analyzerExecutorImpl = newExecutor
-        return newExecutor
-    }
 
     fun addOnBarcodeScanResultListener(listener: OnBarcodeScanResultListener) {
         this.onBarcodeScanResultListener.add(listener)
@@ -105,14 +65,6 @@ abstract class BarcodeReader(
         onBarcodeScanResultListener.forEach {
             it.onBarcodeScanResult(BarcodeResult(ArrayList(resultList), tag))
         }
-    }
-
-    protected fun doAsync(command: Runnable) {
-        analyzerExecutor.execute(command)
-    }
-
-    protected fun onUI(command: Runnable) {
-        mainExecutor.execute(command)
     }
 
     private fun parseBarcode(code: Barcode): BarcodeInfo {
@@ -166,64 +118,6 @@ abstract class BarcodeReader(
             }
         }
         return BarcodeType.UNKNOWN
-    }
-
-
-    private class SingleExecutor(lifecycleOwner: LifecycleOwner, threadName: String) : Executor {
-
-        private val thread = HandlerThread(threadName).apply {
-            start()
-        }
-
-        private val handler = Handler(thread.looper)
-
-        var isDestroy = false
-            private set
-
-        init {
-            lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                    if (event.targetState == Lifecycle.State.DESTROYED) {
-                        destroy()
-                    }
-                }
-            })
-        }
-
-        override fun execute(command: Runnable?) {
-            if (isDestroy) {
-                return
-            }
-            command ?: return
-            handler.post(command)
-        }
-
-        fun destroy() {
-            if (isDestroy) {
-                return
-            }
-            isDestroy = true
-            thread.quitSafely()
-        }
-    }
-
-    protected class MainExecutor : Executor {
-
-        private val handler = Handler(Looper.getMainLooper())
-
-        override fun execute(command: Runnable?) {
-            command ?: return
-            handler.post(command)
-        }
-
-        fun delay(delay: Long, command: Runnable) {
-            handler.postDelayed(command, delay)
-        }
-
-        fun cancel(command: Runnable) {
-            handler.removeCallbacks(command)
-        }
-
     }
 
 }

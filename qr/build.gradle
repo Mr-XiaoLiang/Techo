@@ -44,5 +44,6 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
     implementation "androidx.camera:camera-view:$camerax_version"
-
+    // zxing create qr
+    implementation "com.google.zxing:core:3.5.1"
 }

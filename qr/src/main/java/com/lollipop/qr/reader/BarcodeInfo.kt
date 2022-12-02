@@ -1,8 +1,9 @@
-package com.lollipop.qr
+package com.lollipop.qr.reader
 
 import android.graphics.Point
 import android.graphics.Rect
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.lollipop.qr.BarcodeFormat
 
 sealed class BarcodeInfo {
 
@@ -165,7 +166,6 @@ class BarcodeResult(
         get() {
             return list.isEmpty()
         }
-
 
 
 }
