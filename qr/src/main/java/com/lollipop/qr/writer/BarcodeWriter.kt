@@ -35,7 +35,7 @@ class BarcodeWriter(
     }
 
     fun encode(info: BarcodeInfo.Contact) {
-        val vCard = VCard(true)
+        val vCard = VCard(true, "${info.name.first}${info.name.last}")
         vCard.add(
             "N",
             info.name.prefix,
@@ -44,7 +44,6 @@ class BarcodeWriter(
             info.name.first,
             info.name.suffix
         )
-        vCard.add("FN", "${info.name.first}${info.name.last}")
         vCard.add("ORG", info.organization)
         vCard.add("TITLE", info.title)
         info.phones.forEach {
@@ -429,7 +428,7 @@ class BarcodeWriter(
     }
 
 
-    private class VCard(val autoWrap: Boolean) {
+    private class VCard(val autoWrap: Boolean, val fileName: String) {
 
         companion object {
             private val SPECIAL = arrayOf("\\", ";", ",")
@@ -439,6 +438,10 @@ class BarcodeWriter(
         val contentBuilder = StringBuilder("BEGIN:VCARD\nVERSION:4.0\n")
 
         private var isAddEnd = false
+
+        init {
+            add("FN", fileName)
+        }
 
         fun add(key: String, vararg value: String) {
             add(key, emptyArray(), *value)
