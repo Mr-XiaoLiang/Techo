@@ -7,7 +7,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.BarcodeType
-import com.lollipop.qr.comm.BarcodeExecutor
+import com.lollipop.qr.comm.*
 
 abstract class BarcodeReader(
     lifecycleOwner: LifecycleOwner

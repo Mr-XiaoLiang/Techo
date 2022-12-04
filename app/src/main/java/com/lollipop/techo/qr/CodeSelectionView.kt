@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View.OnClickListener
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.ListenerManager
-import com.lollipop.qr.reader.BarcodeWrapper
+import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.techo.R
 import kotlin.math.max
 

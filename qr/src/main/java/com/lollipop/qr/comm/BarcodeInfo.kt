@@ -1,4 +1,4 @@
-package com.lollipop.qr.reader
+package com.lollipop.qr.comm
 
 import android.graphics.Point
 import android.graphics.Rect
