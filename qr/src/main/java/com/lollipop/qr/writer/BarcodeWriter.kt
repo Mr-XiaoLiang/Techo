@@ -11,7 +11,7 @@ import com.lollipop.qr.comm.BarcodeInfo
 import kotlin.math.max
 import kotlin.math.min
 
-class BarcodeWriter(
+open class BarcodeWriter(
     lifecycleOwner: LifecycleOwner
 ) : BarcodeExecutor(lifecycleOwner) {
 
@@ -32,34 +32,6 @@ class BarcodeWriter(
 
     fun encode(content: String): Builder {
         return Builder(this, content)
-    }
-
-    fun encode(info: BarcodeInfo.Contact) {
-        val vCard = VCard(true, "${info.name.first}${info.name.last}")
-        vCard.add(
-            "N",
-            info.name.prefix,
-            info.name.last,
-            info.name.middle,
-            info.name.first,
-            info.name.suffix
-        )
-        vCard.add("ORG", info.organization)
-        vCard.add("TITLE", info.title)
-        info.phones.forEach {
-            vCard.add("TEL", arrayOf(it.type.name), it.number)
-        }
-        info.emails.forEach {
-            vCard.add("EMAIL", arrayOf(it.type.name), it.address)
-        }
-        info.urls.forEach {
-            vCard.add("URL", it)
-        }
-        info.addresses.forEach {
-            vCard.add("ADR", arrayOf(it.type.name), *it.lines)
-        }
-        vCard.end()
-        encode(vCard.toString())
     }
 
     private fun loadBitmap(builder: Builder, base: Bitmap?, callback: (Result<Bitmap>) -> Unit) {
@@ -423,98 +395,6 @@ class BarcodeWriter(
                 value
             }
             return this
-        }
-
-    }
-
-
-    private class VCard(val autoWrap: Boolean, val fileName: String) {
-
-        companion object {
-            private val SPECIAL = arrayOf("\\", ";", ",")
-            private const val MAX_LINE_LENGTH = 75
-        }
-
-        val contentBuilder = StringBuilder("BEGIN:VCARD\nVERSION:4.0\n")
-
-        private var isAddEnd = false
-
-        init {
-            add("FN", fileName)
-        }
-
-        fun add(key: String, vararg value: String) {
-            add(key, emptyArray(), *value)
-        }
-
-        fun add(key: String, arg: Array<String>, vararg value: String) {
-            var lineLength = 0
-            contentBuilder.append(key)
-            lineLength += key.length
-            arg.forEach {
-                contentBuilder.append(";")
-                lineLength += 1
-                lineLength = addValue(lineLength, it)
-            }
-            contentBuilder.append(":")
-            lineLength += 1
-            for (i in value.indices) {
-                if (i > 0) {
-                    contentBuilder.append(";")
-                    lineLength += 1
-                }
-                lineLength = addValue(lineLength, value[i])
-            }
-            contentBuilder.append("\n")
-        }
-
-        private fun addValue(lineLength: Int, value: String): Int {
-            val encodeValue = value.encode()
-            if (!autoWrap) {
-                contentBuilder.append(encodeValue)
-                return lineLength + encodeValue.length
-            }
-            var valueLength = encodeValue.length
-            var valueIndex = 0
-            var index = lineLength
-            while (index + valueLength > MAX_LINE_LENGTH) {
-                val subLength = min(valueLength, MAX_LINE_LENGTH - index)
-                val subString = encodeValue.substring(valueIndex, subLength)
-                valueIndex += subLength
-                valueLength -= subLength
-                contentBuilder.append(subString)
-                contentBuilder.append("\n ")
-                index = 1
-            }
-            if (valueLength > 0) {
-                contentBuilder.append(encodeValue.substring(valueIndex, valueIndex + valueLength))
-                index += valueLength
-            }
-            return index
-        }
-
-        private fun String.encode(): String {
-            var value = this
-            if (value.isEmpty()) {
-                return value
-            }
-            SPECIAL.forEach { char ->
-                value = value.replace(char, " ")
-            }
-            return value
-        }
-
-        fun end() {
-            if (isAddEnd) {
-                return
-            }
-            contentBuilder.append("END:VCARD")
-            isAddEnd = true
-        }
-
-        override fun toString(): String {
-            end()
-            return contentBuilder.toString()
         }
 
     }

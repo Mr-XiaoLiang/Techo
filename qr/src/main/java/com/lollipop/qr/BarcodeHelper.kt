@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.lollipop.qr.reader.CameraBarcodeReader
 import com.lollipop.qr.reader.ImageBarcodeReader
 import com.lollipop.qr.writer.BarcodeWriter
+import com.lollipop.qr.writer.TypedBarcodeWriter
 
 object BarcodeHelper {
 
@@ -15,8 +16,8 @@ object BarcodeHelper {
         return ImageBarcodeReader(lifecycleOwner)
     }
 
-    fun createWriter(lifecycleOwner: LifecycleOwner): BarcodeWriter {
-        return BarcodeWriter(lifecycleOwner)
+    fun createWriter(lifecycleOwner: LifecycleOwner): TypedBarcodeWriter {
+        return TypedBarcodeWriter(lifecycleOwner)
     }
 
 }

@@ -87,7 +87,7 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
             resultBackPressHandler.isEnabled = true
             if (com.lollipop.techo.BuildConfig.DEBUG) {
                 result.list.forEach {
-                    log(it.describe.displayValue + ", " + it.info::class.java)
+                    log(it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
                 }
             }
         }

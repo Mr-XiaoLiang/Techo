@@ -68,9 +68,10 @@ abstract class BarcodeReader(
     }
 
     private fun parseBarcode(code: Barcode): BarcodeInfo {
+        val rawValue = code.rawValue ?: ""
         return when (findBarcodeType(code.valueType)) {
             BarcodeType.UNKNOWN -> {
-                BarcodeInfo.Unknown
+                BarcodeInfo.Unknown(rawValue)
             }
             BarcodeType.CONTACT_INFO -> {
                 BarcodeResultBuilder.createContactBy(code)
@@ -79,19 +80,19 @@ abstract class BarcodeReader(
                 BarcodeResultBuilder.createEmailBy(code)
             }
             BarcodeType.ISBN -> {
-                BarcodeInfo.Isbn
+                BarcodeInfo.Isbn(rawValue)
             }
             BarcodeType.PHONE -> {
                 BarcodeResultBuilder.createPhoneBy(code)
             }
             BarcodeType.PRODUCT -> {
-                BarcodeInfo.Product
+                BarcodeInfo.Product(rawValue)
             }
             BarcodeType.SMS -> {
                 BarcodeResultBuilder.createSmsBy(code)
             }
             BarcodeType.TEXT -> {
-                BarcodeInfo.Text
+                BarcodeInfo.Text(rawValue)
             }
             BarcodeType.URL -> {
                 BarcodeResultBuilder.createUrlBy(code)

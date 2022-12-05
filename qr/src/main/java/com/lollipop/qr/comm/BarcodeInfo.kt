@@ -7,9 +7,15 @@ import com.lollipop.qr.BarcodeFormat
 
 sealed class BarcodeInfo {
 
-    object Unknown : BarcodeInfo()
+    data class Text(val value: String) : BarcodeInfo()
 
-    class Contact(
+    data class Unknown(val value: String) : BarcodeInfo()
+
+    data class Isbn(val value: String) : BarcodeInfo()
+
+    data class Product(val value: String) : BarcodeInfo()
+
+    data class Contact(
         val name: PersonName,
         val organization: String,
         val title: String,
@@ -19,7 +25,7 @@ sealed class BarcodeInfo {
         val urls: List<String>
     ) : BarcodeInfo()
 
-    class DriverLicense(
+    data class DriverLicense(
         val addressCity: String,
         val addressState: String,
         val addressStreet: String,
@@ -36,7 +42,7 @@ sealed class BarcodeInfo {
         val middleName: String
     ) : BarcodeInfo()
 
-    class CalendarEvent(
+    data class CalendarEvent(
         val end: CalendarDateTime,
         val start: CalendarDateTime,
         val description: String,
@@ -46,66 +52,61 @@ sealed class BarcodeInfo {
         val summary: String
     ) : BarcodeInfo()
 
-    class Email(
+    data class Email(
         val type: Type,
         val address: String,
         val body: String,
         val subject: String
     ) : BarcodeInfo() {
-        enum class Type(override val key: Int) : KeyEnum {
-            UNKNOWN(Barcode.Email.TYPE_UNKNOWN),
-            WORK(Barcode.Email.TYPE_WORK),
-            HOME(Barcode.Email.TYPE_HOME),
+        enum class Type(override val key: Int, val proto: String) : KeyEnum {
+            UNKNOWN(Barcode.Email.TYPE_UNKNOWN, ""),
+            WORK(Barcode.Email.TYPE_WORK, "WORK"),
+            HOME(Barcode.Email.TYPE_HOME, "HOME"),
         }
     }
 
-    class GeoPoint(
+    data class GeoPoint(
         val lat: Double,
         val lng: Double
     ) : BarcodeInfo()
 
-    class Phone(
+    data class Phone(
         val type: Type,
         val number: String
     ) : BarcodeInfo() {
-        enum class Type(override val key: Int) : KeyEnum {
-            UNKNOWN(Barcode.Phone.TYPE_UNKNOWN),
-            WORK(Barcode.Phone.TYPE_WORK),
-            HOME(Barcode.Phone.TYPE_HOME),
-            FAX(Barcode.Phone.TYPE_FAX),
-            MOBILE(Barcode.Phone.TYPE_MOBILE),
+        enum class Type(override val key: Int, val proto: String) : KeyEnum {
+            UNKNOWN(Barcode.Phone.TYPE_UNKNOWN, ""),
+            WORK(Barcode.Phone.TYPE_WORK, "WORK"),
+            HOME(Barcode.Phone.TYPE_HOME, "HOME"),
+            FAX(Barcode.Phone.TYPE_FAX, "FAX"),
+            MOBILE(Barcode.Phone.TYPE_MOBILE, "MOBILE"),
         }
     }
 
-    class Sms(
+    data class Sms(
         val message: String,
         val phoneNumber: String
     ) : BarcodeInfo()
 
-    class Url(
+    data class Url(
         val title: String,
         val url: String
     ) : BarcodeInfo()
 
-    class Wifi(
+    data class Wifi(
         val encryptionType: EncryptionType,
         val password: String,
-        val ssid: String
+        val ssid: String,
+        val username: String,
     ) : BarcodeInfo() {
-        enum class EncryptionType(override val key: Int) : KeyEnum {
-            OPEN(Barcode.WiFi.TYPE_OPEN),
-            WEP(Barcode.WiFi.TYPE_WEP),
-            WPA(Barcode.WiFi.TYPE_WPA),
+        enum class EncryptionType(override val key: Int, val proto: String) : KeyEnum {
+            OPEN(Barcode.WiFi.TYPE_OPEN, ""),
+            WEP(Barcode.WiFi.TYPE_WEP, "WEP"),
+            WPA(Barcode.WiFi.TYPE_WPA, "WPA"),
         }
     }
 
-    object Isbn : BarcodeInfo()
-
-    object Text : BarcodeInfo()
-
-    object Product : BarcodeInfo()
-
-    class PersonName(
+    data class PersonName(
         val first: String,
         val formattedName: String,
         val last: String,
@@ -115,7 +116,7 @@ sealed class BarcodeInfo {
         val suffix: String
     )
 
-    class Address(
+    data class Address(
         val type: Type,
         val lines: Array<String>
     ) {
@@ -128,7 +129,7 @@ sealed class BarcodeInfo {
 
     }
 
-    class CalendarDateTime(
+    data class CalendarDateTime(
         val year: Int,
         val month: Int,
         val day: Int,
@@ -223,7 +224,8 @@ internal object BarcodeResultBuilder {
                     BarcodeInfo.Wifi.EncryptionType.OPEN
                 },
             password = wifi?.password ?: "",
-            ssid = wifi?.ssid ?: ""
+            ssid = wifi?.ssid ?: "",
+            username = ""
         )
     }
 
