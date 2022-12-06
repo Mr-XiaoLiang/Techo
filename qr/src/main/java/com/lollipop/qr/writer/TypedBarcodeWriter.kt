@@ -35,27 +35,28 @@ class TypedBarcodeWriter(lifecycleOwner: LifecycleOwner) : BarcodeWriter(lifecyc
     fun encode(info: BarcodeInfo): Builder {
         return when (info) {
             is BarcodeInfo.CalendarEvent -> {
-                // TODO() 还不知道怎么写，姑且随便打印吧
+                // 还不知道怎么写，姑且随便打印吧
                 encode(info.toString())
             }
             is BarcodeInfo.Contact -> {
                 encode(info)
             }
             is BarcodeInfo.DriverLicense -> {
-                // TODO() 还不知道怎么写，姑且随便打印吧
+                // 还不知道怎么写，姑且随便打印吧
                 encode(info.toString())
             }
             is BarcodeInfo.Email -> {
                 encode(info)
             }
             is BarcodeInfo.GeoPoint -> {
-                // TODO() 还不知道怎么写，姑且随便打印吧
+                // 还不知道怎么写，姑且随便打印吧
                 encode(info.toString())
             }
             is BarcodeInfo.Isbn -> {
                 encode(info.value)
             }
             is BarcodeInfo.Phone -> {
+                // 数据不全
                 encode(info)
             }
             is BarcodeInfo.Product -> {
@@ -71,6 +72,7 @@ class TypedBarcodeWriter(lifecycleOwner: LifecycleOwner) : BarcodeWriter(lifecyc
                 encode(info.value)
             }
             is BarcodeInfo.Url -> {
+                // 数据不全
                 encode(info.url)
             }
             is BarcodeInfo.Wifi -> {
