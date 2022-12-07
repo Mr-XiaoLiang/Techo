@@ -11,7 +11,12 @@ import android.view.MotionEvent
 import android.view.View.OnClickListener
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.ListenerManager
+import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.onUI
+import com.lollipop.qr.BarcodeFormat
+import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
+import com.lollipop.qr.comm.CodeDescribe
 import com.lollipop.techo.R
 import kotlin.math.max
 
@@ -24,11 +29,8 @@ class CodeSelectionView @JvmOverloads constructor(
     private val boundsDrawable = BoundsDrawable()
 
     private val codeBounds = ArrayList<Rect>()
+    private val cornerPoints = ArrayList<Point>()
     private val codeResultList = ArrayList<BarcodeWrapper>()
-
-    private var navigateIcon: Drawable? = null
-
-    private var navigateIconTint: ColorStateList? = null
 
     private val touchDownLocation = Point()
 
@@ -37,12 +39,6 @@ class CodeSelectionView @JvmOverloads constructor(
     }
 
     private val codeSelectedListenerManager = ListenerManager<OnCodeSelectedListener>()
-
-    var navigateIconSize = 0
-        set(value) {
-            field = value
-            updateNavigateIcon()
-        }
 
     init {
         setOnClickListener(onViewClickListener)
@@ -60,20 +56,46 @@ class CodeSelectionView @JvmOverloads constructor(
             spaceWeight = typeArray.getFloat(
                 R.styleable.CodeSelectionView_codeSpaceWeight, 0.5F
             )
-            navigateIcon = typeArray.getDrawable(R.styleable.CodeSelectionView_codeNavigationIcon)
+            maskColor = typeArray.getColor(
+                R.styleable.CodeSelectionView_codeMaskColor, Color.TRANSPARENT
+            )
             navigateIconSize = typeArray.getDimensionPixelSize(
                 R.styleable.CodeSelectionView_codeNavigationIconSize, 0
             )
+            setNavigateIcon(typeArray.getDrawable(R.styleable.CodeSelectionView_codeNavigationIcon))
             val tintColor = typeArray.getColor(
                 R.styleable.CodeSelectionView_codeNavigationIconTint, 0
             )
-            navigateIconTint = if (tintColor != 0) {
-                ColorStateList.valueOf(tintColor)
-            } else {
-                null
-            }
-            navigateIcon?.setTintList(navigateIconTint)
+            tintNavigateIcon(
+                if (tintColor != 0) {
+                    ColorStateList.valueOf(tintColor)
+                } else {
+                    null
+                }
+            )
             typeArray.recycle()
+        }
+        if (isInEditMode) {
+            onCodeResult(
+                Size(720, 1250),
+                listOf(
+                    BarcodeWrapper(
+                        BarcodeInfo.Text("Text"),
+                        CodeDescribe(
+                            Rect(100, 100, 200, 200),
+                            arrayOf(
+                                Point(100, 100),
+                                Point(100, 200),
+                                Point(200, 100),
+                                Point(200, 200)
+                            ),
+                            "Text",
+                            BarcodeFormat.QR_CODE,
+                            "Text".toByteArray()
+                        )
+                    )
+                )
+            )
         }
     }
 
@@ -109,9 +131,23 @@ class CodeSelectionView @JvmOverloads constructor(
             boundsDrawable.spaceWeight = value
         }
 
+    var navigateIconSize: Int
+        set(value) {
+            boundsDrawable.navigateIconSize = value
+        }
+        get() {
+            return boundsDrawable.navigateIconSize
+        }
+
+    var maskColor: Int
+        set(value) {
+            boundsDrawable.maskColor = value
+        }
+        get() {
+            return boundsDrawable.maskColor
+        }
+
     fun onCodeResult(size: Size, list: List<BarcodeWrapper>) {
-        codeResultList.clear()
-        codeBounds.clear()
         val viewWidth = width
         val viewHeight = height
         val srcWidth = size.width
@@ -120,12 +156,29 @@ class CodeSelectionView @JvmOverloads constructor(
         val offsetX = (viewWidth - srcWidth * weight) / 2
         val offsetY = (viewHeight - srcHeight * weight) / 2
 
-        val boundsList = list.map { it.describe.boundingBox.copyOf(weight, offsetX, offsetY) }
+        doAsync {
+            val boundsList = ArrayList<Rect>(list.size)
+            val pointList = ArrayList<Point>(list.size * 4)
+            list.forEach { barcode ->
+                val describe = barcode.describe
+                boundsList.add(describe.boundingBox.copyOf(weight, offsetX, offsetY))
+                describe.cornerPoints.forEach {
+                    pointList.add(Point(it.x.offset(weight, offsetX), it.y.offset(weight, offsetY)))
+                }
+            }
+            onUI {
+                codeResultList.clear()
+                codeBounds.clear()
+                cornerPoints.clear()
 
-        codeResultList.addAll(list)
-        codeBounds.addAll(boundsList)
+                codeResultList.addAll(list)
+                codeBounds.addAll(boundsList)
+                cornerPoints.addAll(pointList)
 
-        boundsDrawable.setRectList(boundsList)
+                boundsDrawable.setRectList(boundsList)
+            }
+        }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -136,25 +189,12 @@ class CodeSelectionView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    override fun setFrame(l: Int, t: Int, r: Int, b: Int): Boolean {
-        val frame = super.setFrame(l, t, r, b)
-        updateNavigateIcon()
-        return frame
-    }
-
     fun setNavigateIcon(drawable: Drawable?) {
-        navigateIcon?.callback = null
-        drawable?.callback = this
-        navigateIcon = drawable
-        drawable?.setTintList(navigateIconTint)
-        updateNavigateIcon()
-        invalidate()
+        boundsDrawable.setNavigateIcon(drawable)
     }
 
     fun tintNavigateIcon(color: ColorStateList?) {
-        navigateIconTint = color
-        navigateIcon?.setTintList(color)
-        invalidate()
+        boundsDrawable.tintNavigateIcon(color)
     }
 
     fun addOnCodeSelectedListener(listener: OnCodeSelectedListener) {
@@ -163,35 +203,6 @@ class CodeSelectionView @JvmOverloads constructor(
 
     fun removeOnCodeSelectedListener(listener: OnCodeSelectedListener) {
         codeSelectedListenerManager.removeListener(listener)
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        if (canvas != null) {
-            drawNavigateIcon(canvas)
-        }
-    }
-
-    private fun drawNavigateIcon(canvas: Canvas) {
-        if (navigateIconSize < 1) {
-            return
-        }
-        val icon = navigateIcon ?: return
-        val halfIconSize = navigateIconSize / 2
-        codeBounds.forEach {
-            val x = it.centerX() - halfIconSize
-            val y = it.centerY() - halfIconSize
-            val saveCount = canvas.save()
-            canvas.translate(x.toFloat(), y.toFloat())
-            icon.draw(canvas)
-            canvas.restoreToCount(saveCount)
-        }
-    }
-
-    private fun updateNavigateIcon() {
-        if (width > 0 && height > 0) {
-            navigateIcon?.setBounds(0, 0, navigateIconSize, navigateIconSize)
-        }
     }
 
     private fun onViewClick() {
@@ -228,6 +239,8 @@ class CodeSelectionView @JvmOverloads constructor(
 
     private class BoundsDrawable : Drawable() {
 
+        private var navigateIcon: Drawable? = null
+
         private val paint = Paint().apply {
             isAntiAlias = true
             isDither = true
@@ -241,6 +254,8 @@ class CodeSelectionView @JvmOverloads constructor(
             set(value) {
                 paint.color = value
             }
+
+        var maskColor: Int = Color.TRANSPARENT
 
         var strokeWidth: Float
             get() {
@@ -258,9 +273,18 @@ class CodeSelectionView @JvmOverloads constructor(
 
         private val rectList = ArrayList<Rect>()
 
+        var navigateIconSize = 0
+            set(value) {
+                field = value
+                updateNavigateIcon()
+            }
+
+        private var navigateIconTint: ColorStateList? = null
+
         override fun onBoundsChange(bounds: Rect) {
             super.onBoundsChange(bounds)
             buildPath()
+            updateNavigateIcon()
         }
 
         fun setRectList(list: List<Rect>) {
@@ -278,6 +302,21 @@ class CodeSelectionView @JvmOverloads constructor(
             rectList.forEach {
                 addRect(it, boundsPath)
             }
+        }
+
+        fun setNavigateIcon(drawable: Drawable?) {
+            navigateIcon?.callback = null
+            drawable?.callback = this.callback
+            navigateIcon = drawable
+            drawable?.setTintList(navigateIconTint)
+            updateNavigateIcon()
+            invalidateSelf()
+        }
+
+        fun tintNavigateIcon(color: ColorStateList?) {
+            navigateIconTint = color
+            navigateIcon?.setTintList(color)
+            invalidateSelf()
         }
 
         /**
@@ -335,10 +374,31 @@ class CodeSelectionView @JvmOverloads constructor(
         }
 
         override fun draw(canvas: Canvas) {
-            if (boundsPath.isEmpty) {
+            canvas.drawColor(maskColor)
+            if (!boundsPath.isEmpty) {
+                canvas.drawPath(boundsPath, paint)
+            }
+            drawNavigateIcon(canvas)
+        }
+
+        private fun drawNavigateIcon(canvas: Canvas) {
+            if (navigateIconSize < 1) {
                 return
             }
-            canvas.drawPath(boundsPath, paint)
+            val icon = navigateIcon ?: return
+            val halfIconSize = navigateIconSize / 2
+            rectList.forEach {
+                val x = it.centerX() - halfIconSize
+                val y = it.centerY() - halfIconSize
+                val saveCount = canvas.save()
+                canvas.translate(x.toFloat(), y.toFloat())
+                icon.draw(canvas)
+                canvas.restoreToCount(saveCount)
+            }
+        }
+
+        private fun updateNavigateIcon() {
+            navigateIcon?.setBounds(0, 0, navigateIconSize, navigateIconSize)
         }
 
         override fun setAlpha(alpha: Int) {

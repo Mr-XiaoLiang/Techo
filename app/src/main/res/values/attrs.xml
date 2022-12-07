@@ -59,5 +59,6 @@
         <attr name="codeNavigationIcon" format="reference" />
         <attr name="codeNavigationIconSize" format="dimension"/>
         <attr name="codeNavigationIconTint" format="color"/>
+        <attr name="codeMaskColor" format="color"/>
     </declare-styleable>
 </resources>

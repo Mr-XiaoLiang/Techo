@@ -47,6 +47,7 @@
 
     <FrameLayout
         android:id="@+id/resultPanel"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -56,11 +57,12 @@
             android:layout_height="match_parent"
             android:color="@color/brand_4"
             android:radius="5dp"
-            app:codeSpaceWeight="0.5"
-            app:codeStrokeWidth="2dp"
+            app:codeMaskColor="#6000"
             app:codeNavigationIcon="@drawable/ic_baseline_arrow_circle_right_24"
+            app:codeNavigationIconSize="36dp"
             app:codeNavigationIconTint="@color/brand_4"
-            app:codeNavigationIconSize="36dp"/>
+            app:codeSpaceWeight="0.5"
+            app:codeStrokeWidth="4dp" />
 
     </FrameLayout>
 
@@ -76,7 +78,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center_vertical|start"
             android:layout_marginStart="10dp"
-            android:background="?attr/selectableItemBackground">
+            android:background="?attr/selectableItemBackgroundBorderless">
 
             <com.lollipop.techo.view.RoundClipLayout
                 android:id="@+id/backButtonBackground"
@@ -84,8 +86,8 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_margin="6dp"
-                android:radius="18dp"
-                android:background="@color/gray_4" />
+                android:background="@color/gray_4"
+                android:radius="18dp" />
 
             <ImageView
                 android:id="@+id/backButtonIcon"

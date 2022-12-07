@@ -69,7 +69,6 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
     }
 
     private fun onResult(result: BarcodeResult) {
-        log("OnBarcodeScanResult: ${result.list.size}")
         if (!result.isEmpty) {
             qrReaderHelper.analyzerEnable = false
             qrReaderHelper.analyzerBitmap?.let {
@@ -87,7 +86,8 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
             resultBackPressHandler.isEnabled = true
             if (com.lollipop.techo.BuildConfig.DEBUG) {
                 result.list.forEach {
-                    log(it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
+                    log("OnBarcodeScanResult", it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
+                    log("OnBarcodeScanResult", "cornerPoints = ", it.describe.cornerPoints.size)
                 }
             }
         }
