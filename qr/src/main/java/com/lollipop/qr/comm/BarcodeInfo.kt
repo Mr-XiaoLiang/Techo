@@ -4,77 +4,184 @@ import android.graphics.Point
 import android.graphics.Rect
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.lollipop.qr.BarcodeFormat
+import org.json.JSONObject
 
 sealed class BarcodeInfo {
 
-    data class Text(val value: String) : BarcodeInfo()
+    companion object {
+        private const val INFO_NAME = "name"
+    }
 
-    data class Unknown(val value: String) : BarcodeInfo()
+    protected inline fun <reified T : Any> T.name(): String {
+        return this::class.java.name
+    }
 
-    data class Isbn(val value: String) : BarcodeInfo()
+    fun toJson(): String {
+        val jsonObject = JSONObject()
+        try {
+            save(jsonObject)
+            jsonObject.put(INFO_NAME, name())
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        try {
+            return jsonObject.toString()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return ""
+    }
 
-    data class Product(val value: String) : BarcodeInfo()
+    fun fromJson(json: String): BarcodeInfo {
+        try {
+            val jsonObject = JSONObject(json)
+            if (jsonObject.has(INFO_NAME)) {
+                val name = jsonObject.optString(INFO_NAME)
+                val instance = Class.forName(name).newInstance()
+                if (instance is BarcodeInfo) {
+                    return instance
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return Text(json)
+    }
 
-    data class Contact(
-        val name: PersonName,
-        val organization: String,
-        val title: String,
-        val addresses: List<Address>,
-        val emails: List<Email>,
-        val phones: List<Phone>,
-        val urls: List<String>
-    ) : BarcodeInfo()
+    protected open fun save(json: JSONObject) {
 
-    data class DriverLicense(
-        val addressCity: String,
-        val addressState: String,
-        val addressStreet: String,
-        val addressZip: String,
-        val birthDate: String,
-        val documentType: String,
-        val expiryDate: String,
-        val firstName: String,
-        val gender: String,
-        val issueDate: String,
-        val issuingCountry: String,
-        val lastName: String,
-        val licenseNumber: String,
-        val middleName: String
-    ) : BarcodeInfo()
+    }
 
-    data class CalendarEvent(
-        val end: CalendarDateTime,
-        val start: CalendarDateTime,
-        val description: String,
-        val location: String,
-        val organizer: String,
-        val status: String,
-        val summary: String
-    ) : BarcodeInfo()
+    protected open fun resume(json: JSONObject) {
 
-    data class Email(
-        val type: Type,
-        val address: String,
-        val body: String,
-        val subject: String
+    }
+
+    class Text @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+        companion object {
+            private const val VALUE = "value"
+        }
+
+        override fun save(json: JSONObject) {
+            super.save(json)
+            json.put(VALUE, value)
+        }
+
+        override fun resume(json: JSONObject) {
+            super.resume(json)
+            value = json.optString(VALUE)
+        }
+    }
+
+    class Unknown @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+        companion object {
+            private const val VALUE = "value"
+        }
+
+        override fun save(json: JSONObject) {
+            super.save(json)
+            json.put(VALUE, value)
+        }
+
+        override fun resume(json: JSONObject) {
+            super.resume(json)
+            value = json.optString(VALUE)
+        }
+    }
+
+    class Isbn @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+        companion object {
+            private const val VALUE = "value"
+        }
+
+        override fun save(json: JSONObject) {
+            super.save(json)
+            json.put(VALUE, value)
+        }
+
+        override fun resume(json: JSONObject) {
+            super.resume(json)
+            value = json.optString(VALUE)
+        }
+    }
+
+    class Product @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+        companion object {
+            private const val VALUE = "value"
+        }
+
+        override fun save(json: JSONObject) {
+            super.save(json)
+            json.put(VALUE, value)
+        }
+
+        override fun resume(json: JSONObject) {
+            super.resume(json)
+            value = json.optString(VALUE)
+        }
+    }
+
+    class Contact @JvmOverloads constructor(
+        val name: PersonName = PersonName(),
+        var organization: String = "",
+        var title: String = "",
+        val addresses: ArrayList<Address> = ArrayList(),
+        val emails: ArrayList<Email> = ArrayList(),
+        val phones: ArrayList<Phone> = ArrayList(),
+        val urls: ArrayList<String> = ArrayList()
     ) : BarcodeInfo() {
-        enum class Type(override val key: Int, val proto: String) : KeyEnum {
+
+    }
+
+    class DriverLicense @JvmOverloads constructor(
+        var addressCity: String = "",
+        var addressState: String = "",
+        var addressStreet: String = "",
+        var addressZip: String = "",
+        var birthDate: String = "",
+        var documentType: String = "",
+        var expiryDate: String = "",
+        var firstName: String = "",
+        var gender: String = "",
+        var issueDate: String = "",
+        var issuingCountry: String = "",
+        var lastName: String = "",
+        var licenseNumber: String = "",
+        var middleName: String = ""
+    ) : BarcodeInfo()
+
+    class CalendarEvent @JvmOverloads constructor(
+        var end: CalendarDateTime = CalendarDateTime(),
+        var start: CalendarDateTime = CalendarDateTime(),
+        var description: String = "",
+        var location: String = "",
+        var organizer: String = "",
+        var status: String = "",
+        var summary: String = ""
+    ) : BarcodeInfo()
+
+    class Email @JvmOverloads constructor(
+        var type: Type = Type.UNKNOWN,
+        var address: String = "",
+        var body: String = "",
+        var subject: String = ""
+    ) : BarcodeInfo() {
+        enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
             UNKNOWN(Barcode.Email.TYPE_UNKNOWN, ""),
             WORK(Barcode.Email.TYPE_WORK, "WORK"),
             HOME(Barcode.Email.TYPE_HOME, "HOME"),
         }
     }
 
-    data class GeoPoint(
-        val lat: Double,
-        val lng: Double
+    class GeoPoint @JvmOverloads constructor(
+        var lat: Double = 0.0,
+        var lng: Double = 0.0
     ) : BarcodeInfo()
 
-    data class Phone(
-        val type: Type,
-        val number: String
+    class Phone @JvmOverloads constructor(
+        var type: Type = Type.UNKNOWN,
+        var number: String = ""
     ) : BarcodeInfo() {
-        enum class Type(override val key: Int, val proto: String) : KeyEnum {
+        enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
             UNKNOWN(Barcode.Phone.TYPE_UNKNOWN, ""),
             WORK(Barcode.Phone.TYPE_WORK, "WORK"),
             HOME(Barcode.Phone.TYPE_HOME, "HOME"),
@@ -83,42 +190,42 @@ sealed class BarcodeInfo {
         }
     }
 
-    data class Sms(
-        val message: String,
-        val phoneNumber: String
+    class Sms @JvmOverloads constructor(
+        var message: String = "",
+        var phoneNumber: String = ""
     ) : BarcodeInfo()
 
-    data class Url(
-        val title: String,
-        val url: String
+    class Url @JvmOverloads constructor(
+        var title: String = "",
+        var url: String = ""
     ) : BarcodeInfo()
 
-    data class Wifi(
-        val encryptionType: EncryptionType,
-        val password: String,
-        val ssid: String,
-        val username: String,
+    class Wifi @JvmOverloads constructor(
+        var encryptionType: EncryptionType = EncryptionType.OPEN,
+        var password: String = "",
+        var ssid: String = "",
+        var username: String = "",
     ) : BarcodeInfo() {
-        enum class EncryptionType(override val key: Int, val proto: String) : KeyEnum {
+        enum class EncryptionType(override val key: Int = 0, val proto: String) : KeyEnum {
             OPEN(Barcode.WiFi.TYPE_OPEN, ""),
             WEP(Barcode.WiFi.TYPE_WEP, "WEP"),
             WPA(Barcode.WiFi.TYPE_WPA, "WPA"),
         }
     }
 
-    data class PersonName(
-        val first: String,
-        val formattedName: String,
-        val last: String,
-        val middle: String,
-        val prefix: String,
-        val pronunciation: String,
-        val suffix: String
+    class PersonName(
+        val first: String = "",
+        val formattedName: String = "",
+        val last: String = "",
+        val middle: String = "",
+        val prefix: String = "",
+        val pronunciation: String = "",
+        val suffix: String = ""
     )
 
-    data class Address(
-        val type: Type,
-        val lines: Array<String>
+    class Address(
+        val type: Type = Type.UNKNOWN,
+        val lines: Array<String> = emptyArray()
     ) {
 
         enum class Type(override val key: Int) : KeyEnum {
@@ -129,14 +236,14 @@ sealed class BarcodeInfo {
 
     }
 
-    data class CalendarDateTime(
-        val year: Int,
-        val month: Int,
-        val day: Int,
-        val hours: Int,
-        val minutes: Int,
-        val seconds: Int,
-        val rawValue: String
+    class CalendarDateTime(
+        val year: Int = 0,
+        val month: Int = 0,
+        val day: Int = 0,
+        val hours: Int = 0,
+        val minutes: Int = 0,
+        val seconds: Int = 0,
+        val rawValue: String = ""
     )
 
     interface KeyEnum {
@@ -200,7 +307,7 @@ internal object BarcodeResultBuilder {
             addresses = formatAddress(info?.addresses),
             emails = formatEmail(info?.emails),
             phones = formatPhones(info?.phones),
-            urls = info?.urls ?: emptyList()
+            urls = ArrayList(info?.urls ?: emptyList())
         )
     }
 
@@ -312,7 +419,7 @@ internal object BarcodeResultBuilder {
 
     private fun formatPhones(
         list: List<Barcode.Phone?>?
-    ): List<BarcodeInfo.Phone> {
+    ): ArrayList<BarcodeInfo.Phone> {
         val result = ArrayList<BarcodeInfo.Phone>()
         list?.forEach {
             if (it != null) {
@@ -333,7 +440,7 @@ internal object BarcodeResultBuilder {
 
     private fun formatEmail(
         list: List<Barcode.Email?>?,
-    ): List<BarcodeInfo.Email> {
+    ): ArrayList<BarcodeInfo.Email> {
         val result = ArrayList<BarcodeInfo.Email>()
         list?.forEach {
             if (it != null) {
@@ -356,7 +463,7 @@ internal object BarcodeResultBuilder {
         )
     }
 
-    private fun formatAddress(list: List<Barcode.Address?>?): List<BarcodeInfo.Address> {
+    private fun formatAddress(list: List<Barcode.Address?>?): ArrayList<BarcodeInfo.Address> {
         val result = ArrayList<BarcodeInfo.Address>()
         list?.forEach {
             if (it != null) {
