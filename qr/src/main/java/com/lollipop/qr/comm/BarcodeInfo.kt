@@ -10,17 +10,21 @@ import org.json.JSONObject
 sealed class BarcodeInfo {
 
     companion object {
-        private const val INFO_NAME = "infName"
+        private const val INFO_NAME = "infoName"
+        private const val INFO_RAW = "infoRaw"
     }
 
     protected inline fun <reified T : Any> T.name(): String {
         return this::class.java.name
     }
 
+    var rawValue: String = ""
+
     fun toJson(): String {
         val jsonObject = this.toJson { json, info ->
             info.save(json)
             json.put(INFO_NAME, name())
+            json.put(INFO_RAW, info.rawValue)
         }
         try {
             return jsonObject.toString()
@@ -37,6 +41,8 @@ sealed class BarcodeInfo {
                 val name = jsonObject.optString(INFO_NAME)
                 val instance = Class.forName(name).newInstance()
                 if (instance is BarcodeInfo) {
+                    instance.resume(jsonObject)
+                    instance.rawValue = jsonObject.optString(INFO_RAW)
                     return instance
                 }
             }
@@ -689,17 +695,17 @@ internal object BarcodeResultBuilder {
             emails = formatEmail(info?.emails),
             phones = formatPhones(info?.phones),
             urls = ArrayList(info?.urls ?: emptyList())
-        )
+        ).putInfoRaw(code)
     }
 
     fun createPhoneBy(code: Barcode): BarcodeInfo.Phone {
-        return createPhoneBy(code.phone)
+        return createPhoneBy(code.phone).putInfoRaw(code)
     }
 
     fun createEmailBy(
         code: Barcode,
     ): BarcodeInfo.Email {
-        return createEmailBy(code.email)
+        return createEmailBy(code.email).putInfoRaw(code)
     }
 
     fun createWifiBy(
@@ -714,7 +720,7 @@ internal object BarcodeResultBuilder {
             password = wifi?.password ?: "",
             ssid = wifi?.ssid ?: "",
             username = ""
-        )
+        ).putInfoRaw(code)
     }
 
     fun createUrlBy(
@@ -724,7 +730,7 @@ internal object BarcodeResultBuilder {
         return BarcodeInfo.Url(
             title = url?.title ?: "",
             url = url?.url ?: ""
-        )
+        ).putInfoRaw(code)
     }
 
     fun createSmsBy(
@@ -734,7 +740,7 @@ internal object BarcodeResultBuilder {
         return BarcodeInfo.Sms(
             message = sms?.message ?: "",
             phoneNumber = sms?.phoneNumber ?: ""
-        )
+        ).putInfoRaw(code)
     }
 
     fun createGeoBy(
@@ -744,7 +750,7 @@ internal object BarcodeResultBuilder {
         return BarcodeInfo.GeoPoint(
             lat = geoPoint?.lat ?: 0.0,
             lng = geoPoint?.lng ?: 0.0
-        )
+        ).putInfoRaw(code)
     }
 
     fun createCalendarEventBy(
@@ -759,7 +765,7 @@ internal object BarcodeResultBuilder {
             organizer = calendarEvent?.organizer ?: "",
             status = calendarEvent?.status ?: "",
             summary = calendarEvent?.summary ?: ""
-        )
+        ).putInfoRaw(code)
     }
 
     fun createDriverLicenseBy(
@@ -781,7 +787,29 @@ internal object BarcodeResultBuilder {
             lastName = license?.lastName ?: "",
             licenseNumber = license?.licenseNumber ?: "",
             middleName = license?.middleName ?: ""
-        )
+        ).putInfoRaw(code)
+    }
+
+    fun createUnknown(code: Barcode): BarcodeInfo.Unknown {
+        return BarcodeInfo.Unknown(code.rawValue ?: "").putInfoRaw(code)
+    }
+
+    fun createIsbn(code: Barcode): BarcodeInfo.Isbn {
+        return BarcodeInfo.Isbn(code.displayValue ?: "").putInfoRaw(code)
+    }
+
+    fun createProduct(code: Barcode): BarcodeInfo.Product {
+        return BarcodeInfo.Product(code.displayValue ?: "").putInfoRaw(code)
+    }
+
+    fun createText(code: Barcode): BarcodeInfo.Text {
+        return BarcodeInfo.Text(code.displayValue ?: "").putInfoRaw(code)
+    }
+
+    private inline fun <reified T : BarcodeInfo> T.putInfoRaw(code: Barcode): T {
+        val info = this
+        info.rawValue = code.rawValue ?: ""
+        return info
     }
 
     private fun createCalendarDateTime(
