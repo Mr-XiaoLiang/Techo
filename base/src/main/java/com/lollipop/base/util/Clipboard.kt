@@ -109,28 +109,51 @@ object Clipboard {
      * 清空剪切板
      */
     fun clear(context: Context) {
-        val clipboardService = context.getSystemService(Context.CLIPBOARD_SERVICE)
-        if (clipboardService is ClipboardManager) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                try {
-                    clipboardService.clearPrimaryClip()
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                }
-            }
+        val clipboardService = getClipboardManager(context) ?: return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
-                clipboardService.setPrimaryClip(ClipData.newPlainText("", ""))
+                clipboardService.clearPrimaryClip()
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
         }
+        try {
+            clipboardService.setPrimaryClip(ClipData.newPlainText("", ""))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 增加剪切板的变更监听器
+     */
+    fun addPrimaryClipChangedListener(
+        context: Context,
+        listener: ClipboardManager.OnPrimaryClipChangedListener
+    ) {
+        getClipboardManager(context)?.addPrimaryClipChangedListener(listener)
+    }
+
+    /**
+     * 移除剪切板的变更监听器
+     */
+    fun removePrimaryClipChangedListener(
+        context: Context,
+        listener: ClipboardManager.OnPrimaryClipChangedListener
+    ) {
+        getClipboardManager(context)?.removePrimaryClipChangedListener(listener)
     }
 
     private fun copy(context: Context, clipInfo: ClipData) {
+        getClipboardManager(context)?.setPrimaryClip(clipInfo)
+    }
+
+    private fun getClipboardManager(context: Context): ClipboardManager? {
         val clipboardService = context.getSystemService(Context.CLIPBOARD_SERVICE)
         if (clipboardService is ClipboardManager) {
-            clipboardService.setPrimaryClip(clipInfo)
+            return clipboardService
         }
+        return null
     }
 
     /**
