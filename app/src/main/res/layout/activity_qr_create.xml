@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".qr.QrCreateActivity">
+
+    <LinearLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <com.lollipop.techo.view.RoundClipLayout
+                android:id="@+id/backButtonBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:background="@color/gray_4"
+                android:radius="18dp" />
+
+            <ImageView
+                android:id="@+id/backButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/description_back"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@color/gray_0" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.lollipop.techo.view.RoundClipLayout
+            android:id="@+id/qrCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="24dp"
+            android:radius="20dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/qrNameView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:paddingTop="24dp"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/app_name" />
+
+                <ImageView
+                    android:id="@+id/qrImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="20dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/qrNameView"
+                    tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/sloganView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/gray_8"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/qrImageView" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@color/gray_8"
+                    app:layout_constraintBottom_toBottomOf="@id/sloganView"
+                    app:layout_constraintEnd_toStartOf="@id/sloganView"
+                    app:layout_constraintStart_toStartOf="@id/qrNameView"
+                    app:layout_constraintTop_toTopOf="@id/sloganView" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@color/gray_8"
+                    app:layout_constraintBottom_toBottomOf="@id/sloganView"
+                    app:layout_constraintEnd_toEndOf="@id/qrNameView"
+                    app:layout_constraintStart_toEndOf="@id/sloganView"
+                    app:layout_constraintTop_toTopOf="@id/sloganView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.lollipop.techo.view.RoundClipLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

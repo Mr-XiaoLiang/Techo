@@ -1,13 +1,13 @@
 package com.lollipop.techo.qr.result
 
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.techo.databinding.ItemQrResultRootBinding
+import com.lollipop.techo.qr.QrCreateActivity
 
 abstract class QrResultRootHolder<B : ViewBinding>(
     protected val binding: ResultItemView<B>
@@ -50,8 +50,7 @@ abstract class QrResultRootHolder<B : ViewBinding>(
 
     protected open fun showQr() {
         val rawValue = currentInfo?.rawValue ?: return
-        // TODO
-        Toast.makeText(itemView.context, rawValue, Toast.LENGTH_SHORT).show()
+        QrCreateActivity.start(itemView.context, rawValue)
     }
 
     class ResultItemView<C : ViewBinding>(

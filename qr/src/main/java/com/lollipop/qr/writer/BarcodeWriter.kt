@@ -45,7 +45,7 @@ open class BarcodeWriter(
 
     private fun loadBitMatrix(builder: Builder, callback: (Result<LBitMatrix>) -> Unit) {
         doAsync {
-            val result = builder.encode()
+            val result = builder.build()
             onUI {
                 callback(result)
             }
@@ -154,7 +154,7 @@ open class BarcodeWriter(
             errorCorrection(ErrorCorrectionLevel.H)
         }
 
-        fun encode(): Result<LBitMatrix> {
+        fun build(): Result<LBitMatrix> {
             try {
                 val formatZxing = format.zxing.getOrNull()
                     ?: return Result.failure(
@@ -171,7 +171,7 @@ open class BarcodeWriter(
 
         fun drawBitmap(base: Bitmap?): Result<Bitmap> {
             try {
-                val matrixResult = encode()
+                val matrixResult = build()
                 val matrix = matrixResult.getOrNull() ?: return Result.failure(
                     matrixResult.exceptionOrNull()
                         ?: java.lang.IllegalArgumentException("encode error: $matrixResult")

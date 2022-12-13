@@ -1,6 +1,8 @@
 package com.lollipop.base.ui
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,38 @@ open class BaseActivity : AppCompatActivity(),
     RequestLauncher,
     PigmentPage,
     PigmentProvider {
+
+    companion object {
+        inline fun <reified T : Activity> start(
+            context: Context,
+            intentCallback: ((Intent) -> Unit) = {}
+        ) {
+            val intent = Intent(context, T::class.java)
+            intentCallback(intent)
+            start(context, intent)
+        }
+
+        fun start(context: Context, intent: Intent) {
+            if (!context.isActivity()) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+
+        private fun Context.isActivity(): Boolean {
+            var c: Context = this
+            do {
+                if (c is Activity) {
+                    return true
+                }
+                if (c is ContextWrapper) {
+                    c = c.baseContext
+                } else {
+                    return false
+                }
+            } while (true)
+        }
+    }
 
     override val pigmentProviderHelper = PigmentProviderHelper()
 

@@ -47,7 +47,7 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
             Toast.makeText(this, "打开相册", Toast.LENGTH_SHORT).show()
         }
 
-        binding.backButton.setOnClickListener {
+        binding.backButton.onClick {
             notifyBackPress()
         }
 
