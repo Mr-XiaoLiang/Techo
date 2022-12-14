@@ -2,12 +2,12 @@ package com.lollipop.qr.writer
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.qrcode.encoder.QRCode
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.comm.BarcodeExecutor
-import com.lollipop.qr.comm.BarcodeInfo
 import kotlin.math.max
 import kotlin.math.min
 
@@ -91,7 +91,7 @@ open class BarcodeWriter(
         val width = bitMatrix.width
         val height = bitMatrix.height
         //创建一个空的像素数组
-        val pixelArray = IntArray(width * height) { Color.WHITE }
+        val pixelArray = IntArray(width * height) { Color.TRANSPARENT }
         //如果有原始图片，那么就将它复制到现有像素数组
         src?.getPixels(pixelArray, 0, width, 0, 0, width, height)
         //将二维码赋值到现有像素数组
@@ -99,19 +99,6 @@ open class BarcodeWriter(
         //将像素数组赋值到图片中
         outBitmap.setPixels(pixelArray, 0, width, 0, 0, width, height)
         return outBitmap
-    }
-
-    private fun getPixelArray(
-        bitMatrix: LBitMatrix,
-        darkColor: Int,
-        lightColor: Int
-    ): IntArray {
-        return getPixelArray(
-            bitMatrix,
-            IntArray(bitMatrix.width * bitMatrix.width) { Color.WHITE },
-            darkColor,
-            lightColor
-        )
     }
 
     private fun getPixelArray(
@@ -140,8 +127,8 @@ open class BarcodeWriter(
         private val content: String
     ) {
 
-        private var width = 0
-        private var height = 0
+        private var width = 144
+        private var height = 144
         private var format = BarcodeFormat.QR_CODE
         private var miniDataPoint = false
         private var hints = HashMap<com.google.zxing.EncodeHintType, Any>()

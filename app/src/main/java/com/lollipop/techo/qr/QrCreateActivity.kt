@@ -2,12 +2,11 @@ package com.lollipop.techo.qr
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import com.lollipop.base.ui.BaseActivity
-import com.lollipop.base.util.doAsync
-import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.onClick
-import com.lollipop.base.util.onUI
+import com.lollipop.base.util.*
+import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityQrCreateBinding
@@ -38,6 +37,7 @@ class QrCreateActivity : BaseActivity() {
         binding.backButton.onClick {
             notifyBackPress()
         }
+        binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -47,7 +47,9 @@ class QrCreateActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        updateBarcode()
+        binding.qrImageView.post {
+            updateBarcode()
+        }
     }
 
     private fun updateBarcode() {
@@ -55,10 +57,12 @@ class QrCreateActivity : BaseActivity() {
         if (info.isEmpty()) {
             binding.qrImageView.setImageResource(R.mipmap.ic_launcher_round)
         } else {
+            val builder = BarcodeHelper.createWriter(this)
+                .encode(info)
+                .size(binding.qrImageView.width, binding.qrImageView.height)
+                .color(Color.BLACK, Color.TRANSPARENT)
             doAsync {
-                val result = BarcodeHelper.createWriter(this)
-                    .encode(info)
-                    .drawBitmap(null)
+                val result = builder.drawBitmap(null)
                 onUI {
                     val bitmap = result.getOrNull()
                     if (bitmap != null) {
