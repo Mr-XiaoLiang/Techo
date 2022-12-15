@@ -15,20 +15,28 @@ class QrCreateActivity : BaseActivity() {
 
     companion object {
 
-        private const val QR_INFO = "QR_INFO"
+        private const val BARCODE_INFO = "BARCODE_INFO"
+        private const val BARCODE_FORMAT = "BARCODE_FORMAT"
 
-        fun start(context: Context, info: String) {
+        fun start(context: Context, info: String, format: BarcodeFormat = BarcodeFormat.QR_CODE) {
             start<QrCreateActivity>(context) {
-                it.putExtra(QR_INFO, info)
+                it.putExtra(BARCODE_INFO, info)
+                it.putExtra(BARCODE_FORMAT, format.code)
             }
         }
     }
 
     private val binding: ActivityQrCreateBinding by lazyBind()
 
-    private val qrInfo: String
+    private val codeInfo: String
         get() {
-            return intent.getStringExtra(QR_INFO) ?: ""
+            return intent.getStringExtra(BARCODE_INFO) ?: ""
+        }
+
+    private val codeFormat: BarcodeFormat
+        get() {
+            val code = intent.getIntExtra(BARCODE_FORMAT, BarcodeFormat.QR_CODE.code)
+            return BarcodeFormat.values().find { it.code == code } ?: BarcodeFormat.QR_CODE
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +61,7 @@ class QrCreateActivity : BaseActivity() {
     }
 
     private fun updateBarcode() {
-        val info = qrInfo
+        val info = codeInfo
         if (info.isEmpty()) {
             binding.qrImageView.setImageResource(R.mipmap.ic_launcher_round)
         } else {
@@ -61,6 +69,7 @@ class QrCreateActivity : BaseActivity() {
                 .encode(info)
                 .size(binding.qrImageView.width, binding.qrImageView.height)
                 .color(Color.BLACK, Color.TRANSPARENT)
+                .format(codeFormat)
             doAsync {
                 val result = builder.drawBitmap(null)
                 onUI {
