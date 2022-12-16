@@ -2,6 +2,7 @@ package com.lollipop.qr.comm
 
 import android.graphics.Point
 import android.graphics.Rect
+import androidx.annotation.CallSuper
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.lollipop.qr.BarcodeFormat
 import org.json.JSONArray
@@ -12,19 +13,27 @@ sealed class BarcodeInfo {
     companion object {
         private const val INFO_NAME = "infoName"
         private const val INFO_RAW = "infoRaw"
+        private const val INFO_BARCODE_FORMAT = "infoBarcodeFormat"
     }
 
-    protected inline fun <reified T : Any> T.name(): String {
+    protected inline fun <reified T : Any> T.className(): String {
         return this::class.java.name
     }
 
     var rawValue: String = ""
+        private set
+    var format: BarcodeFormat = BarcodeFormat.UNKNOWN
+        private set
+
+    fun setRaw(value: String, f: BarcodeFormat) {
+        rawValue = value
+        format = f
+    }
 
     fun toJson(): String {
         val jsonObject = this.toJson { json, info ->
             info.save(json)
-            json.put(INFO_NAME, name())
-            json.put(INFO_RAW, info.rawValue)
+            json.put(INFO_NAME, className())
         }
         try {
             return jsonObject.toString()
@@ -42,19 +51,34 @@ sealed class BarcodeInfo {
                 val instance = Class.forName(name).newInstance()
                 if (instance is BarcodeInfo) {
                     instance.resume(jsonObject)
-                    instance.rawValue = jsonObject.optString(INFO_RAW)
                     return instance
                 }
             }
         } catch (e: Throwable) {
             e.printStackTrace()
         }
-        return Text(json)
+        return Text().apply {
+            value = json
+            setRaw(json, BarcodeFormat.QR_CODE)
+        }
     }
 
-    internal abstract fun save(json: JSONObject)
+    @CallSuper
+    internal open fun save(json: JSONObject) {
+        json.put(INFO_RAW, rawValue)
+        json.put(INFO_BARCODE_FORMAT, format.name)
+    }
 
-    internal abstract fun resume(json: JSONObject)
+    @CallSuper
+    internal open fun resume(json: JSONObject) {
+        rawValue = json.optString(INFO_RAW)
+        val formatName = json.optString(INFO_BARCODE_FORMAT)
+        format = BarcodeFormat.values().find { it.name == formatName } ?: BarcodeFormat.UNKNOWN
+    }
+
+    open fun getBarcodeValue(): String {
+        return rawValue
+    }
 
     protected inline fun <reified T : Any> Collection<T>.mapToJson(map: (T) -> Any): JSONArray {
         val jsonArray = JSONArray()
@@ -109,71 +133,81 @@ sealed class BarcodeInfo {
         }
     }
 
-    class Text @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+    class Text : BarcodeInfo() {
+
         companion object {
             private const val VALUE = "value"
         }
 
+        var value: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(VALUE, value)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             value = json.optString(VALUE)
         }
     }
 
-    class Unknown @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+    class Unknown : BarcodeInfo() {
+
         companion object {
             private const val VALUE = "value"
         }
 
+        var value: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(VALUE, value)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             value = json.optString(VALUE)
         }
     }
 
-    class Isbn @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+    class Isbn : BarcodeInfo() {
         companion object {
             private const val VALUE = "value"
         }
 
+        var value: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(VALUE, value)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             value = json.optString(VALUE)
         }
     }
 
-    class Product @JvmOverloads constructor(var value: String = "") : BarcodeInfo() {
+    class Product : BarcodeInfo() {
         companion object {
             private const val VALUE = "value"
         }
 
+        var value: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(VALUE, value)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             value = json.optString(VALUE)
         }
     }
 
-    class Contact @JvmOverloads constructor(
-        var name: PersonName = PersonName(),
-        var organization: String = "",
-        var title: String = "",
-        val addresses: ArrayList<Address> = ArrayList(),
-        val emails: ArrayList<Email> = ArrayList(),
-        val phones: ArrayList<Phone> = ArrayList(),
-        val urls: ArrayList<String> = ArrayList()
-    ) : BarcodeInfo() {
+    class Contact : BarcodeInfo() {
 
         companion object {
             private const val PERSON = "person"
@@ -185,7 +219,16 @@ sealed class BarcodeInfo {
             private const val URLS = "urls"
         }
 
+        var name: PersonName = PersonName()
+        var organization: String = ""
+        var title: String = ""
+        val addresses: ArrayList<Address> = ArrayList()
+        val emails: ArrayList<Email> = ArrayList()
+        val phones: ArrayList<Phone> = ArrayList()
+        val urls: ArrayList<String> = ArrayList()
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(PERSON, name.toJson { j, p -> p.save(j) })
             json.put(ORGANIZATION, organization)
             json.put(TITLE, title)
@@ -196,6 +239,7 @@ sealed class BarcodeInfo {
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             name = PersonName.createBy(json.optJSONObject(PERSON) ?: JSONObject())
             organization = json.optString(ORGANIZATION) ?: ""
             title = json.optString(TITLE) ?: ""
@@ -212,22 +256,7 @@ sealed class BarcodeInfo {
     }
 
 
-    class DriverLicense @JvmOverloads constructor(
-        var addressCity: String = "",
-        var addressState: String = "",
-        var addressStreet: String = "",
-        var addressZip: String = "",
-        var birthDate: String = "",
-        var documentType: String = "",
-        var expiryDate: String = "",
-        var firstName: String = "",
-        var gender: String = "",
-        var issueDate: String = "",
-        var issuingCountry: String = "",
-        var lastName: String = "",
-        var licenseNumber: String = "",
-        var middleName: String = ""
-    ) : BarcodeInfo() {
+    class DriverLicense : BarcodeInfo() {
 
         companion object {
             private const val ADDRESS_CITY = "addressCity"
@@ -246,7 +275,23 @@ sealed class BarcodeInfo {
             private const val MIDDLE_NAME = "middleName"
         }
 
+        var addressCity: String = ""
+        var addressState: String = ""
+        var addressStreet: String = ""
+        var addressZip: String = ""
+        var birthDate: String = ""
+        var documentType: String = ""
+        var expiryDate: String = ""
+        var firstName: String = ""
+        var gender: String = ""
+        var issueDate: String = ""
+        var issuingCountry: String = ""
+        var lastName: String = ""
+        var licenseNumber: String = ""
+        var middleName: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(ADDRESS_CITY, addressCity)
             json.put(ADDRESS_STATE, addressState)
             json.put(ADDRESS_STREET, addressStreet)
@@ -264,6 +309,7 @@ sealed class BarcodeInfo {
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             addressCity = json.optString(ADDRESS_CITY) ?: ""
             addressState = json.optString(ADDRESS_STATE) ?: ""
             addressStreet = json.optString(ADDRESS_STREET) ?: ""
@@ -283,15 +329,7 @@ sealed class BarcodeInfo {
     }
 
 
-    class CalendarEvent @JvmOverloads constructor(
-        var end: CalendarDateTime = CalendarDateTime(),
-        var start: CalendarDateTime = CalendarDateTime(),
-        var description: String = "",
-        var location: String = "",
-        var organizer: String = "",
-        var status: String = "",
-        var summary: String = ""
-    ) : BarcodeInfo() {
+    class CalendarEvent : BarcodeInfo() {
 
         companion object {
             private const val END = "end"
@@ -303,7 +341,16 @@ sealed class BarcodeInfo {
             private const val SUMMARY = "summary"
         }
 
+        var end: CalendarDateTime = CalendarDateTime()
+        var start: CalendarDateTime = CalendarDateTime()
+        var description: String = ""
+        var location: String = ""
+        var organizer: String = ""
+        var status: String = ""
+        var summary: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(END, end.toJson { j, c -> c.save(j) })
             json.put(START, start.toJson { j, c -> c.save(j) })
             json.put(DESCRIPTION, description)
@@ -314,6 +361,7 @@ sealed class BarcodeInfo {
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             end = CalendarDateTime.createBy(json.optJSONObject(END) ?: JSONObject())
             start = CalendarDateTime.createBy(json.optJSONObject(START) ?: JSONObject())
             description = json.optString(DESCRIPTION)
@@ -324,12 +372,7 @@ sealed class BarcodeInfo {
         }
     }
 
-    class Email @JvmOverloads constructor(
-        var type: Type = Type.UNKNOWN,
-        var address: String = "",
-        var body: String = "",
-        var subject: String = ""
-    ) : BarcodeInfo() {
+    class Email : BarcodeInfo() {
 
         companion object {
             internal fun createBy(json: JSONObject): Email {
@@ -345,6 +388,11 @@ sealed class BarcodeInfo {
 
         }
 
+        var type: Type = Type.UNKNOWN
+        var address: String = ""
+        var body: String = ""
+        var subject: String = ""
+
         enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
             UNKNOWN(Barcode.Email.TYPE_UNKNOWN, ""),
             WORK(Barcode.Email.TYPE_WORK, "WORK"),
@@ -352,6 +400,7 @@ sealed class BarcodeInfo {
         }
 
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(TYPE, type.proto)
             json.put(ADDRESS, address)
             json.put(BODY, body)
@@ -359,6 +408,7 @@ sealed class BarcodeInfo {
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             val typeProto = json.optString(TYPE) ?: ""
             type = Type.values().find { it.proto == typeProto } ?: Type.UNKNOWN
             address = json.optString(ADDRESS)
@@ -368,32 +418,31 @@ sealed class BarcodeInfo {
 
     }
 
-    class GeoPoint @JvmOverloads constructor(
-        var lat: Double = 0.0,
-        var lng: Double = 0.0
-    ) : BarcodeInfo() {
+    class GeoPoint : BarcodeInfo() {
 
         companion object {
             private const val LAT = "lat"
             private const val LNG = "lng"
         }
 
+        var lat: Double = 0.0
+        var lng: Double = 0.0
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(LAT, lat)
             json.put(LNG, lng)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             lat = json.optDouble(LAT, 0.0)
             lng = json.optDouble(LNG, 0.0)
         }
 
     }
 
-    class Phone @JvmOverloads constructor(
-        var type: Type = Type.UNKNOWN,
-        var number: String = ""
-    ) : BarcodeInfo() {
+    class Phone : BarcodeInfo() {
 
         companion object {
             internal fun createBy(json: JSONObject): Phone {
@@ -407,6 +456,9 @@ sealed class BarcodeInfo {
 
         }
 
+        var type: Type = Type.UNKNOWN
+        var number: String = ""
+
         enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
             UNKNOWN(Barcode.Phone.TYPE_UNKNOWN, ""),
             WORK(Barcode.Phone.TYPE_WORK, "WORK"),
@@ -416,64 +468,65 @@ sealed class BarcodeInfo {
         }
 
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(TYPE, type.proto)
             json.put(NUMBER, number)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             val typeProto = json.optString(TYPE) ?: ""
             type = Type.values().find { it.proto == typeProto } ?: Type.UNKNOWN
             number = json.optString(NUMBER)
         }
     }
 
-    class Sms @JvmOverloads constructor(
-        var message: String = "",
-        var phoneNumber: String = ""
-    ) : BarcodeInfo() {
+    class Sms : BarcodeInfo() {
 
         companion object {
             private const val MESSAGE = "message"
             private const val PHONE_NUMBER = "phoneNumber"
         }
 
+        var message: String = ""
+        var phoneNumber: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(MESSAGE, message)
             json.put(PHONE_NUMBER, phoneNumber)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             message = json.optString(MESSAGE) ?: ""
             phoneNumber = json.optString(PHONE_NUMBER) ?: ""
         }
     }
 
-    class Url @JvmOverloads constructor(
-        var title: String = "",
-        var url: String = ""
-    ) : BarcodeInfo() {
+    class Url : BarcodeInfo() {
         companion object {
             private const val TITLE = "title"
             private const val URL = "url"
         }
 
+        var title: String = ""
+        var url: String = ""
+
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(TITLE, title)
             json.put(URL, url)
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             title = json.optString(TITLE) ?: ""
             url = json.optString(URL) ?: ""
         }
     }
 
-    class Wifi @JvmOverloads constructor(
-        var encryptionType: EncryptionType = EncryptionType.OPEN,
-        var password: String = "",
-        var ssid: String = "",
-        var username: String = "",
-    ) : BarcodeInfo() {
+    class Wifi : BarcodeInfo() {
 
         companion object {
             private const val ENCRYPTION_TYPE = "encryptionType"
@@ -482,6 +535,11 @@ sealed class BarcodeInfo {
             private const val USERNAME = "username"
         }
 
+        var encryptionType: EncryptionType = EncryptionType.OPEN
+        var password: String = ""
+        var ssid: String = ""
+        var username: String = ""
+
         enum class EncryptionType(override val key: Int = 0, val proto: String) : KeyEnum {
             OPEN(Barcode.WiFi.TYPE_OPEN, ""),
             WEP(Barcode.WiFi.TYPE_WEP, "WEP"),
@@ -489,6 +547,7 @@ sealed class BarcodeInfo {
         }
 
         override fun save(json: JSONObject) {
+            super.save(json)
             json.put(ENCRYPTION_TYPE, encryptionType.proto)
             json.put(PASSWORD, password)
             json.put(SSID, ssid)
@@ -496,6 +555,7 @@ sealed class BarcodeInfo {
         }
 
         override fun resume(json: JSONObject) {
+            super.resume(json)
             val typeProto = json.optString(ENCRYPTION_TYPE) ?: ""
             encryptionType =
                 EncryptionType.values().find { it.proto == typeProto } ?: EncryptionType.OPEN
@@ -666,6 +726,12 @@ class BarcodeResult(
 }
 
 internal object BarcodeResultBuilder {
+
+    private inline fun <reified T : Any> ArrayList<T>.reset(list: List<T>) {
+        this.clear()
+        this.addAll(list)
+    }
+
     fun createCodeDescribeBy(code: Barcode): CodeDescribe {
         return CodeDescribe(
             code.boundingBox ?: Rect(),
@@ -678,24 +744,24 @@ internal object BarcodeResultBuilder {
 
     fun createContactBy(code: Barcode): BarcodeInfo.Contact {
         val info = code.contactInfo
-        val name = info?.name
-        return BarcodeInfo.Contact(
+        val nameInfo = info?.name
+        return BarcodeInfo.Contact().apply {
             name = BarcodeInfo.PersonName(
-                first = name?.first ?: "",
-                formattedName = name?.formattedName ?: "",
-                last = name?.last ?: "",
-                middle = name?.middle ?: "",
-                prefix = name?.prefix ?: "",
-                pronunciation = name?.pronunciation ?: "",
-                suffix = name?.suffix ?: ""
-            ),
-            organization = info?.organization ?: "",
-            title = info?.title ?: "",
-            addresses = formatAddress(info?.addresses),
-            emails = formatEmail(info?.emails),
-            phones = formatPhones(info?.phones),
-            urls = ArrayList(info?.urls ?: emptyList())
-        ).putInfoRaw(code)
+                first = nameInfo?.first ?: "",
+                formattedName = nameInfo?.formattedName ?: "",
+                last = nameInfo?.last ?: "",
+                middle = nameInfo?.middle ?: "",
+                prefix = nameInfo?.prefix ?: "",
+                pronunciation = nameInfo?.pronunciation ?: "",
+                suffix = nameInfo?.suffix ?: ""
+            )
+            organization = info?.organization ?: ""
+            title = info?.title ?: ""
+            addresses.reset(formatAddress(info?.addresses))
+            emails.reset(formatEmail(info?.emails))
+            phones.reset(formatPhones(info?.phones))
+            urls.reset(ArrayList(info?.urls ?: emptyList()))
+        }.putInfoRaw(code)
     }
 
     fun createPhoneBy(code: Barcode): BarcodeInfo.Phone {
@@ -712,103 +778,111 @@ internal object BarcodeResultBuilder {
         code: Barcode
     ): BarcodeInfo.Wifi {
         val wifi = code.wifi
-        return BarcodeInfo.Wifi(
+        return BarcodeInfo.Wifi().apply {
             encryptionType = BarcodeInfo.Wifi.EncryptionType.values()
                 .findByCode(wifi?.encryptionType) {
                     BarcodeInfo.Wifi.EncryptionType.OPEN
-                },
-            password = wifi?.password ?: "",
-            ssid = wifi?.ssid ?: "",
+                }
+            password = wifi?.password ?: ""
+            ssid = wifi?.ssid ?: ""
             username = ""
-        ).putInfoRaw(code)
+        }.putInfoRaw(code)
     }
 
     fun createUrlBy(
         code: Barcode
     ): BarcodeInfo.Url {
-        val url = code.url
-        return BarcodeInfo.Url(
-            title = url?.title ?: "",
-            url = url?.url ?: ""
-        ).putInfoRaw(code)
+        val urlInfo = code.url
+        return BarcodeInfo.Url().apply {
+            title = urlInfo?.title ?: ""
+            url = urlInfo?.url ?: ""
+        }.putInfoRaw(code)
     }
 
     fun createSmsBy(
         code: Barcode
     ): BarcodeInfo.Sms {
         val sms = code.sms
-        return BarcodeInfo.Sms(
-            message = sms?.message ?: "",
+        return BarcodeInfo.Sms().apply {
+            message = sms?.message ?: ""
             phoneNumber = sms?.phoneNumber ?: ""
-        ).putInfoRaw(code)
+        }.putInfoRaw(code)
     }
 
     fun createGeoBy(
         code: Barcode
     ): BarcodeInfo.GeoPoint {
         val geoPoint = code.geoPoint
-        return BarcodeInfo.GeoPoint(
-            lat = geoPoint?.lat ?: 0.0,
+        return BarcodeInfo.GeoPoint().apply {
+            lat = geoPoint?.lat ?: 0.0
             lng = geoPoint?.lng ?: 0.0
-        ).putInfoRaw(code)
+        }.putInfoRaw(code)
     }
 
     fun createCalendarEventBy(
         code: Barcode
     ): BarcodeInfo.CalendarEvent {
         val calendarEvent = code.calendarEvent
-        return BarcodeInfo.CalendarEvent(
-            end = createCalendarDateTime(calendarEvent?.end),
-            start = createCalendarDateTime(calendarEvent?.start),
-            description = calendarEvent?.description ?: "",
-            location = calendarEvent?.location ?: "",
-            organizer = calendarEvent?.organizer ?: "",
-            status = calendarEvent?.status ?: "",
+        return BarcodeInfo.CalendarEvent().apply {
+            end = createCalendarDateTime(calendarEvent?.end)
+            start = createCalendarDateTime(calendarEvent?.start)
+            description = calendarEvent?.description ?: ""
+            location = calendarEvent?.location ?: ""
+            organizer = calendarEvent?.organizer ?: ""
+            status = calendarEvent?.status ?: ""
             summary = calendarEvent?.summary ?: ""
-        ).putInfoRaw(code)
+        }.putInfoRaw(code)
     }
 
     fun createDriverLicenseBy(
         code: Barcode
     ): BarcodeInfo.DriverLicense {
         val license = code.driverLicense
-        return BarcodeInfo.DriverLicense(
-            addressCity = license?.addressCity ?: "",
-            addressState = license?.addressState ?: "",
-            addressStreet = license?.addressStreet ?: "",
-            addressZip = license?.addressZip ?: "",
-            birthDate = license?.birthDate ?: "",
-            documentType = license?.documentType ?: "",
-            expiryDate = license?.expiryDate ?: "",
-            firstName = license?.firstName ?: "",
-            gender = license?.gender ?: "",
-            issueDate = license?.issueDate ?: "",
-            issuingCountry = license?.issuingCountry ?: "",
-            lastName = license?.lastName ?: "",
-            licenseNumber = license?.licenseNumber ?: "",
+        return BarcodeInfo.DriverLicense().apply {
+            addressCity = license?.addressCity ?: ""
+            addressState = license?.addressState ?: ""
+            addressStreet = license?.addressStreet ?: ""
+            addressZip = license?.addressZip ?: ""
+            birthDate = license?.birthDate ?: ""
+            documentType = license?.documentType ?: ""
+            expiryDate = license?.expiryDate ?: ""
+            firstName = license?.firstName ?: ""
+            gender = license?.gender ?: ""
+            issueDate = license?.issueDate ?: ""
+            issuingCountry = license?.issuingCountry ?: ""
+            lastName = license?.lastName ?: ""
+            licenseNumber = license?.licenseNumber ?: ""
             middleName = license?.middleName ?: ""
-        ).putInfoRaw(code)
+        }.putInfoRaw(code)
     }
 
     fun createUnknown(code: Barcode): BarcodeInfo.Unknown {
-        return BarcodeInfo.Unknown(code.rawValue ?: "").putInfoRaw(code)
+        return BarcodeInfo.Unknown().apply {
+            value = code.rawValue ?: ""
+        }.putInfoRaw(code)
     }
 
     fun createIsbn(code: Barcode): BarcodeInfo.Isbn {
-        return BarcodeInfo.Isbn(code.displayValue ?: "").putInfoRaw(code)
+        return BarcodeInfo.Isbn().apply {
+            value = code.rawValue ?: ""
+        }.putInfoRaw(code)
     }
 
     fun createProduct(code: Barcode): BarcodeInfo.Product {
-        return BarcodeInfo.Product(code.displayValue ?: "").putInfoRaw(code)
+        return BarcodeInfo.Product().apply {
+            value = code.rawValue ?: ""
+        }.putInfoRaw(code)
     }
 
     fun createText(code: Barcode): BarcodeInfo.Text {
-        return BarcodeInfo.Text(code.displayValue ?: "").putInfoRaw(code)
+        return BarcodeInfo.Text().apply {
+            value = code.rawValue ?: ""
+        }.putInfoRaw(code)
     }
 
     private inline fun <reified T : BarcodeInfo> T.putInfoRaw(code: Barcode): T {
         val info = this
-        info.rawValue = code.rawValue ?: ""
+        info.setRaw(code.rawValue ?: "", code.findFormat())
         return info
     }
 
@@ -839,12 +913,12 @@ internal object BarcodeResultBuilder {
     }
 
     private fun createPhoneBy(phone: Barcode.Phone?): BarcodeInfo.Phone {
-        return BarcodeInfo.Phone(
+        return BarcodeInfo.Phone().apply {
             type = BarcodeInfo.Phone.Type.values().findByCode(phone?.type) {
                 BarcodeInfo.Phone.Type.UNKNOWN
-            },
+            }
             number = phone?.number ?: ""
-        )
+        }
     }
 
     private fun formatEmail(
@@ -862,14 +936,14 @@ internal object BarcodeResultBuilder {
     private fun createEmailBy(
         email: Barcode.Email?,
     ): BarcodeInfo.Email {
-        return BarcodeInfo.Email(
+        return BarcodeInfo.Email().apply {
             type = BarcodeInfo.Email.Type.values().findByCode(email?.type) {
                 BarcodeInfo.Email.Type.UNKNOWN
-            },
-            address = email?.address ?: "",
-            body = email?.body ?: "",
+            }
+            address = email?.address ?: ""
+            body = email?.body ?: ""
             subject = email?.subject ?: ""
-        )
+        }
     }
 
     private fun formatAddress(list: List<Barcode.Address?>?): ArrayList<BarcodeInfo.Address> {
@@ -902,7 +976,7 @@ internal object BarcodeResultBuilder {
         return def()
     }
 
-    fun Barcode.findFormat(): BarcodeFormat {
+    private fun Barcode.findFormat(): BarcodeFormat {
         val code = this.format
         BarcodeFormat.values().forEach {
             if (it.code == code) {
