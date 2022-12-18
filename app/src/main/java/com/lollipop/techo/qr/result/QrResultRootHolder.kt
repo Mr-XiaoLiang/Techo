@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
+import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.techo.databinding.ItemQrResultRootBinding
 import com.lollipop.techo.qr.QrCreateActivity
@@ -49,8 +50,12 @@ abstract class QrResultRootHolder<B : ViewBinding>(
     }
 
     protected open fun showQr() {
-        val rawValue = currentInfo?.rawValue ?: return
-        QrCreateActivity.start(itemView.context, rawValue)
+        val info = currentInfo ?: return
+        var format = info.format
+        if (format.zxing.isFailure) {
+            format = BarcodeFormat.QR_CODE
+        }
+        QrCreateActivity.start(itemView.context, info.getBarcodeValue(), format)
     }
 
     class ResultItemView<C : ViewBinding>(
