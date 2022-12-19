@@ -37,7 +37,7 @@ abstract class QrResultRootHolder<B : ViewBinding>(
         onBind(info)
     }
 
-    abstract fun onBind(info: BarcodeInfo)
+    protected abstract fun onBind(info: BarcodeInfo)
 
     protected inline fun <reified T : BarcodeInfo> BarcodeInfo.bindContent(
         block: B.(T) -> Unit
