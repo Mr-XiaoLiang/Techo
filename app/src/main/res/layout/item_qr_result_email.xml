@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp">
+
+    <TextView
+        android:id="@+id/emailSubjectView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_gray_10"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="@string/app_name" />
+
+
+    <TextView
+        android:id="@+id/emailAddressView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/text_gray_9"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        tools:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/emailBodyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/text_gray_7"
+        android:textSize="14sp"
+        tools:text="@string/app_name" />
+
+</LinearLayout>

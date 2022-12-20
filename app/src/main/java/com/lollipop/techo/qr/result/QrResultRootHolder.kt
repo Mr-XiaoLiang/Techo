@@ -1,12 +1,16 @@
 package com.lollipop.techo.qr.result
 
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.lollipop.base.util.Clipboard
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.comm.BarcodeInfo
+import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ItemQrResultRootBinding
 import com.lollipop.techo.qr.QrCreateActivity
 
@@ -24,7 +28,8 @@ abstract class QrResultRootHolder<B : ViewBinding>(
 
     }
 
-    private var currentInfo: BarcodeInfo? = null
+    protected var currentInfo: BarcodeInfo? = null
+        private set
 
     init {
         binding.card.qrBtn.onClick {
@@ -34,20 +39,18 @@ abstract class QrResultRootHolder<B : ViewBinding>(
 
     fun bind(info: BarcodeInfo) {
         currentInfo = info
-        onBind(info)
+        onBind()
     }
 
-    protected abstract fun onBind(info: BarcodeInfo)
-
-    protected inline fun <reified T : BarcodeInfo> BarcodeInfo.bindContent(
-        block: B.(T) -> Unit
-    ) {
-        val content = binding.content
-        val info = this
+    protected inline fun <reified T : BarcodeInfo> typedInfo(): T? {
+        val info = currentInfo
         if (info is T) {
-            block(content, info)
+            return info
         }
+        return null
     }
+
+    protected abstract fun onBind()
 
     protected open fun showQr() {
         val info = currentInfo ?: return
@@ -56,6 +59,11 @@ abstract class QrResultRootHolder<B : ViewBinding>(
             format = BarcodeFormat.QR_CODE
         }
         QrCreateActivity.start(itemView.context, info.getBarcodeValue(), format)
+    }
+
+    protected fun View.bindClickByCopy(value: () -> String) {
+        Clipboard.copy(itemView.context, value = value())
+        Toast.makeText(itemView.context, R.string.copied, Toast.LENGTH_SHORT).show()
     }
 
     class ResultItemView<C : ViewBinding>(

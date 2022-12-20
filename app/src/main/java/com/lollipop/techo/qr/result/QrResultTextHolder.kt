@@ -1,11 +1,7 @@
 package com.lollipop.techo.qr.result
 
 import android.view.ViewGroup
-import android.widget.Toast
-import com.lollipop.base.util.Clipboard
-import com.lollipop.base.util.onClick
 import com.lollipop.qr.comm.BarcodeInfo
-import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ItemQrResultTextBinding
 
 class QrResultTextHolder(
@@ -18,35 +14,36 @@ class QrResultTextHolder(
         }
     }
 
-    private var textValue = ""
-
     init {
-        binding.content.textValueView.onClick {
-            onTextViewClick()
+        binding.content.textValueView.bindClickByCopy {
+            getTextValue()
         }
     }
 
-    private fun onTextViewClick() {
-        Clipboard.copy(itemView.context, value = textValue)
-        Toast.makeText(itemView.context, R.string.copied, Toast.LENGTH_SHORT).show()
+    private fun getTextValue(): String {
+        val info = currentInfo ?: return ""
+        return when (info) {
+            is BarcodeInfo.Text -> {
+                info.value
+            }
+            is BarcodeInfo.Unknown -> {
+                info.value
+            }
+            is BarcodeInfo.Isbn -> {
+                info.value
+            }
+            is BarcodeInfo.Product -> {
+                info.value
+            }
+            else -> {
+                info.rawValue
+            }
+        }
     }
 
-    override fun onBind(info: BarcodeInfo) {
-        info.bindContent<BarcodeInfo.Text> {
-            textValue = it.value
-            textValueView.text = it.value
-        }
-        info.bindContent<BarcodeInfo.Unknown> {
-            textValue = it.value
-            textValueView.text = it.value
-        }
-        info.bindContent<BarcodeInfo.Isbn> {
-            textValue = it.value
-            textValueView.text = it.value
-        }
-        info.bindContent<BarcodeInfo.Product> {
-            textValue = it.value
-            textValueView.text = it.value
+    override fun onBind() {
+        with(binding.content) {
+            textValueView.text = getTextValue()
         }
     }
 
