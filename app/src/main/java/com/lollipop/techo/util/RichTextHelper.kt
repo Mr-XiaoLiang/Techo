@@ -44,36 +44,16 @@ class RichTextHelper {
         private fun SpannableStringBuilder.addSpan(
             start: Int,
             length: Int,
-            spans: Array<out Any>
+            span: Any
         ): SpannableStringBuilder {
             val startIndex = min(this.length, max(start, 0))
             val endIndex = min(this.length, max(length + startIndex, 0))
-            for (span in spans) {
-                try {
-                    setSpan(span, startIndex, endIndex, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                }
+            try {
+                setSpan(span, startIndex, endIndex, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
             return this
-        }
-
-        fun textSpanBuilder(
-            span: TextSpan,
-            builder: SpannableStringBuilder
-        ): (impl: Array<Any>) -> Unit {
-            return {
-                builder.addSpan(span.start, span.length, it)
-            }
-        }
-
-        fun textSpanSimpleBuilder(
-            span: TextSpan,
-            builder: SpannableStringBuilder
-        ): (impl: Any) -> Unit {
-            return {
-                builder.addSpan(span.start, span.length, arrayOf(it))
-            }
         }
 
     }
@@ -170,11 +150,11 @@ class RichTextHelper {
             }
         }
 
-        val spanBuilder = SpannableStringBuilder(allStr)
+        val spanBuilder = startStackFlow(allStr)
 
         if (option.font.isText || !info.spanEnable) {
             // 添加到集合中
-            addSpan(spanBuilder)
+            spanBuilder.commit()
             return this
         }
 
@@ -183,67 +163,57 @@ class RichTextHelper {
         }
 
         // 添加到集合中
-        addSpan(spanBuilder)
-        return this
+        return spanBuilder.commit()
     }
 
-    private fun addSpan(spanBuilder: SpannableStringBuilder, span: TextSpan) {
-        val addTextSpan = textSpanSimpleBuilder(span, spanBuilder)
+    private fun addSpan(spanBuilder: StackedBuilder, span: TextSpan) {
         if (span.hasStyle(FontStyle.FontSize)) {
             // 添加字体大小的Span
-            addTextSpan(AbsoluteSizeSpan(span.fontSize, true))
+            spanBuilder.fontSize(span.fontSize, true)
         }
         if (span.hasStyle(FontStyle.Link) && span.link.isNotEmpty()) {
-            //设置 link
-            hasLink = true
             // 添加一个点击的span
-            addTextSpan(ClickSpan(span.color, ClickWrapper(span.link, ClickEvent.LINK, ::onClick)))
+            spanBuilder.onClick(
+                data = span.link,
+                linkColor = span.color,
+                event = ClickEvent.LINK,
+                callback = ::onClick
+            )
         } else if (span.hasStyle(FontStyle.Color)) {
             // 添加一个前景色的span
-            addTextSpan(ForegroundColorSpan(span.color))
+            spanBuilder.color(span.color)
         }
+
         //设置 粗体& 斜体
-        val typeface = when {
-            FontStyle.hasAll(span.style, FontStyle.Bold, FontStyle.Italic) -> {
-                Typeface.BOLD_ITALIC
-            }
-            FontStyle.has(span.style, FontStyle.Bold) -> {
-                Typeface.BOLD
-            }
-            FontStyle.has(span.style, FontStyle.Italic) -> {
-                Typeface.ITALIC
-            }
-            else -> {
-                Typeface.NORMAL
-            }
-        }
-        if (typeface != Typeface.NORMAL) {
-            addTextSpan(StyleSpan(typeface))
+        val bold = FontStyle.has(span.style, FontStyle.Bold)
+        val italic = FontStyle.has(span.style, FontStyle.Italic)
+        if (bold || italic) {
+            spanBuilder.textStyle(bold, italic)
         }
 
         // 设置 下划线
         if (span.hasStyle(FontStyle.Underline)) {
-            addTextSpan(UnderlineSpan())
+            spanBuilder.underline()
         }
 
         // 设置 删除线
         if (span.hasStyle(FontStyle.Strikethrough)) {
-            addTextSpan(StrikethroughSpan())
+            spanBuilder.strikethrough()
         }
 
         // 设置 上标
         if (span.hasStyle(FontStyle.Superscript)) {
-            addTextSpan(SuperscriptSpan())
+            spanBuilder.superscript()
         }
 
         // 设置 下标
         if (span.hasStyle(FontStyle.Subscript)) {
-            addTextSpan(SubscriptSpan())
+            spanBuilder.subscript()
         }
 
         // 设置模糊
         if (span.hasStyle(FontStyle.Blur)) {
-            addTextSpan(MaskFilterSpan(BlurMaskFilter(20F, BlurMaskFilter.Blur.NORMAL)))
+            spanBuilder.blur()
         }
     }
 
@@ -291,6 +261,31 @@ class RichTextHelper {
     fun optional(value: Boolean, callback: RichTextHelper.() -> Unit): RichTextHelper {
         if (value) {
             callback(this)
+        }
+        return this
+    }
+
+    /**
+     * 使用一个对象，但是期望它不是空的
+     * 因此当此对象不为空的时候，会在回调函数中出现
+     */
+    inline fun <reified T : Any> usIt(
+        value: T?,
+        callback: RichTextHelper.(T) -> Unit
+    ): RichTextHelper {
+        if (value != null) {
+            callback(this, value)
+        }
+        return this
+    }
+
+    /**
+     * 使用一个字符串，但是期望它不是空的
+     * 因此当此字符串不为空的时候，会在回调函数中出现
+     */
+    fun usStr(value: String?, callback: RichTextHelper.(String) -> Unit): RichTextHelper {
+        if (value != null && value.isNotEmpty()) {
+            callback(this, value)
         }
         return this
     }
@@ -356,6 +351,176 @@ class RichTextHelper {
     }
 
     /**
+     * 开启一个堆叠富文本流程
+     */
+    fun startStackFlow(value: String): StackedBuilder {
+        return StackedBuilder(this, value)
+    }
+
+    class StackedBuilder(
+        private val richTextHelper: RichTextHelper,
+        private val value: String
+    ) {
+        private val spanBuilder = SpannableStringBuilder(value)
+        private val length = value.length
+
+        /**
+         * 设置自定义的Span
+         */
+        fun addSpan(span: Any, start: Int = 0, end: Int = length): StackedBuilder {
+            spanBuilder.addSpan(start, end, span)
+            return this
+        }
+
+        /**
+         * 设置文字大小
+         */
+        fun fontSize(
+            size: Int,
+            dip: Boolean = true,
+            start: Int = 0,
+            end: Int = length
+        ): StackedBuilder {
+            return addSpan(AbsoluteSizeSpan(size, dip), start, end)
+        }
+
+        /**
+         * 设置携带数据的点击
+         */
+        fun <T : Any> clickAny(
+            data: T,
+            linkColor: Int = 0,
+            event: ClickEvent = ClickEvent.LINK,
+            start: Int = 0,
+            end: Int = length,
+            callback: (T, ClickEvent) -> Unit,
+        ): StackedBuilder {
+            richTextHelper.hasLink = true
+            return addSpan(ClickSpan(linkColor, ClickWrapper(data, event, callback)), start, end)
+        }
+
+        /**
+         * 设置文本的点击
+         */
+        fun onClick(
+            data: String = value,
+            linkColor: Int = 0,
+            event: ClickEvent = ClickEvent.LINK,
+            start: Int = 0,
+            end: Int = length,
+            callback: (String, ClickEvent) -> Unit,
+        ): StackedBuilder {
+            return clickAny(data, linkColor, event, start, end, callback)
+        }
+
+        /**
+         * 设置前景颜色
+         */
+        fun color(
+            color: Int,
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(ForegroundColorSpan(color), start, end)
+        }
+
+        /**
+         * 设置背景颜色
+         */
+        fun backgroundColor(
+            color: Int,
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(BackgroundColorSpan(color), start, end)
+        }
+
+        /**
+         * 设置字体样式
+         */
+        fun textStyle(
+            bold: Boolean,
+            italic: Boolean,
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            val typeface = when {
+                bold && italic -> {
+                    Typeface.BOLD_ITALIC
+                }
+                bold -> {
+                    Typeface.BOLD
+                }
+                italic -> {
+                    Typeface.ITALIC
+                }
+                else -> {
+                    Typeface.NORMAL
+                }
+            }
+            return addSpan(StyleSpan(typeface), start, end)
+        }
+
+        /**
+         * 设置下划线
+         */
+        fun underline(
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(UnderlineSpan(), start, end)
+        }
+
+        /**
+         * 设置 删除线
+         */
+        fun strikethrough(
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(StrikethroughSpan(), start, end)
+        }
+
+        /**
+         * 设置 上标
+         */
+        fun superscript(
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(SuperscriptSpan(), start, end)
+        }
+
+        /**
+         * 设置 下标
+         */
+        fun subscript(
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(SubscriptSpan(), start, end)
+        }
+
+        /**
+         * 设置模糊
+         */
+        fun blur(
+            radius: Float = 20F,
+            style: BlurMaskFilter.Blur = BlurMaskFilter.Blur.NORMAL,
+            start: Int = 0,
+            end: Int = length,
+        ): StackedBuilder {
+            return addSpan(MaskFilterSpan(BlurMaskFilter(radius, style)), start, end)
+        }
+
+        fun commit(): RichTextHelper {
+            // 添加到集合中
+            richTextHelper.addSpan(spanBuilder)
+            return richTextHelper
+        }
+    }
+
+    /**
      * 聚合的点击事件接口
      */
     fun interface OnClickListener {
@@ -393,8 +558,9 @@ class RichTextHelper {
 
     }
 
-    enum class ClickEvent {
-        LINK,
+    sealed class ClickEvent {
+        object LINK : ClickEvent()
+        class Custom(val flag: String) : ClickEvent()
     }
 
     /**
