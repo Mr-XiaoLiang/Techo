@@ -714,6 +714,34 @@ sealed class BarcodeInfo {
 
         }
 
+        fun getDisplayValue(): String {
+            return if (formattedName.isNotEmpty()) {
+                formattedName
+            } else {
+                val builder = StringBuilder()
+                    .appendByNotEmpty(prefix)
+                    .appendByNotEmpty(first)
+                    .appendByNotEmpty(middle)
+                    .appendByNotEmpty(last)
+                    .appendByNotEmpty(suffix)
+                if (pronunciation.isNotEmpty()) {
+                    builder.append("[").append(pronunciation).append("]")
+                }
+                builder.toString()
+            }
+        }
+
+        private fun StringBuilder.appendByNotEmpty(value: String): StringBuilder {
+            val builder = this
+            if (value.isNotEmpty()) {
+                if (builder.isNotEmpty()) {
+                    builder.append(" ")
+                }
+                builder.append(value)
+            }
+            return builder
+        }
+
         internal fun save(json: JSONObject) {
             json.put(FIRST, first)
             json.put(FORMATTED_NAME, formattedName)

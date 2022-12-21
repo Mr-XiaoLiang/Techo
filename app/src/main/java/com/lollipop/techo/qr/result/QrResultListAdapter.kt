@@ -11,6 +11,7 @@ class QrResultListAdapter(
     companion object {
         private const val TYPE_TEXT = 0
         private const val TYPE_WIFI = 1
+        private const val TYPE_EMAIL = 2
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QrResultRootHolder<*> {
@@ -30,7 +31,9 @@ class QrResultListAdapter(
             is BarcodeInfo.CalendarEvent -> TODO()
             is BarcodeInfo.Contact -> TODO()
             is BarcodeInfo.DriverLicense -> TODO()
-            is BarcodeInfo.Email -> TODO()
+            is BarcodeInfo.Email -> {
+                TYPE_EMAIL
+            }
             is BarcodeInfo.GeoPoint -> TODO()
             is BarcodeInfo.Phone -> TODO()
             is BarcodeInfo.Sms -> TODO()

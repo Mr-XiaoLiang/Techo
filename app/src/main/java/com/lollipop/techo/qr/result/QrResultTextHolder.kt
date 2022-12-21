@@ -2,21 +2,15 @@ package com.lollipop.techo.qr.result
 
 import android.view.ViewGroup
 import com.lollipop.qr.comm.BarcodeInfo
-import com.lollipop.techo.databinding.ItemQrResultTextBinding
+import com.lollipop.techo.util.RichTextHelper
 
 class QrResultTextHolder(
-    binding: ResultItemView<ItemQrResultTextBinding>
-) : QrResultRootHolder<ItemQrResultTextBinding>(binding) {
+    parent: ViewGroup
+) : QrResultBaseHolder(parent) {
 
     companion object {
         fun create(parent: ViewGroup): QrResultTextHolder {
-            return QrResultTextHolder(parent.bindContent())
-        }
-    }
-
-    init {
-        binding.content.textValueView.bindClickByCopy {
-            getTextValue()
+            return QrResultTextHolder(parent)
         }
     }
 
@@ -42,9 +36,12 @@ class QrResultTextHolder(
     }
 
     override fun onBind() {
-        with(binding.content) {
-            textValueView.text = getTextValue()
-        }
+        RichTextHelper.startRichFlow()
+            .startStackFlow(getTextValue())
+            .fontSize(22)
+            .onClick { s, _ -> copyValue(s) }
+            .commit()
+            .intoContent()
     }
 
 }

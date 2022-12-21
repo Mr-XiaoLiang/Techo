@@ -2,33 +2,31 @@ package com.lollipop.techo.qr.result
 
 import android.view.ViewGroup
 import com.lollipop.qr.comm.BarcodeInfo
-import com.lollipop.techo.databinding.ItemQrResultWifiBinding
+import com.lollipop.techo.util.RichTextHelper
 
 class QrResultWifiHolder(
-    binding: ResultItemView<ItemQrResultWifiBinding>
-) : QrResultRootHolder<ItemQrResultWifiBinding>(binding) {
+    parent: ViewGroup
+) : QrResultBaseHolder(parent) {
 
     companion object {
         fun create(parent: ViewGroup): QrResultWifiHolder {
-            return QrResultWifiHolder(parent.bindContent())
-        }
-    }
-
-    init {
-        binding.content.ssidValueView.bindClickByCopy {
-            typedInfo<BarcodeInfo.Wifi>()?.ssid ?: ""
-        }
-        binding.content.pwdValueView.bindClickByCopy {
-            typedInfo<BarcodeInfo.Wifi>()?.password ?: ""
+            return QrResultWifiHolder(parent)
         }
     }
 
     override fun onBind() {
         val info = typedInfo<BarcodeInfo.Wifi>() ?: return
-        with(binding.content) {
-            ssidValueView.text = info.ssid
-            pwdValueView.text = info.password
-        }
+        RichTextHelper.startRichFlow()
+            .startStackFlow(info.ssid)
+            .fontSize(26)
+            .onClick { s, _ -> copyValue(s) }
+            .commit()
+            .addInfo("\n")
+            .startStackFlow(info.password)
+            .fontSize(16)
+            .onClick { s, _ -> copyValue(s) }
+            .commit()
+            .intoContent()
     }
 
 }

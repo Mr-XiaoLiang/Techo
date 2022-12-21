@@ -354,20 +354,35 @@ class RichTextHelper {
      * 开启一个堆叠富文本流程
      */
     fun startStackFlow(value: String): StackedBuilder {
-        return StackedBuilder(this, value)
+        return StackedBuilder.create(this, value)
     }
 
-    class StackedBuilder(
+    class StackedBuilder private constructor(
         private val richTextHelper: RichTextHelper,
         private val value: String
     ) {
+        companion object {
+            @JvmStatic
+            internal fun create(richTextHelper: RichTextHelper, value: String): StackedBuilder {
+                return StackedBuilder(richTextHelper, value)
+            }
+        }
+
         private val spanBuilder = SpannableStringBuilder(value)
         private val length = value.length
+
+        val isEmpty: Boolean
+            get() {
+                return length == 0
+            }
 
         /**
          * 设置自定义的Span
          */
         fun addSpan(span: Any, start: Int = 0, end: Int = length): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             spanBuilder.addSpan(start, end, span)
             return this
         }
@@ -381,6 +396,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(AbsoluteSizeSpan(size, dip), start, end)
         }
 
@@ -395,6 +413,9 @@ class RichTextHelper {
             end: Int = length,
             callback: (T, ClickEvent) -> Unit,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             richTextHelper.hasLink = true
             return addSpan(ClickSpan(linkColor, ClickWrapper(data, event, callback)), start, end)
         }
@@ -410,6 +431,9 @@ class RichTextHelper {
             end: Int = length,
             callback: (String, ClickEvent) -> Unit,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return clickAny(data, linkColor, event, start, end, callback)
         }
 
@@ -421,6 +445,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(ForegroundColorSpan(color), start, end)
         }
 
@@ -432,6 +459,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(BackgroundColorSpan(color), start, end)
         }
 
@@ -444,6 +474,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             val typeface = when {
                 bold && italic -> {
                     Typeface.BOLD_ITALIC
@@ -468,6 +501,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(UnderlineSpan(), start, end)
         }
 
@@ -478,6 +514,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(StrikethroughSpan(), start, end)
         }
 
@@ -488,6 +527,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(SuperscriptSpan(), start, end)
         }
 
@@ -498,6 +540,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(SubscriptSpan(), start, end)
         }
 
@@ -510,6 +555,9 @@ class RichTextHelper {
             start: Int = 0,
             end: Int = length,
         ): StackedBuilder {
+            if (isEmpty) {
+                return this
+            }
             return addSpan(MaskFilterSpan(BlurMaskFilter(radius, style)), start, end)
         }
 
