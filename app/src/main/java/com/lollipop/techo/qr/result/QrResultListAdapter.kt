@@ -6,7 +6,7 @@ import com.lollipop.qr.comm.BarcodeInfo
 
 class QrResultListAdapter(
     private val data: List<BarcodeInfo>
-): RecyclerView.Adapter<QrResultRootHolder<*>>() {
+): RecyclerView.Adapter<QrResultBaseHolder>() {
 
     companion object {
         private const val TYPE_TEXT = 0
@@ -14,11 +14,11 @@ class QrResultListAdapter(
         private const val TYPE_EMAIL = 2
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QrResultRootHolder<*> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QrResultBaseHolder {
         TODO("Not yet implemented")
     }
 
-    override fun onBindViewHolder(holder: QrResultRootHolder<*>, position: Int) {
+    override fun onBindViewHolder(holder: QrResultBaseHolder, position: Int) {
         holder.bind(data[position])
     }
 

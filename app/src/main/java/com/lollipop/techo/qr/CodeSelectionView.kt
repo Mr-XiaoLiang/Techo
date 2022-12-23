@@ -80,7 +80,9 @@ class CodeSelectionView @JvmOverloads constructor(
                 Size(720, 1250),
                 listOf(
                     BarcodeWrapper(
-                        BarcodeInfo.Text("Text"),
+                        BarcodeInfo.Text().apply {
+                            value = "Text"
+                        },
                         CodeDescribe(
                             Rect(100, 100, 200, 200),
                             arrayOf(
