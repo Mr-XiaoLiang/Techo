@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,33 +7,27 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.lollipop.browser.view.PageGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="0px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/urlInput"
-            android:lines="1"
-            android:maxLines="1"/>
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Done"
-            android:id="@+id/doneBtn"/>
-    </LinearLayout>
-
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:id="@+id/progressBar"
-        android:max="100"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
-
-    <WebView
-        android:layout_width="match_parent"
+        android:id="@+id/pageGroup"
         android:layout_height="match_parent"
-        android:id="@+id/webView"/>
+        android:paddingTop="30dp"
+        android:paddingBottom="48dp">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_launcher_background"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_launcher_background"/>
+    </com.lollipop.browser.view.PageGroup>
 
-</LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:text="预览"
+        android:id="@+id/previewBtn"/>
+
+</FrameLayout>
