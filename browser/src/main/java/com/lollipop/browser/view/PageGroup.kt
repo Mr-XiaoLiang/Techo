@@ -5,6 +5,7 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -29,7 +30,6 @@ class PageGroup @JvmOverloads constructor(
 
     private var pageWidth = 0
     private var pageHeight = 0
-    private var previewOffsetX = 0F
 
     private val zoomHelper by lazy {
         ZoomHelper().onStart(::onZoomAnimationStart)
@@ -39,6 +39,18 @@ class PageGroup @JvmOverloads constructor(
 
     private val zoomInInterpolator = OvershootInterpolator()
     private val zoomOutInterpolator = AccelerateInterpolator()
+
+    private var pagePosition = 0
+    private var pageOffset = 0
+
+    private val pageSpaceWidth: Int
+        get() {
+            return if (isPreviewMode) {
+                (pageWidth * previewScale + previewInterval).toInt()
+            } else {
+                pageWidth
+            }
+        }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
@@ -62,18 +74,32 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        pageWidth = width - paddingLeft - paddingRight
+        pageHeight = height - paddingTop - paddingBottom
+        layoutPage()
+    }
 
-        val widthSize = width
-        val heightSize = height
-
+    private fun layoutPage() {
         var childLeft = paddingLeft
         val childTop = paddingTop
+        val spaceWidth = pageSpaceWidth
 
-        val childWidth = widthSize - paddingLeft - paddingRight
-        val childHeight = heightSize - paddingTop - paddingBottom
-        pageWidth = childWidth
-        pageHeight = childHeight
-        previewOffsetX = pageWidth * (1 - previewScale) * -1 + previewInterval
+        val childWidth: Int
+        val childHeight: Int
+
+        // 偏移到第一个的位置
+        childLeft -= pagePosition * spaceWidth
+        // 加上偏移到中间
+        if (isPreviewMode) {
+            childWidth = (pageWidth * previewScale).toInt()
+            childHeight = (pageHeight * previewScale).toInt()
+            childLeft += ((pageWidth - childWidth) * 0.5F).toInt()
+        } else {
+            childWidth = pageWidth
+            childHeight = pageHeight
+        }
+
+        childLeft -= pageOffset
 
         for (i in 0 until childCount) {
             getChildAt(i)?.layout(
@@ -82,11 +108,39 @@ class PageGroup @JvmOverloads constructor(
                 childLeft + childWidth,
                 childTop + childHeight
             )
-            childLeft += childWidth
-            if (isPreviewMode) {
-                childLeft += previewInterval
-            }
+            childLeft += spaceWidth
         }
+
+    }
+
+    fun scrollPage(position: Int, offset: Int) {
+        pagePosition = position
+        pageOffset = offset
+
+        var childLeft = paddingLeft
+        val spaceWidth = pageSpaceWidth
+        // 偏移到第一个的位置
+        childLeft -= position * spaceWidth
+        // 加上偏移到中间
+        if (isPreviewMode) {
+            childLeft += ((pageWidth * (1 - previewScale)) * 0.5F).toInt()
+        }
+        childLeft -= offset
+        for (i in 0 until childCount) {
+            getChildAt(i)?.let {
+                val off = childLeft - it.left
+                it.offsetLeftAndRight(off)
+            }
+            childLeft += spaceWidth
+        }
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (isPreviewMode) {
+            requestDisallowInterceptTouchEvent(true)
+            return true
+        }
+        return super.onInterceptTouchEvent(ev)
     }
 
     fun setMode(preview: Boolean) {
@@ -113,11 +167,13 @@ class PageGroup @JvmOverloads constructor(
             zoomOutInterpolator.getInterpolation(1 - p)
         }
         val scale = (1F - previewScale) * (1 - progress) + previewScale
+        val pageOffset = (pageSpaceWidth - pageWidth) * progress
+        val currentPosition = pagePosition
         for (i in 0 until childCount) {
             getChildAt(i)?.let {
                 it.scaleX = scale
                 it.scaleY = scale
-                it.translationX = (previewOffsetX * i) * progress
+                it.translationX = (pageOffset * (currentPosition - i))
             }
         }
     }

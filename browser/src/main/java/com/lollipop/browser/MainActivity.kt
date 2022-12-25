@@ -2,15 +2,10 @@ package com.lollipop.browser
 
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityMainBinding
-import com.lollipop.web.WebHelper
 import com.lollipop.web.WebHost
 
 class MainActivity : AppCompatActivity(), WebHost {
@@ -35,6 +30,7 @@ class MainActivity : AppCompatActivity(), WebHost {
 //            binding.urlInput.closeBoard()
 //            webHelper.loadUrl(binding.urlInput.text?.toString() ?: "")
 //        }
+        binding.pageGroup.scrollPage(1, 0)
         binding.pageGroup.previewInterval = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 20F, resources.displayMetrics
         ).toInt()
