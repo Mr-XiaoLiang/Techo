@@ -167,7 +167,8 @@ class PageGroup @JvmOverloads constructor(
             zoomOutInterpolator.getInterpolation(1 - p)
         }
         val scale = (1F - previewScale) * (1 - progress) + previewScale
-        val pageOffset = (pageSpaceWidth - pageWidth) * progress
+        val spaceWidth = pageWidth * previewScale + previewInterval
+        val pageOffset = (pageWidth - spaceWidth) * progress
         val currentPosition = pagePosition
         for (i in 0 until childCount) {
             getChildAt(i)?.let {
