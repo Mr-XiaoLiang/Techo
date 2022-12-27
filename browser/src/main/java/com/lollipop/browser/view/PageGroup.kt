@@ -198,8 +198,6 @@ class PageGroup @JvmOverloads constructor(
         var zoomOutValue = 1F
         var zoomInValue = 0F
 
-        var selectedPage = 0
-
         fun setInterpolator(interpolator: TimeInterpolator) {
             zoomAnimator.interpolator = interpolator
         }
