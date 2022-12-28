@@ -16,7 +16,7 @@ class PageGroup @JvmOverloads constructor(
 ) : ViewGroup(context, attributeSet) {
 
     var previewInterval = 0
-    var previewScale = 0.8F
+    var previewScale = 0.6F
 
     var animationDuration: Long
         get() {
@@ -136,6 +136,10 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (zoomHelper.isRunning) {
+            // 动画过程中不能操作
+            return true
+        }
         if (isPreviewMode) {
             requestDisallowInterceptTouchEvent(true)
             return true
@@ -197,6 +201,11 @@ class PageGroup @JvmOverloads constructor(
         private var onEndListener: (() -> Unit)? = null
         var zoomOutValue = 1F
         var zoomInValue = 0F
+
+        val isRunning: Boolean
+            get() {
+                return zoomAnimator.isRunning
+            }
 
         fun setInterpolator(interpolator: TimeInterpolator) {
             zoomAnimator.interpolator = interpolator
