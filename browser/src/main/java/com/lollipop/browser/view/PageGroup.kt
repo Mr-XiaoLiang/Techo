@@ -140,11 +140,29 @@ class PageGroup @JvmOverloads constructor(
             // 动画过程中不能操作
             return true
         }
-        if (isPreviewMode) {
-            requestDisallowInterceptTouchEvent(true)
+        if (isPreviewMode && ev?.actionMasked == MotionEvent.ACTION_DOWN) {
+            parent?.requestDisallowInterceptTouchEvent(true)
             return true
         }
         return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (zoomHelper.isRunning) {
+            // 动画过程中不能操作
+            return true
+        }
+        if (!isPreviewMode) {
+            return super.onTouchEvent(event)
+        }
+        when(event?.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {}
+            MotionEvent.ACTION_MOVE -> {}
+            MotionEvent.ACTION_POINTER_UP -> {}
+            MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_UP-> {}
+        }
+        return super.onTouchEvent(event)
     }
 
     fun setMode(preview: Boolean) {
