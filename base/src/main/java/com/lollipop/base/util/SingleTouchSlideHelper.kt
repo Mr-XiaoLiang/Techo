@@ -28,6 +28,7 @@ class SingleTouchSlideHelper(
     private val touchMoveListener = ListenerManager<OnTouchMoveListener>()
     private val touchOffsetListener = ListenerManager<OnTouchOffsetListener>()
     private val touchEndListener = ListenerManager<OnTouchEndListener>()
+    private val clickListener = ListenerManager<OnClickListener>()
 
     private var activeTouchId = SingleTouchHelper.POINT_ID_NONE
 
@@ -88,6 +89,11 @@ class SingleTouchSlideHelper(
 
     private fun onTouchEnd(isCancel: Boolean) {
         touchEndListener.invoke { it.onTouchEnd(isCancel) }
+        if (!isCancel && direction == Direction.PENDING) {
+            val x = touchHelper.x
+            val y = touchHelper.y
+            clickListener.invoke { it.onClick(x, y) }
+        }
     }
 
     fun addMoveListener(listener: OnTouchMoveListener) {
@@ -112,6 +118,14 @@ class SingleTouchSlideHelper(
 
     fun removeEndListener(listener: OnTouchEndListener) {
         touchEndListener.removeListener(listener)
+    }
+
+    fun addClickListener(listener: OnClickListener) {
+        clickListener.addListener(listener)
+    }
+
+    fun removeClickListener(listener: OnClickListener) {
+        clickListener.removeListener(listener)
     }
 
     private fun checkDirection() {
@@ -160,6 +174,10 @@ class SingleTouchSlideHelper(
 
     fun interface OnTouchEndListener {
         fun onTouchEnd(isCancel: Boolean)
+    }
+
+    fun interface OnClickListener {
+        fun onClick(x: Float, y: Float)
     }
 
 }
