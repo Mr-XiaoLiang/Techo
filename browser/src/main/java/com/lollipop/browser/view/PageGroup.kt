@@ -1,19 +1,23 @@
 package com.lollipop.browser.view
 
 import android.animation.Animator
-import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import com.lollipop.base.util.SingleTouchSlideHelper
 import kotlin.math.abs
 
 class PageGroup @JvmOverloads constructor(
     context: Context, attributeSet: AttributeSet? = null
-) : ViewGroup(context, attributeSet) {
+) : ViewGroup(context, attributeSet),
+    SingleTouchSlideHelper.OnTouchOffsetListener,
+    SingleTouchSlideHelper.OnTouchEndListener,
+    SingleTouchSlideHelper.OnClickListener {
 
     var previewInterval = 0
     var previewScale = 0.6F
@@ -51,6 +55,16 @@ class PageGroup @JvmOverloads constructor(
                 pageWidth
             }
         }
+
+    private val singleTouchSlideHelper = SingleTouchSlideHelper(
+        context, SingleTouchSlideHelper.Slider.Horizontally
+    )
+
+    init {
+        singleTouchSlideHelper.addEndListener(this)
+        singleTouchSlideHelper.addOffsetListener(this)
+        singleTouchSlideHelper.addClickListener(this)
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
@@ -147,6 +161,7 @@ class PageGroup @JvmOverloads constructor(
         return super.onInterceptTouchEvent(ev)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (zoomHelper.isRunning) {
             // 动画过程中不能操作
@@ -155,23 +170,12 @@ class PageGroup @JvmOverloads constructor(
         if (!isPreviewMode) {
             return super.onTouchEvent(event)
         }
-        when(event?.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {}
-            MotionEvent.ACTION_MOVE -> {}
-            MotionEvent.ACTION_POINTER_UP -> {}
-            MotionEvent.ACTION_CANCEL,
-            MotionEvent.ACTION_UP-> {}
-        }
-        return super.onTouchEvent(event)
+        return singleTouchSlideHelper.onTouch(event)
     }
 
     fun setMode(preview: Boolean) {
         isPreviewMode = preview
         zoomHelper.start(preview)
-    }
-
-    fun setInterpolator(interpolator: TimeInterpolator) {
-        zoomHelper.setInterpolator(interpolator)
     }
 
     private fun onZoomAnimationStart() {
@@ -225,10 +229,6 @@ class PageGroup @JvmOverloads constructor(
                 return zoomAnimator.isRunning
             }
 
-        fun setInterpolator(interpolator: TimeInterpolator) {
-            zoomAnimator.interpolator = interpolator
-        }
-
         fun onUpdate(listener: (Float) -> Unit): ZoomHelper {
             onUpdateListener = listener
             return this
@@ -279,6 +279,19 @@ class PageGroup @JvmOverloads constructor(
         fun end() {
             zoomAnimator.end()
         }
+    }
+
+    override fun onTouchMoved(offsetX: Float, offsetY: Float) {
+        val newOffset = (pageOffset + offsetX + 0.5F).toInt()
+        scrollPage(pagePosition, newOffset)
+    }
+
+    override fun onTouchEnd(isCancel: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onClick(x: Float, y: Float) {
+        TODO("Not yet implemented")
     }
 
 }
