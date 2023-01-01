@@ -282,16 +282,30 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onTouchMoved(offsetX: Float, offsetY: Float) {
-        val newOffset = (pageOffset + offsetX + 0.5F).toInt()
-        scrollPage(pagePosition, newOffset)
+        var newOffset = (pageOffset + offsetX + 0.5F).toInt()
+        var page = pagePosition
+        if (newOffset < 0) {
+            if (page > 0) {
+                page--
+            } else {
+                newOffset = 0
+            }
+        } else if (newOffset > pageSpaceWidth) {
+            if (page < childCount - 1) {
+                page++
+            } else {
+                newOffset = pageSpaceWidth
+            }
+        }
+        scrollPage(page, newOffset)
     }
 
     override fun onTouchEnd(isCancel: Boolean) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     override fun onClick(x: Float, y: Float) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
 }
