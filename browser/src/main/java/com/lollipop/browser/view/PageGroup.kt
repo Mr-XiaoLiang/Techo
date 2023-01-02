@@ -287,14 +287,16 @@ class PageGroup @JvmOverloads constructor(
         if (newOffset < 0) {
             if (page > 0) {
                 page--
+                newOffset += pageSpaceWidth
             } else {
                 newOffset = 0
             }
-        } else if (newOffset > pageSpaceWidth) {
-            if (page < childCount - 1) {
+        } else if (newOffset > 0) {
+            if (page >= childCount - 1) {
+                newOffset = 0
+            } else if (newOffset > pageSpaceWidth) {
                 page++
-            } else {
-                newOffset = pageSpaceWidth
+                newOffset -= pageSpaceWidth
             }
         }
         scrollPage(page, newOffset)
