@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -307,6 +308,47 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onClick(x: Float, y: Float) {
+        // TODO("Not yet implemented")
+
+        val xInt = x.toInt()
+        val yInt = y.toInt()
+
+        val position = pagePosition
+        val offset = pageOffset
+        var childLeft = paddingLeft
+        var childTop = paddingTop
+        val spaceWidth = pageSpaceWidth
+        // 偏移到第一个的位置
+        childLeft -= position * spaceWidth
+        val cardWidth = if (isPreviewMode) {
+            (pageWidth * previewScale).toInt()
+        } else {
+            pageWidth
+        }
+        val cardHeight = if (isPreviewMode) {
+            (pageHeight * previewScale).toInt()
+        } else {
+            pageHeight
+        }
+        // 加上偏移到中间
+        if (isPreviewMode) {
+            childLeft += ((pageWidth - cardWidth) * 0.5F).toInt()
+            childTop += ((pageHeight - cardHeight) * 0.5F).toInt()
+        }
+        childLeft -= offset
+        val tempRect = Rect()
+
+        for (i in 0 until childCount) {
+            tempRect.set(childLeft, childTop, childLeft + cardWidth, childTop + cardHeight)
+            if (tempRect.contains(xInt, yInt)) {
+                onPageClick(i)
+                return
+            }
+            childLeft += spaceWidth
+        }
+    }
+
+    private fun onPageClick(position: Int) {
         // TODO("Not yet implemented")
     }
 
