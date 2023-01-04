@@ -308,8 +308,6 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onClick(x: Float, y: Float) {
-        // TODO("Not yet implemented")
-
         val xInt = x.toInt()
         val yInt = y.toInt()
 
