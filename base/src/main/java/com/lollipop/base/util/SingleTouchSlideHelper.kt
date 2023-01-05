@@ -40,11 +40,11 @@ class SingleTouchSlideHelper(
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 touchDownLocation.set(touchHelper.x, touchHelper.y)
+                touchLastLocation.set(touchDownLocation)
                 direction = Direction.PENDING
             }
             MotionEvent.ACTION_MOVE -> {
-                touchLastLocation.set(touchHelper.x, touchHelper.y)
-                checkDirection()
+                checkDirection(touchHelper.x, touchHelper.y)
                 onTouchMove()
             }
             MotionEvent.ACTION_POINTER_UP -> {
@@ -128,12 +128,12 @@ class SingleTouchSlideHelper(
         clickListener.removeListener(listener)
     }
 
-    private fun checkDirection() {
+    private fun checkDirection(x: Float, y: Float) {
         if (direction != Direction.PENDING) {
             return
         }
-        val xOffset = abs(touchLastLocation.x - touchDownLocation.x)
-        val yOffset = abs(touchLastLocation.y - touchDownLocation.y)
+        val xOffset = abs(x - touchDownLocation.x)
+        val yOffset = abs(y - touchDownLocation.y)
         when (slider) {
             Horizontally -> {
                 if (xOffset >= scaledTouchSlop) {
