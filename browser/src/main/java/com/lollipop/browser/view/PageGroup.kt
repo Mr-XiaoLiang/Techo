@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import com.lollipop.base.util.SingleTouchSlideHelper
+import com.lollipop.base.util.log
 import kotlin.math.abs
 
 class PageGroup @JvmOverloads constructor(
@@ -47,15 +48,6 @@ class PageGroup @JvmOverloads constructor(
 
     private var pagePosition = 0
     private var pageOffset = 0
-
-    private val pageSpaceWidth: Int
-        get() {
-            return if (isPreviewMode) {
-                (pageWidth * previewScale + previewInterval).toInt()
-            } else {
-                pageWidth
-            }
-        }
 
     private val singleTouchSlideHelper = SingleTouchSlideHelper(
         context, SingleTouchSlideHelper.Slider.Horizontally
@@ -97,7 +89,11 @@ class PageGroup @JvmOverloads constructor(
     private fun layoutPage() {
         var childLeft = paddingLeft
         val childTop = paddingTop
-        val spaceWidth = pageSpaceWidth
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
 
         val childWidth: Int
         val childHeight: Int
@@ -128,24 +124,23 @@ class PageGroup @JvmOverloads constructor(
 
     }
 
-    fun scrollPage(position: Int, offset: Int) {
+    private fun scrollPage(position: Int, offset: Int, preview: Boolean = isPreviewMode) {
+        log("scrollPage: $position, $offset")
         pagePosition = position
         pageOffset = offset
 
+        val childTop = paddingTop
         var childLeft = paddingLeft
-        val spaceWidth = pageSpaceWidth
+        val spaceWidth = if (preview) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
         // 偏移到第一个的位置
         childLeft -= position * spaceWidth
-        // 加上偏移到中间
-        if (isPreviewMode) {
-            childLeft += ((pageWidth * (1 - previewScale)) * 0.5F).toInt()
-        }
         childLeft -= offset
         for (i in 0 until childCount) {
-            getChildAt(i)?.let {
-                val off = childLeft - it.left
-                it.offsetLeftAndRight(off)
-            }
+            getChildAt(i)?.layout(childLeft, childTop, childLeft + pageWidth, childTop + pageHeight)
             childLeft += spaceWidth
         }
     }
@@ -180,11 +175,16 @@ class PageGroup @JvmOverloads constructor(
     }
 
     private fun onZoomAnimationStart() {
-
+        scrollPage(pagePosition, 0, false)
     }
 
     private fun onZoomAnimationEnd() {
-
+        for (i in 0 until childCount) {
+            getChildAt(i)?.let {
+                it.translationX = 0F
+            }
+        }
+        scrollPage(pagePosition, 0)
     }
 
     private fun onZoomAnimationUpdate(p: Float) {
@@ -203,6 +203,15 @@ class PageGroup @JvmOverloads constructor(
                 it.scaleY = scale
                 it.translationX = (pageOffset * (currentPosition - i))
             }
+        }
+    }
+
+    private fun getChildLeft(selected: Int, position: Int, preview: Boolean): Int {
+        val positionOffset = position - selected
+        return if (preview) {
+            (positionOffset * ((pageWidth * previewScale) + previewInterval)).toInt()
+        } else {
+            positionOffset * pageWidth
         }
     }
 
@@ -283,21 +292,27 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onTouchMoved(offsetX: Float, offsetY: Float) {
-        var newOffset = (pageOffset + offsetX + 0.5F).toInt()
+        log("onTouchMoved: $offsetX")
+        var newOffset = (pageOffset - offsetX).toInt()
         var page = pagePosition
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
         if (newOffset < 0) {
             if (page > 0) {
                 page--
-                newOffset += pageSpaceWidth
+                newOffset += spaceWidth
             } else {
                 newOffset = 0
             }
         } else if (newOffset > 0) {
             if (page >= childCount - 1) {
                 newOffset = 0
-            } else if (newOffset > pageSpaceWidth) {
+            } else if (newOffset > spaceWidth) {
                 page++
-                newOffset -= pageSpaceWidth
+                newOffset -= spaceWidth
             }
         }
         scrollPage(page, newOffset)
@@ -315,7 +330,11 @@ class PageGroup @JvmOverloads constructor(
         val offset = pageOffset
         var childLeft = paddingLeft
         var childTop = paddingTop
-        val spaceWidth = pageSpaceWidth
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
         // 偏移到第一个的位置
         childLeft -= position * spaceWidth
         val cardWidth = if (isPreviewMode) {
