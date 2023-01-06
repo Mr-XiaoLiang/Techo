@@ -7,9 +7,11 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.OverScroller
 import com.lollipop.base.util.SingleTouchSlideHelper
 import com.lollipop.base.util.log
 import kotlin.math.abs
@@ -53,10 +55,18 @@ class PageGroup @JvmOverloads constructor(
         context, SingleTouchSlideHelper.Slider.Horizontally
     )
 
+    private val overScroller = OverScroller(context)
+
+    private val minimumVelocity: Int
+    private val maximumVelocity: Int
+
     init {
         singleTouchSlideHelper.addEndListener(this)
         singleTouchSlideHelper.addOffsetListener(this)
         singleTouchSlideHelper.addClickListener(this)
+        val configuration = ViewConfiguration.get(context)
+        minimumVelocity = configuration.scaledMinimumFlingVelocity
+        maximumVelocity = configuration.scaledMaximumFlingVelocity
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
