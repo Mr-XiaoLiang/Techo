@@ -7,6 +7,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -56,7 +57,7 @@ class PageGroup @JvmOverloads constructor(
     )
 
     private val overScroller = OverScroller(context)
-
+    private var velocityTracker: VelocityTracker? = null
     private val minimumVelocity: Int
     private val maximumVelocity: Int
 
@@ -160,9 +161,19 @@ class PageGroup @JvmOverloads constructor(
             // 动画过程中不能操作
             return true
         }
-        if (isPreviewMode && ev?.actionMasked == MotionEvent.ACTION_DOWN) {
-            parent?.requestDisallowInterceptTouchEvent(true)
-            return true
+        when (ev?.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                initOrResetVelocityTracker()
+                velocityTracker?.addMovement(ev)
+                if (isPreviewMode) {
+                    parent?.requestDisallowInterceptTouchEvent(true)
+                    return true
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                initVelocityTrackerIfNotExists()
+                velocityTracker?.addMovement(ev)
+            }
         }
         return super.onInterceptTouchEvent(ev)
     }
@@ -176,7 +187,28 @@ class PageGroup @JvmOverloads constructor(
         if (!isPreviewMode) {
             return super.onTouchEvent(event)
         }
+        initVelocityTrackerIfNotExists()
+        velocityTracker?.addMovement(event)
         return singleTouchSlideHelper.onTouch(event)
+    }
+
+    private fun initOrResetVelocityTracker() {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain()
+        } else {
+            velocityTracker?.clear()
+        }
+    }
+
+    private fun initVelocityTrackerIfNotExists() {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain()
+        }
+    }
+
+    private fun recycleVelocityTracker() {
+        velocityTracker?.recycle()
+        velocityTracker = null
     }
 
     fun setMode(preview: Boolean) {
