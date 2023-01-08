@@ -60,6 +60,7 @@ class PageGroup @JvmOverloads constructor(
     private var velocityTracker: VelocityTracker? = null
     private val minimumVelocity: Int
     private val maximumVelocity: Int
+    private var lastScrollX = 0
 
     init {
         singleTouchSlideHelper.addEndListener(this)
@@ -211,6 +212,36 @@ class PageGroup @JvmOverloads constructor(
         velocityTracker = null
     }
 
+    override fun computeScroll() {
+        super.computeScroll()
+        if (overScroller.computeScrollOffset()) {
+            val currX = overScroller.currX
+            val offsetX = currX - lastScrollX
+            lastScrollX = currX
+            onTouchMoved(offsetX.toFloat(), 0F)
+            postInvalidateOnAnimation()
+        } else if (pageOffset != 0) {
+            springBack()
+        }
+    }
+
+    private fun springBack() {
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
+        val offset = pageOffset
+        val targetOffset = if (offset > (spaceWidth / 2) && pagePosition < (childCount - 1)) {
+            spaceWidth
+        } else {
+            0
+        }
+        overScroller.abortAnimation()
+        overScroller.startScroll(offset, 0, targetOffset, 0)
+        postInvalidateOnAnimation()
+    }
+
     fun setMode(preview: Boolean) {
         isPreviewMode = preview
         zoomHelper.start(preview)
@@ -255,6 +286,105 @@ class PageGroup @JvmOverloads constructor(
         } else {
             positionOffset * pageWidth
         }
+    }
+
+    override fun onTouchMoved(offsetX: Float, offsetY: Float) {
+        log("onTouchMoved: $offsetX")
+        if (!overScroller.isFinished) {
+            overScroller.abortAnimation()
+        }
+        var newOffset = (pageOffset - offsetX).toInt()
+        var page = pagePosition
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
+        if (newOffset < 0) {
+            if (page > 0) {
+                page--
+                newOffset += spaceWidth
+            } else {
+                newOffset = 0
+            }
+        } else if (newOffset > 0) {
+            if (page >= childCount - 1) {
+                newOffset = 0
+            } else if (newOffset > spaceWidth) {
+                page++
+                newOffset -= spaceWidth
+            }
+        }
+        scrollPage(page, newOffset)
+    }
+
+    override fun onTouchEnd(isCancel: Boolean) {
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
+        val currentOffset = pageOffset
+        overScroller.abortAnimation()
+        val xVelocity = velocityTracker?.xVelocity ?: 0F
+        recycleVelocityTracker()
+        val maxOffset = (childCount - pagePosition) * spaceWidth - currentOffset
+        val minOffset = (pagePosition * spaceWidth + currentOffset) * -1
+        overScroller.fling(
+            currentOffset, 0,
+            xVelocity.toInt(), 0,
+            minOffset, maxOffset,
+            0, 0
+        )
+        lastScrollX = currentOffset
+        postInvalidateOnAnimation()
+    }
+
+    override fun onClick(x: Float, y: Float) {
+        val xInt = x.toInt()
+        val yInt = y.toInt()
+
+        val position = pagePosition
+        val offset = pageOffset
+        var childLeft = paddingLeft
+        var childTop = paddingTop
+        val spaceWidth = if (isPreviewMode) {
+            (pageWidth * previewScale + previewInterval).toInt()
+        } else {
+            pageWidth
+        }
+        // 偏移到第一个的位置
+        childLeft -= position * spaceWidth
+        val cardWidth = if (isPreviewMode) {
+            (pageWidth * previewScale).toInt()
+        } else {
+            pageWidth
+        }
+        val cardHeight = if (isPreviewMode) {
+            (pageHeight * previewScale).toInt()
+        } else {
+            pageHeight
+        }
+        // 加上偏移到中间
+        if (isPreviewMode) {
+            childLeft += ((pageWidth - cardWidth) * 0.5F).toInt()
+            childTop += ((pageHeight - cardHeight) * 0.5F).toInt()
+        }
+        childLeft -= offset
+        val tempRect = Rect()
+
+        for (i in 0 until childCount) {
+            tempRect.set(childLeft, childTop, childLeft + cardWidth, childTop + cardHeight)
+            if (tempRect.contains(xInt, yInt)) {
+                onPageClick(i)
+                return
+            }
+            childLeft += spaceWidth
+        }
+    }
+
+    private fun onPageClick(position: Int) {
+        // TODO("Not yet implemented")
     }
 
     private class ZoomHelper : ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
@@ -331,84 +461,6 @@ class PageGroup @JvmOverloads constructor(
         fun end() {
             zoomAnimator.end()
         }
-    }
-
-    override fun onTouchMoved(offsetX: Float, offsetY: Float) {
-        log("onTouchMoved: $offsetX")
-        var newOffset = (pageOffset - offsetX).toInt()
-        var page = pagePosition
-        val spaceWidth = if (isPreviewMode) {
-            (pageWidth * previewScale + previewInterval).toInt()
-        } else {
-            pageWidth
-        }
-        if (newOffset < 0) {
-            if (page > 0) {
-                page--
-                newOffset += spaceWidth
-            } else {
-                newOffset = 0
-            }
-        } else if (newOffset > 0) {
-            if (page >= childCount - 1) {
-                newOffset = 0
-            } else if (newOffset > spaceWidth) {
-                page++
-                newOffset -= spaceWidth
-            }
-        }
-        scrollPage(page, newOffset)
-    }
-
-    override fun onTouchEnd(isCancel: Boolean) {
-        // TODO("Not yet implemented")
-    }
-
-    override fun onClick(x: Float, y: Float) {
-        val xInt = x.toInt()
-        val yInt = y.toInt()
-
-        val position = pagePosition
-        val offset = pageOffset
-        var childLeft = paddingLeft
-        var childTop = paddingTop
-        val spaceWidth = if (isPreviewMode) {
-            (pageWidth * previewScale + previewInterval).toInt()
-        } else {
-            pageWidth
-        }
-        // 偏移到第一个的位置
-        childLeft -= position * spaceWidth
-        val cardWidth = if (isPreviewMode) {
-            (pageWidth * previewScale).toInt()
-        } else {
-            pageWidth
-        }
-        val cardHeight = if (isPreviewMode) {
-            (pageHeight * previewScale).toInt()
-        } else {
-            pageHeight
-        }
-        // 加上偏移到中间
-        if (isPreviewMode) {
-            childLeft += ((pageWidth - cardWidth) * 0.5F).toInt()
-            childTop += ((pageHeight - cardHeight) * 0.5F).toInt()
-        }
-        childLeft -= offset
-        val tempRect = Rect()
-
-        for (i in 0 until childCount) {
-            tempRect.set(childLeft, childTop, childLeft + cardWidth, childTop + cardHeight)
-            if (tempRect.contains(xInt, yInt)) {
-                onPageClick(i)
-                return
-            }
-            childLeft += spaceWidth
-        }
-    }
-
-    private fun onPageClick(position: Int) {
-        // TODO("Not yet implemented")
     }
 
 }
