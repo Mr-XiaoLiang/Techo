@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.OverScroller
+import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.SingleTouchSlideHelper
 import com.lollipop.base.util.log
 import kotlin.math.abs
@@ -61,6 +62,8 @@ class PageGroup @JvmOverloads constructor(
     private val minimumVelocity: Int
     private val maximumVelocity: Int
     private var lastScrollX = 0
+
+    private val pageClickListener = ListenerManager<OnPageClickListener>()
 
     init {
         singleTouchSlideHelper.addEndListener(this)
@@ -383,8 +386,20 @@ class PageGroup @JvmOverloads constructor(
         }
     }
 
+    fun addPageClickListener(listener: OnPageClickListener) {
+        pageClickListener.addListener(listener)
+    }
+
+    fun removePageClickListener(listener: OnPageClickListener) {
+        pageClickListener.removeListener(listener)
+    }
+
     private fun onPageClick(position: Int) {
-        // TODO("Not yet implemented")
+        pageClickListener.invoke { it.onPageClick(position) }
+    }
+
+    fun interface OnPageClickListener {
+        fun onPageClick(position: Int)
     }
 
     private class ZoomHelper : ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
