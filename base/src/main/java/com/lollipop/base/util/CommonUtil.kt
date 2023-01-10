@@ -209,10 +209,32 @@ inline fun <reified T> T.delay(
 /**
  * 一个全局的打印Log的方法
  */
-inline fun <reified T : Any> T.log(vararg value: Any) {
-    Log.d(CommonUtil.logTag, "${this.javaClass.simpleName} -> ${CommonUtil.print(value)}")
+inline fun <reified T : Any> T.logD(tag: String = ""): (String) -> Unit {
+    val logTag = "$tag ${this.javaClass.simpleName}@${System.identityHashCode(this)}"
+    return { value ->
+        value.splitLog {
+            Log.d(CommonUtil.logTag, "${logTag} -> $value")
+        }
+    }
 }
 
+inline fun <reified T : Any> T.lazyLogD(tag: String = "") = lazy { logD(tag) }
+
+fun CharSequence.splitLog(callback: (CharSequence) -> Unit) {
+    val value = this
+    val splitLength = 500
+    val length = value.length
+    if (length <= splitLength) {
+        callback(value)
+        return
+    }
+    var startIndex = 0
+    while (startIndex < length) {
+        val endIndex = kotlin.math.min(startIndex + splitLength, length)
+        callback(value.subSequence(startIndex, endIndex))
+        startIndex = endIndex
+    }
+}
 
 /**
  * 对一个输入框关闭键盘

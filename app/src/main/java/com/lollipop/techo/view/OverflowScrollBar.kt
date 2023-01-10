@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
-import com.lollipop.base.util.log
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.techo.R
 import kotlin.math.max
 import kotlin.math.min
@@ -63,6 +63,8 @@ class OverflowScrollBar(
         get() {
             return progressDrawable.barBounds
         }
+
+    private val log by lazyLogD()
 
     init {
         setImageDrawable(progressDrawable)

@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lollipop.base.util.changeAlpha
-import com.lollipop.base.util.log
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.visibleOrInvisible
 import com.lollipop.guide.GuideProvider
@@ -183,6 +183,8 @@ class DefaultGuideProvider : GuideProvider() {
 
         private val clipOutDrawable = ClipOutDrawable()
         private val popBackground = PopDrawable()
+
+        private val log by lazyLogD()
 
         private val popTextView = TextView(context).apply {
             background = popBackground

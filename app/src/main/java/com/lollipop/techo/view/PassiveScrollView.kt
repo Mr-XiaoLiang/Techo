@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.lollipop.base.util.ListenerManager
-import com.lollipop.base.util.log
+import com.lollipop.base.util.lazyLogD
 import kotlin.math.max
 
 class PassiveScrollView(
@@ -18,6 +18,8 @@ class PassiveScrollView(
     private var maxContentHeight = 0
 
     private val onContentHeightChangedListener = ListenerManager<OnContentHeightChangedListener>()
+
+    private val log by lazyLogD()
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
