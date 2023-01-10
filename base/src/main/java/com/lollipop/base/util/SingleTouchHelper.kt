@@ -14,6 +14,9 @@ class SingleTouchHelper {
     private var touchX = 0F
     private var touchY = 0F
 
+    var isTouching = false
+        private set
+
     val x: Float
         get() {
             return touchX
@@ -27,14 +30,16 @@ class SingleTouchHelper {
         event ?: return
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                isTouching = true
                 touchPointId = event.getPointerId(0)
                 touchX = event.activeX()
                 touchY = event.activeY()
             }
+            MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
+                isTouching = false
                 touchX = event.activeX()
                 touchY = event.activeY()
-                touchPointId = POINT_ID_NONE
             }
             else -> {
                 touchX = event.activeX()

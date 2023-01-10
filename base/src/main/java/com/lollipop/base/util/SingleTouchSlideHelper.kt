@@ -30,7 +30,13 @@ class SingleTouchSlideHelper(
     private val touchEndListener = ListenerManager<OnTouchEndListener>()
     private val clickListener = ListenerManager<OnClickListener>()
 
-    private var activeTouchId = SingleTouchHelper.POINT_ID_NONE
+    var activeTouchId = SingleTouchHelper.POINT_ID_NONE
+        private set
+
+    val isTouching: Boolean
+        get() {
+            return touchHelper.isTouching
+        }
 
     fun onTouch(event: MotionEvent?): Boolean {
         event ?: return false

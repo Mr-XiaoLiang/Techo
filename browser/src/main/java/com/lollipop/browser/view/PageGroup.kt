@@ -15,7 +15,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.OverScroller
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.SingleTouchSlideHelper
-import com.lollipop.base.util.log
 import kotlin.math.abs
 
 class PageGroup @JvmOverloads constructor(
@@ -198,30 +197,39 @@ class PageGroup @JvmOverloads constructor(
 
     private fun initOrResetVelocityTracker() {
         if (velocityTracker == null) {
+            log("initOrResetVelocityTracker = init")
             velocityTracker = VelocityTracker.obtain()
         } else {
+            log("initOrResetVelocityTracker = clear")
             velocityTracker?.clear()
         }
     }
 
     private fun initVelocityTrackerIfNotExists() {
+        log("initVelocityTrackerIfNotExists $velocityTracker")
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain()
         }
     }
 
     private fun recycleVelocityTracker() {
+        log("recycleVelocityTracker $velocityTracker")
         velocityTracker?.recycle()
         velocityTracker = null
     }
 
     override fun computeScroll() {
-        super.computeScroll()
+        if (singleTouchSlideHelper.isTouching) {
+            overScroller.abortAnimation()
+            return
+        }
+        log("computeScroll()")
         if (overScroller.computeScrollOffset()) {
             val currX = overScroller.currX
+            log("computeScroll() overScroller.currX = $currX")
             val offsetX = currX - lastScrollX
             lastScrollX = currX
-            onTouchMoved(offsetX.toFloat(), 0F)
+            moveByOffset(offsetX.toFloat(), 0F)
             postInvalidateOnAnimation()
         } else if (pageOffset != 0) {
             springBack()
@@ -241,7 +249,9 @@ class PageGroup @JvmOverloads constructor(
             0
         }
         overScroller.abortAnimation()
-        overScroller.startScroll(offset, 0, targetOffset, 0)
+        val dx = (targetOffset - offset) * -1
+        lastScrollX = offset
+        overScroller.startScroll(offset, 0, dx, 0)
         postInvalidateOnAnimation()
     }
 
@@ -282,20 +292,16 @@ class PageGroup @JvmOverloads constructor(
         }
     }
 
-    private fun getChildLeft(selected: Int, position: Int, preview: Boolean): Int {
-        val positionOffset = position - selected
-        return if (preview) {
-            (positionOffset * ((pageWidth * previewScale) + previewInterval)).toInt()
-        } else {
-            positionOffset * pageWidth
-        }
-    }
-
     override fun onTouchMoved(offsetX: Float, offsetY: Float) {
         log("onTouchMoved: $offsetX")
         if (!overScroller.isFinished) {
             overScroller.abortAnimation()
         }
+        moveByOffset(offsetX, offsetY)
+    }
+
+    private fun moveByOffset(offsetX: Float, offsetY: Float) {
+        log("moveByOffset $offsetX, $offsetY")
         var newOffset = (pageOffset - offsetX).toInt()
         var page = pagePosition
         val spaceWidth = if (isPreviewMode) {
@@ -322,6 +328,7 @@ class PageGroup @JvmOverloads constructor(
     }
 
     override fun onTouchEnd(isCancel: Boolean) {
+        log("onTouchEnd: $isCancel")
         val spaceWidth = if (isPreviewMode) {
             (pageWidth * previewScale + previewInterval).toInt()
         } else {
@@ -329,18 +336,29 @@ class PageGroup @JvmOverloads constructor(
         }
         val currentOffset = pageOffset
         overScroller.abortAnimation()
-        val xVelocity = velocityTracker?.xVelocity ?: 0F
+        val tracker = velocityTracker
+        val xVelocity = if (tracker != null) {
+            tracker.computeCurrentVelocity(1000, maximumVelocity.toFloat())
+            tracker.getXVelocity(singleTouchSlideHelper.activeTouchId)
+        } else {
+            0F
+        }
         recycleVelocityTracker()
-        val maxOffset = (childCount - pagePosition) * spaceWidth - currentOffset
-        val minOffset = (pagePosition * spaceWidth + currentOffset) * -1
-        overScroller.fling(
-            currentOffset, 0,
-            xVelocity.toInt(), 0,
-            minOffset, maxOffset,
-            0, 0
-        )
-        lastScrollX = currentOffset
-        postInvalidateOnAnimation()
+        if (abs(xVelocity) > minimumVelocity) {
+            val maxOffset = (childCount - pagePosition) * spaceWidth - currentOffset
+            val minOffset = (pagePosition * spaceWidth + currentOffset) * -1
+            log("overScroller.fling(currentOffset = $currentOffset, xVelocity = $xVelocity, minOffset = $minOffset, maxOffset = $maxOffset)")
+            overScroller.fling(
+                currentOffset, 0,
+                xVelocity.toInt(), 0,
+                minOffset, maxOffset,
+                0, 0
+            )
+            lastScrollX = currentOffset
+            postInvalidateOnAnimation()
+        } else {
+            springBack()
+        }
     }
 
     override fun onClick(x: Float, y: Float) {
@@ -476,6 +494,10 @@ class PageGroup @JvmOverloads constructor(
         fun end() {
             zoomAnimator.end()
         }
+    }
+
+    private fun log(value: String) {
+        // 不需要Log了
     }
 
 }
