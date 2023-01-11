@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:layout_height="72dp">
 
-    <com.lollipop.techo.view.VectorClipLayout
+    <com.lollipop.clip.VectorClipLayout
         style="@style/SmoothRectangle"
         android:layout_width="0px"
         android:layout_height="match_parent"
@@ -21,6 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/brand_1" />
-    </com.lollipop.techo.view.VectorClipLayout>
+    </com.lollipop.clip.VectorClipLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

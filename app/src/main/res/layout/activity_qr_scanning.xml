@@ -80,7 +80,7 @@
             android:layout_marginStart="10dp"
             android:background="?attr/selectableItemBackgroundBorderless">
 
-            <com.lollipop.techo.view.RoundClipLayout
+            <com.lollipop.clip.RoundClipLayout
                 android:id="@+id/backButtonBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

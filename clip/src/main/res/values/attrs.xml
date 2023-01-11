@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VectorClipLayout">
+        <attr name="viewportWidth" format="integer" />
+        <attr name="viewportHeight" format="integer" />
+        <attr name="pathData" format="string" />
+    </declare-styleable>
+    <declare-styleable name="RoundClipLayout">
+        <attr name="android:radius" format="dimension" />
+        <attr name="leftTop" format="dimension" />
+        <attr name="leftBottom" format="dimension" />
+        <attr name="rightTop" format="dimension" />
+        <attr name="rightBottom" format="dimension" />
+        <attr name="clipStrokeWidth" format="dimension" />
+        <attr name="clipStrokeColor" format="color" />
+    </declare-styleable>
+</resources>

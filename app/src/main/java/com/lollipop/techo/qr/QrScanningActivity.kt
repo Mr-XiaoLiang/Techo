@@ -26,6 +26,8 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
         resumeScan()
     }
 
+    private val log by lazyLogD()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
@@ -86,8 +88,8 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
             resultBackPressHandler.isEnabled = true
             if (com.lollipop.techo.BuildConfig.DEBUG) {
                 result.list.forEach {
-                    log("OnBarcodeScanResult", it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
-                    log("OnBarcodeScanResult", "cornerPoints = ", it.describe.cornerPoints.size)
+                    log("OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
+                    log("OnBarcodeScanResult cornerPoints = " + it.describe.cornerPoints.size)
                 }
             }
         }

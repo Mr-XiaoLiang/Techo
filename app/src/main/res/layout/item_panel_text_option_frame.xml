@@ -9,7 +9,7 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="16dp">
 
-    <com.lollipop.techo.view.RoundClipLayout
+    <com.lollipop.clip.RoundClipLayout
         android:id="@+id/selectedIcon"
         android:layout_width="12dp"
         android:layout_height="12dp"

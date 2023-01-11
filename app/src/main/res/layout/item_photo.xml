@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.lollipop.techo.view.RoundClipLayout
+    <com.lollipop.clip.RoundClipLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -16,6 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:spaceWidth="2dp" />
-    </com.lollipop.techo.view.RoundClipLayout>
+    </com.lollipop.clip.RoundClipLayout>
 
 </FrameLayout>

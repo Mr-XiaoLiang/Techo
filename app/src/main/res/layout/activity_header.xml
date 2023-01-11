@@ -27,7 +27,7 @@
             android:layout_marginStart="10dp"
             android:background="?attr/selectableItemBackground">
 
-            <com.lollipop.techo.view.RoundClipLayout
+            <com.lollipop.clip.RoundClipLayout
                 android:id="@+id/backButtonBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="200dp">
 
-            <com.lollipop.techo.view.RoundClipLayout
+            <com.lollipop.clip.RoundClipLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/gray_0"
@@ -95,7 +95,7 @@
                     app:minHideDelay="300"
                     app:showDelay="300" />
 
-            </com.lollipop.techo.view.RoundClipLayout>
+            </com.lollipop.clip.RoundClipLayout>
         </com.lollipop.techo.view.VerticalPageLayout>
 
     </com.lollipop.techo.view.VerticalPageScrollView>

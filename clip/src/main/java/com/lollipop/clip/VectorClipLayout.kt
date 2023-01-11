@@ -1,11 +1,9 @@
-package com.lollipop.techo.view
+package com.lollipop.clip
 
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.lollipop.techo.R
-import com.lollipop.techo.util.VectorHelper
 
 class VectorClipLayout(
     context: Context, attrs: AttributeSet?, style: Int

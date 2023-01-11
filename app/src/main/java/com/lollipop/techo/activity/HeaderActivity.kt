@@ -59,6 +59,8 @@ abstract class HeaderActivity : BaseActivity() {
 
     private var isBlurHeader = AppUtil.isBlurHeader
 
+    private val log by lazyLogD()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
