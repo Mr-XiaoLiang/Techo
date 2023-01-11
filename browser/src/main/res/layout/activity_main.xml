@@ -1,25 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    tools:context=".MainActivity">
 
-    <com.lollipop.browser.view.PageGroup
+    <LinearLayout
         android:layout_width="match_parent"
-        android:id="@+id/pageGroup"
         android:layout_height="match_parent"
-        android:paddingTop="30dp"
-        android:paddingBottom="48dp">
-    </com.lollipop.browser.view.PageGroup>
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/statusPanel"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            tools:background="#0f0">
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/webPageContainerView"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            tools:background="#f00" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottom_action_bar_height" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:text="预览"
-        android:id="@+id/previewBtn"/>
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-</FrameLayout>
+        <FrameLayout
+            android:id="@+id/browserNavigationBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottom_action_bar_height">
+
+            <FrameLayout
+                android:layout_width="@dimen/bottom_action_bar_height"
+                android:layout_height="@dimen/bottom_action_bar_height"
+                android:layout_gravity="left"
+                android:layout_marginStart="24dp"
+                tools:ignore="RtlHardcoded">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    app:tint="@color/nav_icon" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="@dimen/bottom_action_bar_height"
+                android:layout_height="@dimen/bottom_action_bar_height"
+                android:layout_gravity="right"
+                android:layout_marginEnd="24dp"
+                tools:ignore="RtlHardcoded">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_arrow_forward_24"
+                    app:tint="@color/nav_icon" />
+            </FrameLayout>
+
+            <com.lollipop.clip.RoundClipLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginVertical="6dp"
+                android:background="@color/white"
+                android:radius="18dp"
+                app:clipStrokeWidth="1dp"
+                app:clipStrokeColor="@color/nav_icon">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_search_24"
+                    app:tint="@color/nav_icon" />
+            </com.lollipop.clip.RoundClipLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

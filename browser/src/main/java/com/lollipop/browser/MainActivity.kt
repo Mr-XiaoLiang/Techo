@@ -29,23 +29,6 @@ class MainActivity : AppCompatActivity(), WebHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-//        binding.doneBtn.onClick {
-//            binding.urlInput.closeBoard()
-//            webHelper.loadUrl(binding.urlInput.text?.toString() ?: "")
-//        }
-//        binding.pageGroup.scrollPage(0, 0)
-        binding.pageGroup.previewInterval = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 20F, resources.displayMetrics
-        ).toInt()
-        binding.pageGroup.animationDuration = 500L
-        var isPreview = false
-        binding.previewBtn.onClick {
-            isPreview = !isPreview
-            binding.pageGroup.setMode(isPreview)
-        }
-        for (i in 0..3) {
-            binding.pageGroup.addView(createWebPage("https://m.baidu.com"))
-        }
     }
 
     private fun createWebPage(url: String): View {
