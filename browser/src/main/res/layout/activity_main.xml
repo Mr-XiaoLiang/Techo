@@ -35,12 +35,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/nav_bar"
+        android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <FrameLayout
             android:id="@+id/browserNavigationBar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/bottom_action_bar_height">
+            android:layout_height="@dimen/bottom_action_bar_height"
+            android:background="@color/nav_bar"
+            android:elevation="10dp">
 
             <FrameLayout
                 android:layout_width="@dimen/bottom_action_bar_height"
@@ -79,8 +83,8 @@
                 android:layout_marginVertical="6dp"
                 android:background="@color/white"
                 android:radius="18dp"
-                app:clipStrokeWidth="1dp"
-                app:clipStrokeColor="@color/nav_icon">
+                app:clipStrokeColor="@color/nav_icon"
+                app:clipStrokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,6 +102,99 @@
             </com.lollipop.clip.RoundClipLayout>
 
         </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/nav_panel_option_btn_size"
+            android:background="@color/nav_bar"
+            android:elevation="10dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/optionShareBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_share_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/optionCollectionBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_star_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/optionRefreshBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_refresh_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/optionBookmarkBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_bookmarks_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:id="@+id/optionSettingsBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_settings_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:clipToPadding="false"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:id="@+id/navPanelTabGroup"/>
 
     </LinearLayout>
 

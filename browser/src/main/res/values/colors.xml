@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="nav_icon">#131313</color>
+
+    <color name="nav_bar">#FFFFFF</color>
+
 </resources>
