@@ -91,14 +91,16 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_marginStart="6dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_search_24"
+                        app:tint="@color/nav_icon" />
+
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_baseline_search_24"
-                    app:tint="@color/nav_icon" />
             </com.lollipop.clip.RoundClipLayout>
 
         </FrameLayout>
@@ -166,6 +168,21 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_bookmarks_24"
+                    app:tint="@color/nav_icon" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/optionDownloadBtn"
+                android:layout_width="0px"
+                android:layout_height="@dimen/nav_panel_option_btn_size"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_download_24"
                     app:tint="@color/nav_icon" />
 
             </FrameLayout>
