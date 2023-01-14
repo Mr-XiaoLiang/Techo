@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.View
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityMainBinding
@@ -29,6 +30,13 @@ class MainActivity : AppCompatActivity(), WebHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        initBottomSheetPanel()
+    }
+
+    private fun initBottomSheetPanel() {
+        val sheetBehavior = BottomSheetBehavior.from(binding.navBottomSheetPanel)
+        sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        sheetBehavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_action_bar_height)
     }
 
     private fun createWebPage(url: String): View {

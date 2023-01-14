@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bottom_action_bar_height">48dp</dimen>
+    <dimen name="bottom_action_bar_height">56dp</dimen>
     <dimen name="nav_panel_option_btn_size">36dp</dimen>
     <dimen name="nav_panel_tab_card_height">160dp</dimen>
     <dimen name="nav_panel_tab_card_width">90dp</dimen>
