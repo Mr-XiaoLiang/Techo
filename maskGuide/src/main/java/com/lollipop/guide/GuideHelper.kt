@@ -15,9 +15,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.util.WindowInsetsHelper
-import com.lollipop.base.util.cleanWindowInsetHelper
-import com.lollipop.base.util.fixInsetsByPadding
+import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.base.util.insets.cleanWindowInsetHelper
+import com.lollipop.base.util.insets.fixInsetsByListener
 import com.lollipop.guide.impl.DefaultGuideProvider
 import kotlin.math.abs
 
@@ -158,7 +158,7 @@ class GuideHelper(private val option: Option) : GuideManager,
             }
 
             guideRoot.fitsSystemWindows = true
-            guideRoot.fixInsetsByPadding { _, _, insets ->
+            guideRoot.fixInsetsByListener { _, _, insets ->
                 val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
                 windowInsetsSize.set(
                     insetsValue.left,
