@@ -3,7 +3,6 @@ package com.lollipop.base.util.insets
 import android.app.Activity
 import android.graphics.Color
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
@@ -17,13 +16,45 @@ import androidx.core.view.WindowInsetsCompat
  */
 class WindowInsetsHelper(
     private val applyType: WindowInsetsApplyType,
-    private val edge: WindowInsetsEdge = WindowInsetsEdge.ALL,
+    private val windowInsetsOperator: WindowInsetsOperator,
     private val targetView: View? = null
 ) : OnApplyWindowInsetsListener {
 
     companion object {
-        fun getInsetsValue(insets: WindowInsetsCompat): WindowInsetsValue {
-            return WindowInsetsValue(insets.getInsets(WindowInsetsCompat.Type.systemBars()))
+        fun getInsetsValue(
+            insets: WindowInsetsCompat,
+            type: WindowInsetsType = WindowInsetsType.SYSTEM_BARS
+        ): WindowInsetsValue {
+            val typeMask = when (type) {
+                WindowInsetsType.SYSTEM_BARS -> {
+                    WindowInsetsCompat.Type.systemBars()
+                }
+                WindowInsetsType.DISPLAY_CUTOUT -> {
+                    WindowInsetsCompat.Type.displayCutout()
+                }
+                WindowInsetsType.TAPPABLE_ELEMENT -> {
+                    WindowInsetsCompat.Type.tappableElement()
+                }
+                WindowInsetsType.MANDATORY_SYSTEM_GESTURES -> {
+                    WindowInsetsCompat.Type.mandatorySystemGestures()
+                }
+                WindowInsetsType.SYSTEM_GESTURES -> {
+                    WindowInsetsCompat.Type.systemGestures()
+                }
+                WindowInsetsType.IME -> {
+                    WindowInsetsCompat.Type.ime()
+                }
+                WindowInsetsType.CAPTION_BAR -> {
+                    WindowInsetsCompat.Type.captionBar()
+                }
+                WindowInsetsType.NAVIGATION_BARS -> {
+                    WindowInsetsCompat.Type.navigationBars()
+                }
+                WindowInsetsType.STATUS_BARS -> {
+                    WindowInsetsCompat.Type.systemBars()
+                }
+            }
+            return WindowInsetsValue(insets.getInsets(typeMask))
         }
 
         fun initWindowFlag(activity: Activity) {
@@ -36,67 +67,41 @@ class WindowInsetsHelper(
         }
 
         fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
-            target.layoutParams?.let { layoutParams ->
-                if (layoutParams is ViewGroup.MarginLayoutParams) {
-                    layoutParams.setMargins(left, top, right, bottom)
-                }
-                target.layoutParams = layoutParams
-            }
+            WindowInsetsOperator.setMargin(target, left, top, right, bottom)
         }
 
         fun setPadding(target: View, left: Int, top: Int, right: Int, bottom: Int) {
-            target.setPadding(left, top, right, bottom)
+            WindowInsetsOperator.setPadding(target, left, top, right, bottom)
         }
+
+        fun setHeight(target: View, height: Int) {
+            WindowInsetsOperator.setHeight(target, height)
+        }
+
+        fun setWidth(target: View, width: Int) {
+            WindowInsetsOperator.setWidth(target, width)
+        }
+
     }
-
-    /**
-     * 基础的Margin值，它表示了最小的margin
-     * 如果缩进尺寸小于此值，那么会保持在此值
-     */
-    var baseMargin: BoundsSnapshot = BoundsSnapshot.EMPTY
-        private set
-
-    /**
-     * 基础的padding值，它代表了最小的padding值
-     * 如果缩进尺寸小于此值，那么将会保持在此值
-     */
-    var basePadding: BoundsSnapshot = BoundsSnapshot.EMPTY
-        private set
 
     /**
      * 以快照的形式记录当前Margin值，并且以此为基础
      */
     fun snapshotMargin(target: View) {
-        target.layoutParams?.let { layoutParams ->
-            if (layoutParams is ViewGroup.MarginLayoutParams) {
-                baseMargin = BoundsSnapshot(
-                    left = layoutParams.leftMargin,
-                    top = layoutParams.topMargin,
-                    right = layoutParams.rightMargin,
-                    bottom = layoutParams.bottomMargin
-                )
-            }
-        }
+        windowInsetsOperator.snapshotMargin(target)
     }
 
     /**
      * 以快照的形式记录当前Padding值，并且以此为基础
      */
     fun snapshotPadding(target: View) {
-        basePadding = BoundsSnapshot(
-            left = target.paddingLeft,
-            top = target.paddingTop,
-            right = target.paddingRight,
-            bottom = target.paddingBottom
-        )
+        windowInsetsOperator.snapshotPadding(target)
     }
 
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         return applyType.onWindowInsetsChanged(
             targetView ?: v,
-            edge,
-            baseMargin,
-            basePadding,
+            windowInsetsOperator,
             insets
         )
     }
@@ -104,7 +109,7 @@ class WindowInsetsHelper(
     fun interface OnWindowInsetsChangedListener {
         fun onWindowInsetsChanged(
             v: View,
-            option: WindowInsetsOption,
+            operator: WindowInsetsOperator,
             insets: WindowInsetsCompat
         ): WindowInsetsCompat
     }
@@ -148,7 +153,11 @@ private fun View.setWindowInsetsHelper(
     edge: WindowInsetsEdge,
     customTarget: View?
 ): WindowInsetsHelper {
-    val windowInsetsHelper = WindowInsetsHelper(type, edge, customTarget ?: this)
+    val windowInsetsHelper = WindowInsetsHelper(
+        type,
+        WindowInsetsOperator(edge),
+        customTarget ?: this
+    )
     ViewCompat.setOnApplyWindowInsetsListener(this, windowInsetsHelper)
 
     windowInsetsHelper.snapshotPadding(this)

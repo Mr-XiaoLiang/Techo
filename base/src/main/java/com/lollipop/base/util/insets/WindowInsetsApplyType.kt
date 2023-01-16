@@ -7,22 +7,17 @@ sealed class WindowInsetsApplyType {
 
     abstract fun onWindowInsetsChanged(
         view: View,
-        edge: WindowInsetsEdge,
-        baseMargin: BoundsSnapshot,
-        basePadding: BoundsSnapshot,
+        operator: WindowInsetsOperator,
         insets: WindowInsetsCompat
     ): WindowInsetsCompat
 
     object Padding : WindowInsetsApplyType() {
         override fun onWindowInsetsChanged(
             view: View,
-            edge: WindowInsetsEdge,
-            baseMargin: BoundsSnapshot,
-            basePadding: BoundsSnapshot,
+            operator: WindowInsetsOperator,
             insets: WindowInsetsCompat
         ): WindowInsetsCompat {
-            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
-            insetsValue.basePlus(basePadding, edge)
+            val insetsValue = operator.computeInsetsValueByPadding(insets)
             WindowInsetsHelper.setPadding(
                 view,
                 insetsValue.left,
@@ -38,13 +33,10 @@ sealed class WindowInsetsApplyType {
     object Margin : WindowInsetsApplyType() {
         override fun onWindowInsetsChanged(
             view: View,
-            edge: WindowInsetsEdge,
-            baseMargin: BoundsSnapshot,
-            basePadding: BoundsSnapshot,
+            operator: WindowInsetsOperator,
             insets: WindowInsetsCompat
         ): WindowInsetsCompat {
-            val insetsValue = WindowInsetsHelper.getInsetsValue(insets)
-            insetsValue.basePlus(baseMargin, edge)
+            val insetsValue = operator.computeInsetsValueByMargin(insets)
             WindowInsetsHelper.setMargin(
                 view,
                 insetsValue.left,
@@ -62,14 +54,12 @@ sealed class WindowInsetsApplyType {
     ) : WindowInsetsApplyType() {
         override fun onWindowInsetsChanged(
             view: View,
-            edge: WindowInsetsEdge,
-            baseMargin: BoundsSnapshot,
-            basePadding: BoundsSnapshot,
+            operator: WindowInsetsOperator,
             insets: WindowInsetsCompat
         ): WindowInsetsCompat {
             return listener.onWindowInsetsChanged(
                 view,
-                WindowInsetsOption(edge, baseMargin, basePadding),
+                operator,
                 insets
             )
         }
