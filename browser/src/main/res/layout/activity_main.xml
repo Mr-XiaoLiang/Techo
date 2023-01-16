@@ -34,10 +34,10 @@
 
     <LinearLayout
         android:id="@+id/navBottomSheetPanel"
-        android:elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/nav_bar"
+        android:elevation="10dp"
         android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -230,6 +230,20 @@
             android:paddingTop="20dp"
             android:paddingBottom="20dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/app_name" />
+
     </LinearLayout>
+
+    <View
+        android:id="@+id/navigationBarBackgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_gravity="bottom"
+        android:background="@color/nav_bar"
+        android:elevation="10dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
