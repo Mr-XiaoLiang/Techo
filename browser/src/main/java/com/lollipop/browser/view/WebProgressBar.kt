@@ -16,6 +16,22 @@ class WebProgressBar @JvmOverloads constructor(
         setImageDrawable(progressDrawable)
     }
 
+    var color: Int
+        get() {
+            return progressDrawable.color
+        }
+        set(value) {
+            progressDrawable.color = value
+        }
+
+    var progress: Float
+        set(value) {
+            progressDrawable.progress = value
+        }
+        get() {
+            return progressDrawable.progress
+        }
+
     private class ProgressDrawable : Drawable() {
 
         private val paint = Paint().apply {
