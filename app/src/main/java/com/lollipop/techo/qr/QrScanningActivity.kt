@@ -7,6 +7,10 @@ import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
+import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.comm.BarcodeWrapper
@@ -55,12 +59,12 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
 
         binding.resultImageView.addOnCodeSelectedListener(this)
 
-        binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
-        binding.flashBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
-            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        binding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
+        binding.flashBtn.fixInsetsByMargin(WindowInsetsEdge.build {
+            bottom = WindowInsetsEdgeStrategy.ACCUMULATE
         })
-        binding.galleryBtn.fixInsetsByMargin(WindowInsetsHelper.Edge.build {
-            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        binding.galleryBtn.fixInsetsByMargin(WindowInsetsEdge.build {
+            bottom = WindowInsetsEdgeStrategy.ACCUMULATE
         })
     }
 

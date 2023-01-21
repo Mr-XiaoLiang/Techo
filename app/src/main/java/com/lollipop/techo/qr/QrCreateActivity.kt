@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.os.Bundle
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.techo.R
@@ -45,7 +47,7 @@ class QrCreateActivity : BaseActivity() {
         binding.backButton.onClick {
             notifyBackPress()
         }
-        binding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
+        binding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
     }
 
     override fun onNewIntent(intent: Intent?) {

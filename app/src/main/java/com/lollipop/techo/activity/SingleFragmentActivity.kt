@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivitySingleFragmentBinding
 

@@ -16,6 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
+import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.palette.ColorHistoryHelper
 import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.Pigment
@@ -180,14 +184,14 @@ class RichTextOptionFragment : PageFragment(),
 
     private fun initInsets() {
 
-        val rightAndBottom = WindowInsetsHelper.Edge.build {
-            right = WindowInsetsHelper.EdgeStrategy.COMPARE
-            bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        val rightAndBottom = WindowInsetsEdge.build {
+            right = WindowInsetsEdgeStrategy.COMPARE
+            bottom = WindowInsetsEdgeStrategy.ACCUMULATE
         }
 
         binding.textSelectorView.fixInsetsByPadding(
-            WindowInsetsHelper.Edge.build {
-                bottom = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+            WindowInsetsEdge.build {
+                bottom = WindowInsetsEdgeStrategy.ACCUMULATE
             }
         )
         binding.textSelectorScrollBar.fixInsetsByPadding(rightAndBottom)
@@ -196,10 +200,10 @@ class RichTextOptionFragment : PageFragment(),
         binding.palettePanel.fixInsetsByPadding(rightAndBottom)
         binding.fontSizePresetGroup.fixInsetsByPadding(rightAndBottom)
 
-        val header = WindowInsetsHelper.Edge.build {
-            top = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
-            left = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
-            right = WindowInsetsHelper.EdgeStrategy.ACCUMULATE
+        val header = WindowInsetsEdge.build {
+            top = WindowInsetsEdgeStrategy.ACCUMULATE
+            left = WindowInsetsEdgeStrategy.ACCUMULATE
+            right = WindowInsetsEdgeStrategy.ACCUMULATE
         }
         binding.backButton.fixInsetsByMargin(header)
         binding.previewView.fixInsetsByPadding(header)

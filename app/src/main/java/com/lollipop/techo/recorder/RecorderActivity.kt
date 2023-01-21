@@ -12,6 +12,9 @@ import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.recorder.RecorderHelper
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityRecorderBinding
@@ -78,7 +81,7 @@ class RecorderActivity : BaseActivity() {
         WindowInsetsHelper.initWindowFlag(this)
         backPressHandler.bindTo(this)
         setContentView(binding.root)
-        binding.dialogRootView.fixInsetsByPadding(WindowInsetsHelper.Edge.CONTENT)
+        binding.dialogRootView.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
         binding.backgroundView.onClick {
             cancel()
         }

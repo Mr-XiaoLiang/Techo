@@ -3,7 +3,7 @@ package com.lollipop.techo.activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.lollipop.base.util.WindowInsetsHelper
+import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.registerResult
 import com.lollipop.techo.databinding.ActivityDemoBinding

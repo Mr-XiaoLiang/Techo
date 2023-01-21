@@ -13,6 +13,8 @@ import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
@@ -103,7 +105,7 @@ class TechoEditActivity : HeaderActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        floatingBinding.floatingButtonPanel.fixInsetsByPadding(WindowInsetsHelper.Edge.ALL)
+        floatingBinding.floatingButtonPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initContentView()
         initMenuBtn()
         initData()

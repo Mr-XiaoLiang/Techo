@@ -18,6 +18,10 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.ViewPropertyTransition
 import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
+import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentParse
@@ -80,13 +84,13 @@ abstract class HeaderActivity : BaseActivity() {
         viewBinding.backButton.setOnClickListener {
             notifyBackPress()
         }
-        viewBinding.appBar.fixInsetsByMargin(WindowInsetsHelper.Edge.HEADER)
+        viewBinding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
         viewBinding.contentScrollView.fixInsetsByMargin(
-            WindowInsetsHelper.Edge(
-                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
-                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
-                WindowInsetsHelper.EdgeStrategy.ACCUMULATE,
-                WindowInsetsHelper.EdgeStrategy.ORIGINAL
+            WindowInsetsEdge(
+                WindowInsetsEdgeStrategy.ACCUMULATE,
+                WindowInsetsEdgeStrategy.ACCUMULATE,
+                WindowInsetsEdgeStrategy.ACCUMULATE,
+                WindowInsetsEdgeStrategy.ORIGINAL
             )
         )
         viewBinding.headerBackground.onClick {
