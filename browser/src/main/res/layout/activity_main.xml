@@ -15,7 +15,13 @@
             android:id="@+id/statusPanel"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            tools:background="#0f0">
+            tools:background="#0f0"
+            tools:layout_height="24dp">
+
+            <com.lollipop.browser.view.WebProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/webProgressBar"/>
 
         </FrameLayout>
 

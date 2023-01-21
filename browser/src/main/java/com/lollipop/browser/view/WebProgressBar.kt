@@ -12,10 +12,6 @@ class WebProgressBar @JvmOverloads constructor(
 
     private val progressDrawable = ProgressDrawable()
 
-    init {
-        setImageDrawable(progressDrawable)
-    }
-
     var color: Int
         get() {
             return progressDrawable.color
@@ -31,6 +27,14 @@ class WebProgressBar @JvmOverloads constructor(
         get() {
             return progressDrawable.progress
         }
+
+    init {
+        setImageDrawable(progressDrawable)
+        if (isInEditMode) {
+            color = 0x30FF0000
+            progress = 0.3F
+        }
+    }
 
     private class ProgressDrawable : Drawable() {
 
