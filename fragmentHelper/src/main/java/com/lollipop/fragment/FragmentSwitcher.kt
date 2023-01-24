@@ -36,6 +36,21 @@ class FragmentSwitcher(
         switchTo(tag, null)
     }
 
+    fun clear(): Int {
+        infoMap.clear()
+        cache.clear()
+        val transaction = fragmentManager.beginTransaction()
+        val prefix = commonFragmentTag
+        fragmentManager.fragments.forEach {
+            // 通过前缀把所有前面的Fragment都隐藏了，如果通过tag隐藏某个Fragment，
+            // 可能会在Fragment的恢复时，出现遗漏
+            if (it.tag?.startsWith(prefix) == true) {
+                transaction.remove(it)
+            }
+        }
+        return transaction.commit()
+    }
+
     fun switchTo(tag: String, arguments: Bundle?): Int {
         val transaction = fragmentManager.beginTransaction()
         // 隐藏老的Fragment
