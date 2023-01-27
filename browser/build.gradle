@@ -44,4 +44,5 @@ dependencies {
     implementation project(path: ':web')
     implementation project(path: ':maskGuide')
     implementation project(path: ':clip')
+    implementation project(path: ':fragmentHelper')
 }
