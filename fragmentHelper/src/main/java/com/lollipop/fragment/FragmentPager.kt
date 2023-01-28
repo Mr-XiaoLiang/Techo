@@ -1,5 +1,7 @@
 package com.lollipop.fragment
 
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -13,54 +15,107 @@ import androidx.viewpager2.widget.ViewPager2
  * 本来想做一个ViewPager和ViewPager2都包含的
  * 但是想了下，抛弃ViewPager吧
  */
-class FragmentPager {
+class FragmentPager private constructor(
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle,
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    fun setAdapter(viewPager2: ViewPager2) {
-        // TODO
-//        viewPager2.adapter
+    companion object {
+        fun create(
+            fragmentManager: FragmentManager,
+            lifecycle: Lifecycle,
+        ): FragmentPager {
+            return FragmentPager(fragmentManager, lifecycle)
+        }
+
+        fun bind(activity: AppCompatActivity, viewPager2: ViewPager2): FragmentPager {
+            val fragmentPager = create(activity.supportFragmentManager, activity.lifecycle)
+            viewPager2.adapter = fragmentPager
+            return fragmentPager
+        }
+
+        fun bind(fragment: Fragment, viewPager2: ViewPager2): FragmentPager {
+            val fragmentPager = create(fragment.childFragmentManager, fragment.lifecycle)
+            viewPager2.adapter = fragmentPager
+            return fragmentPager
+        }
+
+        fun bind(activity: AppCompatActivity, recyclerView: RecyclerView): FragmentPager {
+            val fragmentPager = create(activity.supportFragmentManager, activity.lifecycle)
+            recyclerView.adapter = fragmentPager
+            return fragmentPager
+        }
+
+        fun bind(fragment: Fragment, recyclerView: RecyclerView): FragmentPager {
+            val fragmentPager = create(fragment.childFragmentManager, fragment.lifecycle)
+            recyclerView.adapter = fragmentPager
+            return fragmentPager
+        }
     }
 
-    private class PageAdapter(
-        fragmentManager: FragmentManager,
-        lifecycle: Lifecycle,
-        private val creator: FragmentCreator,
-        private val itemCountProvider: () -> Int,
-        private val infoProvider: (Int) -> FragmentInfo?
-    ) : FragmentStateAdapter(fragmentManager, lifecycle) {
+    private val creator = FragmentCreator()
 
-        init {
-            setHasStableIds(true)
+    val infoList = ArrayList<FragmentInfo>()
+
+    init {
+        setHasStableIds(true)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun reset(list: List<FragmentInfo>) {
+        infoList.clear()
+        infoList.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return infoList.size
+    }
+
+    fun opt(position: Int): FragmentInfo? {
+        if (position < 0 || position >= itemCount) {
+            return null
         }
+        return infoList[position]
+    }
 
-        override fun getItemCount(): Int {
-            return itemCountProvider()
+    override fun createFragment(position: Int): Fragment {
+        val info = opt(position) ?: throw IllegalArgumentException(
+            "FragmentInfo 找不到了，count = ${itemCount}, position = $position"
+        )
+        return creator.create(info, null)
+    }
+
+    override fun getItemId(position: Int): Long {
+        if (position < 0 || position >= itemCount) {
+            return RecyclerView.NO_ID
         }
+        val info = opt(position) ?: return RecyclerView.NO_ID
+        return ItemFlag.makeFlag(System.identityHashCode(info.fragment), position)
+    }
 
-        override fun createFragment(position: Int): Fragment {
-            val info = infoProvider(position) ?: throw IllegalArgumentException(
-                "FragmentInfo 找不到了，count = ${itemCount}, position = $position"
-            )
-            return creator.create(info, null)
+    override fun containsItem(itemId: Long): Boolean {
+        val hash = ItemFlag.getHash(itemId)
+        val position = ItemFlag.getPosition(itemId)
+        if (position < 0 || position >= itemCount) {
+            return false
         }
+        val info = opt(position) ?: return false
+        return System.identityHashCode(info.fragment) == hash
+    }
 
-        override fun getItemId(position: Int): Long {
-            if (position < 0 || position >= itemCount) {
-                return RecyclerView.NO_ID
-            }
-            val info = infoProvider(position) ?: return RecyclerView.NO_ID
-            return ItemFlag.makeFlag(System.identityHashCode(info.fragment), position)
-        }
+    /**
+     * 添加一个Fragment创建事件的回调函数
+     */
+    fun addFragmentCreatedCallback(callback: FragmentCreatedCallback) {
+        creator.addFragmentCreatedCallback(callback)
+    }
 
-        override fun containsItem(itemId: Long): Boolean {
-            val hash = ItemFlag.getHash(itemId)
-            val position = ItemFlag.getPosition(itemId)
-            if (position < 0 || position >= itemCount) {
-                return false
-            }
-            val info = infoProvider(position) ?: return false
-            return System.identityHashCode(info.fragment) == hash
-        }
-
+    /**
+     * 移除一个Fragment创建事件的回调函数
+     */
+    fun removeFragmentCreatedCallback(callback: FragmentCreatedCallback) {
+        creator.removeFragmentCreatedCallback(callback)
     }
 
     private object ItemFlag {
@@ -79,3 +134,4 @@ class FragmentPager {
     }
 
 }
+
