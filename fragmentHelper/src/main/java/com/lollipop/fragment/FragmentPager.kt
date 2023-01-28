@@ -27,30 +27,6 @@ class FragmentPager private constructor(
         ): FragmentPager {
             return FragmentPager(fragmentManager, lifecycle)
         }
-
-        fun bind(activity: AppCompatActivity, viewPager2: ViewPager2): FragmentPager {
-            val fragmentPager = create(activity.supportFragmentManager, activity.lifecycle)
-            viewPager2.adapter = fragmentPager
-            return fragmentPager
-        }
-
-        fun bind(fragment: Fragment, viewPager2: ViewPager2): FragmentPager {
-            val fragmentPager = create(fragment.childFragmentManager, fragment.lifecycle)
-            viewPager2.adapter = fragmentPager
-            return fragmentPager
-        }
-
-        fun bind(activity: AppCompatActivity, recyclerView: RecyclerView): FragmentPager {
-            val fragmentPager = create(activity.supportFragmentManager, activity.lifecycle)
-            recyclerView.adapter = fragmentPager
-            return fragmentPager
-        }
-
-        fun bind(fragment: Fragment, recyclerView: RecyclerView): FragmentPager {
-            val fragmentPager = create(fragment.childFragmentManager, fragment.lifecycle)
-            recyclerView.adapter = fragmentPager
-            return fragmentPager
-        }
     }
 
     private val creator = FragmentCreator()

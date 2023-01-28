@@ -5,15 +5,17 @@ import androidx.annotation.AnimatorRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 
 /**
  * fragment的切换器
  */
-class FragmentSwitcher(
+class FragmentSwitcher internal constructor(
     private val fragmentManager: FragmentManager,
     private val containerId: Int
-) {
+) : LifecycleEventObserver {
 
     companion object {
         private val EMPTY_TRANSACTION_ANIMATION = TransactionAnimation(0, 0, 0, 0)
@@ -208,6 +210,12 @@ class FragmentSwitcher(
      */
     fun removeFragmentChangedCallback(callback: FragmentChangedCallback) {
         changedCallback.removeListener(callback)
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (source.lifecycle.currentState <= Lifecycle.State.DESTROYED) {
+            clear()
+        }
     }
 
     /**
