@@ -1,12 +1,12 @@
 package com.lollipop.web.search.impl
 
-import com.lollipop.web.search.SearchEngine
-import com.lollipop.web.search.SearchEngineCallback
+import androidx.lifecycle.Lifecycle
+import com.lollipop.web.search.*
 
-open class Bing: SearchEngine {
+open class Bing(lifecycle: Lifecycle) : SimpleSearchEngine(lifecycle) {
 
-    override fun getSearchUrl(keyword: String, callback: SearchEngineCallback) {
-        callback.onSearchEngineResult("https://bing.com/search?q=$keyword")
+    override fun getSearchUrl(keyword: String): String {
+        return "https://bing.com/search?q=$keyword"
     }
 
 }

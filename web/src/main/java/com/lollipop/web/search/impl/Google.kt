@@ -1,12 +1,12 @@
 package com.lollipop.web.search.impl
 
-import com.lollipop.web.search.SearchEngine
-import com.lollipop.web.search.SearchEngineCallback
+import androidx.lifecycle.Lifecycle
+import com.lollipop.web.search.*
 
-open class Google: SearchEngine {
+open class Google(lifecycle: Lifecycle) : SimpleSearchEngine(lifecycle) {
 
-    override fun getSearchUrl(keyword: String, callback: SearchEngineCallback) {
-        callback.onSearchEngineResult("https://www.google.com/search?q=${keyword}")
+    override fun getSearchUrl(keyword: String): String {
+        return "https://www.google.com/search?q=${keyword}"
     }
 
 }

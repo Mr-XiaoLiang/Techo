@@ -2,8 +2,9 @@ package com.lollipop.web.search
 
 interface SearchEngineCallback {
 
-    fun onSearchEngineResult(url: String)
-
-    fun onSearchRelevantResult(values: List<String>)
+    /**
+     * 搜索引擎的建议结果
+     */
+    fun onSearchRelevantResult(values: List<SearchSuggestion>)
 
 }
