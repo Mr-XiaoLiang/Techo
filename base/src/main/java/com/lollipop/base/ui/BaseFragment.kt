@@ -2,7 +2,6 @@ package com.lollipop.base.ui
 
 import android.content.Context
 import android.content.Intent
-import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressHandler
@@ -73,8 +72,21 @@ open class BaseFragment : Fragment(),
         activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
+    protected inline fun <reified T : Any> check(context: Context?): T? {
+        parentFragment?.check<T>()?.let {
+            return it
+        }
+        getContext()?.check<T>()?.let {
+            return it
+        }
+        context?.check<T>()?.let {
+            return it
+        }
+        return null
+    }
+
     protected inline fun <reified T : Any> check(
-        context: Context? = null,
+        context: Context?,
         callback: (T) -> Unit
     ) {
         if (parentFragment?.check(callback) == true) {
@@ -94,6 +106,13 @@ open class BaseFragment : Fragment(),
             return true
         }
         return false
+    }
+
+    protected inline fun <reified T : Any> Any.check(): T? {
+        if (this is T) {
+            return this
+        }
+        return null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
