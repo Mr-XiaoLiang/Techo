@@ -1,9 +1,11 @@
 package com.lollipop.web
 
 import android.app.Activity
+import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 
 interface WebHost {
 
@@ -21,21 +23,22 @@ interface WebHost {
             }
             return null
         }
-    val hostLifecycleOwner: LifecycleOwner?
+
+    val hostLifecycle: Lifecycle
         get() {
             val activity = this
             if (activity is Activity) {
                 if (activity.isFinishing || activity.isDestroyed) {
-                    return null
+                    return ProcessLifecycleOwner.get().lifecycle
                 }
             }
             if (activity is LifecycleOwner) {
                 if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.DESTROYED)) {
-                    return null
+                    return ProcessLifecycleOwner.get().lifecycle
                 }
-                return activity
+                return activity.lifecycle
             }
-            return null
+            return ProcessLifecycleOwner.get().lifecycle
         }
 
 }

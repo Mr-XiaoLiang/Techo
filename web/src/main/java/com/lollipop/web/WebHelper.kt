@@ -3,6 +3,7 @@ package com.lollipop.web
 import android.graphics.Bitmap
 import android.view.View
 import com.lollipop.web.bridge.Bridge
+import com.lollipop.web.bridge.BridgeAlias
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.completion.UrlCompletion
 import com.lollipop.web.completion.UrlCompletionResult
@@ -13,6 +14,7 @@ import com.lollipop.web.listener.TitleListener
 import com.lollipop.web.listener.WindowListener
 import com.lollipop.web.search.SearchEngine
 import com.lollipop.web.search.SearchEngineCallback
+import com.lollipop.web.search.SearchSuggestion
 import com.lollipop.web.search.impl.Bing
 
 /**
@@ -76,7 +78,7 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
 
     private val defaultCompletion by lazy { EmptyCompletion() }
 
-    private val defaultSearchEngine by lazy { Bing() }
+    private val defaultSearchEngine by lazy { Bing(iWeb.host.hostLifecycle) }
 
     val canRegisterBridgeRoot: Boolean
         get() {
@@ -91,15 +93,19 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
     }
 
     fun addBridgeRoot(bridge: BridgeRoot): WebHelper {
-        iWeb.addBridgeRoot(bridge)
+        if (canRegisterBridgeRoot) {
+            bridgeRootList.add(bridge)
+        }
         return this
     }
 
-    fun addBridge(rootName: String, bridge: Bridge): WebHelper {
+    fun addBridge(rootName: String, bridge: Bridge, vararg alias: String): WebHelper {
         this.bridgeRootList.forEach {
             if (it.name == rootName) {
                 it.addBridge(bridge)
-                return this
+                alias.forEach { name ->
+                    it.addBridge(BridgeAlias(name, bridge))
+                }
             }
         }
         return this
@@ -110,16 +116,9 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
             return this
         }
         isInit = true
-        globeBridgeRoot.forEach {
-            addBridgeRoot(it.newInstance())
-        }
-        globeBridge.forEach { entry ->
-            val key = entry.key
-            this.bridgeRootList.find { it.name == key }?.let { root ->
-                entry.value.forEach { bridge ->
-                    root.addBridge(bridge.newInstance())
-                }
-            }
+        initGlobeBridge()
+        this.bridgeRootList.forEach {
+            iWeb.addBridgeRoot(it)
         }
         if (urlCompletion == null) {
             urlCompletion = globeUrlCompletion.newInstance()
@@ -128,6 +127,22 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
             searchEngine = globeSearchEngine.newInstance()
         }
         return this
+    }
+
+    private fun initGlobeBridge() {
+        globeBridgeRoot.forEach {
+            addBridgeRoot(it.newInstance())
+        }
+        globeBridge.forEach { entry ->
+            val key = entry.key
+            this.bridgeRootList.forEach { root ->
+                if (root.name == key) {
+                    entry.value.forEach { bridge ->
+                        root.addBridge(bridge.newInstance())
+                    }
+                }
+            }
+        }
     }
 
     fun loadUrl(url: String): WebHelper {
@@ -178,15 +193,7 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
     }
 
     override fun onSearch(keyword: String) {
-        getSearchEngine().getSearchUrl(keyword, this)
-    }
-
-    override fun onSearchEngineResult(url: String) {
-        onLoadUrl(url)
-    }
-
-    override fun onSearchRelevantResult(values: List<String>) {
-        // TODO("Not yet implemented")
+        getSearchEngine().search(keyword, this)
     }
 
     class SimpleTitleListener : TitleListener {
@@ -210,6 +217,10 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
             this.onIconChangedCallback = callback
         }
 
+    }
+
+    override fun onSearchRelevantResult(values: List<SearchSuggestion>) {
+        TODO("Not yet implemented")
     }
 
 }

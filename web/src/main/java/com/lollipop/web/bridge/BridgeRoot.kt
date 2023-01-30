@@ -1,7 +1,5 @@
 package com.lollipop.web.bridge
 
-import android.app.Activity
-import androidx.lifecycle.LifecycleOwner
 import com.lollipop.web.IWeb
 import com.lollipop.web.WebHost
 import java.lang.ref.WeakReference
@@ -10,6 +8,11 @@ abstract class BridgeRoot : BridgeCluster() {
 
     companion object {
         private val EMPTY_HOST = EmptyWebHost()
+
+        fun simpleRoot(name: String): BridgeRoot {
+            return Simple(name)
+        }
+
     }
 
     private var hostReference: WeakReference<WebHost>? = null
@@ -30,15 +33,8 @@ abstract class BridgeRoot : BridgeCluster() {
         dispatch(host, iWeb, bridgeName, params)
     }
 
-    private class EmptyWebHost: WebHost {
-        override val hostActivity: Activity?
-            get() {
-                return null
-            }
-        override val hostLifecycleOwner: LifecycleOwner?
-            get() {
-                return null
-            }
-    }
+    private class EmptyWebHost : WebHost
+
+    class Simple(override val name: String) : BridgeRoot()
 
 }
