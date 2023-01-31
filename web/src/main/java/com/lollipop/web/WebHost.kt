@@ -26,17 +26,9 @@ interface WebHost {
 
     val hostLifecycle: Lifecycle
         get() {
-            val activity = this
-            if (activity is Activity) {
-                if (activity.isFinishing || activity.isDestroyed) {
-                    return ProcessLifecycleOwner.get().lifecycle
-                }
-            }
-            if (activity is LifecycleOwner) {
-                if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.DESTROYED)) {
-                    return ProcessLifecycleOwner.get().lifecycle
-                }
-                return activity.lifecycle
+            val host = this
+            if (host is LifecycleOwner) {
+                return host.lifecycle
             }
             return ProcessLifecycleOwner.get().lifecycle
         }
