@@ -1,7 +1,6 @@
 package com.lollipop.web
 
 import android.app.Activity
-import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
