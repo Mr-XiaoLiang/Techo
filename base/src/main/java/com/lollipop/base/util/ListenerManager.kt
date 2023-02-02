@@ -6,6 +6,11 @@ class ListenerManager<T : Any> {
 
     private val list = ArrayList<WeakReference<T>>()
 
+    val isEmpty: Boolean
+        get() {
+            return list.isEmpty()
+        }
+
     fun addListener(listener: T) {
         synchronized(list) {
             list.add(WeakReference(listener))
@@ -25,8 +30,16 @@ class ListenerManager<T : Any> {
     }
 
     fun invoke(callback: (T) -> Unit) {
-        list.forEach {
-            it.get()?.let(callback)
+        synchronized(list) {
+            list.forEach {
+                it.get()?.let(callback)
+            }
+        }
+    }
+
+    fun clear() {
+        synchronized(list) {
+            list.clear()
         }
     }
 
