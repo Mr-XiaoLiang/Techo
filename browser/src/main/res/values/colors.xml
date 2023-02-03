@@ -12,4 +12,7 @@
 
     <color name="nav_bar">#FFFFFF</color>
 
+    <color name="sheet_background">#FFFFFF</color>
+    <color name="sheet_holder">#787878</color>
+
 </resources>
