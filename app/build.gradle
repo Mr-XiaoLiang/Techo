@@ -57,6 +57,8 @@ dependencies {
     implementation project(path: ':ltabview')
     implementation project(path: ':qr')
     implementation project(path: ':clip')
+    implementation project(path: ':colorRes')
+    implementation project(path: ':fragmentHelper')
 
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop
