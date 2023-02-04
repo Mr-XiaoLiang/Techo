@@ -89,8 +89,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginVertical="10dp"
-                android:background="@color/white"
+                android:background="@color/gray_0"
                 android:radius="18dp"
+                android:id="@+id/searchBar"
                 app:clipStrokeColor="@color/nav_icon"
                 app:clipStrokeWidth="1dp">
 

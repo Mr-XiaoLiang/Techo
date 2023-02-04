@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.lollipop.base.util.ListenerManager
 import com.lollipop.browser.R
 
 class SecretKeyboardView @JvmOverloads constructor(
@@ -25,6 +26,8 @@ class SecretKeyboardView @JvmOverloads constructor(
             field = value
             requestLayout()
         }
+
+    private val keyButtonClickListener = ListenerManager<OnKeyButtonClickListener>()
 
     init {
         if (attributeSet != null) {
@@ -56,10 +59,28 @@ class SecretKeyboardView @JvmOverloads constructor(
         if (provider == null) {
             return
         }
-        Key.values().forEach {
-            val button = provider.createButton(this, it)
+        Key.values().forEach { key ->
+            val button = provider.createButton(this, key)
+            button.setOnClickListener { onButtonClick(it) }
             addView(button)
         }
+    }
+
+    private fun onButtonClick(view: View) {
+        val indexOfChild = indexOfChild(view)
+        if (indexOfChild < 0 || indexOfChild >= Key.values().size) {
+            return
+        }
+        val key = Key.values()[indexOfChild]
+        keyButtonClickListener.invoke { it.onKeyButtonClick(key) }
+    }
+
+    fun addOnKeyButtonClickListener(listener: OnKeyButtonClickListener) {
+        keyButtonClickListener.addListener(listener)
+    }
+
+    fun removeOnKeyButtonClickListener(listener: OnKeyButtonClickListener) {
+        keyButtonClickListener.removeListener(listener)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -110,7 +131,11 @@ class SecretKeyboardView @JvmOverloads constructor(
 
     }
 
-    interface KeyButtonProvider {
+    fun interface OnKeyButtonClickListener {
+        fun onKeyButtonClick(key: Key)
+    }
+
+    fun interface KeyButtonProvider {
         fun createButton(parent: SecretKeyboardView, key: Key): View
     }
 
@@ -125,22 +150,26 @@ class SecretKeyboardView @JvmOverloads constructor(
     }
 
     enum class Key(
+        val number: Int,
         val spanX: Int,
         val spanY: Int,
         val x: Int,
         val y: Int
     ) {
-        NUMBER_0(1, 1, 0, 0),
-        NUMBER_1(1, 1, 0, 1),
-        NUMBER_2(1, 1, 1, 1),
-        NUMBER_3(1, 1, 2, 1),
-        NUMBER_4(1, 1, 0, 2),
-        NUMBER_5(1, 1, 1, 2),
-        NUMBER_6(1, 1, 2, 2),
-        NUMBER_7(1, 1, 0, 3),
-        NUMBER_8(1, 1, 1, 3),
-        NUMBER_9(1, 1, 2, 3),
-        SUBMIT(2, 1, 1, 0),
+        NUMBER_0(0, 1, 1, 0, 0),
+        NUMBER_1(1, 1, 1, 0, 1),
+        NUMBER_2(2, 1, 1, 1, 1),
+        NUMBER_3(3, 1, 1, 2, 1),
+        NUMBER_4(4, 1, 1, 0, 2),
+        NUMBER_5(5, 1, 1, 1, 2),
+        NUMBER_6(6, 1, 1, 2, 2),
+        NUMBER_7(7, 1, 1, 0, 3),
+        NUMBER_8(8, 1, 1, 1, 3),
+        NUMBER_9(9, 1, 1, 2, 3),
+        SUBMIT(10, 2, 1, 1, 0);
+
+        val numberString: String = number.toString()
+
     }
 
 }

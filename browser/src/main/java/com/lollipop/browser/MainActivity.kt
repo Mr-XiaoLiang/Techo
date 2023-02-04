@@ -3,13 +3,16 @@ package com.lollipop.browser
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.insets.*
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
+import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityMainBinding
+import com.lollipop.browser.secret.SecretDialog
 import com.lollipop.web.WebHelper
 import com.lollipop.web.WebHost
 import kotlin.math.max
@@ -42,8 +45,12 @@ class MainActivity : AppCompatActivity(), WebHost {
                 minSize = 4.dp2px
             )
         )
-        binding.statusPanel.setBackgroundColor(getColor(R.color.teal_700))
-
+        binding.statusPanel.setBackgroundColor(getColor(R.color.brand_4))
+        binding.searchBar.onClick {
+            SecretDialog.show(this) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun initBottomSheetPanel() {
