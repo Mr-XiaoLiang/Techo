@@ -5,6 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.lollipop.base.util.DatabaseHelper
+import com.lollipop.base.util.DatabaseHelper.getIntByName
+import com.lollipop.base.util.DatabaseHelper.getTextByName
+import com.lollipop.base.util.DatabaseHelper.putValue
 import com.lollipop.techo.data.json.mapToJson
 import com.lollipop.techo.data.json.toJsonObject
 
@@ -17,42 +21,6 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
     companion object {
         private const val DB_NAME = "techo"
         private const val VERSION = 1
-
-        private fun Cursor.getText(enum: Enum<*>, def: String = ""): String {
-            val columnIndex = getColumnIndex(enum.name)
-            if (columnIndex < 0) {
-                return def
-            }
-            return getString(columnIndex)
-        }
-
-        private fun ContentValues.put(enum: Enum<*>, value: String) {
-            put(enum.name, value)
-        }
-
-        private fun ContentValues.put(enum: Enum<*>, value: Int) {
-            put(enum.name, value)
-        }
-
-        private fun Cursor.getInt(enum: Enum<*>, def: Int = 0): Int {
-            return getInt(enum.name, def)
-        }
-
-        private fun Cursor.getInt(name: String, def: Int = 0): Int {
-            val columnIndex = getColumnIndex(name)
-            if (columnIndex < 0) {
-                return def
-            }
-            return getInt(columnIndex)
-        }
-
-        private fun Cursor.getFloat(enum: Enum<*>, def: Float = 0F): Float {
-            val columnIndex = getColumnIndex(enum.name)
-            if (columnIndex < 0) {
-                return def
-            }
-            return getFloat(columnIndex)
-        }
 
         private fun selectLastId(table: String, idName: String, db: SQLiteDatabase): Int {
             try {
@@ -183,12 +151,6 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         TechoTable.delete(writeDb, id)
     }
 
-    private enum class ColumnFormat {
-        TEXT,
-        INTEGER,
-        FLOAT
-    }
-
     private object FlagTable {
 
         const val NAME = "Flag"
@@ -199,9 +161,9 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             Column.values().map { it.name }.toTypedArray()
         }
 
-        enum class Column(val format: ColumnFormat) {
-            NAME(ColumnFormat.TEXT),
-            COLOR(ColumnFormat.INTEGER)
+        enum class Column(val format: DatabaseHelper.ColumnFormat) {
+            NAME(DatabaseHelper.ColumnFormat.TEXT),
+            COLOR(DatabaseHelper.ColumnFormat.INTEGER)
         }
 
         fun getCreateSql(): String {
@@ -225,9 +187,9 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         ): List<TechoFlag> {
             return queryList(db, rawQueryCallback) {
                 TechoFlag.create(
-                    id = it.getInt(ID),
-                    name = it.getText(Column.NAME),
-                    color = it.getInt(Column.COLOR),
+                    id = it.getIntByName(ID),
+                    name = it.getTextByName(Column.NAME),
+                    color = it.getIntByName(Column.COLOR),
                 )
             }
         }
@@ -265,8 +227,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
                 NAME,
                 null,
                 ContentValues().apply {
-                    put(Column.NAME, flag.name)
-                    put(Column.COLOR, flag.color)
+                    putValue(Column.NAME, flag.name)
+                    putValue(Column.COLOR, flag.color)
                 })
             if (insert >= 0) {
                 return selectLastId(NAME, ID, db)
@@ -278,8 +240,8 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             db.update(
                 NAME,
                 ContentValues().apply {
-                    put(Column.NAME, flag.name)
-                    put(Column.COLOR, flag.color)
+                    putValue(Column.NAME, flag.name)
+                    putValue(Column.COLOR, flag.color)
                 },
                 "$ID = ?",
                 arrayOf(flag.id.toString())
@@ -306,11 +268,11 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
             Column.values().map { it.name }.toTypedArray()
         }
 
-        enum class Column(val format: ColumnFormat) {
-            TITLE(ColumnFormat.TEXT),
-            FLAG(ColumnFormat.INTEGER),
-            CONTENT(ColumnFormat.TEXT),
-            KEYWORD(ColumnFormat.TEXT),
+        enum class Column(val format: DatabaseHelper.ColumnFormat) {
+            TITLE(DatabaseHelper.ColumnFormat.TEXT),
+            FLAG(DatabaseHelper.ColumnFormat.INTEGER),
+            CONTENT(DatabaseHelper.ColumnFormat.TEXT),
+            KEYWORD(DatabaseHelper.ColumnFormat.TEXT),
         }
 
         val SELECT_ALL = "SELECT t.$ID AS $ID, " +
@@ -440,24 +402,24 @@ class TechoDbUtil(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, V
         private fun Cursor.toTechoInfo(): TechoInfo {
             val cursor = this
             return TechoInfo().apply {
-                parse(cursor.getText(Column.CONTENT).toJsonObject())
+                parse(cursor.getTextByName(Column.CONTENT).toJsonObject())
                 flag = TechoFlag.create(
-                    id = cursor.getInt(FlagTable.ID),
-                    name = cursor.getText(FlagTable.Column.NAME),
-                    color = cursor.getInt(FlagTable.Column.COLOR),
+                    id = cursor.getIntByName(FlagTable.ID),
+                    name = cursor.getTextByName(FlagTable.Column.NAME),
+                    color = cursor.getIntByName(FlagTable.Column.COLOR),
                 )
-                id = cursor.getInt(ID)
-                title = cursor.getText(Column.TITLE)
+                id = cursor.getIntByName(ID)
+                title = cursor.getTextByName(Column.TITLE)
             }
         }
 
         private fun TechoInfo.toContentValues(): ContentValues {
             val info = this
             return ContentValues().apply {
-                put(Column.TITLE, info.title)
-                put(Column.FLAG, info.flag.id)
-                put(Column.CONTENT, info.toJson().toString())
-                put(Column.KEYWORD, info.keyWords.mapToJson().toString())
+                putValue(Column.TITLE, info.title)
+                putValue(Column.FLAG, info.flag.id)
+                putValue(Column.CONTENT, info.toJson().toString())
+                putValue(Column.KEYWORD, info.keyWords.mapToJson().toString())
             }
         }
     }
