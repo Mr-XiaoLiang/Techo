@@ -308,7 +308,7 @@ class TechoDbUtil(context: Context) : DatabaseHelper(context, DB_NAME, null, VER
         fun delete(db: SQLiteDatabase, id: Int) {
             db.delete(
                 tableName,
-                "${idColumn} = ?",
+                "$idColumn = ?",
                 arrayOf(id.toString())
             )
         }
