@@ -89,6 +89,18 @@ class FragmentSwitcher internal constructor(
         return transaction.commit()
     }
 
+    fun findByTag(tag: String): Fragment? {
+        return fragmentManager.findFragmentByTag(getFragmentTag(tag))
+    }
+
+    inline fun <reified T : Fragment> findTypedByTag(tag: String): T? {
+        val fragment = findByTag(tag)
+        if (fragment is T) {
+            return fragment
+        }
+        return null
+    }
+
     /**
      * 切换至指定的Fragment
      * @param tag 需要显示的Fragment的Tag，它需要存在于Switcher的数据集合中

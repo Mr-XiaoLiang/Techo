@@ -1,6 +1,7 @@
 package com.lollipop.browser.web
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.TxtHelper
 import com.lollipop.base.util.doAsync
@@ -8,7 +9,9 @@ import com.lollipop.base.util.onUI
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
+
 
 /**
  * 网页的状态管理器
@@ -16,8 +19,13 @@ import java.util.*
 object WebStatusManager {
 
     private var statusFile: File? = null
+    private var faviconDir: File? = null
+    private var snapshotDir: File? = null
 
     private const val STATUS_FILE_NAME = "status.ltf"
+    private const val CANCEL_DIR = "status"
+    private const val FAVICON_DIR = "favicon"
+    private const val SNAPSHOT_DIR = "snapshot"
 
     private val statusArray = ArrayList<WebStatus>()
     private val statusMap = HashMap<String, WebStatus>()
@@ -34,6 +42,9 @@ object WebStatusManager {
 
     private fun init(context: Context) {
         statusFile = File(context.filesDir, STATUS_FILE_NAME)
+        val imgDir = File(context.cacheDir, CANCEL_DIR)
+        faviconDir = File(imgDir, FAVICON_DIR)
+        snapshotDir = File(imgDir, SNAPSHOT_DIR)
     }
 
     private fun loadData() {
@@ -101,6 +112,17 @@ object WebStatusManager {
         }
     }
 
+    fun find(pageId: String): WebStatus? {
+        return statusMap[pageId]
+    }
+
+    fun getPageList(): List<String> {
+        return statusArray.map { it.pageId }
+    }
+
+    /**
+     * 保存状态信息
+     */
     fun save() {
         val file = statusFile ?: return
         doAsync {
@@ -118,6 +140,10 @@ object WebStatusManager {
         }
     }
 
+    /**
+     * 创建一个新的页面
+     * @return 返回一个新页面的PageID
+     */
     fun newPage(): String {
         var pageId = ""
         var count = 0
@@ -148,10 +174,82 @@ object WebStatusManager {
         }
     }
 
+    fun onLoadStart(pageId: String, url: String) {
+        statusMap[pageId]?.resetByNewPage(url)
+        onInfoChanged()
+    }
+
+    fun onTitleChanged(pageId: String, title: String) {
+        statusMap[pageId]?.updateTitle(title)
+        onInfoChanged()
+    }
+
+    fun onIconChanged(pageId: String, icon: Bitmap?) {
+        onImageChanged(pageId, icon, faviconDir) { status, file ->
+            status.updateFavicon(file)
+        }
+    }
+
+    fun onSnapshotChanged(pageId: String, icon: Bitmap?) {
+        onImageChanged(pageId, icon, snapshotDir) { status, file ->
+            status.updateSnapshot(file)
+        }
+    }
+
+    fun onProgressChanged(pageId: String, progress: Float) {
+        statusMap[pageId]?.updateProgress(progress)
+        onInfoChanged()
+    }
+
+    private fun onImageChanged(
+        pageId: String,
+        image: Bitmap?,
+        dir: File?,
+        result: (WebStatus, File) -> Unit
+    ) {
+        image ?: return
+        dir ?: return
+        val status = statusMap[pageId] ?: return
+        doAsync {
+            dir.mkdirs()
+            val imageFile = File(dir, pageId)
+            image.writeToFile(imageFile)
+            result(status, imageFile)
+            onInfoChanged()
+        }
+    }
+
+    private fun Bitmap.writeToFile(file: File) {
+        if (file.exists()) {
+            file.delete()
+        }
+        file.parentFile?.mkdirs()
+        val bitmap = this
+        var out: FileOutputStream? = null
+        try {
+            out = FileOutputStream(file)
+            if (bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)) {
+                out.flush()
+                out.close()
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        } finally {
+            try {
+                out?.close()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun onInfoChanged() {
+        save()
+    }
+
     private fun removePageCache(status: WebStatus) {
         status.favicon?.tryDelete()
         status.snapshot?.tryDelete()
-        // TODO
     }
 
     fun addReadyListener(listener: OnManagerReadyListener) {
@@ -185,26 +283,6 @@ object WebStatusManager {
          * 页面的ID，这是唯一标识符，用来区分每个Tab下的浏览器窗口
          */
         val pageId: String,
-        /**
-         * 页面标题
-         */
-        var title: String = "",
-        /**
-         * 页面URL
-         */
-        var url: String = "",
-        /**
-         * 页面的ICON
-         */
-        var favicon: File? = null,
-        /**
-         * 页面快照
-         */
-        var snapshot: File? = null,
-        /**
-         * 加载状态
-         */
-        var progress: Float = 0F
     ) {
 
         companion object {
@@ -228,14 +306,45 @@ object WebStatusManager {
 
             fun fromJson(json: JSONObject): WebStatus {
                 return WebStatus(
-                    pageId = json.optString(PAGE_ID),
-                    title = json.optString(TITLE),
-                    url = json.optString(URL),
-                    favicon = json.optString(FAVICON).optFile(),
-                    snapshot = json.optString(SNAPSHOT).optFile(),
-                )
+                    pageId = json.optString(PAGE_ID)
+                ).apply {
+                    title = json.optString(TITLE)
+                    url = json.optString(URL)
+                    favicon = json.optString(FAVICON).optFile()
+                    snapshot = json.optString(SNAPSHOT).optFile()
+                }
             }
         }
+
+        /**
+         * 页面标题
+         */
+        var title: String = ""
+            private set
+
+        /**
+         * 页面URL
+         */
+        var url: String = ""
+            private set
+
+        /**
+         * 页面的ICON
+         */
+        var favicon: File? = null
+            private set
+
+        /**
+         * 页面快照
+         */
+        var snapshot: File? = null
+            private set
+
+        /**
+         * 加载状态
+         */
+        var progress: Float = 0F
+            private set
 
         fun toJson(): JSONObject {
             return JSONObject().apply {
@@ -245,6 +354,32 @@ object WebStatusManager {
                 put(FAVICON, favicon?.path ?: "")
                 put(SNAPSHOT, snapshot?.path ?: "")
             }
+        }
+
+        internal fun resetByNewPage(url: String) {
+            this.url = url
+            updateProgress(0F)
+            updateTitle("")
+            updateSnapshot(null)
+            updateFavicon(null)
+        }
+
+        internal fun updateTitle(title: String) {
+            this.title = title
+        }
+
+        internal fun updateFavicon(icon: File?) {
+            this.favicon?.delete()
+            this.favicon = icon
+        }
+
+        internal fun updateSnapshot(img: File?) {
+            this.snapshot?.delete()
+            this.snapshot = img
+        }
+
+        internal fun updateProgress(value: Float) {
+            this.progress = value
         }
 
     }

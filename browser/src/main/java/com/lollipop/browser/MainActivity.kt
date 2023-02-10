@@ -1,8 +1,7 @@
 package com.lollipop.browser
 
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.View
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -13,32 +12,31 @@ import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.browser.secret.SecretDialog
-import com.lollipop.web.WebHelper
-import com.lollipop.web.WebHost
+import com.lollipop.browser.web.WebPageFragment
+import com.lollipop.browser.web.WebStatusManager
+import com.lollipop.fragment.FragmentHelper
+import com.lollipop.fragment.FragmentSwitcher
+import com.lollipop.web.search.SearchSuggestion
 import kotlin.math.max
 
-class MainActivity : AppCompatActivity(), WebHost {
+class MainActivity : AppCompatActivity(), WebPageFragment.Callback {
 
     private val binding: ActivityMainBinding by lazyBind()
 
-//    private val webHelper by lazy {
-//        WebHelper.bind(this, binding.webView)
-//            .onTitleChanged {
-//                onTitleChanged { iWeb, title ->
-//                    Toast.makeText(this@MainActivity, title, Toast.LENGTH_SHORT).show()
-//                }
-//            }.onProgressChanged { _, progress ->
-//                binding.progressBar.progress = progress
-//            }
-//    }
-
     private val log by lazyLogD()
+
+    private var fragmentSwitcher: FragmentSwitcher? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         initBottomSheetPanel()
+        initView()
+        fragmentSwitcher = FragmentHelper.with(this).into(binding.webPageContainerView)
+    }
+
+    private fun initView() {
         binding.statusPanel.fixInsetsByListener(
             WindowInsetsEdgeViewDelegate(
                 direction = WindowInsetsEdgeViewDelegate.Direction.TOP,
@@ -83,10 +81,32 @@ class MainActivity : AppCompatActivity(), WebHost {
         }
     }
 
-    private fun createWebPage(url: String): View {
-        val webView = WebView(this)
-        WebHelper.bind(this, webView).init().loadUrl(url)
-        return webView
+    private fun findPage(pageId: String): WebPageFragment? {
+        return fragmentSwitcher?.findTypedByTag(pageId)
+    }
+
+    override fun onLoadStart(pageId: String, url: String) {
+        WebStatusManager.onLoadStart(pageId, url)
+    }
+
+    override fun onLoadProgressChanged(pageId: String, progress: Float) {
+        WebStatusManager.onProgressChanged(pageId, progress)
+    }
+
+    override fun onTitleChanged(pageId: String, title: String) {
+        WebStatusManager.onTitleChanged(pageId, title)
+    }
+
+    override fun onIconChanged(pageId: String, icon: Bitmap?) {
+        WebStatusManager.onIconChanged(pageId, icon)
+    }
+
+    override fun onSearchRelevantResult(pageId: String, values: List<SearchSuggestion>) {
+        if (values.isEmpty()) {
+            return
+        }
+        // 默认实现，直接打开第一个
+        findPage(pageId)?.load(values[0].url)
     }
 
 }

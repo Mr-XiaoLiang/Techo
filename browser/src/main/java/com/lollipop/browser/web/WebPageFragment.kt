@@ -15,17 +15,19 @@ import com.lollipop.web.WebHelper
 import com.lollipop.web.WebHost
 import com.lollipop.web.listener.ProgressListener
 import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.search.SearchEngineCallback
+import com.lollipop.web.search.SearchSuggestion
 
 class WebPageFragment : BaseFragment(),
     WebHost,
     BrowserMainPanel.Callback,
     TitleListener,
-    ProgressListener {
+    ProgressListener,
+    SearchEngineCallback {
 
     companion object {
 
         private const val ARG_PAGE_ID = "ARG_PAGE_ID"
-
         fun putArguments(arguments: Bundle, pageId: String) {
             arguments.putString(ARG_PAGE_ID, pageId)
         }
@@ -33,11 +35,12 @@ class WebPageFragment : BaseFragment(),
         private fun getPageId(arguments: Bundle?): String {
             return arguments?.getString(ARG_PAGE_ID) ?: ""
         }
+
     }
 
     private val binding: FragmentWebPageBinding by lazyBind()
 
-    private var loadStatusCallback: LoadStatusCallback? = null
+    private var callback: Callback? = null
 
     private var webHelper: WebHelper? = null
 
@@ -55,12 +58,12 @@ class WebPageFragment : BaseFragment(),
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        loadStatusCallback = check(context)
+        callback = check(context)
     }
 
     override fun onDetach() {
         super.onDetach()
-        loadStatusCallback = null
+        callback = null
     }
 
     override fun onCreateView(
@@ -81,28 +84,36 @@ class WebPageFragment : BaseFragment(),
 
     private fun initWeb(helper: WebHelper) {
         helper.onTitleChanged(this)
-        // TODO
+        helper.onProgressChanged(this)
     }
 
     fun load(url: String) {
-        // TODO
+        webHelper?.loadUrl(url)
     }
 
     override fun onTitleChanged(iWeb: IWeb, title: String) {
-        TODO("Not yet implemented")
+        if (iWeb.host === this) {
+            callback?.onTitleChanged(pageId = pageId, title = title)
+        }
     }
 
     override fun onIconChanged(iWeb: IWeb, icon: Bitmap?) {
-        TODO("Not yet implemented")
+        if (iWeb.host === this) {
+            callback?.onIconChanged(pageId = pageId, icon = icon)
+        }
     }
 
     override fun onProgressChanged(iWeb: IWeb, progress: Int) {
         if (iWeb.host === this) {
-            loadStatusCallback?.onLoadProgressChanged(pageId = pageId, progress = progress * 0.01F)
+            callback?.onLoadProgressChanged(pageId = pageId, progress = progress * 0.01F)
         }
     }
 
-    interface LoadStatusCallback {
+    override fun onSearchRelevantResult(values: List<SearchSuggestion>) {
+        callback?.onSearchRelevantResult(pageId = pageId, values = values)
+    }
+
+    interface Callback {
 
         fun onLoadStart(pageId: String, url: String)
 
@@ -111,8 +122,11 @@ class WebPageFragment : BaseFragment(),
          */
         fun onLoadProgressChanged(pageId: String, progress: Float)
 
-        fun onLoadFinished(pageId: String, title: String, url: String)
+        fun onTitleChanged(pageId: String, title: String)
 
+        fun onIconChanged(pageId: String, icon: Bitmap?)
+
+        fun onSearchRelevantResult(pageId: String, values: List<SearchSuggestion>)
     }
 
 

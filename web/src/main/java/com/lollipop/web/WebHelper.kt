@@ -20,7 +20,10 @@ import com.lollipop.web.search.impl.Bing
 /**
  * 放弃继承和包装，采用组合组件的形式来提供Web的支持能力
  */
-class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
+class WebHelper(
+    val iWeb: IWeb,
+    private val searchEngineCallback: SearchEngineCallback?
+) : UrlCompletionResult, SearchEngineCallback {
 
     companion object {
 
@@ -39,8 +42,12 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
             globeSearchEngine = clazz
         }
 
-        fun bind(host: WebHost, view: View): WebHelper {
-            return WebHelper(IWebFactory.create(host, view))
+        fun bind(
+            host: WebHost,
+            view: View,
+            searchEngineCallback: SearchEngineCallback? = null
+        ): WebHelper {
+            return WebHelper(IWebFactory.create(host, view), searchEngineCallback)
         }
 
         fun register(clazz: Class<out BridgeRoot>) {
@@ -220,7 +227,7 @@ class WebHelper(val iWeb: IWeb) : UrlCompletionResult, SearchEngineCallback {
     }
 
     override fun onSearchRelevantResult(values: List<SearchSuggestion>) {
-        TODO("Not yet implemented")
+        searchEngineCallback?.onSearchRelevantResult(values)
     }
 
 }
