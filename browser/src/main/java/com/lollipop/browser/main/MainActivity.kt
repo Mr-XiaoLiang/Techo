@@ -1,25 +1,26 @@
-package com.lollipop.browser
+package com.lollipop.browser.main
 
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.insets.*
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
+import com.lollipop.browser.R
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.browser.secret.SecretDialog
 import com.lollipop.browser.web.WebPageFragment
 import com.lollipop.browser.web.WebStatusManager
-import com.lollipop.fragment.FragmentHelper
-import com.lollipop.fragment.FragmentSwitcher
+import com.lollipop.fragment.*
 import com.lollipop.web.search.SearchSuggestion
 import kotlin.math.max
 
-class MainActivity : AppCompatActivity(), WebPageFragment.Callback {
+class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCreatedCallback {
 
     private val binding: ActivityMainBinding by lazyBind()
 
@@ -27,13 +28,18 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback {
 
     private var fragmentSwitcher: FragmentSwitcher? = null
 
+    private var pendingUrlMap = HashMap<String, String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
         initBottomSheetPanel()
         initView()
-        fragmentSwitcher = FragmentHelper.with(this).into(binding.webPageContainerView)
+        val switcher = FragmentHelper.with(this)
+            .into(binding.webPageContainerView)
+        switcher.addFragmentCreatedCallback(this)
+        fragmentSwitcher = switcher
     }
 
     private fun initView() {
@@ -81,6 +87,33 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkPageOnResume()
+    }
+
+    private fun checkPageOnResume() {
+        val switcher = fragmentSwitcher ?: return
+        if (switcher.size < 1) {
+            addPage()
+        }
+    }
+
+
+    fun addPage(url: String = "") {
+        val switcher = fragmentSwitcher ?: return
+        val pageId = WebStatusManager.newPage()
+        addPageAndSwitch(switcher, pageId)
+        if (url.isEmpty()) {
+            pendingUrlMap[pageId] = url
+        }
+    }
+
+    private fun addPageAndSwitch(switcher: FragmentSwitcher, pageId: String) {
+        switcher.add(SimpleFragmentInfo(fragment = WebPageFragment::class.java, tag = pageId))
+        switcher.switchTo(pageId)
+    }
+
     private fun findPage(pageId: String): WebPageFragment? {
         return fragmentSwitcher?.findTypedByTag(pageId)
     }
@@ -107,6 +140,14 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback {
         }
         // 默认实现，直接打开第一个
         findPage(pageId)?.load(values[0].url)
+    }
+
+    override fun onFragmentCreated(fragment: Fragment, info: FragmentInfo) {
+        val url = pendingUrlMap[info.tag] ?: ""
+        val bundle = fragment.arguments ?: Bundle()
+        WebPageFragment.putArguments(bundle, info.tag, url)
+        fragment.arguments = bundle
+        pendingUrlMap.remove(info.tag)
     }
 
 }

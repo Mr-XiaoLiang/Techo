@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import com.lollipop.base.ui.BaseFragment
 import com.lollipop.base.util.lazyBind
 import com.lollipop.browser.databinding.FragmentWebPageBinding
+import com.lollipop.browser.main.MainPageDelegate
 import com.lollipop.web.IWeb
 import com.lollipop.web.WebHelper
 import com.lollipop.web.WebHost
@@ -28,12 +29,22 @@ class WebPageFragment : BaseFragment(),
     companion object {
 
         private const val ARG_PAGE_ID = "ARG_PAGE_ID"
-        fun putArguments(arguments: Bundle, pageId: String) {
+        private const val ARG_URL = "ARG_URL"
+        fun putArguments(arguments: Bundle, pageId: String, url: String) {
             arguments.putString(ARG_PAGE_ID, pageId)
+            arguments.putString(ARG_URL, url)
         }
 
         private fun getPageId(arguments: Bundle?): String {
             return arguments?.getString(ARG_PAGE_ID) ?: ""
+        }
+
+        private fun getUrl(arguments: Bundle?): String {
+            return arguments?.getString(ARG_URL) ?: ""
+        }
+
+        private fun clearArgumentsUrl(arguments: Bundle?) {
+            arguments?.remove(ARG_URL)
         }
 
     }
@@ -55,6 +66,8 @@ class WebPageFragment : BaseFragment(),
         get() {
             return this.lifecycle
         }
+
+    private var mainPageDelegate: MainPageDelegate? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,8 +100,28 @@ class WebPageFragment : BaseFragment(),
         helper.onProgressChanged(this)
     }
 
+    override fun onStart() {
+        super.onStart()
+        val presetUrl = getUrl(arguments)
+        if (presetUrl.isEmpty()) {
+            if (mainPageDelegate == null) {
+                mainPageDelegate = MainPageDelegate.inflate(binding.pageContainerView)
+            }
+        } else {
+            load(presetUrl)
+            clearArgumentsUrl(arguments)
+        }
+    }
+
     fun load(url: String) {
         webHelper?.loadUrl(url)
+        mainPageDelegate?.destroy()
+        mainPageDelegate = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainPageDelegate?.resume()
     }
 
     override fun onTitleChanged(iWeb: IWeb, title: String) {
