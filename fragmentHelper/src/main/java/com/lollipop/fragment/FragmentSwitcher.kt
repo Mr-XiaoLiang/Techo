@@ -33,6 +33,11 @@ class FragmentSwitcher internal constructor(
     var currentFragment = ""
         private set
 
+    val size: Int
+        get() {
+            return infoMap.size
+        }
+
     private val commonFragmentTag by lazy {
         getFragmentTag("")
     }
