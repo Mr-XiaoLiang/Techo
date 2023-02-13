@@ -105,7 +105,7 @@ class WebPageFragment : BaseFragment(),
         val presetUrl = getUrl(arguments)
         if (presetUrl.isEmpty()) {
             if (mainPageDelegate == null) {
-                mainPageDelegate = MainPageDelegate.inflate(binding.pageContainerView)
+                mainPageDelegate = MainPageDelegate.inflate(binding.pageContainerView, ::load)
             }
         } else {
             load(presetUrl)

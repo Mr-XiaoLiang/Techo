@@ -32,7 +32,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    
+
     viewBinding {
         enabled = true
     }
@@ -49,6 +49,7 @@ dependencies {
     implementation "com.google.android.material:material:1.7.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
     implementation project(path: ':base')
     implementation project(path: ':web')
     implementation project(path: ':maskGuide')
