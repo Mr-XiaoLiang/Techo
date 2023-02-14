@@ -3,4 +3,7 @@
     <string name="input_hint_secret">请输入口令</string>
     <string name="done">完成</string>
     <string name="content_description_header_image">Header Image</string>
+    <string name="label_baidu">百度</string>
+    <string name="label_bing">必应</string>
+    <string name="label_google">Google</string>
 </resources>
