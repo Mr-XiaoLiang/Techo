@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_0"
+    tools:context=".copyright.CopyrightIcons8Activity">
+
+    <FrameLayout
+        android:id="@+id/headerGroup"
+        android:layout_width="match_parent"
+        android:layout_height="320dp" />
+
+    <LinearLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackground">
+
+            <com.lollipop.clip.RoundClipLayout
+                android:id="@+id/backButtonBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:radius="18dp"
+                tools:background="#f00" />
+
+            <ImageView
+                android:id="@+id/backButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@color/text_gray_10" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/text_gray_10"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="@string/app_name" />
+    </LinearLayout>
+
+    <com.lollipop.vertical_page.VerticalPageScrollView
+        android:id="@+id/contentScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <com.lollipop.vertical_page.VerticalPageLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="200dp">
+
+            <com.lollipop.clip.RoundClipLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/gray_0"
+                app:leftTop="20dp"
+                app:rightTop="20dp">
+
+                <FrameLayout
+                    android:id="@+id/contentRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/contentLoadingView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="24dp"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/brand_4"
+                    app:indicatorSize="24dp"
+                    app:minHideDelay="300"
+                    app:showDelay="300" />
+
+            </com.lollipop.clip.RoundClipLayout>
+        </com.lollipop.vertical_page.VerticalPageLayout>
+
+    </com.lollipop.vertical_page.VerticalPageScrollView>
+
+
+    <FrameLayout
+        android:id="@+id/floatingRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

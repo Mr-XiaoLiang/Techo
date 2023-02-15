@@ -19,6 +19,8 @@ object LauncherManager {
         TODO()
     }
 
+// 谷歌徽标 icon by Icons8
+
     private enum class DefaultLauncher(
         val id: Int,
         @StringRes
@@ -43,7 +45,7 @@ object LauncherManager {
         Bing(
             id = -2,
             label = R.string.label_bing,
-            icon = 0,
+            icon = R.drawable.ic_bing,
             iconTint = R.color.gray_0,
             background = 0,
             url = ""
