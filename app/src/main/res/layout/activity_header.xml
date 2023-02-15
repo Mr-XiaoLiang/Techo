@@ -60,13 +60,13 @@
             tools:text="@string/app_name" />
     </LinearLayout>
 
-    <com.lollipop.techo.view.VerticalPageScrollView
+    <com.lollipop.vertical_page.VerticalPageScrollView
         android:id="@+id/contentScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize">
 
-        <com.lollipop.techo.view.VerticalPageLayout
+        <com.lollipop.vertical_page.VerticalPageLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="200dp">
@@ -96,9 +96,9 @@
                     app:showDelay="300" />
 
             </com.lollipop.clip.RoundClipLayout>
-        </com.lollipop.techo.view.VerticalPageLayout>
+        </com.lollipop.vertical_page.VerticalPageLayout>
 
-    </com.lollipop.techo.view.VerticalPageScrollView>
+    </com.lollipop.vertical_page.VerticalPageScrollView>
 
 
     <FrameLayout

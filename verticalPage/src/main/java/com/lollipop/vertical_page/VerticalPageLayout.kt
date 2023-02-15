@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.vertical_page
 
 import android.content.Context
 import android.util.AttributeSet
