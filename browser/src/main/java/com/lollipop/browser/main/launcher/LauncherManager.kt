@@ -8,18 +8,16 @@ import com.lollipop.browser.R
 object LauncherManager {
 
     fun load(callback: (List<LauncherInfo>) -> Unit) {
-        TODO()
+//        TODO()
     }
 
     fun add(info: LauncherInfo) {
-        TODO()
+//        TODO()
     }
 
     fun move(info: LauncherInfo, index: Int) {
-        TODO()
+//        TODO()
     }
-
-// 谷歌徽标 icon by Icons8
 
     private enum class DefaultLauncher(
         val id: Int,

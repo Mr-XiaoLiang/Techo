@@ -1,8 +1,8 @@
 package com.lollipop.browser.main
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -12,8 +12,8 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.R
+import com.lollipop.browser.copyright.CopyrightIcons8Activity
 import com.lollipop.browser.databinding.ActivityMainBinding
-import com.lollipop.browser.secret.SecretDialog
 import com.lollipop.browser.web.WebPageFragment
 import com.lollipop.browser.web.WebStatusManager
 import com.lollipop.fragment.*
@@ -51,9 +51,7 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
         )
         binding.statusPanel.setBackgroundColor(getColor(R.color.brand_4))
         binding.searchBar.onClick {
-            SecretDialog.show(this) {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            }
+            startActivity(Intent(this, CopyrightIcons8Activity::class.java))
         }
     }
 

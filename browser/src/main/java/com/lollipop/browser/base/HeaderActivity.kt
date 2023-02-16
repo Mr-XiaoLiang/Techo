@@ -5,13 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.onUI
+import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityHeaderBinding
 
 abstract class HeaderActivity : AppCompatActivity() {
@@ -40,7 +41,7 @@ abstract class HeaderActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        headerView?.let {
+        createHeaderView()?.let {
             viewBinding.headerGroup.addView(
                 it,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -67,8 +68,21 @@ abstract class HeaderActivity : AppCompatActivity() {
         hideLoading()
     }
 
+    protected open fun createHeaderView(): View? {
+        return null
+    }
+
+    protected fun setOptionButton(callback: (ImageView) -> Unit) {
+        viewBinding.optionButton.isVisible = true
+        callback(viewBinding.optionButton)
+    }
+
     override fun setTitle(title: CharSequence?) {
         viewBinding.titleView.text = title ?: ""
+    }
+
+    protected fun onTitleClick(callback: () -> Unit) {
+        viewBinding.titleView.onClick { callback() }
     }
 
     protected open fun onDecorationChanged(

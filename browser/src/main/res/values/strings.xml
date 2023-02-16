@@ -6,4 +6,7 @@
     <string name="label_baidu">百度</string>
     <string name="label_bing">必应</string>
     <string name="label_google">Google</string>
+    <string name="copyright_title_icons8">icons8</string>
+    <string name="copyright_info_icons8">以下 ICON 由 icons8.com 提供</string>
+    <string name="copyright_info_button">前往</string>
 </resources>

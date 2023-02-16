@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
-            android:name=".CopyrightIcons8Activity"
+            android:name=".copyright.CopyrightIcons8Activity"
             android:exported="false" />
         <activity
             android:name=".main.MainActivity"

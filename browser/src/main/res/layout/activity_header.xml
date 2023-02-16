@@ -47,15 +47,30 @@
 
         <TextView
             android:id="@+id/titleView"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:textAllCaps="true"
             android:textColor="@color/text_gray_10"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="@string/app_name" />
+
+        <ImageView
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:src="@drawable/ic_baseline_done_24"
+            android:id="@+id/optionButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginEnd="10dp"
+            android:padding="12dp"
+            app:tint="@color/text_gray_10" />
+
     </LinearLayout>
 
     <com.lollipop.vertical_page.VerticalPageScrollView
