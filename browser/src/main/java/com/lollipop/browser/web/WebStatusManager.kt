@@ -3,9 +3,9 @@ package com.lollipop.browser.web
 import android.content.Context
 import android.graphics.Bitmap
 import com.lollipop.base.util.ListenerManager
-import com.lollipop.base.util.TxtHelper
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
+import com.lollipop.browser.utils.FileInfoManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -16,7 +16,7 @@ import java.util.*
 /**
  * 网页的状态管理器
  */
-object WebStatusManager {
+object WebStatusManager : FileInfoManager() {
 
     private var statusFile: File? = null
     private var faviconDir: File? = null
@@ -40,7 +40,7 @@ object WebStatusManager {
         loadData()
     }
 
-    private fun init(context: Context) {
+    override fun init(context: Context) {
         statusFile = File(context.filesDir, STATUS_FILE_NAME)
         val imgDir = File(context.cacheDir, CANCEL_DIR)
         faviconDir = File(imgDir, FAVICON_DIR)
@@ -58,32 +58,24 @@ object WebStatusManager {
     }
 
     private fun loadDataFromFile(): Boolean {
-        try {
-            val file = statusFile ?: return false
-            if (!file.exists()) {
+        val file = statusFile ?: return false
+        var result = true
+        val list = ArrayList<WebStatus>()
+        readArrayFromFile(
+            file,
+            emptyData = {
                 clearStatus()
-                return true
-            }
-            val value = TxtHelper.readFromFile(file)
-            val jsonArray = JSONArray(value)
-            val list = ArrayList<WebStatus>()
-            for (i in 0 until jsonArray.length()) {
-                val obj = jsonArray.optJSONObject(i) ?: continue
-                try {
-                    val status = WebStatus.fromJson(obj)
-                    if (status.pageId.isNotEmpty()) {
-                        list.add(status)
-                    }
-                } catch (e: Throwable) {
-                    e.printStackTrace()
+                if (it) {
+                    result = false
                 }
+            },
+        ) { obj ->
+            val status = WebStatus.fromJson(obj)
+            if (status.pageId.isNotEmpty()) {
+                list.add(status)
             }
-            resetStatus(list)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            clearStatus()
         }
-        return true
+        return result
     }
 
     private fun clearStatus() {
@@ -133,10 +125,7 @@ object WebStatusManager {
                     jsonArray.put(it.toJson())
                 }
             }
-            if (file.exists()) {
-                file.delete()
-            }
-            TxtHelper.writeToFile(jsonArray.toString(), file)
+            writeToFile(jsonArray, file)
         }
     }
 
@@ -219,30 +208,6 @@ object WebStatusManager {
         }
     }
 
-    private fun Bitmap.writeToFile(file: File) {
-        if (file.exists()) {
-            file.delete()
-        }
-        file.parentFile?.mkdirs()
-        val bitmap = this
-        var out: FileOutputStream? = null
-        try {
-            out = FileOutputStream(file)
-            if (bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)) {
-                out.flush()
-                out.close()
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        } finally {
-            try {
-                out?.close()
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     private fun onInfoChanged() {
         save()
     }
@@ -292,17 +257,6 @@ object WebStatusManager {
             private const val URL = "url"
             private const val FAVICON = "favicon"
             private const val SNAPSHOT = "snapshot"
-
-            private fun String.optFile(): File? {
-                if (this.isEmpty()) {
-                    return null
-                }
-                val file = File(this)
-                if (!file.exists()) {
-                    return null
-                }
-                return file
-            }
 
             fun fromJson(json: JSONObject): WebStatus {
                 return WebStatus(
