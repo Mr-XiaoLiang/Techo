@@ -8,4 +8,8 @@
     <color name="sheet_background">#FFFFFF</color>
     <color name="sheet_holder">#787878</color>
 
+    <color name="logo_baidu">#263AD8</color>
+    <color name="logo_bing">#398174</color>
+    <color name="logo_google">#578AED</color>
+
 </resources>

@@ -327,21 +327,21 @@ object LauncherManager : FileInfoManager() {
             label = R.string.label_baidu,
             icon = R.drawable.ic_baidu,
             iconTint = R.color.gray_0,
-            background = 0,
+            background = R.color.logo_baidu,
             url = ""
         ),
         Bing(
             label = R.string.label_bing,
             icon = R.drawable.ic_bing,
             iconTint = R.color.gray_0,
-            background = 0,
+            background = R.color.logo_bing,
             url = ""
         ),
         Google(
             label = R.string.label_google,
             icon = R.drawable.ic_google,
             iconTint = R.color.gray_0,
-            background = 0,
+            background = R.color.logo_google,
             url = ""
         ),
 
