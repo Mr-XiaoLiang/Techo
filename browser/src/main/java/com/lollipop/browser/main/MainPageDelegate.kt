@@ -44,7 +44,7 @@ class MainPageDelegate(
     }
 
     fun resume() {
-        LauncherManager.load(::onDataLoaded)
+        LauncherManager.load(binding.root.context, ::onDataLoaded)
     }
 
     @SuppressLint("NotifyDataSetChanged")

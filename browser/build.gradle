@@ -57,4 +57,5 @@ dependencies {
     implementation project(path: ':fragmentHelper')
     implementation project(path: ':colorRes')
     implementation project(path: ':verticalPage')
+    implementation project(path: ':stitch')
 }

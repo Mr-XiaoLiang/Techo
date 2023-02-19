@@ -30,7 +30,14 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
-            tools:background="#f00" />
+             >
+
+            <com.lollipop.stitch.ColorStitchView
+                android:id="@+id/colorStitchView"
+                android:layout_width="230dp"
+                android:layout_height="300dp"/>
+
+        </FrameLayout>
 
         <Space
             android:layout_width="match_parent"
