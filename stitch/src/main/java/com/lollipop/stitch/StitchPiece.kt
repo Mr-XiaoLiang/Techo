@@ -56,6 +56,18 @@ class StitchPiece(
         return Bounds(left, top, right, bottom)
     }
 
+    override fun toString(): String {
+        val builder = StringBuilder("StitchPiece[")
+        for (index in points.indices) {
+            if (index > 0) {
+                builder.append(", ")
+            }
+            builder.append(points[index].toString())
+        }
+        builder.append("]")
+        return builder.toString()
+    }
+
     class Bounds(
         val left: Float,
         val top: Float,

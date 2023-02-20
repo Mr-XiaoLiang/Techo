@@ -43,9 +43,28 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
         switcher.addFragmentCreatedCallback(this)
         fragmentSwitcher = switcher
 
+        val colorList = listOf(
+            Color.RED,
+            Color.BLUE,
+            Color.GREEN,
+            Color.CYAN,
+            Color.DKGRAY,
+            Color.RED,
+            Color.BLUE,
+            Color.GREEN,
+            Color.CYAN,
+            Color.DKGRAY,
+            Color.RED,
+            Color.BLUE,
+            Color.GREEN,
+            Color.CYAN,
+            Color.DKGRAY
+        )
+        val suture = StitchHelper.suture(count = colorList.size)
+
         binding.colorStitchView.resetColor(
-            colorList = listOf(Color.RED, Color.BLUE, Color.GREEN),
-            pieces = StitchHelper.suture(count = 3, random = false, horizontalPriority = false)
+            colorList = colorList,
+            pieces = suture
         )
     }
 

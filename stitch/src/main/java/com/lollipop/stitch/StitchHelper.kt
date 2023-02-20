@@ -55,7 +55,8 @@ object StitchHelper {
                     smaller,
                     larger
                 ) { c, x, y, width, height ->
-                    pendingList.addLast(createStitch(stitch, c, x, y, width, height))
+                    val newStitch = createStitch(stitch, c, x, y, width, height)
+                    pendingList.addLast(newStitch)
                 }
             } else if (stitchCount == 2) {
                 // 如果等于2了，那么说明可以随机划分了
@@ -64,11 +65,13 @@ object StitchHelper {
                     stitch.height,
                     horizontalPriority
                 ) { x1, y1, x2, y2, x3, y3, x4, y4 ->
-                    result.add(createPiece(stitch, x1, y1, x2, y2, x3, y3, x4, y4))
+                    val newPiece = createPiece(stitch, x1, y1, x2, y2, x3, y3, x4, y4)
+                    result.add(newPiece)
                 }
             } else if (stitchCount == 1) {
                 // 如果等于1，说明这是一个确定的结果了
-                result.add(createPiece(stitch))
+                val newPiece = createPiece(stitch)
+                result.add(newPiece)
             }
         }
         return result
@@ -124,7 +127,7 @@ object StitchHelper {
     }
 
     private fun moveY(parent: Stitch, y: Float): Float {
-        return y * parent.height * parent.y
+        return y * parent.height + parent.y
     }
 
     /**
@@ -225,6 +228,12 @@ object StitchHelper {
         val y: Float,
         val width: Float,
         val height: Float
-    )
+    ) {
+
+        override fun toString(): String {
+            return "Stitch(count = $count, x = $x, y = $y, width = $width, height = $height)"
+        }
+
+    }
 
 }

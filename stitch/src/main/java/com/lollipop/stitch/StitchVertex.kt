@@ -13,4 +13,8 @@ class StitchVertex(
         return height * yWeight
     }
 
+    override fun toString(): String {
+        return "StitchVertex(x = $xWeight, y = $yWeight)"
+    }
+
 }
