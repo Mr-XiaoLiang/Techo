@@ -21,6 +21,8 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 object LauncherManager : FileInfoManager() {
@@ -217,7 +219,7 @@ object LauncherManager : FileInfoManager() {
         val info = this
         val colorArray = JSONArray()
         info.backgroundColor.forEach {
-            colorArray.put(it)
+            colorArray.put(colorToString(it))
         }
         return JSONObject()
             .put(KEY_LABEL, info.label)
@@ -225,6 +227,52 @@ object LauncherManager : FileInfoManager() {
             .put(KEY_BACKGROUND, info.backgroundFile?.path ?: "")
             .put(KEY_URL, info.url)
             .put(KEY_BACKGROUND_COLOR, colorArray)
+    }
+
+    private fun colorToString(color: Int): String {
+        val builder = StringBuilder("#")
+        val alpha = getColorHex(Color.alpha(color))
+        if (alpha.length < 2) {
+            builder.append("0")
+        }
+        builder.append(alpha)
+
+        val red = getColorHex(Color.red(color))
+        if (red.length < 2) {
+            builder.append("0")
+        }
+        builder.append(red)
+
+        val green = getColorHex(Color.green(color))
+        if (green.length < 2) {
+            builder.append("0")
+        }
+        builder.append(green)
+
+        val blue = getColorHex(Color.blue(color))
+        if (blue.length < 2) {
+            builder.append("0")
+        }
+        builder.append(blue)
+
+        return builder.toString()
+    }
+
+    private fun getColorHex(value: Int): String {
+        val color = min(255, max(0, value))
+        return color.toString(16)
+    }
+
+    private fun stringToColor(value: String): Int? {
+        if (value.isEmpty()) {
+            return null
+        }
+        try {
+            return Color.parseColor(value)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun JSONObject.toInfo(): LauncherInfo? {
@@ -236,7 +284,10 @@ object LauncherManager : FileInfoManager() {
         val colors = ArrayList<Int>()
         if (colorArray != null && colorArray.length() > 0) {
             for (i in 0 until colorArray.length()) {
-                colors.add(colorArray.optInt(i, Color.WHITE))
+                val color = stringToColor(colorArray.optString(i, ""))
+                if (color != null) {
+                    colors.add(color)
+                }
             }
         }
         return LauncherInfo(
