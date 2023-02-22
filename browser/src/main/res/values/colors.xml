@@ -8,8 +8,17 @@
     <color name="sheet_background">#FFFFFF</color>
     <color name="sheet_holder">#787878</color>
 
-    <color name="logo_baidu">#263AD8</color>
-    <color name="logo_bing">#398174</color>
-    <color name="logo_google">#578AED</color>
+    <color name="logo_baidu_1">#CF2D1F</color>
+    <color name="logo_baidu_2">#263AD8</color>
+
+    <color name="logo_bing_1">#00A1F1</color>
+    <color name="logo_bing_2">#7CBB00</color>
+    <color name="logo_bing_3">#FFBB00</color>
+    <color name="logo_bing_4">#F65314</color>
+
+    <color name="logo_google_1">#4285F4</color>
+    <color name="logo_google_2">#34A853</color>
+    <color name="logo_google_3">#FBBC05</color>
+    <color name="logo_google_4">#EA4335</color>
 
 </resources>

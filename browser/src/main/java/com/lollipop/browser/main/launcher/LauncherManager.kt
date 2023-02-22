@@ -110,17 +110,14 @@ object LauncherManager : FileInfoManager() {
     private fun loadDefaultInfo(context: Context): List<LauncherInfo> {
         val launcherList = ArrayList<LauncherInfo>()
         DefaultLauncher.values().forEach { def ->
+            val colorValue = def.background.map { ContextCompat.getColor(context, it) }
             launcherList.add(
                 LauncherInfo(
                     id = createId(),
                     label = context.getString(def.label),
                     icon = createDrawableFile(context, def.icon, launcherLogoSize),
-                    backgroundFile = createDrawableFile(
-                        context,
-                        def.background,
-                        launcherBackgroundSize
-                    ),
-                    backgroundColor = intArrayOf(Color.WHITE),
+                    backgroundFile = null,
+                    backgroundColor = colorValue,
                     url = def.url
                 )
             )
@@ -161,7 +158,7 @@ object LauncherManager : FileInfoManager() {
         label: String,
         icon: File?,
         backgroundFile: File?,
-        backgroundColor: IntArray,
+        backgroundColor: List<Int>,
         url: String,
     ) {
         add(label, icon, backgroundFile, backgroundColor, url, 0)
@@ -171,7 +168,7 @@ object LauncherManager : FileInfoManager() {
         label: String,
         icon: File?,
         backgroundFile: File?,
-        backgroundColor: IntArray,
+        backgroundColor: List<Int>,
         url: String,
         index: Int
     ) {
@@ -295,7 +292,7 @@ object LauncherManager : FileInfoManager() {
             label = obj.optString(KEY_LABEL),
             icon = obj.optString(KEY_ICON).optFile(),
             backgroundFile = obj.optString(KEY_BACKGROUND).optFile(),
-            backgroundColor = colors.toIntArray(),
+            backgroundColor = colors,
             url = obj.optString(KEY_URL),
         )
     }
@@ -370,7 +367,7 @@ object LauncherManager : FileInfoManager() {
         @ColorRes
         val iconTint: Int,
         @DrawableRes
-        val background: Int,
+        val background: IntArray,
         val url: String
     ) {
 
@@ -378,21 +375,31 @@ object LauncherManager : FileInfoManager() {
             label = R.string.label_baidu,
             icon = R.drawable.ic_baidu,
             iconTint = R.color.gray_0,
-            background = R.color.logo_baidu,
+            background = intArrayOf(R.color.logo_baidu_1, R.color.logo_baidu_2),
             url = ""
         ),
         Bing(
             label = R.string.label_bing,
             icon = R.drawable.ic_bing,
             iconTint = R.color.gray_0,
-            background = R.color.logo_bing,
+            background = intArrayOf(
+                R.color.logo_bing_1,
+                R.color.logo_bing_2,
+                R.color.logo_bing_3,
+                R.color.logo_bing_4
+            ),
             url = ""
         ),
         Google(
             label = R.string.label_google,
             icon = R.drawable.ic_google,
             iconTint = R.color.gray_0,
-            background = R.color.logo_google,
+            background = intArrayOf(
+                R.color.logo_google_1,
+                R.color.logo_google_2,
+                R.color.logo_google_3,
+                R.color.logo_google_4
+            ),
             url = ""
         ),
 

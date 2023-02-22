@@ -15,6 +15,7 @@ class ColorStitchView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attributeSet, style) {
 
     private val colorStitchDrawable = ColorStitchDrawable()
+    private val currentPieces = ArrayList<StitchPiece>()
 
     init {
         setImageDrawable(colorStitchDrawable)
@@ -23,8 +24,26 @@ class ColorStitchView @JvmOverloads constructor(
         }
     }
 
-    fun resetColor(colorList: List<Int>, pieces: List<StitchPiece>? = null) {
-        val piecesList = pieces ?: StitchHelper.suture(count = colorList.size)
+    fun resetColor(
+        colorList: List<Int>,
+        pieces: List<StitchPiece>? = null,
+        updatePiece: Boolean = false
+    ) {
+        val piecesList: List<StitchPiece>
+        if (pieces != null) {
+            piecesList = pieces
+            currentPieces.clear()
+            currentPieces.addAll(pieces)
+        } else {
+            if (updatePiece || currentPieces.size != colorList.size) {
+                val list = StitchHelper.suture(count = colorList.size)
+                piecesList = list
+                currentPieces.clear()
+                currentPieces.addAll(list)
+            } else {
+                piecesList = currentPieces
+            }
+        }
         colorStitchDrawable.resetColor(colorList, piecesList)
     }
 

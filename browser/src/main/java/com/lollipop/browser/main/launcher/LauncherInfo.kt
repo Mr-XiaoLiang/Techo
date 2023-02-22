@@ -7,6 +7,6 @@ class LauncherInfo(
     val label: String,
     val icon: File?,
     val backgroundFile: File?,
-    val backgroundColor: IntArray,
+    val backgroundColor: List<Int>,
     val url: String
 )

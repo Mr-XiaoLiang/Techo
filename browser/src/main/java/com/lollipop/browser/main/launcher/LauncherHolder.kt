@@ -1,8 +1,5 @@
 package com.lollipop.browser.main.launcher
 
-import android.graphics.*
-import android.graphics.drawable.Drawable
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ItemMainPageLauncherBinding
+import com.lollipop.stitch.ColorStitchView
 import java.io.File
 
 class LauncherHolder(
@@ -65,79 +63,8 @@ class LauncherHolder(
         Glide.with(imageView).load(file).into(imageView)
     }
 
-    private fun setBackground(view: View, colorList: IntArray) {
-        val background = view.background
-        if (background is BackgroundDrawable) {
-            background.onColorChanged(colorList)
-            return
-        }
-        val newBackground = BackgroundDrawable()
-        newBackground.onColorChanged(colorList)
-        view.background = newBackground
-    }
-
-    private class BackgroundDrawable : Drawable() {
-
-        private val colorList = ArrayList<Int>()
-        private val paint = Paint()
-
-        fun onColorChanged(color: IntArray) {
-            colorList.clear()
-            color.forEach {
-                colorList.add(it)
-            }
-            buildShader()
-        }
-
-        override fun onBoundsChange(bounds: Rect) {
-            super.onBoundsChange(bounds)
-            buildShader()
-        }
-
-        private fun buildShader() {
-            if (bounds.isEmpty) {
-                paint.shader = null
-                return
-            }
-            val colorArray = colorList.toIntArray()
-            if (colorArray.size > 1) {
-                paint.shader = LinearGradient(
-                    bounds.left.toFloat(),
-                    bounds.top.toFloat(),
-                    bounds.right.toFloat(),
-                    bounds.bottom.toFloat(),
-                    colorArray,
-                    null,
-                    Shader.TileMode.CLAMP
-                )
-            } else if (colorArray.isNotEmpty()) {
-                paint.color = colorArray[0]
-            } else {
-                paint.color = Color.BLACK
-            }
-            invalidateSelf()
-        }
-
-        override fun draw(canvas: Canvas) {
-            canvas.drawRect(bounds, paint)
-        }
-
-        override fun setAlpha(alpha: Int) {
-            paint.alpha = alpha
-        }
-
-        override fun setColorFilter(colorFilter: ColorFilter?) {
-            paint.colorFilter = colorFilter
-        }
-
-        @Deprecated(
-            "Deprecated in Java",
-            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
-        )
-        override fun getOpacity(): Int {
-            return PixelFormat.TRANSPARENT
-        }
-
+    private fun setBackground(view: ColorStitchView, colorList: List<Int>) {
+        view.resetColor(colorList, updatePiece = false)
     }
 
 }
