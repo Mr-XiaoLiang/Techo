@@ -371,13 +371,6 @@ object LauncherManager : FileInfoManager() {
         val url: String
     ) {
 
-        Baidu(
-            label = R.string.label_baidu,
-            icon = R.drawable.ic_baidu,
-            iconTint = R.color.gray_0,
-            background = intArrayOf(R.color.logo_baidu_1, R.color.logo_baidu_2),
-            url = "https://www.baidu.com"
-        ),
         Bing(
             label = R.string.label_bing,
             icon = R.drawable.ic_bing,
@@ -390,6 +383,15 @@ object LauncherManager : FileInfoManager() {
             ),
             url = "https://www.bing.com"
         ),
+
+        Baidu(
+            label = R.string.label_baidu,
+            icon = R.drawable.ic_baidu,
+            iconTint = R.color.gray_0,
+            background = intArrayOf(R.color.logo_baidu_1, R.color.logo_baidu_2),
+            url = "https://www.baidu.com"
+        ),
+
         Google(
             label = R.string.label_google,
             icon = R.drawable.ic_google,

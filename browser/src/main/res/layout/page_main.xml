@@ -8,17 +8,19 @@
         android:id="@+id/mainPageHeaderView"
         android:layout_width="match_parent"
         android:layout_height="0px"
+        android:background="@color/brand_9"
         android:contentDescription="@string/content_description_header_image"
         android:scaleType="centerCrop"
         android:src="@drawable/header_main_1"
         app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/brand_9"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainPageLauncherGroup"
         android:layout_width="match_parent"
         android:layout_height="0px"
+        android:clipToPadding="false"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

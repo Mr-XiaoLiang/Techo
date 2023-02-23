@@ -1,13 +1,13 @@
 package com.lollipop.browser.main
 
 import android.annotation.SuppressLint
-import android.graphics.Rect
-import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.lollipop.base.util.ItemDecorationHelper
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.dp2px
 import com.lollipop.browser.databinding.PageMainBinding
 import com.lollipop.browser.main.launcher.LauncherHolder
 import com.lollipop.browser.main.launcher.LauncherInfo
@@ -39,6 +39,16 @@ class MainPageDelegate(
         binding.mainPageLauncherGroup.let {
             it.adapter = adapter
             it.layoutManager = StaggeredGridLayoutManager(4, RecyclerView.VERTICAL)
+            ItemDecorationHelper.clearItemDecoration(it)
+            val dp16 = 16.dp2px
+            it.addItemDecoration(
+                LauncherDecoration(
+                    startSpace = dp16 / 2,
+                    endSpace = dp16 / 2,
+                    verticalInterval = dp16,
+                    horizontalInterval = dp16,
+                )
+            )
         }
     }
 
@@ -95,5 +105,12 @@ class MainPageDelegate(
         }
 
     }
+
+    private class LauncherDecoration(
+        override val startSpace: Int,
+        override val endSpace: Int,
+        override val verticalInterval: Int,
+        override val horizontalInterval: Int
+    ) : ItemDecorationHelper()
 
 }
