@@ -152,7 +152,7 @@ class WebHelper(
         }
     }
 
-    fun loadUrl(url: String): WebHelper {
+    fun loadUrl(url: String, now: Boolean = false): WebHelper {
         init()
         getCompletion().complement(url, this)
         return this

@@ -1,9 +1,12 @@
 package com.lollipop.browser.main
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lollipop.base.util.bind
 import com.lollipop.browser.databinding.PageMainBinding
 import com.lollipop.browser.main.launcher.LauncherHolder
@@ -31,6 +34,13 @@ class MainPageDelegate(
         onClickCallback = ::onItemClick,
         onLongClickCallback = ::onItemLongClick,
     )
+
+    init {
+        binding.mainPageLauncherGroup.let {
+            it.adapter = adapter
+            it.layoutManager = StaggeredGridLayoutManager(4, RecyclerView.VERTICAL)
+        }
+    }
 
     private fun onItemClick(position: Int) {
         if (position < 0 || position >= dataList.size) {

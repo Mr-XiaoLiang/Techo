@@ -42,30 +42,6 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
             .into(binding.webPageContainerView)
         switcher.addFragmentCreatedCallback(this)
         fragmentSwitcher = switcher
-
-        val colorList = listOf(
-            Color.RED,
-            Color.BLUE,
-            Color.GREEN,
-            Color.CYAN,
-            Color.DKGRAY,
-            Color.RED,
-            Color.BLUE,
-            Color.GREEN,
-            Color.CYAN,
-            Color.DKGRAY,
-            Color.RED,
-            Color.BLUE,
-            Color.GREEN,
-            Color.CYAN,
-            Color.DKGRAY
-        )
-        val suture = StitchHelper.suture(count = colorList.size)
-
-        binding.colorStitchView.resetColor(
-            colorList = colorList,
-            pieces = suture
-        )
     }
 
     private fun initView() {
@@ -113,8 +89,7 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
 
     override fun onResume() {
         super.onResume()
-        // TODO 调试
-//        checkPageOnResume()
+        checkPageOnResume()
     }
 
     private fun checkPageOnResume() {
@@ -123,7 +98,6 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
             addPage()
         }
     }
-
 
     fun addPage(url: String = "") {
         val switcher = fragmentSwitcher ?: return

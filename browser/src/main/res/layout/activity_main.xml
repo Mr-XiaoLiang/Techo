@@ -32,11 +32,6 @@
             android:layout_weight="1"
              >
 
-            <com.lollipop.stitch.ColorStitchView
-                android:id="@+id/colorStitchView"
-                android:layout_width="230dp"
-                android:layout_height="300dp"/>
-
         </FrameLayout>
 
         <Space

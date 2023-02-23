@@ -22,12 +22,12 @@ class EmptyCompletion : UrlCompletion {
     private fun fixScheme(url: String): String {
         val scheme = Uri.parse(url).scheme ?: ""
         if (scheme.isEmpty()) {
-            return "http://$url"
+            return "https://$url"
         }
         if (scheme.equals(HTTP, ignoreCase = true) || scheme.equals(HTTPS, ignoreCase = true)) {
             return url
         }
-        return "http://$url"
+        return "https://$url"
     }
 
     private fun isUrl(url: String): Boolean {

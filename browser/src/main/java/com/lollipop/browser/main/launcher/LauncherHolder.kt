@@ -49,7 +49,7 @@ class LauncherHolder(
     }
 
     fun bind(info: LauncherInfo) {
-        setBackground(binding.backgroundView, info.backgroundColor)
+        setBackground(binding.backgroundColorView, info.backgroundColor)
         binding.labelView.text = info.label
         loadOrClear(binding.backgroundView, info.backgroundFile)
         loadOrClear(binding.iconView, info.icon)

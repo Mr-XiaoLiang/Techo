@@ -13,22 +13,40 @@
         android:orientation="vertical">
 
         <com.lollipop.stitch.ColorStitchView
+            android:id="@+id/backgroundColorView"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
             android:id="@+id/backgroundView"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="#0f0" />
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/iconGroup"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
             android:id="@+id/iconView"
-            android:layout_width="match_parent"
+            android:layout_width="0px"
             android:layout_height="0px"
             android:scaleType="fitCenter"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_launcher_foreground" />
+            app:layout_constraintTop_toTopOf="@id/iconGroup"
+            app:layout_constraintBottom_toBottomOf="@id/iconGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@drawable/ic_google"
+            app:layout_constraintWidth_percent="0.7"/>
 
         <TextView
             android:id="@+id/labelView"
@@ -46,7 +64,7 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iconView" />
+            app:layout_constraintTop_toBottomOf="@id/iconGroup" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

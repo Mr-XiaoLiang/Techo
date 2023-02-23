@@ -376,7 +376,7 @@ object LauncherManager : FileInfoManager() {
             icon = R.drawable.ic_baidu,
             iconTint = R.color.gray_0,
             background = intArrayOf(R.color.logo_baidu_1, R.color.logo_baidu_2),
-            url = ""
+            url = "https://www.baidu.com"
         ),
         Bing(
             label = R.string.label_bing,
@@ -388,7 +388,7 @@ object LauncherManager : FileInfoManager() {
                 R.color.logo_bing_3,
                 R.color.logo_bing_4
             ),
-            url = ""
+            url = "https://www.bing.com"
         ),
         Google(
             label = R.string.label_google,
@@ -400,7 +400,7 @@ object LauncherManager : FileInfoManager() {
                 R.color.logo_google_3,
                 R.color.logo_google_4
             ),
-            url = ""
+            url = "https://www.google.com"
         ),
 
     }

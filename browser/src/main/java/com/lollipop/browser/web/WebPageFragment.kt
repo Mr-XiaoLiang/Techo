@@ -21,7 +21,6 @@ import com.lollipop.web.search.SearchSuggestion
 
 class WebPageFragment : BaseFragment(),
     WebHost,
-    BrowserMainPanel.Callback,
     TitleListener,
     ProgressListener,
     SearchEngineCallback {
@@ -55,8 +54,6 @@ class WebPageFragment : BaseFragment(),
 
     private var webHelper: WebHelper? = null
 
-    private var browserMainPanel: BrowserMainPanel? = null
-
     private val pageId: String
         get() {
             return getPageId(arguments)
@@ -68,6 +65,8 @@ class WebPageFragment : BaseFragment(),
         }
 
     private var mainPageDelegate: MainPageDelegate? = null
+
+    private var isLoadedUrl = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -92,7 +91,6 @@ class WebPageFragment : BaseFragment(),
         val newHelper = WebHelper.bind(this, binding.webView)
         initWeb(newHelper)
         webHelper = newHelper
-        browserMainPanel = BrowserMainPanel.bind(binding.pageRoot)
     }
 
     private fun initWeb(helper: WebHelper) {
@@ -103,7 +101,7 @@ class WebPageFragment : BaseFragment(),
     override fun onStart() {
         super.onStart()
         val presetUrl = getUrl(arguments)
-        if (presetUrl.isEmpty()) {
+        if (!isLoadedUrl && presetUrl.isEmpty()) {
             if (mainPageDelegate == null) {
                 mainPageDelegate = MainPageDelegate.inflate(binding.pageContainerView, ::load)
             }
@@ -114,6 +112,7 @@ class WebPageFragment : BaseFragment(),
     }
 
     fun load(url: String) {
+        isLoadedUrl = true
         webHelper?.loadUrl(url)
         mainPageDelegate?.destroy()
         mainPageDelegate = null
