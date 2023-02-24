@@ -37,6 +37,7 @@ object LauncherManager : FileInfoManager() {
     private const val KEY_ICON = "icon"
     private const val KEY_BACKGROUND = "background"
     private const val KEY_BACKGROUND_COLOR = "color"
+    private const val KEY_ICON_TINT = "tint"
     private const val KEY_URL = "url"
 
     private var launcherBackgroundSize = Size(LAUNCHER_BACKGROUND_WIDTH, LAUNCHER_BACKGROUND_HEIGHT)
@@ -116,6 +117,7 @@ object LauncherManager : FileInfoManager() {
                     id = createId(),
                     label = context.getString(def.label),
                     icon = createDrawableFile(context, def.icon, launcherLogoSize),
+                    iconTint = ContextCompat.getColor(context, def.iconTint),
                     backgroundFile = null,
                     backgroundColor = colorValue,
                     url = def.url
@@ -157,16 +159,18 @@ object LauncherManager : FileInfoManager() {
     fun add(
         label: String,
         icon: File?,
+        iconTint: Int,
         backgroundFile: File?,
         backgroundColor: List<Int>,
         url: String,
     ) {
-        add(label, icon, backgroundFile, backgroundColor, url, 0)
+        add(label, icon, iconTint, backgroundFile, backgroundColor, url, 0)
     }
 
     private fun add(
         label: String,
         icon: File?,
+        iconTint: Int,
         backgroundFile: File?,
         backgroundColor: List<Int>,
         url: String,
@@ -176,6 +180,7 @@ object LauncherManager : FileInfoManager() {
             id = createId(),
             label = label,
             icon = icon,
+            iconTint = iconTint,
             backgroundFile = backgroundFile,
             backgroundColor = backgroundColor,
             url = url
@@ -223,6 +228,7 @@ object LauncherManager : FileInfoManager() {
             .put(KEY_ICON, info.icon?.path ?: "")
             .put(KEY_BACKGROUND, info.backgroundFile?.path ?: "")
             .put(KEY_URL, info.url)
+            .put(KEY_ICON_TINT, colorToString(info.iconTint))
             .put(KEY_BACKGROUND_COLOR, colorArray)
     }
 
@@ -291,6 +297,7 @@ object LauncherManager : FileInfoManager() {
             id = createId(),
             label = obj.optString(KEY_LABEL),
             icon = obj.optString(KEY_ICON).optFile(),
+            iconTint = stringToColor(obj.optString(KEY_ICON_TINT, "")) ?: 0,
             backgroundFile = obj.optString(KEY_BACKGROUND).optFile(),
             backgroundColor = colors,
             url = obj.optString(KEY_URL),
@@ -355,7 +362,15 @@ object LauncherManager : FileInfoManager() {
                 cacheList.add(index, currentInfo)
             }
         } else {
-            add(info.label, info.icon, info.backgroundFile, info.backgroundColor, info.url, index)
+            add(
+                label = info.label,
+                icon = info.icon,
+                iconTint = info.iconTint,
+                backgroundFile = info.backgroundFile,
+                backgroundColor = info.backgroundColor,
+                url = info.url,
+                index = index
+            )
         }
     }
 

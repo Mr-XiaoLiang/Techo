@@ -1,5 +1,6 @@
 package com.lollipop.browser.main.launcher
 
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -53,6 +54,7 @@ class LauncherHolder(
         binding.labelView.text = info.label
         loadOrClear(binding.backgroundView, info.backgroundFile)
         loadOrClear(binding.iconView, info.icon)
+        binding.iconView.imageTintList = ColorStateList.valueOf(info.iconTint)
     }
 
     private fun loadOrClear(imageView: ImageView, file: File?) {
