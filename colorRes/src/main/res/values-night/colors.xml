@@ -44,4 +44,6 @@
     <color name="text_gray_9">#2B322F</color>
     <color name="text_gray_10">#121514</color>
 
+    <color name="md_sys_outline">#938F99</color>
+
 </resources>

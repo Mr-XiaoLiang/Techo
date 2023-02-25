@@ -2,7 +2,6 @@ package com.lollipop.browser.main
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,7 +17,6 @@ import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.browser.web.WebPageFragment
 import com.lollipop.browser.web.WebStatusManager
 import com.lollipop.fragment.*
-import com.lollipop.stitch.StitchHelper
 import com.lollipop.web.search.SearchSuggestion
 import kotlin.math.max
 
