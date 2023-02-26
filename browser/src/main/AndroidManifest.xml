@@ -9,8 +9,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.Techo">
+        android:theme="@style/Theme.Techo"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".copyright.CopyrightIcons8Activity"
             android:exported="false" />
@@ -23,6 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".main.launcher.LauncherEditActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
