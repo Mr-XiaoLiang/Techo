@@ -1,5 +1,8 @@
 package com.lollipop.base.util
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
@@ -17,6 +20,12 @@ class ActivityLauncherHelper<I, O>(
     private val contract: Class<out ActivityResultContract<I, O>>,
     private val onResult: (O) -> Unit
 ) : ActivityResultLauncher<I>(), LifecycleEventObserver {
+
+    companion object {
+        inline fun <reified T : ActivityResultContract<I, O>, I, O> launcher(): Class<out ActivityResultContract<I, O>> {
+            return T::class.java
+        }
+    }
 
     private val contextReference = WeakReference(activity)
 
@@ -56,6 +65,37 @@ class ActivityLauncherHelper<I, O>(
 
     override fun getContract(): ActivityResultContract<I, *> {
         return launcherImpl!!.contract
+    }
+
+    abstract class Simple<I, O> : ActivityResultContract<I, O>() {
+
+        protected abstract val activityClass: Class<out Activity>
+
+        override fun createIntent(context: Context, input: I): Intent {
+            val intent = Intent(context, activityClass)
+            putParams(intent, input)
+            if (!context.isActivity()) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            return intent
+        }
+
+        protected fun Context.isActivity(): Boolean {
+            var c: Context = this
+            do {
+                if (c is Activity) {
+                    return true
+                }
+                if (c is ContextWrapper) {
+                    c = c.baseContext
+                } else {
+                    return false
+                }
+            } while (true)
+        }
+
+        abstract fun putParams(intent: Intent, input: I)
+
     }
 
 }
