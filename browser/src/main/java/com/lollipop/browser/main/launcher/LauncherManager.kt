@@ -3,7 +3,6 @@ package com.lollipop.browser.main.launcher
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
 import android.util.Size
@@ -17,12 +16,9 @@ import com.lollipop.base.util.onUI
 import com.lollipop.browser.R
 import com.lollipop.browser.utils.FileInfoManager
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.random.Random
 
 object LauncherManager : FileInfoManager() {
@@ -32,13 +28,6 @@ object LauncherManager : FileInfoManager() {
     private const val LAUNCHER_BACKGROUND_WIDTH = 96
     private const val LAUNCHER_BACKGROUND_HEIGHT = 122
     private const val LAUNCHER_LOGO_SIZE = 96
-
-    private const val KEY_LABEL = "label"
-    private const val KEY_ICON = "icon"
-    private const val KEY_BACKGROUND = "background"
-    private const val KEY_BACKGROUND_COLOR = "color"
-    private const val KEY_ICON_TINT = "tint"
-    private const val KEY_URL = "url"
 
     private var launcherBackgroundSize = Size(LAUNCHER_BACKGROUND_WIDTH, LAUNCHER_BACKGROUND_HEIGHT)
     private var launcherLogoSize = Size(LAUNCHER_LOGO_SIZE, LAUNCHER_LOGO_SIZE)
@@ -129,7 +118,7 @@ object LauncherManager : FileInfoManager() {
 
     private fun createId(): Int {
         val first = System.currentTimeMillis().and(0x8FFF).shl(16).toInt()
-        var count = 10
+        var count = 50
         do {
             val end = Random.nextInt(0xFFFF)
             val id = first + end
@@ -198,6 +187,7 @@ object LauncherManager : FileInfoManager() {
     fun remove(launcherInfo: LauncherInfo) {
         val info = cacheList.find { launcherInfo.id == it.id } ?: return
         cacheList.remove(info)
+        idMap.remove(info.id)
         save()
         doAsync {
             info.icon?.delete()
@@ -205,103 +195,31 @@ object LauncherManager : FileInfoManager() {
         }
     }
 
+    fun update(launcherInfo: LauncherInfo) {
+        val id = launcherInfo.id
+        var isChange = false
+        for (index in cacheList.indices) {
+            if (cacheList[index].id == id) {
+                cacheList[index] = launcherInfo
+                isChange = true
+                break
+            }
+        }
+        if (isChange) {
+            save()
+        }
+    }
+
     private fun loadFromFile(): List<LauncherInfo> {
         val file = launcherFile ?: return emptyList()
         val result = ArrayList<LauncherInfo>()
         readArrayFromFile(file, {}) { obj ->
-            val info = obj.toInfo()
+            val info = LauncherInfo.parse(obj) { createId() }
             if (info != null) {
                 result.add(info)
             }
         }
         return result
-    }
-
-    private fun LauncherInfo.toJson(): JSONObject {
-        val info = this
-        val colorArray = JSONArray()
-        info.backgroundColor.forEach {
-            colorArray.put(colorToString(it))
-        }
-        return JSONObject()
-            .put(KEY_LABEL, info.label)
-            .put(KEY_ICON, info.icon?.path ?: "")
-            .put(KEY_BACKGROUND, info.backgroundFile?.path ?: "")
-            .put(KEY_URL, info.url)
-            .put(KEY_ICON_TINT, colorToString(info.iconTint))
-            .put(KEY_BACKGROUND_COLOR, colorArray)
-    }
-
-    private fun colorToString(color: Int): String {
-        val builder = StringBuilder("#")
-        val alpha = getColorHex(Color.alpha(color))
-        if (alpha.length < 2) {
-            builder.append("0")
-        }
-        builder.append(alpha)
-
-        val red = getColorHex(Color.red(color))
-        if (red.length < 2) {
-            builder.append("0")
-        }
-        builder.append(red)
-
-        val green = getColorHex(Color.green(color))
-        if (green.length < 2) {
-            builder.append("0")
-        }
-        builder.append(green)
-
-        val blue = getColorHex(Color.blue(color))
-        if (blue.length < 2) {
-            builder.append("0")
-        }
-        builder.append(blue)
-
-        return builder.toString()
-    }
-
-    private fun getColorHex(value: Int): String {
-        val color = min(255, max(0, value))
-        return color.toString(16)
-    }
-
-    private fun stringToColor(value: String): Int? {
-        if (value.isEmpty()) {
-            return null
-        }
-        try {
-            return Color.parseColor(value)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    private fun JSONObject.toInfo(): LauncherInfo? {
-        val obj = this
-        if (obj.length() < 1 || !obj.has(KEY_URL)) {
-            return null
-        }
-        val colorArray = obj.optJSONArray(KEY_BACKGROUND_COLOR)
-        val colors = ArrayList<Int>()
-        if (colorArray != null && colorArray.length() > 0) {
-            for (i in 0 until colorArray.length()) {
-                val color = stringToColor(colorArray.optString(i, ""))
-                if (color != null) {
-                    colors.add(color)
-                }
-            }
-        }
-        return LauncherInfo(
-            id = createId(),
-            label = obj.optString(KEY_LABEL),
-            icon = obj.optString(KEY_ICON).optFile(),
-            iconTint = stringToColor(obj.optString(KEY_ICON_TINT, "")) ?: 0,
-            backgroundFile = obj.optString(KEY_BACKGROUND).optFile(),
-            backgroundColor = colors,
-            url = obj.optString(KEY_URL),
-        )
     }
 
     private fun createDrawableFile(context: Context, @DrawableRes resId: Int, size: Size): File? {

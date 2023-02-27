@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
@@ -15,7 +15,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityHeaderBinding
 
-abstract class HeaderActivity : AppCompatActivity() {
+abstract class HeaderActivity : BaseActivity() {
 
     private val viewBinding: ActivityHeaderBinding by lazyBind()
 
@@ -98,10 +98,6 @@ abstract class HeaderActivity : AppCompatActivity() {
 
     protected fun showLoading() {
         viewBinding.contentLoadingView.show()
-    }
-
-    fun notifyBackPress() {
-        onBackPressedDispatcher.onBackPressed()
     }
 
 }

@@ -13,4 +13,6 @@
     <string name="hint_launch_url">地址</string>
     <string name="hint_launch_icon">图标</string>
     <string name="save">保存</string>
+    <string name="title_launch_edit">修改启动器</string>
+    <string name="title_launch_create">创建启动器</string>
 </resources>

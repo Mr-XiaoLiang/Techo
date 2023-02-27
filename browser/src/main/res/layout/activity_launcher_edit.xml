@@ -57,6 +57,7 @@
             app:endIconTint="@color/gray_7">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/labelInputView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_launch_label"
@@ -74,6 +75,7 @@
             app:endIconTint="@color/gray_7">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/urlInputView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_launch_url"
@@ -81,6 +83,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/iconInputLayout"
             style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,6 +94,7 @@
             app:endIconTint="@color/gray_7">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/iconInputView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_launch_icon"
@@ -115,6 +119,7 @@
         </com.lollipop.clip.RoundClipLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/submitButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
