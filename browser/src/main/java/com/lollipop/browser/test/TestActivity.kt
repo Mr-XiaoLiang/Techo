@@ -25,10 +25,14 @@ class TestActivity : HeaderActivity() {
         Log.d("fileChooser", it.toString())
         when (it) {
             is FileChooseResult.Single -> {
-                Glide.with(this).load(File(it.uri.path ?: "")).into(binding.imageView)
+                val tempFile = File(cacheDir, System.currentTimeMillis().toString(16))
+                it.save(this, tempFile)
+                Glide.with(this).load(tempFile).into(binding.imageView)
             }
             is FileChooseResult.Multiple -> {
-                Glide.with(this).load(File(it[0].path ?: "")).into(binding.imageView)
+                val tempFile = File(cacheDir, System.currentTimeMillis().toString(16))
+                it.save(this, 0, tempFile)
+                Glide.with(this).load(tempFile).into(binding.imageView)
             }
             else -> {}
         }
