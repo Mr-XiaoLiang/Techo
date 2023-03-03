@@ -51,7 +51,7 @@ dependencies {
     implementation project(path: ':bigBoom')
     implementation project(path: ':recorder')
 
-    implementation 'com.lollipop.plugin:bridge:1.0'
+//    implementation 'com.lollipop.plugin:bridge:1.0'
     implementation project(path: ':renderScript')
     implementation project(path: ':web')
     implementation project(path: ':ltabview')
