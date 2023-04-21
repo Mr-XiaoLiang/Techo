@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.widget
 
 import android.animation.Animator
 import android.content.Context
@@ -16,7 +16,6 @@ import androidx.core.animation.addListener
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.util.onClick
-import com.lollipop.techo.R
 import kotlin.math.sqrt
 
 /**
@@ -127,6 +126,7 @@ class CheckableView(
                 setDefaultDrawable(R.drawable.bg_checkbox_circular)
                 setCheckedDrawable(R.drawable.fg_checkbox_circular)
             }
+
             CheckStyle.SQUARE -> {
                 setDefaultDrawable(R.drawable.bg_checkbox_square)
                 setCheckedDrawable(R.drawable.fg_checkbox_square)

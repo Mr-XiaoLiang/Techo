@@ -6,14 +6,19 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.ui.BaseActivity
-import com.lollipop.base.util.*
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.lazyLogD
+import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.comm.BarcodeWrapper
+import com.lollipop.qr.view.CodeSelectionView
+import com.lollipop.techo.BuildConfig
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 
 class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListener {
@@ -90,9 +95,13 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
                 }
             }
             resultBackPressHandler.isEnabled = true
-            if (com.lollipop.techo.BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 result.list.forEach {
-                    log("OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(it.describe.bytes))
+                    log(
+                        "OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(
+                            it.describe.bytes
+                        )
+                    )
                     log("OnBarcodeScanResult cornerPoints = " + it.describe.cornerPoints.size)
                 }
             }

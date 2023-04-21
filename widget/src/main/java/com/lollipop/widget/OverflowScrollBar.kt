@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.lazyLogD
-import com.lollipop.techo.R
 import kotlin.math.max
 import kotlin.math.min
 

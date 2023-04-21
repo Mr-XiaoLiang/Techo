@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CameraFocusBoundsView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="spaceWeight" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="CodeSelectionView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="codeStrokeWidth" format="dimension" />
+        <attr name="codeSpaceWeight" format="float" />
+        <attr name="codeNavigationIcon" format="reference" />
+        <attr name="codeNavigationIconSize" format="dimension" />
+        <attr name="codeNavigationIconTint" format="color" />
+        <attr name="codeMaskColor" format="color" />
+    </declare-styleable>
+</resources>

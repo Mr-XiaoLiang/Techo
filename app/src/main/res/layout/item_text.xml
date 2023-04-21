@@ -6,7 +6,7 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <com.lollipop.techo.view.CheckableView
+    <com.lollipop.widget.CheckableView
         android:id="@+id/checkBox"
         android:layout_width="48dp"
         android:layout_height="48dp"

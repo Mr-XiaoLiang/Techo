@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CheckableView">
+        <attr name="checkStyle" format="enum">
+            <enum name="circular" value="0" />
+            <enum name="square" value="1" />
+        </attr>
+        <attr name="android:checked" format="boolean" />
+        <attr name="defaultDrawable" format="reference" />
+        <attr name="checkedDrawable" format="reference" />
+        <attr name="iconTint" format="color" />
+
+        <attr name="replaceMode" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="OverflowScrollBar">
+        <attr name="android:color" format="color" />
+        <attr name="isHorizontal" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CameraFocusBoundsView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="spaceWeight" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="CodeSelectionView">
+        <attr name="android:radius" format="dimension" />
+        <attr name="android:color" format="color" />
+        <attr name="codeStrokeWidth" format="dimension" />
+        <attr name="codeSpaceWeight" format="float" />
+        <attr name="codeNavigationIcon" format="reference" />
+        <attr name="codeNavigationIconSize" format="dimension"/>
+        <attr name="codeNavigationIconTint" format="color"/>
+        <attr name="codeMaskColor" format="color"/>
+    </declare-styleable>
+</resources>

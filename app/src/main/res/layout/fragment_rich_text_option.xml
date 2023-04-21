@@ -106,7 +106,7 @@
                             tools:text="测试内容测试内容测试内容测试内容测试内容测试内容测试内容" />
                     </com.lollipop.techo.view.PassiveScrollView>
 
-                    <com.lollipop.techo.view.OverflowScrollBar
+                    <com.lollipop.widget.OverflowScrollBar
                         android:id="@+id/textSelectorScrollBar"
                         android:layout_width="36dp"
                         android:layout_height="match_parent"

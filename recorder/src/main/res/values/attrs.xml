@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecorderWaveView">
+        <attr name="lineWidth" format="dimension" />
+        <attr name="lineSpace" format="dimension" />
+        <attr name="lineColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="AudioVisualizerView">
+        <attr name="barCount" format="integer" />
+        <attr name="intervalWeight" format="float" />
+        <attr name="baseLineHeight" format="dimension" />
+        <attr name="baseLineInterval" format="dimension" />
+        <attr name="selectedColor" format="color" />
+        <attr name="defaultColor" format="color" />
+    </declare-styleable>
+
+</resources>

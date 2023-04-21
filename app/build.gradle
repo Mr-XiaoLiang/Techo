@@ -60,6 +60,7 @@ dependencies {
     implementation project(path: ':colorRes')
     implementation project(path: ':fragmentHelper')
     implementation project(path: ':verticalPage')
+    implementation project(path: ':widget')
 
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop

@@ -1,4 +1,4 @@
-package com.lollipop.techo.view
+package com.lollipop.recorder
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,9 +8,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.SingleTouchSlideHelper
-import com.lollipop.recorder.VisualizerHelper
-import com.lollipop.recorder.VisualizerRenderer
-import com.lollipop.techo.R
 import kotlin.math.min
 
 class AudioVisualizerView(

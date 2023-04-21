@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.lollipop.techo.view.CheckableView
+    <com.lollipop.widget.CheckableView
         android:id="@+id/flashBtn"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -35,7 +35,7 @@
         android:src="@drawable/ic_outline_insert_photo_24"
         app:tint="@color/brand_4" />
 
-    <com.lollipop.techo.qr.CameraFocusBoundsView
+    <com.lollipop.qr.view.CameraFocusBoundsView
         android:id="@+id/focusView"
         android:layout_width="56dp"
         android:layout_height="36dp"
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.lollipop.techo.qr.CodeSelectionView
+        <com.lollipop.qr.view.CodeSelectionView
             android:id="@+id/resultImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

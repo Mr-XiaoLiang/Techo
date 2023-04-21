@@ -1,11 +1,11 @@
-package com.lollipop.techo.qr
+package com.lollipop.qr.view
 
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.lollipop.techo.R
+import com.lollipop.qr.R
 
 class CameraFocusBoundsView @JvmOverloads constructor(
     context: Context,
@@ -171,6 +171,9 @@ class CameraFocusBoundsView @JvmOverloads constructor(
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated("Deprecated in Java",
+            ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+        )
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }

@@ -6,9 +6,9 @@ import android.os.Bundle
 import com.lollipop.base.util.lazyBind
 import com.lollipop.recorder.AudioPlayerHelper
 import com.lollipop.recorder.AudioPlayerHelper.State.*
+import com.lollipop.recorder.AudioVisualizerView
 import com.lollipop.recorder.VisualizerHelper
 import com.lollipop.techo.databinding.DialogAudioPlayBinding
-import com.lollipop.techo.view.AudioVisualizerView
 import kotlin.math.max
 import kotlin.math.min
 

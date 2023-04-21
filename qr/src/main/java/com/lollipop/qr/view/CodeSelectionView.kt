@@ -1,4 +1,4 @@
-package com.lollipop.techo.qr
+package com.lollipop.qr.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,10 +14,10 @@ import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
 import com.lollipop.qr.BarcodeFormat
+import com.lollipop.qr.R
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.comm.CodeDescribe
-import com.lollipop.techo.R
 import kotlin.math.max
 
 class CodeSelectionView @JvmOverloads constructor(

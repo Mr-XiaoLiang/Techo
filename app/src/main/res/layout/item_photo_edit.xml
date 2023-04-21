@@ -12,7 +12,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.lollipop.techo.view.CheckableView
+    <com.lollipop.widget.CheckableView
         android:id="@+id/photoCheckView"
         android:layout_width="48dp"
         android:layout_height="48dp"
