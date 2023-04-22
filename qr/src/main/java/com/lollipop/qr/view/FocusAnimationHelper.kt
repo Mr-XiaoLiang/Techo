@@ -1,4 +1,4 @@
-package com.lollipop.techo.qr
+package com.lollipop.qr.view
 
 import android.animation.Animator
 import android.animation.ValueAnimator

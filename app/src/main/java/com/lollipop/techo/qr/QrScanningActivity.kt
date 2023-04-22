@@ -18,6 +18,7 @@ import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.view.CodeSelectionView
+import com.lollipop.qr.view.FocusAnimationHelper
 import com.lollipop.techo.BuildConfig
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 

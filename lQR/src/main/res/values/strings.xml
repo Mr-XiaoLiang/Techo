@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">lQR</string>
+    <string name="from_photo">从照片识别</string>
+    <string name="create_qr_code">生成二维码</string>
+    <string name="title_main">Lollipop QR</string>
 </resources>

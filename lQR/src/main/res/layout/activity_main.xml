@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <FrameLayout
         android:id="@+id/actionBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="56dp">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
             android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:src="@mipmap/ic_launcher" />
+            app:fontFamily="@font/font_logo"
+            android:text="@string/title_main"/>
 
     </FrameLayout>
 
@@ -24,11 +27,99 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1">
+
         <FrameLayout
+            android:id="@+id/previewContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/previewContainer"/>
+            android:background="#3f00" />
+
+        <com.lollipop.qr.view.CameraFocusBoundsView
+            android:id="@+id/focusView"
+            android:layout_width="56dp"
+            android:layout_height="36dp"
+            android:color="@color/brand_4"
+            android:radius="5dp"
+            android:visibility="gone"
+            app:strokeWidth="2dp"
+            tools:visibility="visible" />
+
+        <com.lollipop.widget.CheckableView
+            android:id="@+id/flashBtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|center"
+            android:layout_margin="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="16dp"
+            app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
+            app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
+            app:iconTint="@color/brand_4"
+            app:replaceMode="true" />
+
+        <com.lollipop.qr.view.CodeSelectionView
+            android:id="@+id/resultImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:color="@color/brand_4"
+            android:radius="5dp"
+            app:codeMaskColor="#6000"
+            app:codeNavigationIcon="@drawable/ic_outline_arrow_circle_right_24"
+            app:codeNavigationIconSize="36dp"
+            app:codeNavigationIconTint="@color/brand_4"
+            app:codeSpaceWeight="0.5"
+            app:codeStrokeWidth="4dp" />
+
+        <com.lollipop.lqrdemo.view.PreviewWindowView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:radius="24dp"
+            app:color="@color/white" />
 
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/galleryBtn"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="56dp"
+            android:text="@string/from_photo"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="16sp"
+            app:backgroundTint="?attr/colorSecondary"
+            app:icon="@drawable/ic_outline_insert_photo_24"
+            app:iconGravity="textStart"
+            app:iconSize="24dp"
+            app:iconTint="?attr/colorOnSecondary" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0px" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minHeight="56dp"
+            android:text="@string/create_qr_code"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="16sp"
+            app:backgroundTint="?attr/colorSecondary"
+            app:icon="@drawable/ic_baseline_qr_code_24"
+            app:iconGravity="textStart"
+            app:iconSize="24dp"
+            app:iconTint="?attr/colorOnSecondary" />
+    </LinearLayout>
 
 </LinearLayout>

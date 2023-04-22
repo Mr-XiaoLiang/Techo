@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "liang.lollipop.lqrdemo"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -43,4 +43,5 @@ dependencies {
     implementation project(path: ':fileChooser')
     implementation project(path: ':qr')
     implementation project(path: ':colorRes')
+    implementation project(path: ':widget')
 }
