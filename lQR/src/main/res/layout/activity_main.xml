@@ -16,10 +16,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_gravity="center"
-            app:fontFamily="@font/font_logo"
-            android:text="@string/title_main"/>
+            android:text="@string/title_main"
+            android:textSize="20sp"
+            app:fontFamily="@font/font_logo" />
 
     </FrameLayout>
 
@@ -44,18 +44,26 @@
             app:strokeWidth="2dp"
             tools:visibility="visible" />
 
-        <com.lollipop.widget.CheckableView
-            android:id="@+id/flashBtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+
+        <com.lollipop.widget.RoundBackgroundView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:layout_margin="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="16dp"
-            app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
-            app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
-            app:iconTint="@color/brand_4"
-            app:replaceMode="true" />
+            app:color="?attr/colorSecondary"
+            app:round_type="oval">
+
+            <com.lollipop.widget.CheckableView
+                android:id="@+id/flashBtn"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:padding="16dp"
+                app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
+                app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
+                app:iconTint="?attr/colorOnSecondary"
+                app:replaceMode="true" />
+
+        </com.lollipop.widget.RoundBackgroundView>
 
         <com.lollipop.qr.view.CodeSelectionView
             android:id="@+id/resultImageView"
