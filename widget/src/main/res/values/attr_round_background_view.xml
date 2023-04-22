@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundBackgroundView">
+        <attr name="round_type" format="enum">
+            <enum name="smaller" value="0" />
+            <enum name="absolute" value="1" />
+            <enum name="width_weight" value="2" />
+            <enum name="height_weight" value="3" />
+            <enum name="oval" value="4" />
+        </attr>
+        <attr name="round_radius" format="dimension" />
+        <attr name="round_weight" format="float" />
+        <attr name="color"/>
+    </declare-styleable>
+</resources>
