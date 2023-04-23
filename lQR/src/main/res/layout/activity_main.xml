@@ -19,7 +19,18 @@
             android:layout_gravity="center"
             android:text="@string/title_main"
             android:textSize="20sp"
+            android:textColor="?attr/colorOnBackground"
             app:fontFamily="@font/font_logo" />
+
+        <com.lollipop.widget.CheckableView
+            android:id="@+id/flashBtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
+            app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
+            app:iconTint="?attr/colorOnBackground"
+            app:replaceMode="true" />
 
     </FrameLayout>
 
@@ -43,27 +54,6 @@
             android:visibility="gone"
             app:strokeWidth="2dp"
             tools:visibility="visible" />
-
-
-        <com.lollipop.widget.RoundBackgroundView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_margin="16dp"
-            app:color="?attr/colorSecondary"
-            app:round_type="oval">
-
-            <com.lollipop.widget.CheckableView
-                android:id="@+id/flashBtn"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:padding="16dp"
-                app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
-                app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
-                app:iconTint="?attr/colorOnSecondary"
-                app:replaceMode="true" />
-
-        </com.lollipop.widget.RoundBackgroundView>
 
         <com.lollipop.qr.view.CodeSelectionView
             android:id="@+id/resultImageView"
