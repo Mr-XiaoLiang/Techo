@@ -1,6 +1,8 @@
 package com.lollipop.lqrdemo
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -27,6 +29,15 @@ class BarcodeDetailDialog(
 
     private val binding: DialogBarCodeDetailBinding by lazyBind()
 
+    private val rawValue by lazy {
+        try {
+            String(info.describe.bytes)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            info.describe.displayValue
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window?.let {
@@ -44,31 +55,88 @@ class BarcodeDetailDialog(
             dismiss()
         }
         binding.shareButton.onClick {
-            Sharesheet.shareText(context, String(info.describe.bytes))
+            Sharesheet.shareText(context, rawValue)
             dismiss()
         }
         binding.openButton.onClick {
-//            openBarcode()
+            openBarcode()
             dismiss()
         }
     }
 
     private fun openBarcode() {
-        when (info.info) {
-            is BarcodeInfo.CalendarEvent -> TODO()
-            is BarcodeInfo.Contact -> TODO()
-            is BarcodeInfo.DriverLicense -> TODO()
-            is BarcodeInfo.Email -> TODO()
-            is BarcodeInfo.GeoPoint -> TODO()
-            is BarcodeInfo.Isbn -> TODO()
-            is BarcodeInfo.Phone -> TODO()
-            is BarcodeInfo.Product -> TODO()
-            is BarcodeInfo.Sms -> TODO()
-            is BarcodeInfo.Text,
-            is BarcodeInfo.Unknown -> TODO()
+        val barcodeInfo = info.info
+        when (barcodeInfo) {
+            is BarcodeInfo.CalendarEvent -> {
+                // TODO()
+            }
 
-            is BarcodeInfo.Url -> TODO()
-            is BarcodeInfo.Wifi -> TODO()
+            is BarcodeInfo.Contact -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.DriverLicense -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Email -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.GeoPoint -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Isbn -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Phone -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Product -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Sms -> {
+                // TODO()
+            }
+
+            is BarcodeInfo.Text,
+            is BarcodeInfo.Unknown -> {
+                tryOpen {
+                    binding.shareButton.callOnClick()
+                }
+            }
+
+            is BarcodeInfo.Url -> {
+                tryOpen {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(barcodeInfo.url))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                }
+                return
+            }
+
+            is BarcodeInfo.Wifi -> {
+                // TODO()
+            }
+        }
+        // 以上都没做实现，所以先无脑跳
+        tryOpen {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(rawValue))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+    }
+
+    private fun tryOpen(callback: () -> Unit) {
+        try {
+            callback()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            binding.shareButton.callOnClick()
         }
     }
 
