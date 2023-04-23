@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:leftTop="20dp"
+    app:rightTop="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorBackgroundFloating"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <com.lollipop.widget.RoundBackgroundView
+            android:layout_width="24dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:alpha="0.5"
+            app:color="?attr/colorOnBackground"
+            app:round_type="smaller"
+            app:round_weight="0.5" />
+
+        <TextView
+            android:id="@+id/hintView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="26dp"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="16sp"
+            tools:text="驾照" />
+
+        <TextView
+            android:id="@+id/contentValueView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="26dp"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="14sp"
+            tools:text="afgajsdgfajhsgdfjahsgfjashdgfaksjfghajsdfgajsafgajsdgfajhsgdfjahsgfjashdgfaksjfghajsdfgajs" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/shareButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/share"
+                android:textColor="?attr/colorOnBackground"
+                app:icon="@drawable/ic_baseline_share_24"
+                app:iconGravity="textTop"
+                app:iconTint="?attr/colorOnBackground" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copyButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/copy"
+                android:textColor="?attr/colorOnBackground"
+                app:icon="@drawable/ic_baseline_content_copy_24"
+                app:iconGravity="textTop"
+                app:iconTint="?attr/colorOnBackground" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/openButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/open"
+                android:textColor="?attr/colorOnBackground"
+                app:icon="@drawable/ic_outline_arrow_circle_right_24"
+                app:iconGravity="textTop"
+                app:iconTint="?attr/colorOnBackground" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.lollipop.clip.RoundClipLayout>

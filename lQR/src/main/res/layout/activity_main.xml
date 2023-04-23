@@ -18,19 +18,31 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/title_main"
-            android:textSize="20sp"
             android:textColor="?attr/colorOnBackground"
+            android:textSize="20sp"
             app:fontFamily="@font/font_logo" />
 
         <com.lollipop.widget.CheckableView
             android:id="@+id/flashBtn"
             android:layout_width="56dp"
             android:layout_height="56dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="16dp"
             app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
             app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
             app:iconTint="?attr/colorOnBackground"
             app:replaceMode="true" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="4dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="?attr/colorOnBackground" />
 
     </FrameLayout>
 

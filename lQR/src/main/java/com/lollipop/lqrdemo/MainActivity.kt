@@ -66,6 +66,10 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
 
         binding.resultImageView.addOnCodeSelectedListener(this)
 
+        binding.backButton.isVisible = false
+        binding.backButton.onClick {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun onResult(result: BarcodeResult) {
@@ -80,6 +84,11 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
                             result.list
                         )
                         binding.resultImageView.isVisible = true
+                        binding.backButton.isVisible = true
+                        if (result.list.size == 1) {
+                            // 只有一个的时候默认选中
+                            onCodeSelected(result.list[0])
+                        }
                     }
                 }
             }
@@ -102,10 +111,11 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
         binding.resultImageView.setImageDrawable(null)
         binding.resultImageView.isVisible = false
         qrReaderHelper.analyzerEnable = true
+        binding.backButton.isVisible = false
     }
 
     override fun onCodeSelected(code: BarcodeWrapper) {
-        Toast.makeText(this, code.describe.displayValue, Toast.LENGTH_SHORT).show()
+        BarcodeDetailDialog.show(this, code)
     }
 
 }

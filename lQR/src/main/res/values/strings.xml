@@ -3,4 +3,21 @@
     <string name="from_photo">从照片识别</string>
     <string name="create_qr_code">生成二维码</string>
     <string name="title_main">Lollipop QR</string>
+    <string name="copy">复制</string>
+    <string name="share">分享</string>
+    <string name="open">打开</string>
+    <string name="copied">已复制</string>
+
+    <string name="code_calendar_event">日程</string>
+    <string name="code_contact">名片</string>
+    <string name="code_driver_license">驾照</string>
+    <string name="code_email">电子邮箱</string>
+    <string name="code_geo_point">地理位置</string>
+    <string name="code_isbn">书籍编号</string>
+    <string name="code_phone">联系电话</string>
+    <string name="code_product">商品编号</string>
+    <string name="code_sms">短信</string>
+    <string name="code_text">文本</string>
+    <string name="code_url">网址</string>
+    <string name="code_wifi">WiFi</string>
 </resources>

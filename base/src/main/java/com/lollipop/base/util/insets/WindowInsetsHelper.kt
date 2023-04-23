@@ -3,6 +3,7 @@ package com.lollipop.base.util.insets
 import android.app.Activity
 import android.graphics.Color
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
@@ -29,27 +30,35 @@ class WindowInsetsHelper(
                 WindowInsetsType.SYSTEM_BARS -> {
                     WindowInsetsCompat.Type.systemBars()
                 }
+
                 WindowInsetsType.DISPLAY_CUTOUT -> {
                     WindowInsetsCompat.Type.displayCutout()
                 }
+
                 WindowInsetsType.TAPPABLE_ELEMENT -> {
                     WindowInsetsCompat.Type.tappableElement()
                 }
+
                 WindowInsetsType.MANDATORY_SYSTEM_GESTURES -> {
                     WindowInsetsCompat.Type.mandatorySystemGestures()
                 }
+
                 WindowInsetsType.SYSTEM_GESTURES -> {
                     WindowInsetsCompat.Type.systemGestures()
                 }
+
                 WindowInsetsType.IME -> {
                     WindowInsetsCompat.Type.ime()
                 }
+
                 WindowInsetsType.CAPTION_BAR -> {
                     WindowInsetsCompat.Type.captionBar()
                 }
+
                 WindowInsetsType.NAVIGATION_BARS -> {
                     WindowInsetsCompat.Type.navigationBars()
                 }
+
                 WindowInsetsType.STATUS_BARS -> {
                     WindowInsetsCompat.Type.systemBars()
                 }
@@ -58,12 +67,16 @@ class WindowInsetsHelper(
         }
 
         fun initWindowFlag(activity: Activity) {
-            activity.window.apply {
+            initWindowFlag(activity.window)
+        }
+
+        fun initWindowFlag(window: Window) {
+            window.apply {
                 statusBarColor = Color.TRANSPARENT
                 navigationBarColor = Color.TRANSPARENT
             }
-            WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
 
         fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
