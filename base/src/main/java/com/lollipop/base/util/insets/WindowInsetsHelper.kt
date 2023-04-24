@@ -9,6 +9,7 @@ import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 /**
  * @author lollipop
@@ -93,6 +94,14 @@ class WindowInsetsHelper(
 
         fun setWidth(target: View, width: Int) {
             WindowInsetsOperator.setWidth(target, width)
+        }
+
+        fun getController(activity: Activity): WindowInsetsControllerCompat {
+            return getController(activity.window)
+        }
+
+        fun getController(window: Window): WindowInsetsControllerCompat {
+            return WindowCompat.getInsetsController(window, window.decorView)
         }
 
     }

@@ -8,6 +8,7 @@
     app:rightTop="20dp">
 
     <LinearLayout
+        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorBackgroundFloating"

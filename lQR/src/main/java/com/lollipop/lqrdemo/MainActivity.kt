@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowInsetsHelper.initWindowFlag(this)
         super.onCreate(savedInstanceState)
+        // 需要按照是否夜间模式来处理，等到做完夜间模式的适配，需要调整
+        WindowInsetsHelper.getController(this).isAppearanceLightStatusBars = true
         setContentView(binding.root)
         resultBackPressHandler.bindTo(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)

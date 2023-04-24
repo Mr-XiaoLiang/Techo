@@ -24,11 +24,12 @@
 
         <com.lollipop.widget.CheckableView
             android:id="@+id/flashBtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="16dp"
+            android:padding="12dp"
             app:checkedDrawable="@drawable/ic_baseline_flash_on_24"
             app:defaultDrawable="@drawable/ic_baseline_flash_off_24"
             app:iconTint="?attr/colorOnBackground"
@@ -39,7 +40,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical|start"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="16dp"
             android:padding="12dp"
             android:src="@drawable/ic_baseline_arrow_back_24"
             app:tint="?attr/colorOnBackground" />
@@ -96,42 +97,86 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="16dp">
 
-        <com.google.android.material.button.MaterialButton
+        <com.lollipop.clip.RoundClipLayout
             android:id="@+id/galleryBtn"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:minHeight="56dp"
-            android:padding="16dp"
-            android:text="@string/from_photo"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="16sp"
-            app:backgroundTint="?attr/colorSecondary"
-            app:icon="@drawable/ic_outline_insert_photo_24"
-            app:iconGravity="textStart"
-            app:iconSize="24dp"
-            app:iconTint="?attr/colorOnSecondary" />
+            android:radius="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/colorSecondary"
+                android:gravity="center"
+                android:foreground="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_outline_insert_photo_24"
+                    app:tint="?attr/colorOnSecondary" />
+
+                <Space
+                    android:layout_width="14dp"
+                    android:layout_height="0px" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/from_photo"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </com.lollipop.clip.RoundClipLayout>
 
         <Space
             android:layout_width="16dp"
             android:layout_height="0px" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/createBtn"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:minHeight="56dp"
-            android:text="@string/create_qr_code"
-            android:padding="16dp"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="16sp"
-            app:backgroundTint="?attr/colorSecondary"
-            app:icon="@drawable/ic_baseline_qr_code_24"
-            app:iconGravity="textStart"
-            app:iconSize="24dp"
-            app:iconTint="?attr/colorOnSecondary" />
+            android:radius="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/colorSecondary"
+                android:gravity="center"
+                android:foreground="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_baseline_qr_code_24"
+                    app:tint="?attr/colorOnSecondary" />
+
+                <Space
+                    android:layout_width="14dp"
+                    android:layout_height="0px" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_qr_code"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </com.lollipop.clip.RoundClipLayout>
+
     </LinearLayout>
 
 </LinearLayout>

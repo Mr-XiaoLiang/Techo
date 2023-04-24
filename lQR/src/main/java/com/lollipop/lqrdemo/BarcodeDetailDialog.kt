@@ -2,8 +2,10 @@ package com.lollipop.lqrdemo
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lollipop.base.util.Clipboard
@@ -44,7 +46,7 @@ class BarcodeDetailDialog(
             WindowInsetsHelper.initWindowFlag(it)
         }
         setContentView(binding.root)
-        binding.root.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
+        binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
 
         val barcodeValue = info.describe.displayValue
         binding.contentValueView.text = barcodeValue
@@ -61,6 +63,9 @@ class BarcodeDetailDialog(
         binding.openButton.onClick {
             openBarcode()
             dismiss()
+        }
+        binding.root.post {
+            findViewById<View>(R.id.design_bottom_sheet)?.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 
