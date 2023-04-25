@@ -18,7 +18,7 @@ import androidx.core.view.WindowInsetsControllerCompat
  */
 class WindowInsetsHelper(
     private val applyType: WindowInsetsApplyType,
-    private val windowInsetsOperator: WindowInsetsOperator,
+    val windowInsetsOperator: WindowInsetsOperator,
     private val targetView: View? = null
 ) : OnApplyWindowInsetsListener {
 
