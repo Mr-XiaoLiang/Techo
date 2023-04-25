@@ -2,7 +2,6 @@ package com.lollipop.lqrdemo
 
 import android.os.Bundle
 import android.util.Size
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
@@ -10,9 +9,11 @@ import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
+import com.lollipop.filechooser.FileChooseResult
+import com.lollipop.filechooser.FileChooser
+import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
         resumeScan()
     }
 
-    private val log by lazyLogD()
+    private val fileChooser = FileChooser.registerChooserLauncher(this, ::onChooseFile)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowInsetsHelper.initWindowFlag(this)
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
         binding.flashBtn.isChecked = qrReaderHelper.torch
 
         binding.galleryBtn.onClick {
-            Toast.makeText(this, "打开相册", Toast.LENGTH_SHORT).show()
+            fileChooser.launch().localOnly().type(FileMime.Image.ALL).start()
         }
 
         binding.resultImageView.addOnCodeSelectedListener(this)
@@ -71,6 +72,20 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
         binding.backButton.isVisible = false
         binding.backButton.onClick {
             onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
+    private fun onChooseFile(file: FileChooseResult) {
+        when (file) {
+            FileChooseResult.Empty -> {
+                // 忽略空返回
+            }
+            is FileChooseResult.Multiple -> {
+            // 多图只读第一张
+            }
+            is FileChooseResult.Single -> {
+                // TODO() 单图直接读
+            }
         }
     }
 
@@ -95,16 +110,6 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
                 }
             }
             resultBackPressHandler.isEnabled = true
-            if (BuildConfig.DEBUG) {
-                result.list.forEach {
-                    log(
-                        "OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(
-                            it.describe.bytes
-                        )
-                    )
-                    log("OnBarcodeScanResult cornerPoints = " + it.describe.cornerPoints.size)
-                }
-            }
         }
     }
 
