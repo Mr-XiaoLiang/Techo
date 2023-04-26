@@ -18,6 +18,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.lollipop.qr.comm.InputImageInfo
 import java.util.concurrent.TimeUnit
 
 class CameraBarcodeReader(
@@ -274,9 +275,11 @@ class CameraBarcodeReader(
         analyzerBitmap = null
         analyzerBitmap = yuv420888ToBitmap(inputImage)
 
+        val info = InputImageInfo.from(inputImage)
+
         BarcodeScanning.getClient(options).process(inputImage)
             .addOnSuccessListener { list ->
-                onDecodeSuccess(list, resultTag)
+                onDecodeSuccess(list, info, resultTag)
             }.addOnCompleteListener {
                 imageProxy.close()
             }.addOnCanceledListener {

@@ -1,8 +1,14 @@
 package com.lollipop.filechooser
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 
 object FileChooser {
 
@@ -54,6 +60,44 @@ object FileChooser {
                 intent
             }
             launcher.launch(FileChooseRequest(target))
+        }
+    }
+
+    fun open(context: Context, from: Uri): InputStream? {
+        return context.contentResolver.openInputStream(from)
+    }
+
+    fun save(context: Context, from: Uri, toFile: File) {
+        save(open(context, from) ?: return, toFile)
+    }
+
+    fun save(inputStream: InputStream, file: File) {
+        var outputStream: OutputStream? = null
+        try {
+            file.parentFile?.mkdirs()
+            file.delete()
+            outputStream = FileOutputStream(file)
+            val buffer = ByteArray(4096)
+            do {
+                val read = inputStream.read(buffer)
+                if (read >= 0) {
+                    outputStream.write(buffer, 0, read)
+                }
+            } while (read >= 0)
+            outputStream.flush()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        } finally {
+            try {
+                inputStream.close()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            try {
+                outputStream?.close()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 

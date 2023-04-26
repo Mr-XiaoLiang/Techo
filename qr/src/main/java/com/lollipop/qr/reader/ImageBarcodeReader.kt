@@ -11,6 +11,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.lollipop.qr.comm.InputImageInfo
 import java.nio.ByteBuffer
 
 class ImageBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecycleOwner) {
@@ -75,7 +76,7 @@ class ImageBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecyc
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
-            onDecodeSuccess(emptyList(), protocol.tag)
+            onDecodeSuccess(emptyList(), InputImageInfo(0, 0), protocol.tag)
             return
         }
 
@@ -90,11 +91,13 @@ class ImageBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecyc
             .setBarcodeFormats(first, *array)
             .build()
 
+        val info = InputImageInfo.from(inputImage)
+
         BarcodeScanning.getClient(options).process(inputImage)
             .addOnSuccessListener { list ->
-                onDecodeSuccess(list, protocol.tag)
+                onDecodeSuccess(list, info, protocol.tag)
             }.addOnFailureListener {
-                onDecodeSuccess(emptyList(), protocol.tag)
+                onDecodeSuccess(emptyList(), info, protocol.tag)
                 it.printStackTrace()
                 protocol.close()
             }.addOnCompleteListener {
@@ -102,6 +105,7 @@ class ImageBarcodeReader(lifecycleOwner: LifecycleOwner) : BarcodeReader(lifecyc
             }.addOnCanceledListener {
                 protocol.close()
             }
+        return
     }
 
     interface ImageProtocol {

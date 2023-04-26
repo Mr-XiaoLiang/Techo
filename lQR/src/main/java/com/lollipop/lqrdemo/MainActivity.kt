@@ -2,7 +2,7 @@ package com.lollipop.lqrdemo
 
 import android.os.Bundle
 import android.util.Size
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -14,14 +14,13 @@ import com.lollipop.base.util.onUI
 import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
+import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
-import com.lollipop.qr.comm.BarcodeWrapper
-import com.lollipop.qr.view.CodeSelectionView
 import com.lollipop.qr.view.FocusAnimationHelper
 
-class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListener {
+class MainActivity : ScanResultActivity() {
 
     private val binding: ActivityMainBinding by lazyBind()
 
@@ -40,8 +39,6 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowInsetsHelper.initWindowFlag(this)
         super.onCreate(savedInstanceState)
-        // 需要按照是否夜间模式来处理，等到做完夜间模式的适配，需要调整
-        WindowInsetsHelper.getController(this).isAppearanceLightStatusBars = true
         setContentView(binding.root)
         resultBackPressHandler.bindTo(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
@@ -52,10 +49,11 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
     private fun initCamera() {
         qrReaderHelper.bindContainer(binding.previewContainer)
         qrReaderHelper.addOnFocusChangedListener(focusAnimationHelper)
-        qrReaderHelper.addOnBarcodeScanResultListener(::onResult)
+        bindResult(qrReaderHelper)
     }
 
     private fun initView() {
+        bindByBack(binding.backButton)
         binding.flashBtn.onClick {
             val torch = !qrReaderHelper.torch
             qrReaderHelper.torch = torch
@@ -67,12 +65,9 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
             fileChooser.launch().localOnly().type(FileMime.Image.ALL).start()
         }
 
-        binding.resultImageView.addOnCodeSelectedListener(this)
+        bindSelectionView(binding.resultImageView, ImageView.ScaleType.CENTER_CROP)
 
         binding.backButton.isVisible = false
-        binding.backButton.onClick {
-            onBackPressedDispatcher.onBackPressed()
-        }
     }
 
     private fun onChooseFile(file: FileChooseResult) {
@@ -80,16 +75,20 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
             FileChooseResult.Empty -> {
                 // 忽略空返回
             }
+
             is FileChooseResult.Multiple -> {
-            // 多图只读第一张
+                if (!file.isEmpty()) {
+                    PhotoScanActivity.start(this, file[0])
+                }
             }
+
             is FileChooseResult.Single -> {
-                // TODO() 单图直接读
+                PhotoScanActivity.start(this, file.uri)
             }
         }
     }
 
-    private fun onResult(result: BarcodeResult) {
+    override fun onBarcodeScanResult(result: BarcodeResult) {
         if (!result.isEmpty) {
             qrReaderHelper.analyzerEnable = false
             qrReaderHelper.analyzerBitmap?.let {
@@ -119,10 +118,6 @@ class MainActivity : AppCompatActivity(), CodeSelectionView.OnCodeSelectedListen
         binding.resultImageView.isVisible = false
         qrReaderHelper.analyzerEnable = true
         binding.backButton.isVisible = false
-    }
-
-    override fun onCodeSelected(code: BarcodeWrapper) {
-        BarcodeDetailDialog.show(this, code)
     }
 
 }

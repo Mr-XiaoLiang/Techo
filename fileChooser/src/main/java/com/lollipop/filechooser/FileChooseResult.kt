@@ -21,11 +21,11 @@ sealed class FileChooseResult {
         }
 
         fun open(context: Context): InputStream? {
-            return context.contentResolver.openInputStream(uri)
+            return FileChooser.open(context, uri)
         }
 
         fun save(context: Context, file: File) {
-            save(open(context) ?: return, file)
+            FileChooser.save(context, uri, file)
         }
 
     }
@@ -47,43 +47,13 @@ sealed class FileChooseResult {
             if (index < 0 || index >= size) {
                 return null
             }
-            return context.contentResolver.openInputStream(get(index))
+            return FileChooser.open(context, get(index))
         }
 
         fun save(context: Context, index: Int, file: File) {
-            save(open(context, index) ?: return, file)
+            FileChooser.save(open(context, index) ?: return, file)
         }
 
-    }
-
-    protected fun save(inputStream: InputStream, file: File) {
-        var outputStream: OutputStream? = null
-        try {
-            file.parentFile?.mkdirs()
-            file.delete()
-            outputStream = FileOutputStream(file)
-            val buffer = ByteArray(4096)
-            do {
-                val read = inputStream.read(buffer)
-                if (read >= 0) {
-                    outputStream.write(buffer, 0, read)
-                }
-            } while (read >= 0)
-            outputStream.flush()
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        } finally {
-            try {
-                inputStream.close()
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-            try {
-                outputStream?.close()
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
     }
 
 }

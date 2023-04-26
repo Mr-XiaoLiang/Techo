@@ -7,7 +7,12 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.BarcodeType
-import com.lollipop.qr.comm.*
+import com.lollipop.qr.comm.BarcodeExecutor
+import com.lollipop.qr.comm.BarcodeInfo
+import com.lollipop.qr.comm.BarcodeResult
+import com.lollipop.qr.comm.BarcodeResultBuilder
+import com.lollipop.qr.comm.BarcodeWrapper
+import com.lollipop.qr.comm.InputImageInfo
 
 abstract class BarcodeReader(
     lifecycleOwner: LifecycleOwner
@@ -54,7 +59,7 @@ abstract class BarcodeReader(
         this.onBarcodeScanResultListener.remove(listener)
     }
 
-    protected fun onDecodeSuccess(list: List<Barcode>, tag: String) {
+    protected fun onDecodeSuccess(list: List<Barcode>, info: InputImageInfo, tag: String) {
         if (!resultByEmpty && list.isEmpty()) {
             return
         }
@@ -63,7 +68,7 @@ abstract class BarcodeReader(
         }
 
         onBarcodeScanResultListener.forEach {
-            it.onBarcodeScanResult(BarcodeResult(ArrayList(resultList), tag))
+            it.onBarcodeScanResult(BarcodeResult(ArrayList(resultList), info, tag))
         }
     }
 
@@ -72,39 +77,51 @@ abstract class BarcodeReader(
             BarcodeType.UNKNOWN -> {
                 BarcodeResultBuilder.createUnknown(code)
             }
+
             BarcodeType.CONTACT_INFO -> {
                 BarcodeResultBuilder.createContactBy(code)
             }
+
             BarcodeType.EMAIL -> {
                 BarcodeResultBuilder.createEmailBy(code)
             }
+
             BarcodeType.ISBN -> {
                 BarcodeResultBuilder.createIsbn(code)
             }
+
             BarcodeType.PHONE -> {
                 BarcodeResultBuilder.createPhoneBy(code)
             }
+
             BarcodeType.PRODUCT -> {
                 BarcodeResultBuilder.createProduct(code)
             }
+
             BarcodeType.SMS -> {
                 BarcodeResultBuilder.createSmsBy(code)
             }
+
             BarcodeType.TEXT -> {
                 BarcodeResultBuilder.createText(code)
             }
+
             BarcodeType.URL -> {
                 BarcodeResultBuilder.createUrlBy(code)
             }
+
             BarcodeType.WIFI -> {
                 BarcodeResultBuilder.createWifiBy(code)
             }
+
             BarcodeType.GEO -> {
                 BarcodeResultBuilder.createGeoBy(code)
             }
+
             BarcodeType.CALENDAR_EVENT -> {
                 BarcodeResultBuilder.createCalendarEventBy(code)
             }
+
             BarcodeType.DRIVER_LICENSE -> {
                 BarcodeResultBuilder.createDriverLicenseBy(code)
             }

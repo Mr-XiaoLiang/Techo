@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PhotoScanActivity">
+
+    <FrameLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/title_main"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="20sp"
+            app:fontFamily="@font/font_logo" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="16dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="?attr/colorOnBackground" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.lollipop.qr.view.CodeSelectionView
+            android:id="@+id/resultImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:color="@color/brand_4"
+            android:radius="5dp"
+            app:codeMaskColor="#6000"
+            app:codeNavigationIcon="@drawable/ic_outline_arrow_circle_right_24"
+            app:codeNavigationIconSize="36dp"
+            app:codeNavigationIconTint="@color/brand_4"
+            app:codeSpaceWeight="0.5"
+            app:codeStrokeWidth="4dp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="16dp"
+            android:indeterminate="true"
+            app:indicatorColor="?attr/colorPrimary"
+            app:minHideDelay="500"
+            app:showDelay="500" />
+
+    </FrameLayout>
+
+</LinearLayout>

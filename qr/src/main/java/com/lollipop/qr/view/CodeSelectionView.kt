@@ -9,6 +9,8 @@ import android.util.AttributeSet
 import android.util.Size
 import android.view.MotionEvent
 import android.view.View.OnClickListener
+import android.widget.ImageView.ScaleType.*
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
@@ -19,6 +21,7 @@ import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.comm.CodeDescribe
 import kotlin.math.max
+import kotlin.math.min
 
 class CodeSelectionView @JvmOverloads constructor(
     context: Context,
@@ -42,7 +45,7 @@ class CodeSelectionView @JvmOverloads constructor(
 
     init {
         setOnClickListener(onViewClickListener)
-        scaleType = ScaleType.CENTER_CROP
+        scaleType = CENTER_CROP
         foreground = boundsDrawable
         attributeSet?.let { attr ->
             val typeArray = context.obtainStyledAttributes(attr, R.styleable.CodeSelectionView)
@@ -149,14 +152,59 @@ class CodeSelectionView @JvmOverloads constructor(
             return boundsDrawable.maskColor
         }
 
+    override fun setScaleType(scaleType: ScaleType?) {
+        if (scaleType != CENTER_CROP && scaleType != FIT_CENTER) {
+            throw RuntimeException("只支持 CENTER_CROP 和 FIT_CENTER")
+        }
+        super.setScaleType(scaleType)
+    }
+
+    private fun getScale(size: Size): Scale {
+        val viewWidth: Float = width.toFloat()
+        val viewHeight: Float = height.toFloat()
+        val srcWidth: Float = size.width.toFloat()
+        val srcHeight: Float = size.height.toFloat()
+        var weight: Float = 1F
+        var offsetX: Float = 0F
+        var offsetY: Float = 0F
+        when (scaleType) {
+            CENTER_CROP -> {
+                // view = 100 * 100
+                // src  = 200 * 300
+                // weight = 0.5F
+                // offsetX = 0F
+                // offsetY = -12.5
+                weight = max(viewWidth / srcWidth, viewHeight / srcHeight)
+                offsetX = (viewWidth - srcWidth * weight) / 2
+                offsetY = (viewHeight - srcHeight * weight) / 2
+            }
+
+            FIT_CENTER -> {
+                // view = 100 * 100
+                // src  = 200 * 300
+                // weight = 0.3F
+                // offsetX = 20F
+                // offsetY = 0F
+                weight = min(viewWidth / srcWidth, viewHeight / srcHeight)
+                offsetX = (viewWidth - srcWidth * weight) / 2
+                offsetY = (viewHeight - srcHeight * weight) / 2
+            }
+
+            else -> {
+            }
+        }
+        val contentLeft = max(offsetX, 0F)
+        val contentTop = max(offsetY, 0F)
+        val contentWidth = min(viewWidth, srcWidth * weight)
+        val contentHeight = min(viewHeight, srcHeight * weight)
+        return Scale(weight, offsetX, offsetY, contentLeft, contentTop, contentWidth, contentHeight)
+    }
+
     fun onCodeResult(size: Size, list: List<BarcodeWrapper>) {
-        val viewWidth = width
-        val viewHeight = height
-        val srcWidth = size.width
-        val srcHeight = size.height
-        val weight = max(viewWidth * 1F / srcWidth, viewHeight * 1F / srcHeight)
-        val offsetX = (viewWidth - srcWidth * weight) / 2
-        val offsetY = (viewHeight - srcHeight * weight) / 2
+        val scale = getScale(size)
+        val weight = scale.weight
+        val offsetX = scale.offsetX
+        val offsetY = scale.offsetY
 
         doAsync {
             val boundsList = ArrayList<Rect>(list.size)
@@ -168,6 +216,7 @@ class CodeSelectionView @JvmOverloads constructor(
                     pointList.add(Point(it.x.offset(weight, offsetX), it.y.offset(weight, offsetY)))
                 }
             }
+            val contentBounds = scale.contentBounds()
             onUI {
                 codeResultList.clear()
                 codeBounds.clear()
@@ -177,7 +226,7 @@ class CodeSelectionView @JvmOverloads constructor(
                 codeBounds.addAll(boundsList)
                 cornerPoints.addAll(pointList)
 
-                boundsDrawable.setRectList(boundsList)
+                boundsDrawable.setRectList(contentBounds, boundsList)
             }
         }
 
@@ -239,6 +288,27 @@ class CodeSelectionView @JvmOverloads constructor(
         fun onCodeSelected(code: BarcodeWrapper)
     }
 
+    private class Scale(
+        val weight: Float,
+        val offsetX: Float,
+        val offsetY: Float,
+        val contentLeft: Float,
+        val contentTop: Float,
+        val contentWidth: Float,
+        val contentHeight: Float
+    ) {
+
+        fun contentBounds(): RectF {
+            return RectF(
+                contentLeft,
+                contentTop,
+                contentLeft + contentWidth,
+                contentTop + contentHeight
+            )
+        }
+
+    }
+
     private class BoundsDrawable : Drawable() {
 
         private var navigateIcon: Drawable? = null
@@ -249,14 +319,10 @@ class CodeSelectionView @JvmOverloads constructor(
             style = Paint.Style.STROKE
         }
 
-        var color: Int
-            get() {
-                return paint.color
-            }
-            set(value) {
-                paint.color = value
-            }
+        @ColorInt
+        var color: Int = Color.BLACK
 
+        @ColorInt
         var maskColor: Int = Color.TRANSPARENT
 
         var strokeWidth: Float
@@ -275,6 +341,8 @@ class CodeSelectionView @JvmOverloads constructor(
 
         private val rectList = ArrayList<Rect>()
 
+        private val photoBounds = RectF()
+
         var navigateIconSize = 0
             set(value) {
                 field = value
@@ -289,7 +357,8 @@ class CodeSelectionView @JvmOverloads constructor(
             updateNavigateIcon()
         }
 
-        fun setRectList(list: List<Rect>) {
+        fun setRectList(contentBounds: RectF, list: List<Rect>) {
+            photoBounds.set(contentBounds)
             rectList.clear()
             rectList.addAll(list)
             buildPath()
@@ -376,10 +445,17 @@ class CodeSelectionView @JvmOverloads constructor(
         }
 
         override fun draw(canvas: Canvas) {
-            canvas.drawColor(maskColor)
-            if (!boundsPath.isEmpty) {
-                canvas.drawPath(boundsPath, paint)
+            if (boundsPath.isEmpty) {
+                return
             }
+            paint.color = maskColor
+            paint.style = Paint.Style.FILL
+            canvas.drawRect(photoBounds, paint)
+
+            paint.color = color
+            paint.style = Paint.Style.STROKE
+            canvas.drawPath(boundsPath, paint)
+
             drawNavigateIcon(canvas)
         }
 

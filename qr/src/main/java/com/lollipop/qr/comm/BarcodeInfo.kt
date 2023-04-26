@@ -2,8 +2,10 @@ package com.lollipop.qr.comm
 
 import android.graphics.Point
 import android.graphics.Rect
+import android.util.Size
 import androidx.annotation.CallSuper
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.writer.TypedBarcodeWriter.Companion.encode
 import org.json.JSONArray
@@ -857,6 +859,7 @@ class BarcodeWrapper(
 
 class BarcodeResult(
     val list: List<BarcodeWrapper>,
+    val info: InputImageInfo,
     val tag: String
 ) {
 
@@ -865,6 +868,24 @@ class BarcodeResult(
             return list.isEmpty()
         }
 
+
+}
+
+class InputImageInfo(
+    val width: Int,
+    val height: Int
+) {
+
+    companion object {
+        @JvmStatic
+        fun from(image: InputImage): InputImageInfo {
+            return InputImageInfo(image.width, image.height)
+        }
+    }
+
+    fun getSize(): Size {
+        return Size(width, height)
+    }
 
 }
 
