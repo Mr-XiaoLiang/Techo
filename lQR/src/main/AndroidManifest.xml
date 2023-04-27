@@ -9,6 +9,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
+            android:name=".CreatorActivity"
+            android:exported="false" />
+        <activity
             android:name=".PhotoScanActivity"
             android:exported="false" />
         <activity
