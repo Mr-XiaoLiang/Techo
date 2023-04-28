@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:leftTop="20dp"
+    app:rightTop="20dp">
+
+    <FrameLayout
+        android:id="@+id/inputContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorBackgroundFloating"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
+
+        <com.lollipop.widget.RoundBackgroundView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:color="@color/colorBackgroundInput"
+            app:round_radius="16dp"
+            app:round_type="absolute">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                tools:text="asfajshf\najksh\nfakshdf" />
+
+        </com.lollipop.widget.RoundBackgroundView>
+
+    </FrameLayout>
+
+</com.lollipop.clip.RoundClipLayout>
