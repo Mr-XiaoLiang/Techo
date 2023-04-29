@@ -13,7 +13,7 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 
-class InputPopupWindow(context: Context) : Dialog(context) {
+class InputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
 
     private val binding: DialogInputBinding by lazyBind()
 
@@ -27,6 +27,7 @@ class InputPopupWindow(context: Context) : Dialog(context) {
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.IME
         }
+        binding.inputEditView.setText(option.preset)
     }
 
     private fun updateWindowAttributes(window: Window) {
@@ -38,5 +39,15 @@ class InputPopupWindow(context: Context) : Dialog(context) {
             }
         }
     }
+
+    override fun dismiss() {
+        option.callback(binding.inputEditView.text ?: "")
+        super.dismiss()
+    }
+
+    class Option(
+        val preset: CharSequence,
+        val callback: (CharSequence) -> Unit
+    )
 
 }

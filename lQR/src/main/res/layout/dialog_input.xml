@@ -24,6 +24,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
+                android:id="@+id/inputEditView"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:paddingHorizontal="16dp"
