@@ -7,13 +7,26 @@
     app:leftTop="20dp"
     app:rightTop="20dp">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/inputContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorBackgroundFloating"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingVertical="16dp">
+
+        <TextView
+            android:id="@+id/warnTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/app_name"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="12sp" />
 
         <com.lollipop.widget.RoundBackgroundView
             android:layout_width="match_parent"
@@ -23,16 +36,18 @@
             app:round_type="absolute">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
                 android:id="@+id/inputEditView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:maxLength="984"
+                android:maxLines="4"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 tools:text="asfajshf\najksh\nfakshdf" />
 
         </com.lollipop.widget.RoundBackgroundView>
 
-    </FrameLayout>
+    </LinearLayout>
 
 </com.lollipop.clip.RoundClipLayout>

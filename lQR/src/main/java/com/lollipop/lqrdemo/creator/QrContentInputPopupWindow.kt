@@ -6,14 +6,20 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
+import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.WindowInsetsType
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 
-class InputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
+class QrContentInputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
+
+    companion object {
+        private const val WARNING_LENGTH = 200
+    }
 
     private val binding: DialogInputBinding by lazyBind()
 
@@ -28,6 +34,13 @@ class InputPopupWindow(context: Context, private val option: Option) : Dialog(co
             windowInsetsOperator.insetsType = WindowInsetsType.IME
         }
         binding.inputEditView.setText(option.preset)
+        binding.inputEditView.doAfterTextChanged { text ->
+            binding.warnTextView.text = context.getString(
+                R.string.warning_qr_content_length,
+                WARNING_LENGTH,
+                text?.length ?: 0
+            )
+        }
     }
 
     private fun updateWindowAttributes(window: Window) {

@@ -21,4 +21,6 @@
     <string name="code_url">网址</string>
     <string name="code_wifi">WiFi</string>
     <string name="save">保存</string>
+
+    <string name="warning_qr_content_length">不建议二维码内容过长，建议在 %1$d 以内，当前为 %2$d</string>
 </resources>
