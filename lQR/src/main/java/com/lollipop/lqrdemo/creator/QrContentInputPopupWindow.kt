@@ -19,6 +19,11 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
 
     companion object {
         private const val WARNING_LENGTH = 200
+
+        fun show(context: Context, preset: CharSequence, callback: (CharSequence) -> Unit) {
+            QrContentInputPopupWindow(context, Option(preset, callback)).show()
+        }
+
     }
 
     private val binding: DialogInputBinding by lazyBind()

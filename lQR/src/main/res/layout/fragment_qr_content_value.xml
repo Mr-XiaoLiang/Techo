@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorBackgroundFloating"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="16dp">
+
+    <com.lollipop.widget.RoundBackgroundView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:color="@color/colorBackgroundInput"
+        app:round_radius="16dp"
+        app:round_type="absolute">
+
+        <TextView
+            android:id="@+id/inputEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:maxLength="984"
+            android:maxLines="4"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            tools:text="asfajshf\najksh\nfakshdf" />
+
+    </com.lollipop.widget.RoundBackgroundView>
+
+</LinearLayout>
