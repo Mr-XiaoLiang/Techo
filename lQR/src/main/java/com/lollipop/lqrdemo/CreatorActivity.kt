@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
@@ -21,6 +22,15 @@ class CreatorActivity : ColorModeActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        binding.subpageGroup.adapter = SubPageAdapter(this)
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.subpageGroup,
+            true
+        ) { tab, position ->
+            val subPage = SubPage.values()[position]
+            tab.text = getString(subPage.tab)
+        }.attach()
     }
 
     private class SubPageAdapter(

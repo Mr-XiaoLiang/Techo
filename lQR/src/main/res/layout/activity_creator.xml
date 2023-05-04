@@ -93,10 +93,13 @@
                 android:layout_height="0px"
                 android:layout_weight="1" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
+                style="@style/Widget.Material3.TabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="70dp" />
+                android:layout_height="wrap_content"
+                app:tabGravity="start"
+                app:tabMode="scrollable" />
 
         </LinearLayout>
 
