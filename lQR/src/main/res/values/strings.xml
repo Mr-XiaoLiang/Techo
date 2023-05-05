@@ -25,4 +25,8 @@
     <string name="warning_qr_content_length">不建议二维码内容过长，建议在 %1$d 以内，当前为 %2$d</string>
 
     <string name="tab_content">内容</string>
+    <string name="tab_position_detection">定位点</string>
+    <string name="tab_alignment">辅助点</string>
+    <string name="tab_data_point">数据点</string>
+    <string name="tab_background">背景</string>
 </resources>

@@ -10,7 +10,11 @@ import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.ColorModeActivity
+import com.lollipop.lqrdemo.creator.QrAlignmentFragment
+import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
+import com.lollipop.lqrdemo.creator.QrDataPointFragment
+import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 
 class CreatorActivity : ColorModeActivity() {
@@ -54,7 +58,14 @@ class CreatorActivity : ColorModeActivity() {
         val fragment: Class<out Fragment>
     ) {
 
-        CONTENT(R.string.tab_content, QrContentValueFragment::class.java)
+        CONTENT(R.string.tab_content, QrContentValueFragment::class.java),
+        POSITION_DETECTION(
+            R.string.tab_position_detection,
+            QrPositionDetectionFragment::class.java
+        ),
+        ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
+        DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
+        BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java)
 
     }
 
