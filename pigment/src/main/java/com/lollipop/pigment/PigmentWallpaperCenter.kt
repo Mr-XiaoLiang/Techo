@@ -12,7 +12,22 @@ object PigmentWallpaperCenter {
     var wallpaperPigment: Pigment? = null
         private set
 
+    var defaultPigment: Pigment? = null
+        private set
+
+    val pigment: Pigment?
+        get() {
+            return wallpaperPigment ?: defaultPigment
+        }
+
     private val pigmentProviderHelper = PigmentProviderHelper()
+
+    fun default(pigment: Pigment) {
+        defaultPigment = pigment
+        if (wallpaperPigment == null) {
+            notifyPigmentChanged()
+        }
+    }
 
     fun init(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -44,13 +59,21 @@ object PigmentWallpaperCenter {
         // 没想好怎么弄，颜色值不够
     }
 
-    private fun onPigmentChanged(newPigment: Pigment) {
+    private fun onWallpaperPigmentChanged(newPigment: Pigment) {
         wallpaperPigment = newPigment
-        pigmentProviderHelper.onDecorationChanged(newPigment)
+        notifyPigmentChanged()
+    }
+
+    private fun notifyPigmentChanged() {
+        val p = pigment ?: return
+        pigmentProviderHelper.onDecorationChanged(p)
     }
 
     fun registerPigment(page: PigmentPage) {
         pigmentProviderHelper.registerPigment(page)
+        pigment?.let {
+            page.onDecorationChanged(it)
+        }
     }
 
     fun unregisterPigment(page: PigmentPage) {
