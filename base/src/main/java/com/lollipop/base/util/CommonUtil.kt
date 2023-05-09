@@ -2,7 +2,6 @@ package com.lollipop.base.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
@@ -16,11 +15,9 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.viewbinding.ViewBinding
 import java.io.*
 import java.lang.ref.WeakReference
 import java.util.concurrent.Executor
@@ -213,7 +210,7 @@ inline fun <reified T : Any> T.logD(tag: String = ""): (String) -> Unit {
     val logTag = "$tag ${this.javaClass.simpleName}@${System.identityHashCode(this)}"
     return { value ->
         value.splitLog {
-            Log.d(CommonUtil.logTag, "${logTag} -> $value")
+            Log.d(CommonUtil.logTag, "$logTag -> $value")
         }
     }
 }
@@ -309,7 +306,8 @@ fun Int.changeAlpha(f: Float): Int {
 val Float.dp2px: Float
     get() {
         return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, this,
+            TypedValue.COMPLEX_UNIT_DIP,
+            this,
             Resources.getSystem().displayMetrics
         )
     }
@@ -320,7 +318,8 @@ val Float.dp2px: Float
 val Float.sp2px: Float
     get() {
         return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP, this,
+            TypedValue.COMPLEX_UNIT_SP,
+            this,
             Resources.getSystem().displayMetrics
         )
     }
@@ -340,38 +339,6 @@ val Int.sp2px: Int
     get() {
         return this.toFloat().sp2px.toInt()
     }
-
-/**
- * 将一个整数作为id来寻找对应的颜色值，
- * 如果找不到或者发生了异常，那么将会返回白色
- */
-fun Int.findColor(context: Context): Int {
-    try {
-        return ContextCompat.getColor(context, this)
-    } catch (e: Throwable) {
-    }
-    return Color.WHITE
-}
-
-/**
- * 将一个整数作为id来寻找对应的颜色值，
- * 如果找不到或者发生了异常，那么将会返回白色
- */
-fun Int.findColor(view: View): Int {
-    return this.findColor(view.context)
-}
-
-/**
- * 如果当前整数是0，那么获取回调函数中的值作为返回值
- * 否则返回当前
- */
-fun Int.zeroTo(value: () -> Int): Int {
-    return if (this == 0) {
-        value()
-    } else {
-        this
-    }
-}
 
 /**
  * 对一个浮点数做范围约束
@@ -400,10 +367,12 @@ fun String.parseColor(): Int {
             val v = (value + value).toInt(16)
             Color.rgb(v, v, v)
         }
+
         2 -> {
             val v = value.toInt(16)
             Color.rgb(v, v, v)
         }
+
         3 -> {
             val r = value.substring(0, 1)
             val g = value.substring(1, 2)
@@ -414,6 +383,7 @@ fun String.parseColor(): Int {
                 (b + b).toInt(16)
             )
         }
+
         4, 5 -> {
             val a = value.substring(0, 1)
             val r = value.substring(1, 2)
@@ -426,12 +396,14 @@ fun String.parseColor(): Int {
                 (b + b).toInt(16)
             )
         }
+
         6, 7 -> {
             val r = value.substring(0, 2).toInt(16)
             val g = value.substring(2, 4).toInt(16)
             val b = value.substring(4, 6).toInt(16)
             Color.rgb(r, g, b)
         }
+
         8 -> {
             val a = value.substring(0, 2).toInt(16)
             val r = value.substring(2, 4).toInt(16)
@@ -439,6 +411,7 @@ fun String.parseColor(): Int {
             val b = value.substring(6, 8).toInt(16)
             Color.argb(a, r, g, b)
         }
+
         else -> {
             Color.WHITE
         }
@@ -473,15 +446,9 @@ fun String.tryInt(def: Int): Int {
         }
         return this.toInt()
     } catch (e: Throwable) {
+        e.printStackTrace()
     }
     return def
-}
-
-/**
- * 以一个View为res来源获取指定id的颜色值
- */
-fun View.getColor(id: Int): Int {
-    return ContextCompat.getColor(this.context, id)
 }
 
 /**
@@ -498,32 +465,6 @@ fun Int.range(min: Int, max: Int): Int {
 }
 
 /**
- * 从Context中尝试通过名字获取一个drawable的id
- */
-fun Context.findDrawableId(name: String): Int {
-    var icon = findId(name, "drawable")
-    if (icon != 0) {
-        return icon
-    }
-    icon = findId(name, "mipmap")
-    return icon
-}
-
-/**
- * 从Context中尝试通过名字获取一个指定类型的资源id
- */
-fun Context.findId(name: String, type: String): Int {
-    return resources.getIdentifier(name, type, packageName)
-}
-
-/**
- * 尝试通过一个id获取对应的资源名
- */
-fun Context.findName(id: Int): String {
-    return resources.getResourceName(id)
-}
-
-/**
  * 从context中获取当前应用的版本名称
  */
 fun Context.versionName(): String {
@@ -535,7 +476,7 @@ fun Context.versionName(): String {
  */
 fun Context.versionCode(): Long {
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
-    if (versionThen(Build.VERSION_CODES.P)) {
+    versionThen(Build.VERSION_CODES.P) {
         return packageInfo.longVersionCode
     }
     return packageInfo.versionCode.toLong()
@@ -573,148 +514,6 @@ fun String.writeTo(file: File) {
         }
     } catch (e: Throwable) {
         e.printStackTrace()
-    }
-}
-
-inline fun <reified T : ViewBinding> Activity.lazyBind(): Lazy<T> = lazy { bind() }
-
-inline fun <reified T : ViewBinding> Fragment.lazyBind(): Lazy<T> = lazy { bind() }
-
-inline fun <reified T : ViewBinding> View.lazyBind(): Lazy<T> = lazy { bind() }
-
-inline fun <reified T : ViewBinding> Dialog.lazyBind(): Lazy<T> = lazy { bind() }
-
-inline fun <reified T : ViewBinding> Activity.bind(): T {
-    return this.layoutInflater.bind()
-}
-
-inline fun <reified T : ViewBinding> Fragment.bind(): T {
-    return this.layoutInflater.bind()
-}
-
-inline fun <reified T : ViewBinding> Dialog.bind(): T {
-    return this.layoutInflater.bind()
-}
-
-inline fun <reified T : ViewBinding> View.bind(): T {
-    return LayoutInflater.from(this.context).bind()
-}
-
-inline fun <reified T : ViewBinding> ViewGroup.bind(attach: Boolean = false): T {
-    return LayoutInflater.from(this.context).bind(this, attach)
-}
-
-inline fun <reified T : ViewBinding> LayoutInflater.bind(
-    parent: ViewGroup? = null,
-    attach: Boolean = false
-): T {
-    val layoutInflater: LayoutInflater = this
-    val bindingClass = T::class.java
-    if (parent == null) {
-        val inflateMethod = bindingClass.getMethod("inflate", LayoutInflater::class.java)
-        val invokeObj = inflateMethod.invoke(null, layoutInflater)
-        if (invokeObj is T) {
-            return invokeObj
-        }
-    } else {
-        val inflateMethod = bindingClass.getMethod(
-            "inflate",
-            LayoutInflater::class.java,
-            ViewGroup::class.java,
-            Boolean::class.java
-        )
-        val invokeObj = inflateMethod.invoke(null, layoutInflater, parent, false)
-        if (invokeObj is T) {
-            if (attach) {
-                parent.addView(invokeObj.root)
-            }
-            return invokeObj
-        }
-    }
-    throw InflateException("Cant inflate ViewBinding ${bindingClass.name}")
-}
-
-inline fun <reified T : ViewBinding> View.withThis(inflate: Boolean = false): Lazy<T> = lazy {
-    val bindingClass = T::class.java
-    val view: View = this
-    if (view is ViewGroup && inflate) {
-        val bindMethod = bindingClass.getMethod(
-            "inflate",
-            LayoutInflater::class.java,
-            ViewGroup::class.java,
-            Boolean::class.javaPrimitiveType
-        )
-        val bindObj = bindMethod.invoke(null, LayoutInflater.from(context), view, true)
-        if (bindObj is T) {
-            return@lazy bindObj
-        }
-    } else {
-        val bindMethod = bindingClass.getMethod(
-            "bind",
-            View::class.java
-        )
-        val bindObj = bindMethod.invoke(null, view)
-        if (bindObj is T) {
-            return@lazy bindObj
-        }
-    }
-    throw InflateException("Cant inflate ViewBinding ${bindingClass.name}")
-}
-
-inline fun <reified T : Any> Fragment.identityCheck(ctx: Context? = null, run: (T) -> Unit) {
-    // 父碎片第一优先
-    if (check(parentFragment, run)) {
-        return
-    }
-    // 指定对象第二优先
-    if (check(ctx, run)) {
-        return
-    }
-    // 默认上下文最后
-    if (check(context, run)) {
-        return
-    }
-}
-
-inline fun <reified T : Any> check(ctx: Any? = null, run: (T) -> Unit): Boolean {
-    if (ctx is T) {
-        run(ctx)
-        return true
-    }
-    return false
-}
-
-inline fun <T : View> T.visibleOrGone(boolean: Boolean, onVisible: (T.() -> Unit) = {}) {
-    visibility = if (boolean) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
-    if (boolean) {
-        onVisible.invoke(this)
-    }
-}
-
-inline fun <T : View> T.visibleOrInvisible(boolean: Boolean, onVisible: (T.() -> Unit) = {}) {
-    visibility = if (boolean) {
-        View.VISIBLE
-    } else {
-        View.INVISIBLE
-    }
-    if (boolean) {
-        onVisible.invoke(this)
-    }
-}
-
-fun View.tryVisible() {
-    if (this.visibility != View.VISIBLE) {
-        this.visibility = View.VISIBLE
-    }
-}
-
-fun View.tryInvisible() {
-    if (this.visibility != View.INVISIBLE) {
-        this.visibility = View.INVISIBLE
     }
 }
 
@@ -766,26 +565,11 @@ fun Int.biggerThen(o: Int): Int {
     return this
 }
 
-fun versionThen(target: Int): Boolean {
-    return Build.VERSION.SDK_INT >= target
-}
-
-fun View.findRootGroup(filter: (ViewGroup) -> Boolean): ViewGroup? {
-    var parent: ViewParent?
-    var view: View? = this
-    var group: ViewGroup? = null
-    do {
-        parent = view?.parent
-        if (parent is ViewGroup && filter(parent)) {
-            group = parent
-        }
-        view = if (parent is View) {
-            parent
-        } else {
-            null
-        }
-    } while (parent != null)
-    return group
+@ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
+inline fun versionThen(target: Int, callback: () -> Unit) {
+    if (Build.VERSION.SDK_INT >= target) {
+        callback()
+    }
 }
 
 fun View.setEmptyClick() {
