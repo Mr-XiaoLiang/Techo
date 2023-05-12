@@ -22,14 +22,14 @@ object FragmentHelper {
 
 }
 
-inline fun <reified T : Any> Fragment.check(context: Context?): T? {
-    check<T>(context) {
+inline fun <reified T : Any> Fragment.checkCallback(context: Context?): T? {
+    checkCallback<T>(context) {
         return it
     }
     return null
 }
 
-inline fun <reified T : Any> Fragment.check(
+inline fun <reified T : Any> Fragment.checkCallback(
     context: Context?,
     callback: (T) -> Unit
 ) {

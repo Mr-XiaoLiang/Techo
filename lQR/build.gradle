@@ -45,5 +45,5 @@ dependencies {
     implementation project(path: ':qr')
     implementation project(path: ':colorRes')
     implementation project(path: ':widget')
-    implementation project(path: ':fileChooser')
+    implementation project(path: ':pigment')
 }

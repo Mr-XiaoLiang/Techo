@@ -1,9 +1,9 @@
 package com.lollipop.lqrdemo.creator
 
-import androidx.fragment.app.Fragment
+import com.lollipop.lqrdemo.base.BaseFragment
 
 /**
  * 辅助定位点的设置
  */
-class QrAlignmentFragment : Fragment() {
+class QrAlignmentFragment : BaseFragment() {
 }

@@ -1,9 +1,9 @@
 package com.lollipop.lqrdemo.creator
 
-import androidx.fragment.app.Fragment
+import com.lollipop.lqrdemo.base.BaseFragment
 
 /**
  * 数据点的设置
  */
-class QrDataPointFragment : Fragment() {
+class QrDataPointFragment : BaseFragment() {
 }

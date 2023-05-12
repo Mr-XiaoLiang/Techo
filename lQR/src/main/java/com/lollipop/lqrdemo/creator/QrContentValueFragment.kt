@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.lollipop.base.ui.BaseFragment
+import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
 
 class QrContentValueFragment : BaseFragment() {
@@ -18,7 +19,7 @@ class QrContentValueFragment : BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = check(context)
+        callback = checkCallback(context)
     }
 
     override fun onDetach() {
