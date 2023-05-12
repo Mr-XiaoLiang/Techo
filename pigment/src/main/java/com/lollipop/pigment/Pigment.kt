@@ -45,31 +45,44 @@ class Pigment(
      * 一般表示比主题色更深或者更浅的颜色，
      * 用于表达主题色，但是和主题色区分
      */
-//    val primaryVariant: Int,
+    val primaryVariant: Int by lazy {
+        PigmentColorHelper.variant(primaryColor)
+    }
 
     /**
      * 在主题色之上的内容的颜色
      */
-//    val onPrimaryTitle: Int,
+    val onPrimaryTitle: Int by lazy {
+        PigmentColorHelper.title(primaryColor)
+    }
 
     /**
      * 在主题色之上的内容的颜色
      */
-//    val onPrimaryBody: Int,
+    val onPrimaryBody: Int by lazy {
+        PigmentColorHelper.body(primaryColor)
+    }
+
     /**
      * 次要颜色的变体
      * 一般是次要颜色的加深或是变浅
      * 用于表达次要颜色的同时和次要颜色区分
      */
-//    val secondaryVariant: Int,
+    val secondaryVariant: Int by lazy {
+        PigmentColorHelper.variant(secondaryColor)
+    }
 
     /**
      * 在次要颜色之上的内容的颜色
      */
-//    val onSecondaryTitle: Int,
+    val onSecondaryTitle: Int by lazy {
+        PigmentColorHelper.title(secondaryColor)
+    }
 
     /**
      * 在次要颜色之上的内容的颜色
      */
-//    val onSecondaryBody: Int,
+    val onSecondaryBody: Int by lazy {
+        PigmentColorHelper.body(secondaryColor)
+    }
 }

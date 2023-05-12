@@ -1,5 +1,7 @@
 package com.lollipop.pigment
 
+import android.graphics.Color
+
 object PigmentColorHelper {
 
     fun variant(src: Int): Int {
@@ -12,6 +14,12 @@ object PigmentColorHelper {
 
     fun body(src: Int): Int {
         TODO()
+    }
+
+    private fun colorToHsv(color: Int): FloatArray {
+        val output = FloatArray(3)
+        Color.colorToHSV(color, output)
+        return output
     }
 
 }
