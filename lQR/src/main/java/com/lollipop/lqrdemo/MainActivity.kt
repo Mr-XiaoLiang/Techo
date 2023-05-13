@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Size
 import android.widget.ImageView
@@ -63,6 +64,10 @@ class MainActivity : ScanResultActivity() {
 
         binding.galleryBtn.onClick {
             fileChooser.launch().localOnly().type(FileMime.Image.ALL).start()
+        }
+
+        binding.createBtn.onClick {
+            startActivity(Intent(this, DemoActivity::class.java))
         }
 
         bindSelectionView(binding.resultImageView, ImageView.ScaleType.CENTER_CROP)

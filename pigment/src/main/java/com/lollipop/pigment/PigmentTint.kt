@@ -9,12 +9,12 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 fun FloatingActionButton.tint(pigment: Pigment) {
-    backgroundTintList = ColorStateList.valueOf(pigment.secondary)
+    backgroundTintList = ColorStateList.valueOf(pigment.secondaryColor)
     imageTintList = ColorStateList.valueOf(pigment.onSecondaryBody)
 }
 
 fun ExtendedFloatingActionButton.tint(pigment: Pigment) {
-    backgroundTintList = ColorStateList.valueOf(pigment.secondary)
+    backgroundTintList = ColorStateList.valueOf(pigment.secondaryColor)
     iconTint = ColorStateList.valueOf(pigment.onSecondaryBody)
     setTextColor(pigment.onSecondaryBody)
 }
@@ -38,12 +38,12 @@ fun ImageView.tintBySelectState(pigment: Pigment, def: Int) {
 fun MaterialButton.tintByHighlight(pigment: Pigment) {
     iconTint = ColorStateList.valueOf(pigment.onSecondaryBody)
     setTextColor(pigment.onSecondaryBody)
-    backgroundTintList = ColorStateList.valueOf(pigment.secondary)
+    backgroundTintList = ColorStateList.valueOf(pigment.secondaryColor)
 }
 
 fun MaterialButton.tintByNotObvious(pigment: Pigment) {
-    iconTint = ColorStateList.valueOf(pigment.secondary)
-    setTextColor(pigment.secondary)
+    iconTint = ColorStateList.valueOf(pigment.secondaryColor)
+    setTextColor(pigment.secondaryColor)
 }
 
 private fun getSelectStateList(pigment: Pigment, def: Int): ColorStateList {
@@ -53,7 +53,7 @@ private fun getSelectStateList(pigment: Pigment, def: Int): ColorStateList {
             intArrayOf()
         ),
         intArrayOf(
-            pigment.secondary,
+            pigment.secondaryColor,
             def
         )
     )

@@ -3,6 +3,7 @@ package com.lollipop.pigment
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.Lifecycle
@@ -31,18 +32,23 @@ object PigmentWallpaperCenter {
         }
     }
 
+    private fun isDarkMode(context: Context): Boolean {
+        val uiMode = context.resources.configuration.uiMode
+        return uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
     fun init(context: Context) {
         val application = context.applicationContext
         val wallpaper = application.getSystemService(Context.WALLPAPER_SERVICE)
         if (wallpaper is WallpaperManager) {
             val wallpaperColors = wallpaper.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             if (wallpaperColors != null) {
-                parseColorToPigment(wallpaperColors)
+                parseColorToPigment(wallpaperColors, isDarkMode(application))
             }
             wallpaper.addOnColorsChangedListener(
                 WallpaperManager.OnColorsChangedListener { colors, which ->
                     if (colors != null && which == WallpaperManager.FLAG_SYSTEM) {
-                        parseColorToPigment(colors)
+                        parseColorToPigment(colors, isDarkMode(application))
                     }
                 },
                 Handler(Looper.getMainLooper())
@@ -50,11 +56,15 @@ object PigmentWallpaperCenter {
         }
     }
 
-    private fun parseColorToPigment(wallpaperColors: WallpaperColors) {
+    private fun parseColorToPigment(wallpaperColors: WallpaperColors, darkMode: Boolean) {
         val newPigment = Pigment(
             primary = wallpaperColors.primaryColor,
             secondary = wallpaperColors.secondaryColor,
-            tertiary = wallpaperColors.tertiaryColor
+            if (darkMode) {
+                BlendMode.Dark
+            } else {
+                BlendMode.Light
+            }
         )
         onWallpaperPigmentChanged(newPigment)
     }

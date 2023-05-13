@@ -20,24 +20,17 @@ class Pigment(
     val secondary: Color?,
 
     /**
-     * 次要颜色
-     * 它是一种撞色
-     * 用于装饰主题色空间内容醒目元素
+     * 混合模式
      */
-    val tertiary: Color?
-
+    private val blendMode: BlendMode
 ) {
 
     val primaryColor: Int by lazy {
-        primary.toArgb()
+        blendMode.original(primary.toArgb())
     }
 
     val secondaryColor: Int by lazy {
-        secondary?.toArgb() ?: primaryColor
-    }
-
-    val tertiaryColor: Int by lazy {
-        tertiary?.toArgb() ?: secondaryColor
+        blendMode.original(secondary?.toArgb() ?: primaryColor)
     }
 
     /**
@@ -46,21 +39,21 @@ class Pigment(
      * 用于表达主题色，但是和主题色区分
      */
     val primaryVariant: Int by lazy {
-        PigmentColorHelper.variant(primaryColor)
+        blendMode.variant(primaryColor)
     }
 
     /**
      * 在主题色之上的内容的颜色
      */
     val onPrimaryTitle: Int by lazy {
-        PigmentColorHelper.title(primaryColor)
+        blendMode.title(primaryColor)
     }
 
     /**
      * 在主题色之上的内容的颜色
      */
     val onPrimaryBody: Int by lazy {
-        PigmentColorHelper.body(primaryColor)
+        blendMode.body(primaryColor)
     }
 
     /**
@@ -69,20 +62,41 @@ class Pigment(
      * 用于表达次要颜色的同时和次要颜色区分
      */
     val secondaryVariant: Int by lazy {
-        PigmentColorHelper.variant(secondaryColor)
+        blendMode.variant(secondaryColor)
     }
 
     /**
      * 在次要颜色之上的内容的颜色
      */
     val onSecondaryTitle: Int by lazy {
-        PigmentColorHelper.title(secondaryColor)
+        blendMode.title(secondaryColor)
     }
 
     /**
      * 在次要颜色之上的内容的颜色
      */
     val onSecondaryBody: Int by lazy {
-        PigmentColorHelper.body(secondaryColor)
+        blendMode.body(secondaryColor)
+    }
+
+    /**
+     * 背景色
+     */
+    val background: Int by lazy {
+        blendMode.background(primaryColor)
+    }
+
+    /**
+     * 背景色之上的标题
+     */
+    val onBackgroundTitle: Int by lazy {
+        blendMode.title(background)
+    }
+
+    /**
+     * 背景色之上的内容体
+     */
+    val onBackgroundBody: Int by lazy {
+        blendMode.title(background)
     }
 }
