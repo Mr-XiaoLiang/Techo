@@ -1,9 +1,10 @@
 package com.lollipop.lqrdemo
 
-import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Size
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -17,6 +18,7 @@ import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
+import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.view.FocusAnimationHelper
@@ -67,12 +69,31 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.createBtn.onClick {
-            startActivity(Intent(this, DemoActivity::class.java))
+//            startActivity(Intent(this, DemoActivity::class.java))
+            Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
 
         bindSelectionView(binding.resultImageView, ImageView.ScaleType.CENTER_CROP)
 
         binding.backButton.isVisible = false
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.flashBtn.tint(ColorStateList.valueOf(pigment.onBackgroundTitle))
+        binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.titleView.setTextColor(pigment.onBackgroundTitle)
+        binding.previewWindowView.color = pigment.backgroundColor
+        binding.focusView.color = pigment.primaryColor
+        binding.resultImageView.color = pigment.primaryColor
+        binding.resultImageView.tintNavigateIcon(ColorStateList.valueOf(pigment.primaryColor))
+        binding.galleryBtnContent.setBackgroundColor(pigment.secondaryColor)
+        binding.galleryBtnText.setTextColor(pigment.onSecondaryTitle)
+        binding.galleryBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
+        binding.createBtnContent.setBackgroundColor(pigment.secondaryColor)
+        binding.createBtnText.setTextColor(pigment.onSecondaryTitle)
+        binding.createBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
     }
 
     private fun onChooseFile(file: FileChooseResult) {

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
+        android:name=".QrApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,12 +14,15 @@
             android:exported="false" />
         <activity
             android:name=".CreatorActivity"
+            android:configChanges="uiMode"
             android:exported="false" />
         <activity
             android:name=".PhotoScanActivity"
+            android:configChanges="uiMode"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="uiMode"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

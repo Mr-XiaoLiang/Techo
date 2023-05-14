@@ -1,5 +1,8 @@
 package com.lollipop.pigment
 
+import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 
 /**
@@ -22,8 +25,39 @@ class Pigment(
     /**
      * 混合模式
      */
-    private val blendMode: BlendMode
+    val blendMode: BlendMode
 ) {
+
+    companion object {
+
+        fun valueOf(primary: Int, secondary: Int, blendMode: BlendMode): Pigment {
+            return Pigment(Color.valueOf(primary), Color.valueOf(secondary), blendMode)
+        }
+
+        fun getBlendByNightMode(context: Context): BlendMode {
+            return if (isNightMode(context)) {
+                BlendMode.Dark
+            } else {
+                BlendMode.Light
+            }
+        }
+
+        fun isNightMode(context: Context): Boolean {
+            return isNightMode(context.resources)
+        }
+
+        fun isNightMode(resources: Resources): Boolean {
+            return isNightMode(resources.configuration)
+        }
+
+        fun isNightMode(config: Configuration): Boolean {
+            return isNightMode(config.uiMode)
+        }
+
+        fun isNightMode(uiMode: Int): Boolean {
+            return uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        }
+    }
 
     val primaryColor: Int by lazy {
         blendMode.original(primary.toArgb())
@@ -82,7 +116,7 @@ class Pigment(
     /**
      * 背景色
      */
-    val background: Int by lazy {
+    val backgroundColor: Int by lazy {
         blendMode.background(primaryColor)
     }
 
@@ -90,13 +124,13 @@ class Pigment(
      * 背景色之上的标题
      */
     val onBackgroundTitle: Int by lazy {
-        blendMode.title(background)
+        blendMode.title(backgroundColor)
     }
 
     /**
      * 背景色之上的内容体
      */
     val onBackgroundBody: Int by lazy {
-        blendMode.title(background)
+        blendMode.title(backgroundColor)
     }
 }

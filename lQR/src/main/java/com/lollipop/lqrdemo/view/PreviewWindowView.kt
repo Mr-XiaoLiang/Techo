@@ -53,6 +53,7 @@ class PreviewWindowView @JvmOverloads constructor(
         }
         set(value) {
             maskDrawable.color = value
+            maskDrawable.invalidateSelf()
         }
 
     private class MaskDrawable : Drawable() {

@@ -3,9 +3,9 @@ package com.lollipop.lqrdemo
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
-import android.util.Size
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -15,6 +15,7 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityPhotoScanBinding
+import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import kotlin.random.Random
@@ -78,6 +79,16 @@ class PhotoScanActivity : ScanResultActivity() {
     override fun onDestroy() {
         super.onDestroy()
         barcodeReader.removeOnBarcodeScanResultListener(this)
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.titleView.setTextColor(pigment.onBackgroundTitle)
+        binding.resultImageView.color = pigment.primaryColor
+        binding.resultImageView.tintNavigateIcon(ColorStateList.valueOf(pigment.primaryColor))
+        binding.progressIndicator.setIndicatorColor(pigment.primaryColor, pigment.secondaryColor)
     }
 
 }

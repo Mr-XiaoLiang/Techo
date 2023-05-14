@@ -1,7 +1,9 @@
 package com.lollipop.lqrdemo
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -20,12 +22,16 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
+import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentPage
+import com.lollipop.pigment.PigmentProvider
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 
 class BarcodeDetailDialog(
-    context: Context, private val info: BarcodeWrapper
-) : BottomSheetDialog(context) {
+    context: Context,
+    private val info: BarcodeWrapper
+) : BottomSheetDialog(context), PigmentPage {
 
     companion object {
         fun show(context: Context, info: BarcodeWrapper) {
@@ -73,6 +79,12 @@ class BarcodeDetailDialog(
         binding.root.post {
             findViewById<View>(R.id.design_bottom_sheet)?.setBackgroundColor(Color.TRANSPARENT)
         }
+        findPigmentProvider()?.registerPigment(this)
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        findPigmentProvider()?.unregisterPigment(this)
     }
 
     private fun updateWindowAttributes(window: Window) {
@@ -178,6 +190,33 @@ class BarcodeDetailDialog(
             is BarcodeInfo.Url -> R.string.code_url
             is BarcodeInfo.Wifi -> R.string.code_wifi
         }
+    }
+
+    private fun findPigmentProvider(): PigmentProvider? {
+        var c = context
+        while (true) {
+            if (c is PigmentProvider) {
+                return c
+            }
+            if (c is ContextWrapper) {
+                c = c.baseContext
+            } else {
+                return null
+            }
+        }
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        binding.contentLayout.setBackgroundColor(pigment.backgroundColor)
+        binding.dialogTouchHolder.color = pigment.onBackgroundBody
+        binding.hintView.setTextColor(pigment.onBackgroundTitle)
+        binding.contentValueView.setTextColor(pigment.onBackgroundBody)
+        binding.shareButton.setTextColor(pigment.onBackgroundTitle)
+        binding.shareButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.copyButton.setTextColor(pigment.onBackgroundTitle)
+        binding.copyButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.openButton.setTextColor(pigment.onBackgroundTitle)
+        binding.openButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
     }
 
 }

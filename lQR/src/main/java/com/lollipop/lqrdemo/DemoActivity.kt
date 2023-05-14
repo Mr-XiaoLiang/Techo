@@ -80,7 +80,7 @@ class DemoActivity : AppCompatActivity() {
         fun bind(pigment: Pigment) {
             binding.card1.setBackgroundColor(pigment.primaryColor)
             binding.card2.setBackgroundColor(pigment.secondaryColor)
-            binding.root.setBackgroundColor(pigment.background)
+            binding.root.setBackgroundColor(pigment.backgroundColor)
 
             binding.title1.setTextColor(pigment.onPrimaryTitle)
             binding.title2.setTextColor(pigment.onSecondaryTitle)

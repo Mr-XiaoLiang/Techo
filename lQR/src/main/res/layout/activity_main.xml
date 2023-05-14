@@ -20,6 +20,7 @@
             android:text="@string/title_main"
             android:textColor="?attr/colorOnBackground"
             android:textSize="20sp"
+            android:id="@+id/titleView"
             app:fontFamily="@font/font_logo" />
 
         <com.lollipop.widget.CheckableView
@@ -82,6 +83,7 @@
             app:codeStrokeWidth="4dp" />
 
         <com.lollipop.lqrdemo.view.PreviewWindowView
+            android:id="@+id/previewWindowView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp"
@@ -102,19 +104,24 @@
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:radius="28dp">
+            app:leftTop="28dp"
+            app:leftBottom="28dp"
+            app:rightTop="5dp"
+            app:rightBottom="5dp">
 
             <LinearLayout
+                android:id="@+id/galleryBtnContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?attr/colorSecondary"
-                android:gravity="center"
                 android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/galleryBtnIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_outline_insert_photo_24"
@@ -125,6 +132,7 @@
                     android:layout_height="0px" />
 
                 <TextView
+                    android:id="@+id/galleryBtnText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/from_photo"
@@ -136,10 +144,14 @@
         </com.lollipop.clip.RoundClipLayout>
 
         <Space
-            android:layout_width="16dp"
+            android:layout_width="8dp"
             android:layout_height="0px" />
 
         <com.lollipop.clip.RoundClipLayout
+            app:leftTop="5dp"
+            app:leftBottom="5dp"
+            app:rightTop="28dp"
+            app:rightBottom="28dp"
             android:id="@+id/createBtn"
             android:layout_width="0px"
             android:layout_height="wrap_content"
@@ -147,16 +159,18 @@
             android:radius="28dp">
 
             <LinearLayout
+                android:id="@+id/createBtnContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?attr/colorSecondary"
-                android:gravity="center"
                 android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/createBtnIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_baseline_qr_code_24"
@@ -167,6 +181,7 @@
                     android:layout_height="0px" />
 
                 <TextView
+                    android:id="@+id/createBtnText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/create_qr_code"

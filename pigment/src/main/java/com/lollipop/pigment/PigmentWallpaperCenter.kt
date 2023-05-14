@@ -3,7 +3,6 @@ package com.lollipop.pigment
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.Lifecycle
@@ -33,27 +32,41 @@ object PigmentWallpaperCenter {
     }
 
     private fun isDarkMode(context: Context): Boolean {
-        val uiMode = context.resources.configuration.uiMode
-        return uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        return Pigment.isNightMode(context)
     }
 
     fun init(context: Context) {
         val application = context.applicationContext
+        val wallpaper = getWallpaperManager(application) ?: return
+        fetchColor(application, wallpaper)
+        wallpaper.addOnColorsChangedListener(
+            { colors, which ->
+                if (colors != null && which == WallpaperManager.FLAG_SYSTEM) {
+                    parseColorToPigment(colors, isDarkMode(application))
+                }
+            },
+            Handler(Looper.getMainLooper())
+        )
+    }
+
+    fun fetch(context: Context) {
+        val manager = getWallpaperManager(context) ?: return
+        fetchColor(context, manager)
+    }
+
+    private fun fetchColor(context: Context, wallpaperManager: WallpaperManager) {
+        wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)?.let {
+            parseColorToPigment(it, isDarkMode(context))
+        }
+    }
+
+    private fun getWallpaperManager(context: Context): WallpaperManager? {
+        val application = context.applicationContext
         val wallpaper = application.getSystemService(Context.WALLPAPER_SERVICE)
         if (wallpaper is WallpaperManager) {
-            val wallpaperColors = wallpaper.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
-            if (wallpaperColors != null) {
-                parseColorToPigment(wallpaperColors, isDarkMode(application))
-            }
-            wallpaper.addOnColorsChangedListener(
-                WallpaperManager.OnColorsChangedListener { colors, which ->
-                    if (colors != null && which == WallpaperManager.FLAG_SYSTEM) {
-                        parseColorToPigment(colors, isDarkMode(application))
-                    }
-                },
-                Handler(Looper.getMainLooper())
-            )
+            return wallpaper
         }
+        return null
     }
 
     private fun parseColorToPigment(wallpaperColors: WallpaperColors, darkMode: Boolean) {

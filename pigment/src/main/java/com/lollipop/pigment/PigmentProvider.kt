@@ -12,6 +12,4 @@ interface PigmentProvider {
         pigmentProviderHelper.unregisterPigment(page)
     }
 
-    fun requestPigment(page: PigmentPage)
-
 }
