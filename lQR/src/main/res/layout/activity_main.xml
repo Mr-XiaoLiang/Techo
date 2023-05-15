@@ -14,13 +14,13 @@
         android:layout_height="56dp">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/title_main"
             android:textColor="?attr/colorOnBackground"
             android:textSize="20sp"
-            android:id="@+id/titleView"
             app:fontFamily="@font/font_logo" />
 
         <com.lollipop.widget.CheckableView
@@ -75,6 +75,7 @@
             android:layout_height="match_parent"
             android:color="@color/brand_4"
             android:radius="5dp"
+            android:visibility="gone"
             app:codeMaskColor="#6000"
             app:codeNavigationIcon="@drawable/ic_outline_arrow_circle_right_24"
             app:codeNavigationIconSize="36dp"
@@ -104,10 +105,10 @@
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:leftTop="28dp"
             app:leftBottom="28dp"
-            app:rightTop="5dp"
-            app:rightBottom="5dp">
+            app:leftTop="28dp"
+            app:rightBottom="5dp"
+            app:rightTop="5dp">
 
             <LinearLayout
                 android:id="@+id/galleryBtnContent"
@@ -148,15 +149,15 @@
             android:layout_height="0px" />
 
         <com.lollipop.clip.RoundClipLayout
-            app:leftTop="5dp"
-            app:leftBottom="5dp"
-            app:rightTop="28dp"
-            app:rightBottom="28dp"
             android:id="@+id/createBtn"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:radius="28dp">
+            android:radius="28dp"
+            app:leftBottom="5dp"
+            app:leftTop="5dp"
+            app:rightBottom="28dp"
+            app:rightTop="28dp">
 
             <LinearLayout
                 android:id="@+id/createBtnContent"

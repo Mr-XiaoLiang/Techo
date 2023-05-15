@@ -75,7 +75,7 @@ class MainActivity : ScanResultActivity() {
 
         bindSelectionView(binding.resultImageView, ImageView.ScaleType.CENTER_CROP)
 
-        binding.backButton.isVisible = false
+        resumeScan()
     }
 
     override fun onDecorationChanged(pigment: Pigment) {

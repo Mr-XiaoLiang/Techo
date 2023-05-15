@@ -201,6 +201,17 @@ class CodeSelectionView @JvmOverloads constructor(
     }
 
     fun onCodeResult(size: Size, list: List<BarcodeWrapper>) {
+        if (width < 1 || height < 1) {
+            requestLayout()
+            post {
+                updateCodeInfo(size, list)
+            }
+            return
+        }
+        updateCodeInfo(size, list)
+    }
+
+    private fun updateCodeInfo(size: Size, list: List<BarcodeWrapper>) {
         val scale = getScale(size)
         val weight = scale.weight
         val offsetX = scale.offsetX
@@ -229,7 +240,6 @@ class CodeSelectionView @JvmOverloads constructor(
                 boundsDrawable.setRectList(contentBounds, boundsList)
             }
         }
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
