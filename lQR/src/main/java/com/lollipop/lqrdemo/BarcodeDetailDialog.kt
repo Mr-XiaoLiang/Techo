@@ -30,12 +30,13 @@ import com.lollipop.qr.comm.BarcodeWrapper
 
 class BarcodeDetailDialog(
     context: Context,
-    private val info: BarcodeWrapper
+    private val info: BarcodeWrapper,
+    private var openCallback: OpenBarcodeCallback?,
 ) : BottomSheetDialog(context), PigmentPage {
 
     companion object {
-        fun show(context: Context, info: BarcodeWrapper) {
-            BarcodeDetailDialog(context, info).show()
+        fun show(context: Context, info: BarcodeWrapper, openCallback: OpenBarcodeCallback?) {
+            BarcodeDetailDialog(context, info, openCallback).show()
         }
     }
 
@@ -98,6 +99,10 @@ class BarcodeDetailDialog(
     }
 
     private fun openBarcode() {
+        if (openCallback != null) {
+            openCallback?.openBarcode(info)
+            return
+        }
         val barcodeInfo = info.info
         when (barcodeInfo) {
             is BarcodeInfo.CalendarEvent -> {
@@ -137,7 +142,8 @@ class BarcodeDetailDialog(
             }
 
             is BarcodeInfo.Text,
-            is BarcodeInfo.Unknown -> {
+            is BarcodeInfo.Unknown,
+            -> {
                 tryOpen {
                     binding.shareButton.callOnClick()
                 }
@@ -185,7 +191,8 @@ class BarcodeDetailDialog(
             is BarcodeInfo.Product -> R.string.code_product
             is BarcodeInfo.Sms -> R.string.code_sms
             is BarcodeInfo.Text,
-            is BarcodeInfo.Unknown -> R.string.code_text
+            is BarcodeInfo.Unknown,
+            -> R.string.code_text
 
             is BarcodeInfo.Url -> R.string.code_url
             is BarcodeInfo.Wifi -> R.string.code_wifi
@@ -217,6 +224,10 @@ class BarcodeDetailDialog(
         binding.copyButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.openButton.setTextColor(pigment.onBackgroundTitle)
         binding.openButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
+    }
+
+    fun interface OpenBarcodeCallback {
+        fun openBarcode(info: BarcodeWrapper)
     }
 
 }

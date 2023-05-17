@@ -23,6 +23,9 @@ import kotlin.random.Random
 class PhotoScanActivity : ScanResultActivity() {
 
     companion object {
+
+        const val REQUEST_CODE_SCAN = 5018
+
         fun start(context: Context, photo: Uri) {
             context.startActivity(Intent(context, PhotoScanActivity::class.java).apply {
                 data = photo
@@ -30,6 +33,16 @@ class PhotoScanActivity : ScanResultActivity() {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             })
+        }
+
+        fun startForResult(activity: Activity, photo: Uri) {
+            activity.startActivityForResult(
+                Intent(activity, PhotoScanActivity::class.java).apply {
+                    action = ACTION_SCAN
+                    data = photo
+                },
+                REQUEST_CODE_SCAN
+            )
         }
 
     }

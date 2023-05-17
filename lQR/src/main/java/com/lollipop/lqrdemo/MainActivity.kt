@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo
 
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.util.Size
 import android.widget.ImageView
@@ -73,9 +74,20 @@ class MainActivity : ScanResultActivity() {
             Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
 
+        updateCreateButtonState()
+
         bindSelectionView(binding.resultImageView, ImageView.ScaleType.CENTER_CROP)
 
         resumeScan()
+    }
+
+    private fun updateCreateButtonState() {
+        binding.createBtn.isEnabled = !fromExternal
+        binding.createBtn.alpha = if (fromExternal) {
+            0.5F
+        } else {
+            1F
+        }
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -104,13 +116,21 @@ class MainActivity : ScanResultActivity() {
 
             is FileChooseResult.Multiple -> {
                 if (!file.isEmpty()) {
-                    PhotoScanActivity.start(this, file[0])
+                    openPhotoScanPage(file[0])
                 }
             }
 
             is FileChooseResult.Single -> {
-                PhotoScanActivity.start(this, file.uri)
+                openPhotoScanPage(file.uri)
             }
+        }
+    }
+
+    private fun openPhotoScanPage(path: Uri) {
+        if (fromExternal) {
+            PhotoScanActivity.startForResult(this, path)
+        } else {
+            PhotoScanActivity.start(this, path)
         }
     }
 
