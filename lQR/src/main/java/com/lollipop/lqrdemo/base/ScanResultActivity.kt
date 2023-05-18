@@ -82,6 +82,7 @@ abstract class ScanResultActivity : ColorModeActivity(),
     }
 
     protected open fun resultByScan(data: Intent) {
+        setResult(Activity.RESULT_OK, data)
         finish()
     }
 
