@@ -78,9 +78,9 @@ class RecorderActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         WindowInsetsHelper.initWindowFlag(this)
         backPressHandler.bindTo(this)
-        setContentView(binding.root)
         binding.dialogRootView.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
         binding.backgroundView.onClick {
             cancel()

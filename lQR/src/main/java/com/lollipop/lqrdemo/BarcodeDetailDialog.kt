@@ -53,11 +53,11 @@ class BarcodeDetailDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         window?.let {
             WindowInsetsHelper.initWindowFlag(it)
             updateWindowAttributes(it)
         }
-        setContentView(binding.root)
         binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.SYSTEM_GESTURES
         }

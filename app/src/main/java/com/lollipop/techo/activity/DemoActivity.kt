@@ -25,8 +25,8 @@ class DemoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowInsetsHelper.initWindowFlag(this)
         setContentView(binding.root)
+        WindowInsetsHelper.initWindowFlag(this)
         initView()
     }
 

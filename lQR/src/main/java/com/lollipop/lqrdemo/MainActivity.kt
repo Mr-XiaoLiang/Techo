@@ -41,9 +41,9 @@ class MainActivity : ScanResultActivity() {
     private val fileChooser = FileChooser.registerChooserLauncher(this, ::onChooseFile)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowInsetsHelper.initWindowFlag(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        WindowInsetsHelper.initWindowFlag(this)
         resultBackPressHandler.bindTo(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()

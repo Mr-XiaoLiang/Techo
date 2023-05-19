@@ -29,12 +29,12 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
     private val binding: DialogInputBinding by lazyBind()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         window?.let {
             WindowInsetsHelper.initWindowFlag(it)
             updateWindowAttributes(it)
         }
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.IME
         }

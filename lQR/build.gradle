@@ -46,4 +46,5 @@ dependencies {
     implementation project(path: ':colorRes')
     implementation project(path: ':widget')
     implementation project(path: ':pigment')
+    implementation project(path: ':privacy')
 }

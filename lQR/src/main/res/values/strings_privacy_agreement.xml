@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="privacy_agreement_label1">隐私协议</string>
+    <string name="privacy_agreement_content1">我们非常重视您的隐私，此隐私协议解释了我们收集、使用和保护您的个人信息的方式。</string>
+    <string name="privacy_agreement_label2">收集的信息</string>
+    <string name="privacy_agreement_content2">我们的二维码扫描软件只会请求摄像头权限，以使您能够使用其扫描二维码的功能。我们不会主动获取或收集您的任何个人信息，并且我们的软件没有联网功能。我们也不会将任何关于您的信息分享、出售或转移给任何第三方。</string>
+    <string name="privacy_agreement_label3">使用手段</string>
+    <string name="privacy_agreement_content3">我们扫描的二维码中可能包含URL链接、电子邮件地址、电话号码或其他联系信息，这些信息会仅用于您扫描后跳转到相应的应用程序或者联系方式上，并不会被保存在我们的服务器中。</string>
+    <string name="privacy_agreement_label4">信息安全</string>
+    <string name="privacy_agreement_content4">我们采取了合理的安全措施来保护您的个人信息免遭丢失、误用、未经授权的访问、披露、更改或损坏。我们只允许被必要授权的员工访问我们所收集的信息，并且他们需要履行保密义务。</string>
+    <string name="privacy_agreement_label5">更新隐私政策</string>
+    <string name="privacy_agreement_content5">我们可能会根据程序更新、法律法规的变化或其他原因不时更新此隐私协议。我们会在更新生效前通知我们的用户，并在此页面上发布更新信息。</string>
+    <string name="privacy_agreement_label6">联系我们</string>
+    <string name="privacy_agreement_content6">如果您对此隐私协议有任何疑问或问题，请通过我们的官方电子邮件和社交媒体与我们联系</string>
+</resources>

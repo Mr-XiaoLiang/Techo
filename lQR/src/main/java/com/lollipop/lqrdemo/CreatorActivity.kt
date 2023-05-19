@@ -22,9 +22,9 @@ class CreatorActivity : ColorModeActivity() {
     private val binding: ActivityCreatorBinding by lazyBind()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowInsetsHelper.initWindowFlag(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        WindowInsetsHelper.initWindowFlag(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.subpageGroup.adapter = SubPageAdapter(this)
         TabLayoutMediator(

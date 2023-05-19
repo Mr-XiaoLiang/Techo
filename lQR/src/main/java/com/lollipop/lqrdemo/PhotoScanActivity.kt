@@ -54,9 +54,9 @@ class PhotoScanActivity : ScanResultActivity() {
     private val readTag = Random.nextInt().toString(16)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowInsetsHelper.initWindowFlag(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        WindowInsetsHelper.initWindowFlag(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.progressIndicator.show()
         bindResult(barcodeReader)
