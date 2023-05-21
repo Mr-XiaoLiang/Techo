@@ -7,7 +7,7 @@ import android.util.Size
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.view.GravityCompat
+import androidx.core.content.PermissionChecker
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.lollipop.base.listener.BackPressHandler
@@ -28,6 +28,10 @@ import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.view.FocusAnimationHelper
 
 class MainActivity : ScanResultActivity() {
+
+    companion object {
+        private const val REQUEST_PERMISSION_CAMERA = 233
+    }
 
     private val binding: ActivityMainBinding by lazyBind()
 
@@ -94,6 +98,12 @@ class MainActivity : ScanResultActivity() {
 //            startActivity(Intent(this, DemoActivity::class.java))
             Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
+        binding.permissionView.onClick {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.CAMERA),
+                REQUEST_PERMISSION_CAMERA
+            )
+        }
 
         updateCreateButtonState()
 
@@ -132,6 +142,8 @@ class MainActivity : ScanResultActivity() {
         binding.createBtnContent.setBackgroundColor(pigment.secondaryColor)
         binding.createBtnText.setTextColor(pigment.onSecondaryTitle)
         binding.createBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
+        binding.permissionBtnText.setBackgroundColor(pigment.secondaryColor)
+        binding.permissionBtnText.setTextColor(pigment.onSecondaryTitle)
     }
 
     private fun onChooseFile(file: FileChooseResult) {
@@ -198,6 +210,14 @@ class MainActivity : ScanResultActivity() {
         }
         binding.backButton.isVisible = isVisible
         binding.menuButton.isVisible = !isVisible
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val selfPermission = PermissionChecker.checkSelfPermission(
+            this, android.Manifest.permission.CAMERA
+        )
+        binding.permissionView.isVisible = selfPermission != PermissionChecker.PERMISSION_GRANTED
     }
 
 }

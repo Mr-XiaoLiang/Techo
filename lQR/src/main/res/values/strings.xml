@@ -30,4 +30,6 @@
     <string name="tab_data_point">数据点</string>
     <string name="tab_background">背景</string>
     <string name="title_privacy_agreement">隐私协议</string>
+    <string name="hint_camera_permission">你还未授权使用摄像头的权限。\n我们无法通过摄像头获取图像信息来展示与解析。</string>
+    <string name="authorization">授权</string>
 </resources>

@@ -2,9 +2,9 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawerLayout"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -74,6 +74,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#3f00" />
+
+            <LinearLayout
+                android:id="@+id/permissionView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                tools:visibility="visible"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="30dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/permissionIconView"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_baseline_error_outline_24" />
+
+                <TextView
+                    android:textColor="@android:color/white"
+                    android:id="@+id/permissionMessageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:gravity="center"
+                    android:text="@string/hint_camera_permission"
+                    android:textSize="14sp" />
+
+                <com.lollipop.clip.RoundClipLayout
+                    android:id="@+id/permissionBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:radius="28dp">
+
+                    <TextView
+                        android:id="@+id/permissionBtnText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/colorSecondary"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="10dp"
+                        android:text="@string/authorization"
+                        android:textColor="?attr/colorOnSecondary"
+                        android:textSize="16sp" />
+
+                </com.lollipop.clip.RoundClipLayout>
+
+            </LinearLayout>
 
             <com.lollipop.qr.view.CameraFocusBoundsView
                 android:id="@+id/focusView"
