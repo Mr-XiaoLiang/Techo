@@ -4,9 +4,12 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.util.Size
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
@@ -38,6 +41,10 @@ class MainActivity : ScanResultActivity() {
         resumeScan()
     }
 
+    private val drawerBackPressHandler = BackPressHandler(false) {
+        closeDrawer()
+    }
+
     private val fileChooser = FileChooser.registerChooserLauncher(this, ::onChooseFile)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +52,7 @@ class MainActivity : ScanResultActivity() {
         setContentView(binding.root)
         WindowInsetsHelper.initWindowFlag(this)
         resultBackPressHandler.bindTo(this)
-        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        binding.contentPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()
         initView()
     }
@@ -58,6 +65,20 @@ class MainActivity : ScanResultActivity() {
 
     private fun initView() {
         bindByBack(binding.backButton)
+        binding.menuButton.onClick {
+            binding.drawerLayout.open()
+        }
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+
+            override fun onDrawerOpened(drawerView: View) {
+                drawerBackPressHandler.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                drawerBackPressHandler.isEnabled = false
+            }
+
+        })
         binding.flashBtn.onClick {
             val torch = !qrReaderHelper.torch
             qrReaderHelper.torch = torch
@@ -81,6 +102,10 @@ class MainActivity : ScanResultActivity() {
         resumeScan()
     }
 
+    private fun closeDrawer() {
+        binding.drawerLayout.close()
+    }
+
     private fun updateCreateButtonState() {
         binding.createBtn.isEnabled = !fromExternal
         binding.createBtn.alpha = if (fromExternal) {
@@ -92,9 +117,10 @@ class MainActivity : ScanResultActivity() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.contentPanel.setBackgroundColor(pigment.backgroundColor)
         binding.flashBtn.tint(ColorStateList.valueOf(pigment.onBackgroundTitle))
         binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.menuButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
         binding.previewWindowView.color = pigment.backgroundColor
         binding.focusView.color = pigment.primaryColor
@@ -146,7 +172,7 @@ class MainActivity : ScanResultActivity() {
                             result.list
                         )
                         binding.resultImageView.isVisible = true
-                        binding.backButton.isVisible = true
+                        setBackButtonVisible(true)
                         if (result.list.size == 1) {
                             // 只有一个的时候默认选中
                             onCodeSelected(result.list[0])
@@ -163,7 +189,15 @@ class MainActivity : ScanResultActivity() {
         binding.resultImageView.setImageDrawable(null)
         binding.resultImageView.isVisible = false
         qrReaderHelper.analyzerEnable = true
-        binding.backButton.isVisible = false
+        setBackButtonVisible(false)
+    }
+
+    private fun setBackButtonVisible(isVisible: Boolean) {
+        if (isVisible) {
+            closeDrawer()
+        }
+        binding.backButton.isVisible = isVisible
+        binding.menuButton.isVisible = !isVisible
     }
 
 }

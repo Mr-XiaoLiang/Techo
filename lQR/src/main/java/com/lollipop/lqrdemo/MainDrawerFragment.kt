@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +11,13 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentMainDrawerBinding
 import com.lollipop.lqrdemo.databinding.ItemMainDrawerBinding
+import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentWallpaperCenter
 
@@ -35,6 +39,7 @@ class MainDrawerFragment : BaseFragment() {
             view.context, RecyclerView.VERTICAL, false
         )
         binding.recyclerView.adapter = ItemAdapter(getItemList())
+        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -48,7 +53,11 @@ class MainDrawerFragment : BaseFragment() {
 
     private fun getItemList(): List<Item> {
         return listOf(
-            // TODO
+            Item(R.string.title_privacy_agreement) {
+                context?.let { c ->
+                    startActivity(Intent(c, PrivacyAgreementActivity::class.java))
+                }
+            }
         )
     }
 

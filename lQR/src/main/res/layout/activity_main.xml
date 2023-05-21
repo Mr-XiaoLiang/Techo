@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    tools:openDrawer="start">
+    android:id="@+id/drawerLayout"
+    tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/contentPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground"
@@ -49,6 +50,16 @@
                 android:layout_marginStart="16dp"
                 android:padding="12dp"
                 android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="?attr/colorOnBackground" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/menuButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="16dp"
+                android:padding="12dp"
+                android:src="@drawable/ic_baseline_menu_24"
                 app:tint="?attr/colorOnBackground" />
 
         </FrameLayout>
