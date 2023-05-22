@@ -17,6 +17,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentMainDrawerBinding
 import com.lollipop.lqrdemo.databinding.ItemMainDrawerBinding
+import com.lollipop.lqrdemo.other.AboutActivity
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentWallpaperCenter
@@ -56,6 +57,11 @@ class MainDrawerFragment : BaseFragment() {
             Item(R.string.title_privacy_agreement) {
                 context?.let { c ->
                     startActivity(Intent(c, PrivacyAgreementActivity::class.java))
+                }
+            },
+            Item(R.string.title_about) {
+                context?.let { c ->
+                    startActivity(Intent(c, AboutActivity::class.java))
                 }
             }
         )
