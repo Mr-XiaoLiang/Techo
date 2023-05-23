@@ -20,7 +20,7 @@
                 android:id="@+id/logoImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher_foreground"
+                android:src="@drawable/ic_logo"
                 tools:background="@android:color/holo_red_dark"
                 tools:tint="@android:color/white" />
         </com.lollipop.clip.RoundClipLayout>

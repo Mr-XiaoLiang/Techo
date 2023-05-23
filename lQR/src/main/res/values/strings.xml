@@ -34,4 +34,6 @@
     <string name="authorization">授权</string>
 
     <string name="title_about">关于</string>
+    <string name="art_guidance">美术指导: Andrew</string>
+    <string name="developer">开发: Lollipop</string>
 </resources>
