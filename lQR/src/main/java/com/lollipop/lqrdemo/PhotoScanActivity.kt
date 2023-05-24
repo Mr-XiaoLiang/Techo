@@ -56,7 +56,7 @@ class PhotoScanActivity : ScanResultActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.progressIndicator.show()
         bindResult(barcodeReader)

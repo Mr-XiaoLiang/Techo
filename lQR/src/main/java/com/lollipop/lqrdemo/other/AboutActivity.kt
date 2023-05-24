@@ -2,6 +2,9 @@ package com.lollipop.lqrdemo.other
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import com.lollipop.base.util.insets.WindowInsetsEdge
+import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.versionName
 import com.lollipop.lqrdemo.base.ColorModeActivity
@@ -15,7 +18,10 @@ class AboutActivity : ColorModeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        WindowInsetsHelper.fitsSystemWindows(this)
+        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.versionView.text = versionName()
+        bindByBack(binding.backButton)
     }
 
     override fun onDecorationChanged(pigment: Pigment) {

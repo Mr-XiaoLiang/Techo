@@ -32,7 +32,7 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window?.let {
-            WindowInsetsHelper.initWindowFlag(it)
+            WindowInsetsHelper.fitsSystemWindows(it)
             updateWindowAttributes(it)
         }
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {

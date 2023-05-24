@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         initBottomSheetPanel()
         initView()
         val switcher = FragmentHelper.with(this)

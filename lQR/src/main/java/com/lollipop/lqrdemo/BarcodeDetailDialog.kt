@@ -55,7 +55,7 @@ class BarcodeDetailDialog(
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window?.let {
-            WindowInsetsHelper.initWindowFlag(it)
+            WindowInsetsHelper.fitsSystemWindows(it)
             updateWindowAttributes(it)
         }
         binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {

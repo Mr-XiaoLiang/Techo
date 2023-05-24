@@ -68,7 +68,7 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         viewBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT,

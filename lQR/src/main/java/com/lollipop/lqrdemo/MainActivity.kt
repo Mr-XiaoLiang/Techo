@@ -54,7 +54,7 @@ class MainActivity : ScanResultActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         resultBackPressHandler.bindTo(this)
         binding.contentPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()
@@ -218,6 +218,7 @@ class MainActivity : ScanResultActivity() {
             this, android.Manifest.permission.CAMERA
         )
         binding.permissionView.isVisible = selfPermission != PermissionChecker.PERMISSION_GRANTED
+        closeDrawer()
     }
 
 }

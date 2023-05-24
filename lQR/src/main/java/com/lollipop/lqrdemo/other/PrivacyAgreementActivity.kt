@@ -28,7 +28,7 @@ class PrivacyAgreementActivity : ColorModeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         bindByBack(binding.backButton)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)

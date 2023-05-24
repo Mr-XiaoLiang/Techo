@@ -67,11 +67,11 @@ class WindowInsetsHelper(
             return WindowInsetsValue(insets.getInsets(typeMask))
         }
 
-        fun initWindowFlag(activity: Activity) {
-            initWindowFlag(activity.window)
+        fun fitsSystemWindows(activity: Activity) {
+            fitsSystemWindows(activity.window)
         }
 
-        fun initWindowFlag(window: Window) {
+        fun fitsSystemWindows(window: Window) {
             window.apply {
                 statusBarColor = Color.TRANSPARENT
                 navigationBarColor = Color.TRANSPARENT

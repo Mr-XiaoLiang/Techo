@@ -24,7 +24,7 @@ class CreatorActivity : ColorModeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.initWindowFlag(this)
+        WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.subpageGroup.adapter = SubPageAdapter(this)
         TabLayoutMediator(
