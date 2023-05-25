@@ -11,8 +11,8 @@ android {
         applicationId "liang.lollipop.lqrdemo"
         minSdk 27
         targetSdk 33
-        versionCode 2_00_00
-        versionName "2.0.0"
+        versionCode 2_00_01
+        versionName "2.0.1"
     }
 
     buildTypes {
@@ -34,9 +34,9 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.bumptech.glide:glide:4.15.0'
     implementation project(path: ':clip')
