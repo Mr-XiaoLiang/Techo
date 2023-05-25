@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -61,11 +63,10 @@ class BarcodeDetailDialog(
         binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.SYSTEM_GESTURES
         }
-        val barcodeValue = info.describe.displayValue
-        binding.contentValueView.text = barcodeValue
+        binding.contentValueView.text = getBarcodeDisplay()
         binding.hintView.setText(getBarcodeType())
         binding.copyButton.onClick {
-            Clipboard.copy(context, value = barcodeValue)
+            Clipboard.copy(context, value = info.info.rawValue)
             Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
             dismiss()
         }
@@ -103,14 +104,14 @@ class BarcodeDetailDialog(
             openCallback?.openBarcode(info)
             return
         }
-        val barcodeInfo = info.info
-        when (barcodeInfo) {
+        when (val barcodeInfo = info.info) {
             is BarcodeInfo.CalendarEvent -> {
                 // TODO()
             }
 
             is BarcodeInfo.Contact -> {
-                // TODO()
+                openContact(barcodeInfo)
+                return
             }
 
             is BarcodeInfo.DriverLicense -> {
@@ -170,6 +171,107 @@ class BarcodeDetailDialog(
         }
     }
 
+    private fun openContact(barcodeInfo: BarcodeInfo.Contact) {
+        //添加需要设置的数据
+        val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
+        intent.putExtra(
+            ContactsContract.Intents.Insert.NAME,
+            barcodeInfo.name.getDisplayValue()
+        )
+        barcodeInfo.phones.findFirst()?.let { phone ->
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone.number)
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, phone.type.contacts)
+        }
+        barcodeInfo.phones.findSecondary()?.let { phone ->
+            intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE, phone.number)
+            intent.putExtra(
+                ContactsContract.Intents.Insert.SECONDARY_PHONE_TYPE,
+                phone.type.contacts
+            )
+        }
+        barcodeInfo.phones.findTertiary()?.let { phone ->
+            intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE, phone.number)
+            intent.putExtra(
+                ContactsContract.Intents.Insert.TERTIARY_PHONE_TYPE,
+                phone.type.contacts
+            )
+        }
+        barcodeInfo.emails.findFirst()?.let { email ->
+            intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email.address)
+            intent.putExtra(
+                ContactsContract.Intents.Insert.EMAIL_TYPE,
+                email.type.contacts
+            )
+        }
+        barcodeInfo.emails.findSecondary()?.let { email ->
+            intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_EMAIL, email.address)
+            intent.putExtra(
+                ContactsContract.Intents.Insert.SECONDARY_EMAIL_TYPE,
+                email.type.contacts
+            )
+        }
+        barcodeInfo.emails.findTertiary()?.let { email ->
+            intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_EMAIL, email.address)
+            intent.putExtra(
+                ContactsContract.Intents.Insert.TERTIARY_EMAIL_TYPE,
+                email.type.contacts
+            )
+        }
+        intent.putExtra(ContactsContract.Intents.Insert.COMPANY, barcodeInfo.organization)
+
+        val values = ArrayList<ContentValues>()
+
+        barcodeInfo.addresses.forEach { address ->
+            values.add(ContentValues().apply {
+                put(
+                    ContactsContract.Data.MIMETYPE,
+                    ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
+                )
+                val linesValue = StringBuilder()
+                address.lines.forEach {
+                    linesValue.append(it)
+                    linesValue.append(" ")
+                }
+                put(
+                    ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
+                    linesValue.toString()
+                )
+            })
+        }
+        barcodeInfo.urls.forEach { url ->
+            values.add(ContentValues().apply {
+                put(
+                    ContactsContract.Data.MIMETYPE,
+                    ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
+                )
+                put(ContactsContract.CommonDataKinds.Website.URL, url)
+            })
+        }
+        intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, values)
+        context.startActivity(intent)
+    }
+
+    private inline fun <reified T : Any> List<T>.findFirst(): T? {
+        if (isEmpty()) {
+            return null
+        }
+        return this[0]
+    }
+
+    private inline fun <reified T : Any> List<T>.findSecondary(): T? {
+        if (size < 2) {
+            return null
+        }
+        return this[1]
+    }
+
+    private inline fun <reified T : Any> List<T>.findTertiary(): T? {
+        if (size < 3) {
+            return null
+        }
+        return this[2]
+    }
+
     private fun tryOpen(callback: () -> Unit) {
         try {
             callback()
@@ -197,6 +299,37 @@ class BarcodeDetailDialog(
             is BarcodeInfo.Url -> R.string.code_url
             is BarcodeInfo.Wifi -> R.string.code_wifi
         }
+    }
+
+    private fun getBarcodeDisplay(): String {
+        when (val barcodeInfo = info.info) {
+            is BarcodeInfo.CalendarEvent -> {}
+            is BarcodeInfo.Contact -> {
+                val builder = StringBuilder()
+                builder.append(barcodeInfo.name.getDisplayValue())
+                barcodeInfo.phones.forEach {
+                    builder.append("\n")
+                    builder.append(it.number)
+                }
+                return builder.toString()
+            }
+
+            is BarcodeInfo.DriverLicense -> {}
+            is BarcodeInfo.Email -> {}
+            is BarcodeInfo.GeoPoint -> {}
+            is BarcodeInfo.Isbn -> {}
+            is BarcodeInfo.Phone -> {}
+            is BarcodeInfo.Product -> {}
+            is BarcodeInfo.Sms -> {}
+            is BarcodeInfo.Text,
+            is BarcodeInfo.Unknown,
+            -> {
+            }
+
+            is BarcodeInfo.Url -> {}
+            is BarcodeInfo.Wifi -> {}
+        }
+        return info.describe.displayValue
     }
 
     private fun findPigmentProvider(): PigmentProvider? {

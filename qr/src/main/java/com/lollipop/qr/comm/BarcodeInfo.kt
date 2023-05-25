@@ -2,6 +2,7 @@ package com.lollipop.qr.comm
 
 import android.graphics.Point
 import android.graphics.Rect
+import android.provider.ContactsContract
 import android.util.Size
 import androidx.annotation.CallSuper
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -119,7 +120,7 @@ sealed class BarcodeInfo {
     protected inline fun <reified T : Any> MutableList<T>.fromJson(
         json: JSONObject,
         name: String,
-        map: (Any) -> T
+        map: (Any) -> T,
     ) {
         val list = this
         val jsonArray = json.optJSONArray(name) ?: return
@@ -132,7 +133,7 @@ sealed class BarcodeInfo {
     protected inline fun <reified T : Any> MutableList<T>.fromJsonByObject(
         json: JSONObject,
         name: String,
-        map: (JSONObject) -> T
+        map: (JSONObject) -> T,
     ) {
         fromJson(json, name) { any ->
             map(
@@ -236,6 +237,9 @@ sealed class BarcodeInfo {
         }
     }
 
+    /**
+     * 联系方式
+     */
     class Contact : BarcodeInfo() {
 
         companion object {
@@ -461,10 +465,22 @@ sealed class BarcodeInfo {
         var body: String = ""
         var subject: String = ""
 
-        enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
-            UNKNOWN(Barcode.Email.TYPE_UNKNOWN, ""),
-            WORK(Barcode.Email.TYPE_WORK, "WORK"),
-            HOME(Barcode.Email.TYPE_HOME, "HOME"),
+        enum class Type(override val key: Int = 0, val proto: String, val contacts: Int) : KeyEnum {
+            UNKNOWN(
+                Barcode.Email.TYPE_UNKNOWN,
+                "",
+                ContactsContract.CommonDataKinds.Email.TYPE_HOME
+            ),
+            WORK(
+                Barcode.Email.TYPE_WORK,
+                "WORK",
+                ContactsContract.CommonDataKinds.Email.TYPE_WORK
+            ),
+            HOME(
+                Barcode.Email.TYPE_HOME,
+                "HOME",
+                ContactsContract.CommonDataKinds.Email.TYPE_HOME
+            ),
         }
 
         override fun save(json: JSONObject) {
@@ -544,12 +560,32 @@ sealed class BarcodeInfo {
         var type: Type = Type.UNKNOWN
         var number: String = ""
 
-        enum class Type(override val key: Int = 0, val proto: String) : KeyEnum {
-            UNKNOWN(Barcode.Phone.TYPE_UNKNOWN, ""),
-            WORK(Barcode.Phone.TYPE_WORK, "WORK"),
-            HOME(Barcode.Phone.TYPE_HOME, "HOME"),
-            FAX(Barcode.Phone.TYPE_FAX, "FAX"),
-            MOBILE(Barcode.Phone.TYPE_MOBILE, "MOBILE"),
+        enum class Type(override val key: Int = 0, val proto: String, val contacts: Int) : KeyEnum {
+            UNKNOWN(
+                Barcode.Phone.TYPE_UNKNOWN,
+                "",
+                ContactsContract.CommonDataKinds.Phone.TYPE_HOME
+            ),
+            WORK(
+                Barcode.Phone.TYPE_WORK,
+                "WORK",
+                ContactsContract.CommonDataKinds.Phone.TYPE_WORK
+            ),
+            HOME(
+                Barcode.Phone.TYPE_HOME,
+                "HOME",
+                ContactsContract.CommonDataKinds.Phone.TYPE_HOME
+            ),
+            FAX(
+                Barcode.Phone.TYPE_FAX,
+                "FAX",
+                ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK
+            ),
+            MOBILE(
+                Barcode.Phone.TYPE_MOBILE,
+                "MOBILE",
+                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE
+            ),
         }
 
         override fun save(json: JSONObject) {
@@ -690,7 +726,7 @@ sealed class BarcodeInfo {
         val middle: String = "",
         val prefix: String = "",
         val pronunciation: String = "",
-        val suffix: String = ""
+        val suffix: String = "",
     ) {
 
         companion object {
@@ -758,7 +794,7 @@ sealed class BarcodeInfo {
 
     class Address(
         val type: Type = Type.UNKNOWN,
-        val lines: Array<String> = emptyArray()
+        val lines: Array<String> = emptyArray(),
     ) {
 
         companion object {
@@ -800,7 +836,7 @@ sealed class BarcodeInfo {
         val hours: Int = 0,
         val minutes: Int = 0,
         val seconds: Int = 0,
-        val rawValue: String = ""
+        val rawValue: String = "",
     ) {
 
         companion object {
@@ -854,13 +890,13 @@ class CodeDescribe(
 
 class BarcodeWrapper(
     val info: BarcodeInfo,
-    val describe: CodeDescribe
+    val describe: CodeDescribe,
 )
 
 class BarcodeResult(
     val list: List<BarcodeWrapper>,
     val info: InputImageInfo,
-    val tag: String
+    val tag: String,
 ) {
 
     val isEmpty: Boolean
@@ -873,7 +909,7 @@ class BarcodeResult(
 
 class InputImageInfo(
     val width: Int,
-    val height: Int
+    val height: Int,
 ) {
 
     companion object {
@@ -939,7 +975,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createWifiBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.Wifi {
         val wifi = code.wifi
         return BarcodeInfo.Wifi().apply {
@@ -954,7 +990,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createUrlBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.Url {
         val urlInfo = code.url
         return BarcodeInfo.Url().apply {
@@ -964,7 +1000,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createSmsBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.Sms {
         val sms = code.sms
         return BarcodeInfo.Sms().apply {
@@ -974,7 +1010,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createGeoBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.GeoPoint {
         val geoPoint = code.geoPoint
         return BarcodeInfo.GeoPoint().apply {
@@ -984,7 +1020,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createCalendarEventBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.CalendarEvent {
         val calendarEvent = code.calendarEvent
         return BarcodeInfo.CalendarEvent().apply {
@@ -999,7 +1035,7 @@ internal object BarcodeResultBuilder {
     }
 
     fun createDriverLicenseBy(
-        code: Barcode
+        code: Barcode,
     ): BarcodeInfo.DriverLicense {
         val license = code.driverLicense
         return BarcodeInfo.DriverLicense().apply {
@@ -1051,7 +1087,7 @@ internal object BarcodeResultBuilder {
     }
 
     private fun createCalendarDateTime(
-        value: Barcode.CalendarDateTime?
+        value: Barcode.CalendarDateTime?,
     ): BarcodeInfo.CalendarDateTime {
         return BarcodeInfo.CalendarDateTime(
             year = value?.year ?: 0,
@@ -1065,7 +1101,7 @@ internal object BarcodeResultBuilder {
     }
 
     private fun formatPhones(
-        list: List<Barcode.Phone?>?
+        list: List<Barcode.Phone?>?,
     ): ArrayList<BarcodeInfo.Phone> {
         val result = ArrayList<BarcodeInfo.Phone>()
         list?.forEach {
@@ -1128,7 +1164,7 @@ internal object BarcodeResultBuilder {
 
     private inline fun <reified T : BarcodeInfo.KeyEnum> Array<T>.findByCode(
         code: Int?,
-        def: () -> T
+        def: () -> T,
     ): T {
         code ?: return def()
         val values = this
