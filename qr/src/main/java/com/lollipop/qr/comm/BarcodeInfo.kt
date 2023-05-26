@@ -439,7 +439,15 @@ sealed class BarcodeInfo {
         }
 
         override fun buildBarcodeValue(): String {
-            // TODO 不正确的序列化方法
+            val builder = StringBuilder()
+            builder.append("BEGIN:VCALENDAR\n")
+            builder.append("VERSION:2.0\n")
+            builder.append("BEGIN:VEVENT\n")
+            builder.append("SUMMARY:").append(summary).append("\n")
+            builder.append("DTSTART:").append(start.formatValue()).append("\n")
+            builder.append("DTEND:").append(end.formatValue()).append("\n")
+            builder.append("END:VEVENT\n")
+            builder.append("END:VCALENDAR")
             return toJson()
         }
     }
@@ -860,6 +868,25 @@ sealed class BarcodeInfo {
             private const val SECONDS = "seconds"
             private const val RAW_VALUE = "rawValue"
 
+        }
+
+        fun formatValue(): String {
+            val builder = StringBuilder()
+            builder.append(year)
+            builder.addNumber(month)
+            builder.addNumber(day)
+            builder.append("T")
+            builder.addNumber(hours)
+            builder.addNumber(minutes)
+            builder.addNumber(seconds)
+            return builder.toString()
+        }
+
+        private fun StringBuilder.addNumber(number: Int) {
+            if (number < 10) {
+                append("0")
+            }
+            append(number)
         }
 
         internal fun save(json: JSONObject) {

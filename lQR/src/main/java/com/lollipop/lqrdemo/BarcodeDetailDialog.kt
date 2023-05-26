@@ -1,6 +1,5 @@
 package com.lollipop.lqrdemo
 
-import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -24,6 +22,9 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
+import com.lollipop.lqrdemo.router.CalendarEventRouter
+import com.lollipop.lqrdemo.router.ContactRouter
+import com.lollipop.lqrdemo.router.PhoneRouter
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentProvider
@@ -106,12 +107,15 @@ class BarcodeDetailDialog(
         }
         when (val barcodeInfo = info.info) {
             is BarcodeInfo.CalendarEvent -> {
-                // TODO()
+                if (CalendarEventRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
 
             is BarcodeInfo.Contact -> {
-                openContact(barcodeInfo)
-                return
+                if (ContactRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
 
             is BarcodeInfo.DriverLicense -> {
@@ -131,7 +135,9 @@ class BarcodeDetailDialog(
             }
 
             is BarcodeInfo.Phone -> {
-                // TODO()
+                if (PhoneRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
 
             is BarcodeInfo.Product -> {
@@ -169,107 +175,6 @@ class BarcodeDetailDialog(
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
-    }
-
-    private fun openContact(barcodeInfo: BarcodeInfo.Contact) {
-        //添加需要设置的数据
-        val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
-        intent.putExtra(
-            ContactsContract.Intents.Insert.NAME,
-            barcodeInfo.name.getDisplayValue()
-        )
-        barcodeInfo.phones.findFirst()?.let { phone ->
-            intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone.number)
-            intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, phone.type.contacts)
-        }
-        barcodeInfo.phones.findSecondary()?.let { phone ->
-            intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE, phone.number)
-            intent.putExtra(
-                ContactsContract.Intents.Insert.SECONDARY_PHONE_TYPE,
-                phone.type.contacts
-            )
-        }
-        barcodeInfo.phones.findTertiary()?.let { phone ->
-            intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE, phone.number)
-            intent.putExtra(
-                ContactsContract.Intents.Insert.TERTIARY_PHONE_TYPE,
-                phone.type.contacts
-            )
-        }
-        barcodeInfo.emails.findFirst()?.let { email ->
-            intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email.address)
-            intent.putExtra(
-                ContactsContract.Intents.Insert.EMAIL_TYPE,
-                email.type.contacts
-            )
-        }
-        barcodeInfo.emails.findSecondary()?.let { email ->
-            intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_EMAIL, email.address)
-            intent.putExtra(
-                ContactsContract.Intents.Insert.SECONDARY_EMAIL_TYPE,
-                email.type.contacts
-            )
-        }
-        barcodeInfo.emails.findTertiary()?.let { email ->
-            intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_EMAIL, email.address)
-            intent.putExtra(
-                ContactsContract.Intents.Insert.TERTIARY_EMAIL_TYPE,
-                email.type.contacts
-            )
-        }
-        intent.putExtra(ContactsContract.Intents.Insert.COMPANY, barcodeInfo.organization)
-
-        val values = ArrayList<ContentValues>()
-
-        barcodeInfo.addresses.forEach { address ->
-            values.add(ContentValues().apply {
-                put(
-                    ContactsContract.Data.MIMETYPE,
-                    ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE
-                )
-                val linesValue = StringBuilder()
-                address.lines.forEach {
-                    linesValue.append(it)
-                    linesValue.append(" ")
-                }
-                put(
-                    ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
-                    linesValue.toString()
-                )
-            })
-        }
-        barcodeInfo.urls.forEach { url ->
-            values.add(ContentValues().apply {
-                put(
-                    ContactsContract.Data.MIMETYPE,
-                    ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE
-                )
-                put(ContactsContract.CommonDataKinds.Website.URL, url)
-            })
-        }
-        intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, values)
-        context.startActivity(intent)
-    }
-
-    private inline fun <reified T : Any> List<T>.findFirst(): T? {
-        if (isEmpty()) {
-            return null
-        }
-        return this[0]
-    }
-
-    private inline fun <reified T : Any> List<T>.findSecondary(): T? {
-        if (size < 2) {
-            return null
-        }
-        return this[1]
-    }
-
-    private inline fun <reified T : Any> List<T>.findTertiary(): T? {
-        if (size < 3) {
-            return null
-        }
-        return this[2]
     }
 
     private fun tryOpen(callback: () -> Unit) {
