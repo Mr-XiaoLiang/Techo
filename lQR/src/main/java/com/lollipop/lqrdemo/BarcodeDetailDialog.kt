@@ -25,6 +25,7 @@ import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
 import com.lollipop.lqrdemo.router.CalendarEventRouter
 import com.lollipop.lqrdemo.router.ContactRouter
 import com.lollipop.lqrdemo.router.PhoneRouter
+import com.lollipop.lqrdemo.router.WifiRouter
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentProvider
@@ -166,7 +167,9 @@ class BarcodeDetailDialog(
             }
 
             is BarcodeInfo.Wifi -> {
-                // TODO()
+                if (WifiRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
         }
         // 以上都没做实现，所以先无脑跳

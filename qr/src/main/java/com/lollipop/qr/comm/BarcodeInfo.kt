@@ -722,7 +722,7 @@ sealed class BarcodeInfo {
             val ssid = info.ssid.encode()
             val pwd = info.password.encode()
             val name = info.username.encode()
-            return "WIFI:T:${type};S:${ssid};P:${pwd};I:${name};H:;"
+            return "WIFI:T:${type};S:${ssid};P:${pwd};I:${name};H:true;;"
         }
 
     }
