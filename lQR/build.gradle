@@ -11,8 +11,8 @@ android {
         applicationId "liang.lollipop.lqrdemo"
         minSdk 27
         targetSdk 33
-        versionCode 2_00_04
-        versionName "2.0.4"
+        versionCode 2_00_08
+        versionName "2.0.8"
     }
 
     buildTypes {
