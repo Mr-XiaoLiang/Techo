@@ -26,6 +26,7 @@ import com.lollipop.lqrdemo.router.CalendarEventRouter
 import com.lollipop.lqrdemo.router.ContactRouter
 import com.lollipop.lqrdemo.router.EmailRouter
 import com.lollipop.lqrdemo.router.PhoneRouter
+import com.lollipop.lqrdemo.router.SmsRouter
 import com.lollipop.lqrdemo.router.WifiRouter
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
@@ -149,7 +150,9 @@ class BarcodeDetailDialog(
             }
 
             is BarcodeInfo.Sms -> {
-                // TODO()
+                if (SmsRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
 
             is BarcodeInfo.Text,

@@ -640,12 +640,12 @@ sealed class BarcodeInfo {
         }
 
         /**
-         * SMSTO:1111:AAAAAA
+         * smsto:1111:AAAAAA
          */
         override fun buildBarcodeValue(): String {
             val number = phoneNumber.encode()
             val message = message.encode()
-            return "SMSTO:${number}:${message}"
+            return "smsto:${number}:${message}"
         }
     }
 
