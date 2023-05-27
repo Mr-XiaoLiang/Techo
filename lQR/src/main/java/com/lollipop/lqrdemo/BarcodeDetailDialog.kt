@@ -162,15 +162,14 @@ class BarcodeDetailDialog(
             is BarcodeInfo.Unknown,
             -> {
                 tryOpen {
-                    binding.shareButton.callOnClick()
+                    openByViewAction(rawValue)
                 }
+                return
             }
 
             is BarcodeInfo.Url -> {
                 tryOpen {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(barcodeInfo.url))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
+                    openByViewAction(barcodeInfo.url)
                 }
                 return
             }
@@ -183,10 +182,14 @@ class BarcodeDetailDialog(
         }
         // 以上都没做实现，所以先无脑跳
         tryOpen {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(rawValue))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+            openByViewAction(rawValue)
         }
+    }
+
+    private fun openByViewAction(raw: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(raw))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 
     private fun tryOpen(callback: () -> Unit) {
