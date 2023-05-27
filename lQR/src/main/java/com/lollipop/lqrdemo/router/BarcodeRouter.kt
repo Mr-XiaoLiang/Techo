@@ -9,6 +9,7 @@ abstract class BarcodeRouter<T : BarcodeInfo> {
     open fun open(context: Context, barcodeInfo: T): Boolean {
         try {
             val intent = getIntent(context, barcodeInfo) ?: return false
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
             return true
         } catch (e: Throwable) {

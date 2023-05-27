@@ -544,9 +544,11 @@ sealed class BarcodeInfo {
             lng = json.optDouble(LNG, 0.0)
         }
 
+        /**
+         * geo:123.456,789.123?q=123.456,789.123
+         */
         override fun buildBarcodeValue(): String {
-            // TODO 不正确的序列化方法
-            return toJson()
+            return "geo:${lat},${lng}"
         }
 
     }

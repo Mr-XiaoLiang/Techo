@@ -25,6 +25,7 @@ import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
 import com.lollipop.lqrdemo.router.CalendarEventRouter
 import com.lollipop.lqrdemo.router.ContactRouter
 import com.lollipop.lqrdemo.router.EmailRouter
+import com.lollipop.lqrdemo.router.GeoRouter
 import com.lollipop.lqrdemo.router.PhoneRouter
 import com.lollipop.lqrdemo.router.SmsRouter
 import com.lollipop.lqrdemo.router.WifiRouter
@@ -132,7 +133,9 @@ class BarcodeDetailDialog(
             }
 
             is BarcodeInfo.GeoPoint -> {
-                // TODO()
+                if (GeoRouter.open(context, barcodeInfo)) {
+                    return
+                }
             }
 
             is BarcodeInfo.Isbn -> {
