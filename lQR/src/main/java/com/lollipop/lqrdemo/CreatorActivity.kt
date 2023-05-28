@@ -9,17 +9,23 @@ import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.registerResult
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
+import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 
 class CreatorActivity : ColorModeActivity() {
 
     private val binding: ActivityCreatorBinding by lazyBind()
+
+    private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
+        // TODO
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +38,14 @@ class CreatorActivity : ColorModeActivity() {
             binding.subpageGroup,
             true
         ) { tab, position ->
-            val subPage = SubPage.values()[position]
-            tab.text = getString(subPage.tab)
+            tab.setText(SubPage.values()[position].tab)
         }.attach()
+
+        contentBuilderLauncher.launch(null)
     }
 
     private class SubPageAdapter(
-        fragmentActivity: FragmentActivity
+        fragmentActivity: FragmentActivity,
     ) : FragmentStateAdapter(fragmentActivity) {
 
         private val pageInfo = SubPage.values()
@@ -55,7 +62,7 @@ class CreatorActivity : ColorModeActivity() {
 
     private enum class SubPage(
         val tab: Int,
-        val fragment: Class<out Fragment>
+        val fragment: Class<out Fragment>,
     ) {
 
         CONTENT(R.string.tab_content, QrContentValueFragment::class.java),

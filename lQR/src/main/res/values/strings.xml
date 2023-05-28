@@ -37,4 +37,6 @@
     <string name="title_about">关于</string>
     <string name="art_guidance">美术指导: Andrew</string>
     <string name="developer">开发: Lollipop</string>
+    <string name="title_content_builder">内容生成</string>
+
 </resources>

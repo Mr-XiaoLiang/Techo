@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Techo">
         <activity
+            android:name=".creator.content.ContentBuilderActivity"
+            android:exported="false" />
+        <activity
             android:name=".other.AboutActivity"
             android:exported="false" />
         <activity

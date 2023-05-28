@@ -18,8 +18,7 @@ class LauncherEditActivity : HeaderActivity() {
         private const val PARAMS_INFO_ID = "INFO_ID"
         private const val PARAMS_INFO_BODY = "INFO_BODY"
 
-        val LAUNCHER =
-            ActivityLauncherHelper.launcher<ResultContract, LauncherInfo?, LauncherInfo?>()
+        val LAUNCHER = ActivityLauncherHelper.launcher<ResultContract, LauncherInfo?, LauncherInfo?>()
 
         private fun putParams(intent: Intent, input: LauncherInfo?) {
             if (input != null) {

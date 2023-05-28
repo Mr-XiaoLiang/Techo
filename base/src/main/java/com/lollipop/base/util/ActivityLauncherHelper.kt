@@ -94,7 +94,7 @@ class ActivityLauncherHelper<I, O>(
             } while (true)
         }
 
-        abstract fun putParams(intent: Intent, input: I)
+        open fun putParams(intent: Intent, input: I) {}
 
     }
 
