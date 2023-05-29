@@ -23,9 +23,8 @@ import com.lollipop.lqrdemo.creator.content.impl.PhoneContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.SmsContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.WifiContentBuilderPage
 import com.lollipop.lqrdemo.databinding.ActivityContentBuilderBinding
-import java.io.File
 
-class ContentBuilderActivity : ColorModeActivity(), ContentBuilder.Callback {
+class ContentBuilderActivity : ColorModeActivity() {
 
     companion object {
 
@@ -57,8 +56,8 @@ class ContentBuilderActivity : ColorModeActivity(), ContentBuilder.Callback {
         }.attach()
     }
 
-    override fun resultContentValue(value: String) {
-        TODO("Not yet implemented")
+    private fun setResult() {
+        binding.viewPager2
     }
 
     class ResultContract : ActivityLauncherHelper.Simple<Any?, String?>() {
