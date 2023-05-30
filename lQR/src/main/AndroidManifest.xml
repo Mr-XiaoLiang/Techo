@@ -19,9 +19,6 @@
             android:name=".other.PrivacyAgreementActivity"
             android:exported="false" />
         <activity
-            android:name=".DemoActivity"
-            android:exported="false" />
-        <activity
             android:name=".CreatorActivity"
             android:configChanges="uiMode"
             android:exported="false" />
