@@ -17,11 +17,14 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
+import com.lollipop.base.util.registerResult
 import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
+import com.lollipop.lqrdemo.other.AppSettings
+import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
@@ -50,6 +53,12 @@ class MainActivity : ScanResultActivity() {
     }
 
     private val fileChooser = FileChooser.registerChooserLauncher(this, ::onChooseFile)
+
+    private val privacyAgreementLauncher = registerResult(PrivacyAgreementActivity.LAUNCHER) {
+        if (it != true) {
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,6 +228,9 @@ class MainActivity : ScanResultActivity() {
         )
         binding.permissionView.isVisible = selfPermission != PermissionChecker.PERMISSION_GRANTED
         closeDrawer()
+        if (!AppSettings.default.isAgreePrivacyAgreement) {
+            privacyAgreementLauncher.launch(null)
+        }
     }
 
 }

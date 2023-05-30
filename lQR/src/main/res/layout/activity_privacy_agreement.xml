@@ -37,6 +37,110 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0px"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
+
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/closeBtn"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:leftBottom="28dp"
+            app:leftTop="28dp"
+            app:rightBottom="5dp"
+            app:rightTop="5dp">
+
+            <LinearLayout
+                android:id="@+id/closeBtnContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/colorSecondary"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/closeBtnIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_baseline_close_24"
+                    app:tint="?attr/colorOnSecondary" />
+
+                <Space
+                    android:layout_width="14dp"
+                    android:layout_height="0px" />
+
+                <TextView
+                    android:id="@+id/closeBtnText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/refuse"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </com.lollipop.clip.RoundClipLayout>
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="0px" />
+
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/agreeBtn"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:radius="28dp"
+            app:leftBottom="5dp"
+            app:leftTop="5dp"
+            app:rightBottom="28dp"
+            app:rightTop="28dp">
+
+            <LinearLayout
+                android:id="@+id/agreeBtnContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/colorSecondary"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/agreeBtnIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_baseline_done_24"
+                    app:tint="?attr/colorOnSecondary" />
+
+                <Space
+                    android:layout_width="14dp"
+                    android:layout_height="0px" />
+
+                <TextView
+                    android:id="@+id/agreeBtnText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/agree"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </com.lollipop.clip.RoundClipLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -7,8 +7,18 @@ import com.lollipop.pigment.PigmentWallpaperCenter
 
 class QrApplication : Application() {
 
+    companion object {
+        val APP: QrApplication
+            get() {
+                return appInner!!
+            }
+
+        private var appInner: QrApplication? = null
+    }
+
     override fun onCreate() {
         super.onCreate()
+        appInner = this
         updateDefaultFigment()
         PigmentWallpaperCenter.init(this)
         val activityHelper = PigmentActivityHelper { onBackground ->
