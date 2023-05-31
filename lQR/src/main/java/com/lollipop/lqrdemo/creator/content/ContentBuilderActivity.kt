@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.creator.content
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ import com.lollipop.lqrdemo.creator.content.impl.PhoneContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.SmsContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.WifiContentBuilderPage
 import com.lollipop.lqrdemo.databinding.ActivityContentBuilderBinding
+import com.lollipop.pigment.Pigment
 
 class ContentBuilderActivity : ColorModeActivity() {
 
@@ -57,7 +59,35 @@ class ContentBuilderActivity : ColorModeActivity() {
     }
 
     private fun setResult() {
-        binding.viewPager2
+        val adapter = binding.viewPager2.adapter ?: return
+        val itemId = adapter.getItemId(binding.viewPager2.currentItem)
+        val fragment = supportFragmentManager.findFragmentByTag("f$itemId")
+        if (fragment is ContentBuilder) {
+            val contentValue = fragment.getContentValue()
+            setResult(RESULT_OK, Intent().putExtra(PARAMS_RESULT, contentValue))
+            return
+        }
+        setResult(RESULT_CANCELED)
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.titleView.setTextColor(pigment.onBackgroundTitle)
+        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
+        binding.tabLayout.tabRippleColor
+        binding.tabLayout.tabTextColors = ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_selected),
+                intArrayOf()
+            ),
+            intArrayOf(
+                pigment.primaryColor,
+                pigment.onBackgroundTitle
+            )
+        )
+        binding.titleView.isSelected
     }
 
     class ResultContract : ActivityLauncherHelper.Simple<Any?, String?>() {

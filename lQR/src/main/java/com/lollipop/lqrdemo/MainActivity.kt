@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ScanResultActivity
+import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.lqrdemo.other.AppSettings
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
@@ -104,7 +106,7 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.createBtn.onClick {
-//            startActivity(Intent(this, DemoActivity::class.java))
+            startActivity(Intent(this, ContentBuilderActivity::class.java))
             Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
         binding.permissionView.onClick {

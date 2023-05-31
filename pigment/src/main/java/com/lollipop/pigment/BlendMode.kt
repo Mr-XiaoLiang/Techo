@@ -6,32 +6,34 @@ import androidx.core.graphics.ColorUtils
 
 sealed class BlendMode {
 
-    protected fun blend(color1: Int, color2: Int, ratio: Float = 0.5F): Int {
-        return ColorUtils.blendARGB(color1, color2, ratio)
-    }
-
-    protected fun titleOnColor(color: Int): Int {
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(color, hsl)
-        if (hsl[2] > 0.5F) {
-            hsl[2] = 0.0F
-        } else {
-            hsl[2] = 1F
+    companion object {
+        protected fun blend(color1: Int, color2: Int, ratio: Float = 0.5F): Int {
+            return ColorUtils.blendARGB(color1, color2, ratio)
         }
-        hsl[1] = 0.05F
-        return ColorUtils.HSLToColor(hsl)
-    }
 
-    protected fun contentOnColor(color: Int): Int {
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(color, hsl)
-        if (hsl[2] > 0.5F) {
-            hsl[2] = 0.0F
-        } else {
-            hsl[2] = 1F
+        protected fun titleOnColor(color: Int): Int {
+            val hsl = FloatArray(3)
+            ColorUtils.colorToHSL(color, hsl)
+            if (hsl[2] > 0.5F) {
+                hsl[2] = 0.0F
+            } else {
+                hsl[2] = 1F
+            }
+            hsl[1] = 0.05F
+            return ColorUtils.HSLToColor(hsl)
         }
-        hsl[1] = 0.1F
-        return ColorUtils.HSLToColor(hsl)
+
+        protected fun contentOnColor(color: Int): Int {
+            val hsl = FloatArray(3)
+            ColorUtils.colorToHSL(color, hsl)
+            if (hsl[2] > 0.5F) {
+                hsl[2] = 0.0F
+            } else {
+                hsl[2] = 1F
+            }
+            hsl[1] = 0.1F
+            return ColorUtils.HSLToColor(hsl)
+        }
     }
 
     abstract fun original(src: Int): Int

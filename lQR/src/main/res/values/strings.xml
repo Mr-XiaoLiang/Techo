@@ -40,5 +40,10 @@
     <string name="title_content_builder">内容生成</string>
     <string name="refuse">拒绝协议</string>
     <string name="agree">同意协议</string>
+    <string name="hint_input_value">…</string>
+
+    <string name="email_address">地址</string>
+    <string name="email_subject">标题</string>
+    <string name="email_message">内容</string>
 
 </resources>
