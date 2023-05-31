@@ -7,11 +7,11 @@ import androidx.core.graphics.ColorUtils
 sealed class BlendMode {
 
     companion object {
-        protected fun blend(color1: Int, color2: Int, ratio: Float = 0.5F): Int {
+        fun blend(color1: Int, color2: Int, ratio: Float = 0.5F): Int {
             return ColorUtils.blendARGB(color1, color2, ratio)
         }
 
-        protected fun titleOnColor(color: Int): Int {
+        fun titleOnColor(color: Int): Int {
             val hsl = FloatArray(3)
             ColorUtils.colorToHSL(color, hsl)
             if (hsl[2] > 0.5F) {
@@ -23,7 +23,7 @@ sealed class BlendMode {
             return ColorUtils.HSLToColor(hsl)
         }
 
-        protected fun contentOnColor(color: Int): Int {
+        fun contentOnColor(color: Int): Int {
             val hsl = FloatArray(3)
             ColorUtils.colorToHSL(color, hsl)
             if (hsl[2] > 0.5F) {

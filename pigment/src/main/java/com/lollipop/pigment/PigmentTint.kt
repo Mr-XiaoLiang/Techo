@@ -8,6 +8,23 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+object PigmentTint {
+
+    fun getSelectStateList(selected: Int, def: Int): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_selected),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selected,
+                def
+            )
+        )
+    }
+
+}
+
 fun FloatingActionButton.tint(pigment: Pigment) {
     backgroundTintList = ColorStateList.valueOf(pigment.secondaryColor)
     imageTintList = ColorStateList.valueOf(pigment.onSecondaryBody)

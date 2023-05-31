@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -198,6 +199,11 @@ abstract class ContentBuilder : BaseFragment() {
             binding.textInputView.setLines(config.lines)
             binding.textInputView.inputType = config.inputType
             binding.textInputView.maxLines = config.maxLines
+            if (config.lines > 1) {
+                binding.textInputView.gravity = Gravity.START.or(Gravity.TOP)
+            } else {
+                binding.textInputView.gravity = Gravity.START.or(Gravity.CENTER_VERTICAL)
+            }
         }
 
         private fun updateBounds(binding: ItemContentBuilderInputBinding) {
@@ -232,6 +238,7 @@ abstract class ContentBuilder : BaseFragment() {
                     }
                 )
                 binding.dividerLine.setBackgroundColor(it.onBackgroundBody)
+                binding.dividerLine.alpha = 0.2F
                 binding.textInputView.setTextColor(it.onBackgroundTitle)
                 binding.textInputView.setTextColor(it.onBackgroundBody)
                 binding.labelView.setTextColor(it.onBackgroundBody)

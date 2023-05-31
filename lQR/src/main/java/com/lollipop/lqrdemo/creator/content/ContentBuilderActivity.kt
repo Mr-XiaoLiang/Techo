@@ -24,7 +24,9 @@ import com.lollipop.lqrdemo.creator.content.impl.PhoneContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.SmsContentBuilderPage
 import com.lollipop.lqrdemo.creator.content.impl.WifiContentBuilderPage
 import com.lollipop.lqrdemo.databinding.ActivityContentBuilderBinding
+import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
+import com.lollipop.pigment.PigmentTint
 
 class ContentBuilderActivity : ColorModeActivity() {
 
@@ -75,19 +77,18 @@ class ContentBuilderActivity : ColorModeActivity() {
         binding.root.setBackgroundColor(pigment.backgroundColor)
         binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
-        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
-        binding.tabLayout.tabRippleColor
-        binding.tabLayout.tabTextColors = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_selected),
-                intArrayOf()
-            ),
-            intArrayOf(
-                pigment.primaryColor,
-                pigment.onBackgroundTitle
-            )
+        updateTabLayoutPigment(pigment)
+    }
+
+    private fun updateTabLayoutPigment(pigment: Pigment) {
+        val theme = BlendMode.blend(pigment.primaryColor, pigment.onBackgroundTitle, 0.6F)
+        binding.tabLayout.setSelectedTabIndicatorColor(theme)
+        binding.tabLayout.tabTextColors = PigmentTint.getSelectStateList(
+            theme,
+            pigment.onBackgroundBody
         )
-        binding.titleView.isSelected
+        val ripple = BlendMode.blend(pigment.primaryColor, pigment.backgroundColor, 0.8F)
+        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(ripple)
     }
 
     class ResultContract : ActivityLauncherHelper.Simple<Any?, String?>() {

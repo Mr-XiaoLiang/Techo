@@ -45,7 +45,6 @@
             android:layout_height="1dp"
             android:layout_gravity="bottom"
             android:layout_marginStart="12dp"
-            android:alpha="0.5"
             tools:background="@android:color/darker_gray" />
     </com.lollipop.clip.RoundClipLayout>
 

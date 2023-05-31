@@ -45,8 +45,8 @@ class EmailContentBuilderPage : ContentBuilder() {
             Input(
                 context.getString(R.string.email_message),
                 InputConfig(
-                    inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE),
-                    lines = 3,
+                    inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE)
+                        .or(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
                 ),
                 { body },
             ) {
