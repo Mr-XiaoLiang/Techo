@@ -51,6 +51,11 @@ abstract class ContentBuilder : BaseFragment() {
 
     abstract fun buildContent(space: ItemSpace)
 
+    @SuppressLint("NotifyDataSetChanged")
+    protected fun notifyStateChanged() {
+        contentGroup?.adapter?.notifyDataSetChanged()
+    }
+
     protected fun ItemSpace.Space(height: Int) {
         add(SpaceItem(height))
     }
