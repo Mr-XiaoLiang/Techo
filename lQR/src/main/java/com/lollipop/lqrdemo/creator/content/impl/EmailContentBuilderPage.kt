@@ -1,6 +1,5 @@
 package com.lollipop.lqrdemo.creator.content.impl
 
-import android.os.Bundle
 import android.text.InputType
 import com.lollipop.base.util.dp2px
 import com.lollipop.lqrdemo.R
@@ -9,15 +8,9 @@ import com.lollipop.qr.comm.BarcodeInfo
 
 class EmailContentBuilderPage : ContentBuilder() {
 
-    companion object {
-        private const val KEY_ADDRESS = "email_address"
-        private const val KEY_BODY = "email_body"
-        private const val KEY_SUBJECT = "email_subject"
-    }
-
-    private var address: String = ""
-    private var body: String = ""
-    private var subject: String = ""
+    private var address by remember()
+    private var body by remember()
+    private var subject by remember()
 
     override fun getContentValue(): String {
         val email = BarcodeInfo.Email()
@@ -25,22 +18,6 @@ class EmailContentBuilderPage : ContentBuilder() {
         email.body = body
         email.subject = subject
         return email.getBarcodeValue()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(KEY_ADDRESS, address)
-        outState.putString(KEY_BODY, body)
-        outState.putString(KEY_SUBJECT, subject)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState ?: return
-        address = savedInstanceState.getString(KEY_ADDRESS, "") ?: ""
-        body = savedInstanceState.getString(KEY_BODY, "") ?: ""
-        subject = savedInstanceState.getString(KEY_SUBJECT, "") ?: ""
-        notifyStateChanged()
     }
 
     override fun buildContent(space: ItemSpace) {

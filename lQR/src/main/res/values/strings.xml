@@ -46,4 +46,7 @@
     <string name="email_subject">标题</string>
     <string name="email_message">内容</string>
 
+    <string name="phone_number">电话号码</string>
+    <string name="sms_message">短信内容</string>
+
 </resources>

@@ -18,8 +18,16 @@ import com.lollipop.lqrdemo.databinding.ItemContentBuilderInputBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentWallpaperCenter
+import org.json.JSONObject
+import kotlin.reflect.KProperty
 
 abstract class ContentBuilder : BaseFragment() {
+
+    companion object {
+        private const val KEY_VALUE_MAP = "KEY_VALUE_MAP"
+    }
+
+    private val valuesMap = HashMap<String, String>()
 
     abstract fun getContentValue(): String
 
@@ -49,6 +57,32 @@ abstract class ContentBuilder : BaseFragment() {
         contentGroup?.adapter = ItemAdapter(itemList)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val json = JSONObject()
+        valuesMap.forEach { entry ->
+            json.put(entry.key, entry.value)
+        }
+        outState.putString(KEY_VALUE_MAP, json.toString())
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState ?: return
+        val jsonValue = savedInstanceState.getString(KEY_VALUE_MAP, "") ?: ""
+        if (jsonValue.isNotEmpty()) {
+            try {
+                val json = JSONObject(jsonValue)
+                json.keys().forEach {
+                    valuesMap[it] = json.optString(it) ?: ""
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+        notifyStateChanged()
+    }
+
     abstract fun buildContent(space: ItemSpace)
 
     @SuppressLint("NotifyDataSetChanged")
@@ -73,6 +107,29 @@ abstract class ContentBuilder : BaseFragment() {
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         contentGroup?.adapter?.notifyDataSetChanged()
+    }
+
+    protected inline fun <reified B : ContentBuilder> B.remember(
+        noinline defValue: () -> String = { "" },
+    ) = ValueDelegate<B>(defValue)
+
+    protected fun setValue(key: String, value: String) {
+        valuesMap[key] = value
+    }
+
+    protected fun getValue(key: String): String? {
+        return valuesMap[key]
+    }
+
+    protected class ValueDelegate<B : ContentBuilder>(val defValue: () -> String) {
+        operator fun getValue(b: B, property: KProperty<*>): String {
+            val valueName = property.name
+            return b.getValue(valueName) ?: defValue()
+        }
+
+        operator fun setValue(b: B, property: KProperty<*>, value: String) {
+            b.setValue(property.name, value)
+        }
     }
 
     private class ItemAdapter(val list: List<Item>) : RecyclerView.Adapter<ItemHolder>() {
