@@ -18,17 +18,15 @@ class PhoneContentBuilderPage : ContentBuilder() {
 
     override fun buildContent(space: ItemSpace) {
         space.apply {
-            Space(16.dp2px)
+            Space()
             Input(
                 context.getString(R.string.phone_number),
-                InputConfig(
-                    inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_VARIATION_NORMAL),
-                ),
+                InputConfig.PHONE,
                 { number },
             ) {
                 number = it.toString()
             }
-            Space(26.dp2px)
+            SpaceEnd()
         }
     }
 }

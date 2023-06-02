@@ -49,4 +49,16 @@
     <string name="phone_number">电话号码</string>
     <string name="sms_message">短信内容</string>
 
+    <string name="contact_prefix_name">前缀</string>
+    <string name="contact_first_name">姓氏</string>
+    <string name="contact_middle_name">中间名</string>
+    <string name="contact_last_name">尾名</string>
+    <string name="contact_suffix_name">后缀</string>
+    <string name="contact_pronunciation_name">读音</string>
+
+    <string name="contact_organization">组织</string>
+
+    <string name="contact_title">标题</string>
+
+
 </resources>

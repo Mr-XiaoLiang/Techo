@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -90,15 +92,28 @@ abstract class ContentBuilder : BaseFragment() {
         contentGroup?.adapter?.notifyDataSetChanged()
     }
 
-    protected fun ItemSpace.Space(height: Int) {
+    protected fun ItemSpace.SpaceEnd(height: Int = 26.dp2px) {
         add(SpaceItem(height))
+    }
+
+    protected fun ItemSpace.Space(height: Int = 16.dp2px) {
+        add(SpaceItem(height))
+    }
+
+    protected fun ItemSpace.Input(
+        @StringRes label: Int,
+        config: InputConfig,
+        presetValue: () -> String,
+        onInputChanged: (String) -> Unit,
+    ) {
+        Input(context.getString(label), config, presetValue, onInputChanged)
     }
 
     protected fun ItemSpace.Input(
         label: String,
         config: InputConfig,
-        presetValue: () -> CharSequence,
-        onInputChanged: (CharSequence) -> Unit,
+        presetValue: () -> String,
+        onInputChanged: (String) -> Unit,
     ) {
         add(InputItem(label, config, presetValue, onInputChanged))
     }
@@ -232,13 +247,69 @@ abstract class ContentBuilder : BaseFragment() {
         val inputType: Int,
         val maxLines: Int = Int.MAX_VALUE,
         val lines: Int = 1,
-    )
+    ) {
+
+        companion object {
+
+            private fun flags(vararg flag: Int): Int {
+                var value = 0
+                flag.forEach {
+                    value = value.or(it)
+                }
+                return value
+            }
+
+            val PHONE = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_NUMBER,
+                    InputType.TYPE_NUMBER_VARIATION_NORMAL
+                )
+            )
+
+            val SUBJECT = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT
+                ),
+            )
+
+            val NORMAL = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_NORMAL
+                )
+            )
+
+            val CONTENT = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE,
+                    InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                )
+            )
+
+            val NAME = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_PERSON_NAME
+                ),
+            )
+
+            val EMAIL = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                ),
+            )
+        }
+
+    }
 
     protected class InputItem(
         private val label: String,
         private val config: InputConfig,
-        private val presetValue: () -> CharSequence,
-        private val onInputChanged: (CharSequence) -> Unit,
+        private val presetValue: () -> String,
+        private val onInputChanged: (String) -> Unit,
     ) : Item() {
 
         private var mergeLast = false

@@ -10,7 +10,7 @@ class SimpleTextInputView @JvmOverloads constructor(
     context: Context, attributeSet: AttributeSet? = null,
 ) : TextInputEditText(context, attributeSet) {
 
-    private var textChangedListener: ((CharSequence) -> Unit)? = null
+    private var textChangedListener: ((String) -> Unit)? = null
 
     private val textWatch = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -30,10 +30,10 @@ class SimpleTextInputView @JvmOverloads constructor(
     }
 
     private fun onTextChanged(value: CharSequence) {
-        this.textChangedListener?.invoke(value)
+        this.textChangedListener?.invoke(value.toString())
     }
 
-    fun onTextChanged(listener: ((CharSequence) -> Unit)?) {
+    fun onTextChanged(listener: ((String) -> Unit)?) {
         this.textChangedListener = listener
     }
 

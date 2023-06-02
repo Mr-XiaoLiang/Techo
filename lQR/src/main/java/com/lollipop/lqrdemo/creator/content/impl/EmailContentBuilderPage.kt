@@ -22,37 +22,30 @@ class EmailContentBuilderPage : ContentBuilder() {
 
     override fun buildContent(space: ItemSpace) {
         space.apply {
-            Space(16.dp2px)
+            Space()
             Input(
                 context.getString(R.string.email_address),
-                InputConfig(
-                    inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS),
-                ),
+                InputConfig.EMAIL,
                 { address },
             ) {
                 address = it.toString()
             }
-            Space(16.dp2px)
+            Space()
             Input(
                 context.getString(R.string.email_subject),
-                InputConfig(
-                    inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT),
-                ),
+                InputConfig.SUBJECT,
                 { subject },
             ) {
                 subject = it.toString()
             }
             Input(
                 context.getString(R.string.email_message),
-                InputConfig(
-                    inputType = InputType.TYPE_CLASS_TEXT.or(InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE)
-                        .or(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
-                ),
+                InputConfig.CONTENT,
                 { body },
             ) {
                 body = it.toString()
             }
-            Space(26.dp2px)
+            SpaceEnd()
         }
     }
 }
