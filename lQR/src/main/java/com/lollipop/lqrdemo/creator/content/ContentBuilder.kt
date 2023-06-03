@@ -26,10 +26,12 @@ import kotlin.reflect.KProperty
 abstract class ContentBuilder : BaseFragment() {
 
     companion object {
-        private const val KEY_VALUE_MAP = "KEY_VALUE_MAP"
+        private const val KEY_VALUE_MAP_STRING = "KEY_VALUE_MAP_STRING"
+        private const val KEY_VALUE_MAP_INT = "KEY_VALUE_MAP_INT"
     }
 
-    private val valuesMap = HashMap<String, String>()
+    private val stringValuesMap = HashMap<String, String>()
+    private val intValuesMap = HashMap<String, Int>()
 
     abstract fun getContentValue(): String
 
@@ -61,22 +63,39 @@ abstract class ContentBuilder : BaseFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val json = JSONObject()
-        valuesMap.forEach { entry ->
-            json.put(entry.key, entry.value)
+        val stringJson = JSONObject()
+        stringValuesMap.forEach { entry ->
+            stringJson.put(entry.key, entry.value)
         }
-        outState.putString(KEY_VALUE_MAP, json.toString())
+        outState.putString(KEY_VALUE_MAP_STRING, stringJson.toString())
+        val intJson = JSONObject()
+        intValuesMap.forEach { entry ->
+            intJson.put(entry.key, entry.value)
+        }
+        outState.putString(KEY_VALUE_MAP_INT, intJson.toString())
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState ?: return
-        val jsonValue = savedInstanceState.getString(KEY_VALUE_MAP, "") ?: ""
-        if (jsonValue.isNotEmpty()) {
+        val stringJsonValue = savedInstanceState.getString(KEY_VALUE_MAP_STRING, "") ?: ""
+        if (stringJsonValue.isNotEmpty()) {
             try {
-                val json = JSONObject(jsonValue)
+                val json = JSONObject(stringJsonValue)
                 json.keys().forEach {
-                    valuesMap[it] = json.optString(it) ?: ""
+                    stringValuesMap[it] = json.optString(it) ?: ""
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+
+        val intJsonValue = savedInstanceState.getString(KEY_VALUE_MAP_INT, "") ?: ""
+        if (intJsonValue.isNotEmpty()) {
+            try {
+                val json = JSONObject(intJsonValue)
+                json.keys().forEach {
+                    intValuesMap[it] = json.optInt(it, 0)
                 }
             } catch (e: Throwable) {
                 e.printStackTrace()
@@ -126,17 +145,29 @@ abstract class ContentBuilder : BaseFragment() {
 
     protected inline fun <reified B : ContentBuilder> B.remember(
         noinline defValue: () -> String = { "" },
-    ) = ValueDelegate<B>(defValue)
+    ) = StringValueDelegate<B>(defValue)
+
+    protected inline fun <reified B : ContentBuilder> B.rememberInt(
+        noinline defValue: () -> Int = { 0 },
+    ) = IntValueDelegate<B>(defValue)
 
     protected fun setValue(key: String, value: String) {
-        valuesMap[key] = value
+        stringValuesMap[key] = value
     }
 
     protected fun getValue(key: String): String? {
-        return valuesMap[key]
+        return stringValuesMap[key]
     }
 
-    protected class ValueDelegate<B : ContentBuilder>(val defValue: () -> String) {
+    protected fun setInt(key: String, value: Int) {
+        intValuesMap[key] = value
+    }
+
+    protected fun getInt(key: String): Int? {
+        return intValuesMap[key]
+    }
+
+    protected class StringValueDelegate<B : ContentBuilder>(val defValue: () -> String) {
         operator fun getValue(b: B, property: KProperty<*>): String {
             val valueName = property.name
             return b.getValue(valueName) ?: defValue()
@@ -144,6 +175,17 @@ abstract class ContentBuilder : BaseFragment() {
 
         operator fun setValue(b: B, property: KProperty<*>, value: String) {
             b.setValue(property.name, value)
+        }
+    }
+
+    protected class IntValueDelegate<B : ContentBuilder>(val defValue: () -> Int) {
+        operator fun getValue(b: B, property: KProperty<*>): Int {
+            val valueName = property.name
+            return b.getInt(valueName) ?: defValue()
+        }
+
+        operator fun setValue(b: B, property: KProperty<*>, value: Int) {
+            b.setInt(property.name, value)
         }
     }
 
