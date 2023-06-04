@@ -308,6 +308,13 @@ abstract class ContentBuilder : BaseFragment() {
                 )
             )
 
+            val URL = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_TEXT,
+                    InputType.TYPE_TEXT_VARIATION_URI
+                )
+            )
+
             val SUBJECT = InputConfig(
                 inputType = flags(
                     InputType.TYPE_CLASS_TEXT,
