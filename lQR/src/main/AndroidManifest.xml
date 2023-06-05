@@ -41,6 +41,21 @@
                 <action android:name="com.google.zxing.client.android.SCAN" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".other.ScanTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_baseline_qr_code_24"
+            android:label="@string/quick_scan"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+        </service>
     </application>
 
 </manifest>
