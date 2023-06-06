@@ -19,13 +19,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 class WindowInsetsHelper(
     private val applyType: WindowInsetsApplyType,
     val windowInsetsOperator: WindowInsetsOperator,
-    private val targetView: View? = null
+    private val targetView: View? = null,
 ) : OnApplyWindowInsetsListener {
 
     companion object {
         fun getInsetsValue(
             insets: WindowInsetsCompat,
-            type: WindowInsetsType = WindowInsetsType.SYSTEM_BARS
+            type: WindowInsetsType = WindowInsetsType.SYSTEM_BARS,
         ): WindowInsetsValue {
             val typeMask = when (type) {
                 WindowInsetsType.SYSTEM_BARS -> {
@@ -132,7 +132,7 @@ class WindowInsetsHelper(
         fun onWindowInsetsChanged(
             v: View,
             operator: WindowInsetsOperator,
-            insets: WindowInsetsCompat
+            insets: WindowInsetsCompat,
         ): WindowInsetsCompat
     }
 
@@ -150,7 +150,7 @@ fun View.fixInsetsByPadding(
 }
 
 fun View.fixInsetsByListener(
-    listener: WindowInsetsHelper.OnWindowInsetsChangedListener
+    listener: WindowInsetsHelper.OnWindowInsetsChangedListener,
 ): WindowInsetsHelper {
     return setWindowInsetsHelper(
         WindowInsetsApplyType.Custom(listener),
@@ -161,7 +161,7 @@ fun View.fixInsetsByListener(
 
 fun View.fixInsetsByMargin(
     edge: WindowInsetsEdge = WindowInsetsEdge.ALL,
-    target: View? = null
+    target: View? = null,
 ): WindowInsetsHelper {
     return setWindowInsetsHelper(
         WindowInsetsApplyType.Margin,
@@ -170,10 +170,23 @@ fun View.fixInsetsByMargin(
     )
 }
 
+fun View.fixInsetsByMultiple(
+    edge: WindowInsetsEdge = WindowInsetsEdge.ALL,
+    type: MultipleInsetsDelegate.ApplyType,
+    target: View? = null,
+    vararg insetsType: WindowInsetsType,
+): WindowInsetsHelper {
+    return setWindowInsetsHelper(
+        WindowInsetsApplyType.Custom(MultipleInsetsDelegate(type, target, *insetsType)),
+        edge,
+        null
+    )
+}
+
 private fun View.setWindowInsetsHelper(
     type: WindowInsetsApplyType,
     edge: WindowInsetsEdge,
-    customTarget: View?
+    customTarget: View?,
 ): WindowInsetsHelper {
     val windowInsetsHelper = WindowInsetsHelper(
         type,

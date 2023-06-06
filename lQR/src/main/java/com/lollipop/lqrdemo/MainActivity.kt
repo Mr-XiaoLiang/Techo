@@ -106,7 +106,7 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.createBtn.onClick {
-//            startActivity(Intent(this, ContentBuilderActivity::class.java))
+            startActivity(Intent(this, ContentBuilderActivity::class.java))
             Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
         binding.permissionView.onClick {

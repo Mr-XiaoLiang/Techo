@@ -10,9 +10,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ActivityLauncherHelper
+import com.lollipop.base.util.insets.MultipleInsetsDelegate
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.base.util.insets.WindowInsetsType
+import com.lollipop.base.util.insets.fixInsetsByMultiple
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.ColorModeActivity
@@ -48,7 +50,12 @@ class ContentBuilderActivity : ColorModeActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         WindowInsetsHelper.fitsSystemWindows(this)
-        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        binding.root.fixInsetsByMultiple(
+            edge = WindowInsetsEdge.ALL,
+            type = MultipleInsetsDelegate.ApplyType.PADDING,
+            target = null,
+            WindowInsetsType.IME, WindowInsetsType.SYSTEM_BARS
+        )
         bindByBack(binding.backButton)
         binding.viewPager2.adapter = PageAdapter(this)
         TabLayoutMediator(
