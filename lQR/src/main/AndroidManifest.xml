@@ -11,12 +11,15 @@
         android:theme="@style/Theme.Techo">
         <activity
             android:name=".creator.content.ContentBuilderActivity"
+            android:configChanges="uiMode"
             android:exported="false" />
         <activity
             android:name=".other.AboutActivity"
+            android:configChanges="uiMode"
             android:exported="false" />
         <activity
             android:name=".other.PrivacyAgreementActivity"
+            android:configChanges="uiMode"
             android:exported="false" />
         <activity
             android:name=".CreatorActivity"
@@ -45,7 +48,7 @@
         <service
             android:name=".other.ScanTileService"
             android:exported="true"
-            android:icon="@drawable/ic_baseline_qr_code_24"
+            android:icon="@drawable/ic_lqr_24dp"
             android:label="@string/quick_scan"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
