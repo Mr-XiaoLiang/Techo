@@ -24,7 +24,7 @@ class SmsContentBuilderPage : ContentBuilder() {
                 InputConfig.PHONE,
                 { phoneNumber },
             ) {
-                phoneNumber = it.toString()
+                phoneNumber = it
             }
             Space()
             Input(
@@ -32,7 +32,7 @@ class SmsContentBuilderPage : ContentBuilder() {
                 InputConfig.CONTENT,
                 { message },
             ) {
-                message = it.toString()
+                message = it
             }
             SpaceEnd()
         }

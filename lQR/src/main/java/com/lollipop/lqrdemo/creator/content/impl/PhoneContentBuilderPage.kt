@@ -24,7 +24,7 @@ class PhoneContentBuilderPage : ContentBuilder() {
                 InputConfig.PHONE,
                 { number },
             ) {
-                number = it.toString()
+                number = it
             }
             SpaceEnd()
         }
