@@ -81,5 +81,6 @@
     <string name="wifi_ssid">名称(SSID)</string>
     <string name="wifi_pwd">密码</string>
     <string name="wifi_user">用户(可选)</string>
+    <string name="calendar_summary">总结</string>
 
 </resources>
