@@ -26,21 +26,21 @@ class WifiContentBuilderPage : ContentBuilder() {
         space.apply {
             Space()
             Input(
-                context.getString(R.string.wifi_ssid),
+                R.string.wifi_ssid,
                 InputConfig.NORMAL,
                 { ssid },
             ) {
                 ssid = it
             }
             Input(
-                context.getString(R.string.wifi_user),
+                R.string.wifi_user,
                 InputConfig.NORMAL,
                 { username },
             ) {
                 username = it
             }
             Input(
-                context.getString(R.string.wifi_pwd),
+                R.string.wifi_pwd,
                 InputConfig.NORMAL,
                 { password },
             ) {

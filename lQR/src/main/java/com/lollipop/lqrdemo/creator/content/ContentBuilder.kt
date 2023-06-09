@@ -1,6 +1,8 @@
 package com.lollipop.lqrdemo.creator.content
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -9,13 +11,17 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.dp2px
+import com.lollipop.base.util.onClick
+import com.lollipop.clip.RoundClipLayout
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.BaseFragment
+import com.lollipop.lqrdemo.databinding.ItemContentBuilderDateBinding
 import com.lollipop.lqrdemo.databinding.ItemContentBuilderInputBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
@@ -137,6 +143,22 @@ abstract class ContentBuilder : BaseFragment() {
         add(InputItem(label, config, presetValue, onInputChanged))
     }
 
+    protected fun ItemSpace.Date(
+        @StringRes label: Int,
+        presetValue: () -> DateInfo,
+        onInputChanged: (DateInfo) -> Unit,
+    ) {
+        Date(context.getString(label), presetValue, onInputChanged)
+    }
+
+    protected fun ItemSpace.Date(
+        label: String,
+        presetValue: () -> DateInfo,
+        onInputChanged: (DateInfo) -> Unit,
+    ) {
+        add(DateItem(label, presetValue, onInputChanged))
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
@@ -215,7 +237,7 @@ abstract class ContentBuilder : BaseFragment() {
 
     private class ItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(item: Item) {
-            item.bind(itemView)
+            item.bind(itemView, PigmentWallpaperCenter.pigment)
         }
     }
 
@@ -262,7 +284,7 @@ abstract class ContentBuilder : BaseFragment() {
 
         abstract fun updateChain(last: Item?, next: Item?)
 
-        abstract fun bind(view: View)
+        abstract fun bind(view: View, pigment: Pigment?)
 
     }
 
@@ -274,7 +296,7 @@ abstract class ContentBuilder : BaseFragment() {
         override fun updateChain(last: Item?, next: Item?) {
         }
 
-        override fun bind(view: View) {
+        override fun bind(view: View, pigment: Pigment?) {
             val layoutParams = view.layoutParams ?: ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -354,26 +376,74 @@ abstract class ContentBuilder : BaseFragment() {
 
     }
 
+    protected abstract class MeltedItem : Item() {
+
+        protected var mergeLast = false
+            private set
+        protected var mergeNext = false
+            private set
+
+        override fun updateChain(last: Item?, next: Item?) {
+            mergeLast = last is MeltedItem
+            mergeNext = next is MeltedItem
+        }
+
+        protected fun updateBounds(
+            pigment: Pigment?,
+            clipBounds: RoundClipLayout,
+            dividerLine: View,
+            itemContentView: View
+        ) {
+            val radius = 12F.dp2px
+            val topRadius = if (mergeLast) {
+                0F
+            } else {
+                radius
+            }
+            val bottomRadius = if (mergeNext) {
+                0F
+            } else {
+                radius
+            }
+            clipBounds.setRadius(
+                leftTop = topRadius,
+                rightTop = topRadius,
+                leftBottom = bottomRadius,
+                rightBottom = bottomRadius
+            )
+            dividerLine.isVisible = mergeNext
+            pigment?.let {
+                itemContentView.setBackgroundColor(
+                    when (it.blendMode) {
+                        BlendMode.Dark -> {
+                            Color.BLACK
+                        }
+
+                        BlendMode.Light -> {
+                            Color.WHITE
+                        }
+                    }
+                )
+                dividerLine.setBackgroundColor(it.onBackgroundBody)
+                dividerLine.alpha = 0.2F
+            }
+        }
+
+    }
+
     protected class InputItem(
         private val label: String,
         private val config: InputConfig,
         private val presetValue: () -> String,
         private val onInputChanged: (String) -> Unit,
-    ) : Item() {
-
-        private var mergeLast = false
-        private var mergeNext = false
+    ) : MeltedItem() {
 
         override val viewId: Int = R.layout.item_content_builder_input
 
-        override fun updateChain(last: Item?, next: Item?) {
-            mergeLast = last is InputItem
-            mergeNext = next is InputItem
-        }
 
-        override fun bind(view: View) {
+        override fun bind(view: View, pigment: Pigment?) {
             val binding = ItemContentBuilderInputBinding.bind(view)
-            updateBounds(binding)
+            updateBounds(binding, pigment)
             binding.labelView.text = label
             binding.textInputView.onTextChanged(null)
             binding.textInputView.setText(presetValue())
@@ -388,45 +458,126 @@ abstract class ContentBuilder : BaseFragment() {
             }
         }
 
-        private fun updateBounds(binding: ItemContentBuilderInputBinding) {
-            val radius = 12F.dp2px
-            val topRadius = if (mergeLast) {
-                0F
-            } else {
-                radius
-            }
-            val bottomRadius = if (mergeNext) {
-                0F
-            } else {
-                radius
-            }
-            binding.itemClipLayout.setRadius(
-                leftTop = topRadius,
-                rightTop = topRadius,
-                leftBottom = bottomRadius,
-                rightBottom = bottomRadius
+        private fun updateBounds(binding: ItemContentBuilderInputBinding, pigment: Pigment?) {
+            updateBounds(
+                pigment,
+                binding.itemClipLayout,
+                binding.dividerLine,
+                binding.itemContentView
             )
-            binding.dividerLine.isVisible = mergeNext
-            PigmentWallpaperCenter.pigment?.let {
-                binding.itemContentView.setBackgroundColor(
-                    when (it.blendMode) {
-                        BlendMode.Dark -> {
-                            Color.BLACK
-                        }
-
-                        BlendMode.Light -> {
-                            Color.WHITE
-                        }
-                    }
-                )
-                binding.dividerLine.setBackgroundColor(it.onBackgroundBody)
-                binding.dividerLine.alpha = 0.2F
+            pigment?.let {
                 binding.textInputView.setTextColor(it.onBackgroundTitle)
-                binding.textInputView.setTextColor(it.onBackgroundBody)
+                binding.textInputView.setHintTextColor(it.onBackgroundBody)
                 binding.labelView.setTextColor(it.onBackgroundBody)
             }
         }
 
     }
+
+
+    protected class DateItem(
+        private val label: String,
+        private val presetValue: () -> DateInfo,
+        private val onDateChanged: (DateInfo) -> Unit,
+    ) : MeltedItem() {
+        override val viewId: Int
+            get() = R.layout.item_content_builder_date
+
+        override fun bind(view: View, pigment: Pigment?) {
+            val binding = ItemContentBuilderDateBinding.bind(view)
+            updateBounds(binding, pigment)
+            binding.labelView.text = label
+            val dateInfo = presetValue()
+            updateDateView(binding.dateView, dateInfo.year, dateInfo.month, dateInfo.day)
+            updateTimeView(binding.timeView, dateInfo.hours, dateInfo.minutes)
+            binding.dateView.onClick {
+                onDateClick(it)
+            }
+            binding.timeView.onClick {
+                onTimeClick(it)
+            }
+        }
+
+        private fun updateDateView(view: TextView, year: Int, month: Int, day: Int) {
+            view.text = view.context.getString(R.string.content_builder_date, year, month, day)
+        }
+
+        private fun updateTimeView(view: TextView, hours: Int, minutes: Int) {
+            view.text = view.context.getString(R.string.content_builder_time, hours, minutes)
+        }
+
+        private fun onDateClick(view: TextView) {
+            val dateInfo = presetValue()
+            DatePickerDialog(
+                view.context,
+                { _, year, month, dayOfMonth ->
+                    updateDateView(view, year, month, dayOfMonth)
+                    onDateChanged(
+                        DateInfo(
+                            year,
+                            month,
+                            dayOfMonth,
+                            dateInfo.hours,
+                            dateInfo.minutes
+                        )
+                    )
+                },
+                dateInfo.year,
+                dateInfo.month - 1,
+                dateInfo.day
+            ).show()
+        }
+
+        private fun onTimeClick(view: TextView) {
+            val dateInfo = presetValue()
+            TimePickerDialog(
+                view.context,
+                { _, hourOfDay, minute ->
+                    updateTimeView(view, hourOfDay, minute)
+                    onDateChanged(
+                        DateInfo(
+                            dateInfo.year,
+                            dateInfo.month,
+                            dateInfo.day,
+                            hourOfDay,
+                            minute
+                        )
+                    )
+                },
+                dateInfo.hours,
+                dateInfo.minutes,
+                true
+            ).show()
+        }
+
+        private fun updateBounds(binding: ItemContentBuilderDateBinding, pigment: Pigment?) {
+            updateBounds(
+                pigment,
+                binding.itemClipLayout,
+                binding.dividerLine,
+                binding.itemContentView
+            )
+            pigment?.let {
+                val buttonBackground = it.secondaryVariant
+                val buttonText = BlendMode.titleOnColor(buttonBackground)
+                binding.dateView.setBackgroundColor(buttonBackground)
+                binding.timeView.setBackgroundColor(buttonBackground)
+                binding.dateView.setTextColor(buttonText)
+                binding.timeView.setTextColor(buttonText)
+
+                binding.labelView.setTextColor(it.onBackgroundBody)
+            }
+        }
+
+    }
+
+    protected class DateInfo(
+        val year: Int = 0,
+        val month: Int = 0,
+        val day: Int = 0,
+        val hours: Int = 0,
+        val minutes: Int = 0,
+        val seconds: Int = 0,
+    )
 
 }

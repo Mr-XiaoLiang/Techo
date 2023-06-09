@@ -18,7 +18,7 @@ class PhoneContentBuilderPage : ContentBuilder() {
         space.apply {
             Space()
             Input(
-                context.getString(R.string.phone_number),
+                R.string.phone_number,
                 InputConfig.PHONE,
                 { number },
             ) {

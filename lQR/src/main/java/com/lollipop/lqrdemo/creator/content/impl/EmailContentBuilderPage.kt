@@ -22,7 +22,7 @@ class EmailContentBuilderPage : ContentBuilder() {
         space.apply {
             Space()
             Input(
-                context.getString(R.string.email_address),
+                R.string.email_address,
                 InputConfig.EMAIL,
                 { address },
             ) {
@@ -30,14 +30,14 @@ class EmailContentBuilderPage : ContentBuilder() {
             }
             Space()
             Input(
-                context.getString(R.string.email_subject),
+                R.string.email_subject,
                 InputConfig.SUBJECT,
                 { subject },
             ) {
                 subject = it
             }
             Input(
-                context.getString(R.string.email_message),
+                R.string.email_message,
                 InputConfig.CONTENT,
                 { body },
             ) {

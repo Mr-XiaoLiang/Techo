@@ -83,4 +83,13 @@
     <string name="wifi_user">用户(可选)</string>
     <string name="calendar_summary">总结</string>
 
+    <string name="content_builder_date">%1$d/%2$d/%3$d</string>
+    <string name="content_builder_time">%1$d:%2$d</string>
+    <string name="calendar_start_time">开始时间</string>
+    <string name="calendar_end_time">结束时间</string>
+    <string name="calendar_description">内容</string>
+    <string name="calendar_location">地址</string>
+    <string name="calendar_organizer">组织者</string>
+    <string name="calendar_status">状态</string>
+
 </resources>
