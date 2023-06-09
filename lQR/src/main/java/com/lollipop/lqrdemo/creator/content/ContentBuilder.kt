@@ -499,11 +499,28 @@ abstract class ContentBuilder : BaseFragment() {
         }
 
         private fun updateDateView(view: TextView, year: Int, month: Int, day: Int) {
-            view.text = view.context.getString(R.string.content_builder_date, year, month, day)
+            view.text = view.context.getString(
+                R.string.content_builder_date,
+                year.formatNumber(),
+                month.formatNumber(),
+                day.formatNumber()
+            )
         }
 
         private fun updateTimeView(view: TextView, hours: Int, minutes: Int) {
-            view.text = view.context.getString(R.string.content_builder_time, hours, minutes)
+            view.text = view.context.getString(
+                R.string.content_builder_time,
+                hours.formatNumber(),
+                minutes.formatNumber()
+            )
+        }
+
+        private fun Int.formatNumber(): String {
+            val number = this
+            if (number < 10) {
+                return "0$number"
+            }
+            return number.toString()
         }
 
         private fun onDateClick(view: TextView) {
@@ -511,11 +528,11 @@ abstract class ContentBuilder : BaseFragment() {
             DatePickerDialog(
                 view.context,
                 { _, year, month, dayOfMonth ->
-                    updateDateView(view, year, month, dayOfMonth)
+                    updateDateView(view, year, month + 1, dayOfMonth)
                     onDateChanged(
                         DateInfo(
                             year,
-                            month,
+                            month + 1,
                             dayOfMonth,
                             dateInfo.hours,
                             dateInfo.minutes
