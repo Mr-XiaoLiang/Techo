@@ -330,6 +330,14 @@ abstract class ContentBuilder : BaseFragment() {
                 )
             )
 
+            val NUMBER = InputConfig(
+                inputType = flags(
+                    InputType.TYPE_CLASS_NUMBER,
+                    InputType.TYPE_NUMBER_FLAG_DECIMAL,
+                    InputType.TYPE_NUMBER_FLAG_SIGNED
+                )
+            )
+
             val URL = InputConfig(
                 inputType = flags(
                     InputType.TYPE_CLASS_TEXT,

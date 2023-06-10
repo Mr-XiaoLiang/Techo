@@ -91,5 +91,7 @@
     <string name="calendar_location">地址</string>
     <string name="calendar_organizer">组织者</string>
     <string name="calendar_status">状态</string>
+    <string name="geo_lat">纬度</string>
+    <string name="geo_lng">经度</string>
 
 </resources>
