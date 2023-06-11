@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -24,6 +25,7 @@ class CreatorActivity : ColorModeActivity() {
     private val binding: ActivityCreatorBinding by lazyBind()
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
+        Toast.makeText(this, it ?: "null", Toast.LENGTH_SHORT).show()
         // TODO
     }
 

@@ -448,7 +448,7 @@ sealed class BarcodeInfo {
             builder.append("DTEND:").append(end.formatValue()).append("\n")
             builder.append("END:VEVENT\n")
             builder.append("END:VCALENDAR")
-            return toJson()
+            return builder.toString()
         }
     }
 

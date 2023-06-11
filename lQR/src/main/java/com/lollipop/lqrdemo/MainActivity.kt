@@ -62,6 +62,11 @@ class MainActivity : ScanResultActivity() {
         }
     }
 
+    private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
+        Toast.makeText(this, it ?: "null", Toast.LENGTH_SHORT).show()
+        // TODO
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -106,7 +111,8 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.createBtn.onClick {
-            startActivity(Intent(this, ContentBuilderActivity::class.java))
+//            startActivity(Intent(this, ContentBuilderActivity::class.java))
+            contentBuilderLauncher.launch(null)
             Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
         binding.permissionView.onClick {
