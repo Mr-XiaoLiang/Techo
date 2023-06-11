@@ -16,6 +16,7 @@ import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.WindowInsetsType
 import com.lollipop.base.util.insets.fixInsetsByMultiple
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.content.impl.CalendarEventContentBuilderPage
@@ -57,6 +58,10 @@ class ContentBuilderActivity : ColorModeActivity() {
             WindowInsetsType.IME, WindowInsetsType.SYSTEM_BARS
         )
         bindByBack(binding.backButton)
+        binding.saveButton.onClick {
+            setResult()
+            finish()
+        }
         binding.viewPager2.adapter = PageAdapter(this)
         TabLayoutMediator(
             binding.tabLayout,
@@ -65,6 +70,8 @@ class ContentBuilderActivity : ColorModeActivity() {
         ) { tab, position ->
             tab.setText(SubPage.values()[position].tab)
         }.attach()
+        // 默认是取消的
+        setResult(RESULT_CANCELED)
     }
 
     private fun setResult() {
@@ -83,6 +90,7 @@ class ContentBuilderActivity : ColorModeActivity() {
         super.onDecorationChanged(pigment)
         binding.root.setBackgroundColor(pigment.backgroundColor)
         binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.saveButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
         updateTabLayoutPigment(pigment)
     }
