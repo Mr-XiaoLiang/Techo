@@ -2,6 +2,7 @@ package com.lollipop.pigment
 
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
+import com.lollipop.pigment.BlendMode.Dark.limitColor
 
 
 sealed class BlendMode {
@@ -34,6 +35,25 @@ sealed class BlendMode {
             hsl[1] = 0.1F
             return ColorUtils.HSLToColor(hsl)
         }
+
+        fun limit(color: Int, maxS: Float, minS: Float, maxL: Float, minL: Float): Int {
+            // [H, S, L]
+            val hsl = FloatArray(3)
+            ColorUtils.colorToHSL(color, hsl)
+            hsl[1] = limit(target = hsl[1], max = maxS, min = minS)
+            hsl[2] = limit(target = hsl[2], max = maxL, min = minL)
+            return ColorUtils.HSLToColor(hsl)
+        }
+
+        private fun limit(target: Float, max: Float, min: Float): Float {
+            if (target < min) {
+                return min
+            }
+            if (target > max) {
+                return max
+            }
+            return target
+        }
     }
 
     abstract fun original(src: Int): Int
@@ -46,9 +66,14 @@ sealed class BlendMode {
 
     abstract fun background(src: Int): Int
 
+    protected fun Int.limitColor(): Int {
+        val color = this
+        return limit(color, 0.5F, 0.2F, 0.6F, 0.2F)
+    }
+
     object Light : BlendMode() {
         override fun original(src: Int): Int {
-            return src
+            return blend(src.limitColor(), Color.WHITE, 0.3F)
         }
 
         override fun variant(src: Int): Int {
@@ -71,7 +96,7 @@ sealed class BlendMode {
 
     object Dark : BlendMode() {
         override fun original(src: Int): Int {
-            return blend(src, Color.BLACK, 0.5F)
+            return blend(src.limitColor(), Color.BLACK, 0.5F)
         }
 
         override fun variant(src: Int): Int {
