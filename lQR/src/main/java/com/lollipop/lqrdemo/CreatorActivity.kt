@@ -33,7 +33,8 @@ class CreatorActivity : ColorModeActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         WindowInsetsHelper.fitsSystemWindows(this)
-        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
+        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
         binding.subpageGroup.adapter = SubPageAdapter(this)
         TabLayoutMediator(
             binding.tabLayout,

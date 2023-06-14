@@ -82,6 +82,7 @@
         app:rightTop="20dp">
 
         <LinearLayout
+            android:id="@+id/panelGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?attr/colorBackgroundFloating"
