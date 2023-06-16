@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -19,6 +20,8 @@ import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
+import com.lollipop.pigment.BlendMode
+import com.lollipop.pigment.Pigment
 
 class CreatorActivity : ColorModeActivity() {
 
@@ -44,6 +47,22 @@ class CreatorActivity : ColorModeActivity() {
         }.attach()
 
         contentBuilderLauncher.launch(null)
+    }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.shareButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.titleView.setTextColor(pigment.onBackgroundTitle)
+        binding.saveBtn.setBackgroundColor(pigment.secondaryVariant)
+        binding.saveBtn.setTextColor(pigment.onSecondaryTitle)
+        binding.panelGroup.setBackgroundColor(pigment.extreme)
+        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
+        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
+        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
+            BlendMode.blend(pigment.primaryColor, pigment.extreme, 0.8F)
+        )
     }
 
     private fun onCodeContentChanged(value: String) {

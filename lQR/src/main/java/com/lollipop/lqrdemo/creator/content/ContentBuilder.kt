@@ -421,17 +421,7 @@ abstract class ContentBuilder : BaseFragment() {
             )
             dividerLine.isVisible = mergeNext
             pigment?.let {
-                itemContentView.setBackgroundColor(
-                    when (it.blendMode) {
-                        BlendMode.Dark -> {
-                            Color.BLACK
-                        }
-
-                        BlendMode.Light -> {
-                            Color.WHITE
-                        }
-                    }
-                )
+                itemContentView.setBackgroundColor(it.extreme)
                 dividerLine.setBackgroundColor(it.onBackgroundBody)
                 dividerLine.alpha = 0.2F
             }

@@ -56,6 +56,8 @@ sealed class BlendMode {
         }
     }
 
+    abstract val extreme: Int
+
     abstract fun original(src: Int): Int
 
     abstract fun variant(src: Int): Int
@@ -72,6 +74,9 @@ sealed class BlendMode {
     }
 
     object Light : BlendMode() {
+
+        override val extreme: Int = Color.WHITE
+
         override fun original(src: Int): Int {
             return blend(src.limitColor(), Color.WHITE, 0.3F)
         }
@@ -95,6 +100,9 @@ sealed class BlendMode {
     }
 
     object Dark : BlendMode() {
+
+        override val extreme: Int = Color.BLACK
+
         override fun original(src: Int): Int {
             return blend(src.limitColor(), Color.BLACK, 0.5F)
         }

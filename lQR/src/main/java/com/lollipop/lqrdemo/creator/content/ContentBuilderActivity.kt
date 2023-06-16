@@ -96,14 +96,11 @@ class ContentBuilderActivity : ColorModeActivity() {
     }
 
     private fun updateTabLayoutPigment(pigment: Pigment) {
-        val theme = BlendMode.blend(pigment.primaryColor, pigment.onBackgroundTitle, 0.6F)
-        binding.tabLayout.setSelectedTabIndicatorColor(theme)
-        binding.tabLayout.tabTextColors = PigmentTint.getSelectStateList(
-            theme,
-            pigment.onBackgroundBody
+        binding.tabLayout.setTabTextColors(pigment.onBackgroundBody, pigment.primaryColor)
+        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
+        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
+            BlendMode.blend(pigment.primaryColor, pigment.backgroundColor, 0.8F)
         )
-        val ripple = BlendMode.blend(pigment.primaryColor, pigment.backgroundColor, 0.8F)
-        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(ripple)
     }
 
     class ResultContract : ActivityLauncherHelper.Simple<Any?, String?>() {

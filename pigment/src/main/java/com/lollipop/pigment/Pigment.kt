@@ -133,4 +133,26 @@ class Pigment(
     val onBackgroundBody: Int by lazy {
         blendMode.title(backgroundColor)
     }
+
+    /**
+     * 模式所对应的极致的颜色
+     * 比如，在深色模式下，它会是黑色，浅色模式下，它会是白色
+     */
+    val extreme: Int by lazy {
+        blendMode.extreme
+    }
+
+    /**
+     * 极致色彩为背景时的标题颜色
+     */
+    val onExtremeTitle: Int by lazy {
+        blendMode.title(extreme)
+    }
+
+    /**
+     * 极致色彩为背景时的内容颜色
+     */
+    val onExtremeBody: Int by lazy {
+        blendMode.body(extreme)
+    }
 }

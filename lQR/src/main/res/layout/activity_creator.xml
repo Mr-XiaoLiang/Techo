@@ -26,6 +26,7 @@
             app:tint="?attr/colorOnBackground" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleView"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,6 +39,7 @@
             app:fontFamily="@font/font_logo" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/shareButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
