@@ -93,5 +93,7 @@
     <string name="calendar_status">状态</string>
     <string name="geo_lat">纬度</string>
     <string name="geo_lng">经度</string>
+    <string name="btn_content_builder">构建内容</string>
+    <string name="btn_content_done">完成</string>
 
 </resources>

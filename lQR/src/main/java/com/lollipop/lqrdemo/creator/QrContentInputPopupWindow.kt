@@ -20,7 +20,7 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
     companion object {
         private const val WARNING_LENGTH = 200
 
-        fun show(context: Context, preset: CharSequence, callback: (CharSequence) -> Unit) {
+        fun show(context: Context, preset: String, callback: (String) -> Unit) {
             QrContentInputPopupWindow(context, Option(preset, callback)).show()
         }
 
@@ -59,13 +59,13 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
     }
 
     override fun dismiss() {
-        option.callback(binding.inputEditView.text ?: "")
+        option.callback(binding.inputEditView.text?.toString() ?: "")
         super.dismiss()
     }
 
     class Option(
-        val preset: CharSequence,
-        val callback: (CharSequence) -> Unit
+        val preset: String,
+        val callback: (String) -> Unit
     )
 
 }

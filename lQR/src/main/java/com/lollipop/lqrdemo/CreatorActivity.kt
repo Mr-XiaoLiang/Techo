@@ -14,7 +14,9 @@ import com.lollipop.base.util.registerResult
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
+import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
+import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
@@ -23,9 +25,11 @@ import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
-class CreatorActivity : ColorModeActivity() {
+class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
 
     private val binding: ActivityCreatorBinding by lazyBind()
+
+    private val creatorHelper = QrCreatorHelper()
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
         onCodeContentChanged(it ?: "")
@@ -126,6 +130,14 @@ class CreatorActivity : ColorModeActivity() {
         DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
         BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java)
 
+    }
+
+    override fun getQrContentInfo(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun requestChangeContent() {
+        QrContentInputPopupWindow.show(this, creatorHelper.contentValue, ::onCodeContentChanged)
     }
 
 }

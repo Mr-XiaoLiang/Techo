@@ -9,9 +9,10 @@ import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.BaseFragment
+import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
 
-class QrContentValueFragment : BaseFragment() {
+class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
 
     private val binding: FragmentQrContentValueBinding by lazyBind()
 
@@ -43,17 +44,17 @@ class QrContentValueFragment : BaseFragment() {
     }
 
     private fun openInputDialog() {
-        val c = context ?: return
-        QrContentInputPopupWindow.show(c, binding.inputEditView.text ?: "", ::onInputResult)
+        callback?.requestChangeContent()
     }
 
-    private fun onInputResult(value: CharSequence) {
-        binding.inputEditView.text = value
-        callback?.onQrContentValueChanged(value)
+    override fun onCodeContentChanged(value: String) {
+        TODO("Not yet implemented")
     }
 
-    fun interface Callback {
-        fun onQrContentValueChanged(value: CharSequence)
+    interface Callback {
+        fun getQrContentInfo(): String
+
+        fun requestChangeContent()
     }
 
 }
