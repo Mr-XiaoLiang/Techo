@@ -29,7 +29,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
 
     private val binding: ActivityCreatorBinding by lazyBind()
 
-    private val creatorHelper = QrCreatorHelper()
+    private val creatorHelper = QrCreatorHelper(this)
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
         onCodeContentChanged(it ?: "")
@@ -72,6 +72,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
     private fun onCodeContentChanged(value: String) {
         findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
     }
+
 
     private fun findFragment(position: Int = -1): Fragment? {
         val pager2 = binding.subpageGroup

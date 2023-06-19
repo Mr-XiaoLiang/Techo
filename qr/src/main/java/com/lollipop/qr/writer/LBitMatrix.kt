@@ -1,6 +1,5 @@
 package com.lollipop.qr.writer
 
-import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 
 
@@ -43,9 +42,11 @@ class LBitMatrix(val width: Int, val height: Int = width) {
                 nullableMatrix.setRegion(left, top, width, height)
                 blackMatrix.setRegion(left, top, width, height)
             }
+
             TYPE.WHITE -> {
                 nullableMatrix.setRegion(left, top, width, height)
             }
+
             else -> {}
         }
     }
