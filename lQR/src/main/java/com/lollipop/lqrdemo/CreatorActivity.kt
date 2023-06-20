@@ -53,6 +53,9 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
         contentBuilderLauncher.launch(null)
     }
 
+    /**
+     *
+     */
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         binding.root.setBackgroundColor(pigment.backgroundColor)
@@ -134,11 +137,11 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
     }
 
     override fun getQrContentInfo(): String {
-        TODO("Not yet implemented")
+        return creatorHelper.contentValue
     }
 
     override fun requestChangeContent() {
-        QrContentInputPopupWindow.show(this, creatorHelper.contentValue, ::onCodeContentChanged)
+        QrContentInputPopupWindow.show(this, getQrContentInfo(), ::onCodeContentChanged)
     }
 
 }
