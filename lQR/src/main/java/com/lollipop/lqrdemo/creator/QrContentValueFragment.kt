@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
@@ -48,7 +49,9 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
     }
 
     override fun onCodeContentChanged(value: String) {
-        TODO("Not yet implemented")
+        onUI {
+            binding.inputEditView.text = value
+        }
     }
 
     interface Callback {

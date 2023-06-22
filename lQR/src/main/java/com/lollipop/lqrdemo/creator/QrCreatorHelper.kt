@@ -61,8 +61,9 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
             }
 
             //use application context to get contentResolver
-            val uri =
-                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            val uri = contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+            )
             uri?.let { contentResolver.openOutputStream(it) }.also { fos = it }
             fos?.use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
             fos?.flush()
