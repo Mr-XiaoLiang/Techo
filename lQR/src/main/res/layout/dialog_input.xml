@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:leftTop="20dp"
-    app:rightTop="20dp">
+    android:radius="20dp">
 
     <LinearLayout
         android:id="@+id/inputContent"
@@ -23,9 +22,7 @@
             android:paddingHorizontal="32dp"
             android:text="@string/app_name"
             android:textColor="?attr/colorSecondary"
-            android:textSize="12sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:textSize="12sp" />
 
         <com.lollipop.widget.RoundBackgroundView
             android:layout_width="match_parent"
@@ -42,6 +39,7 @@
                 android:background="@android:color/transparent"
                 android:maxLength="984"
                 android:maxLines="4"
+                android:hint="@string/hint_input_value"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 tools:text="asfajshf\najksh\nfakshdf" />

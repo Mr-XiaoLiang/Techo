@@ -17,6 +17,7 @@
         app:round_type="absolute">
 
         <TextView
+            android:hint="@string/hint_input_value"
             android:id="@+id/inputEditView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

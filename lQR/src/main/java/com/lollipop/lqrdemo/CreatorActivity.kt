@@ -49,8 +49,6 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
         ) { tab, position ->
             tab.setText(SubPage.values()[position].tab)
         }.attach()
-
-        contentBuilderLauncher.launch(null)
     }
 
     /**
@@ -73,9 +71,13 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
     }
 
     private fun onCodeContentChanged(value: String) {
+        creatorHelper.contentValue = value
         findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
     }
 
+    private fun openBuildPage() {
+        contentBuilderLauncher.launch(null)
+    }
 
     private fun findFragment(position: Int = -1): Fragment? {
         val pager2 = binding.subpageGroup
@@ -141,7 +143,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
     }
 
     override fun requestChangeContent() {
-        QrContentInputPopupWindow.show(this, getQrContentInfo(), ::onCodeContentChanged)
+        QrContentInputPopupWindow.show(
+            this,
+            getQrContentInfo(),
+            ::openBuildPage,
+            ::onCodeContentChanged
+        )
     }
 
 }

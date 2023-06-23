@@ -2,8 +2,12 @@ package com.lollipop.lqrdemo.creator
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.widget.doAfterTextChanged
@@ -12,6 +16,7 @@ import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.WindowInsetsType
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 
@@ -20,8 +25,13 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
     companion object {
         private const val WARNING_LENGTH = 200
 
-        fun show(context: Context, preset: String, callback: (String) -> Unit) {
-            QrContentInputPopupWindow(context, Option(preset, callback)).show()
+        fun show(
+            context: Context,
+            preset: String,
+            openBuildPage: () -> Unit,
+            callback: (String) -> Unit
+        ) {
+            QrContentInputPopupWindow(context, Option(preset, openBuildPage, callback)).show()
         }
 
     }
@@ -32,6 +42,9 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window?.let {
+            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.setGravity(Gravity.TOP)
+            it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             WindowInsetsHelper.fitsSystemWindows(it)
             updateWindowAttributes(it)
         }
@@ -45,6 +58,14 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
                 WARNING_LENGTH,
                 text?.length ?: 0
             )
+        }
+        binding.doneButton.onClick {
+            option.callback(binding.inputEditView.text?.toString() ?: "")
+            dismiss()
+        }
+        binding.builderButton.onClick {
+            option.openBuildPage()
+            dismiss()
         }
     }
 
@@ -65,6 +86,7 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
 
     class Option(
         val preset: String,
+        val openBuildPage: () -> Unit,
         val callback: (String) -> Unit
     )
 

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Size
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.PermissionChecker
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,7 +22,6 @@ import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ScanResultActivity
-import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.lqrdemo.other.AppSettings
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
@@ -106,7 +104,8 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.createBtn.onClick {
-            Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, CreatorActivity::class.java))
+//            Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
         }
         binding.permissionView.onClick {
             requestPermissions(
