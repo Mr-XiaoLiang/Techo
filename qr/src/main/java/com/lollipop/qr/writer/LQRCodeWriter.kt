@@ -137,6 +137,24 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         return renderResultLQR(bean.qrCode, bean.width, bean.height, bean.quietZone)
     }
 
+    /**
+     * 构建原始的二维码的数据
+     * 它的目的是为了更自由的定制二维码
+     */
+    fun encodeOriginal(
+        contents: String,
+        hints: Map<EncodeHintType, *>? = null
+    ): QRCode {
+        var errorCorrectionLevel = ErrorCorrectionLevel.L
+        if (hints != null) {
+            if (hints.containsKey(EncodeHintType.ERROR_CORRECTION)) {
+                errorCorrectionLevel =
+                    ErrorCorrectionLevel.valueOf(hints[EncodeHintType.ERROR_CORRECTION].toString())
+            }
+        }
+        return Encoder.encode(contents, errorCorrectionLevel, hints)
+    }
+
     private fun encodeTo(
         contents: String,
         format: BarcodeFormat,
@@ -153,18 +171,13 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
             throw IllegalArgumentException("Can only encode QR_CODE, but got $format")
         }
 
-        var errorCorrectionLevel = ErrorCorrectionLevel.L
         var quietZone = QUIET_ZONE_SIZE
         if (hints != null) {
-            if (hints.containsKey(EncodeHintType.ERROR_CORRECTION)) {
-                errorCorrectionLevel =
-                    ErrorCorrectionLevel.valueOf(hints[EncodeHintType.ERROR_CORRECTION].toString())
-            }
             if (hints.containsKey(EncodeHintType.MARGIN)) {
                 quietZone = Integer.parseInt(hints[EncodeHintType.MARGIN].toString())
             }
         }
-        val code = Encoder.encode(contents, errorCorrectionLevel, hints)
+        val code = encodeOriginal(contents, hints)
         return CodeBean(code, width, height, quietZone)
     }
 
