@@ -20,40 +20,40 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
          * 获取二维码的Version
          * 通过宽度来计算宽度
          */
-        private fun getVersion(width: Int) = (width - 21) / 4 + 1
+        fun getVersion(width: Int) = (width - 21) / 4 + 1
 
         /**
          * 左上角定位点
          */
-        private fun inLeftTop(x: Int, y: Int): Boolean {
+        fun inLeftTop(x: Int, y: Int): Boolean {
             return (x < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && y < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
         }
 
         /**
          * 右上角定位点
          */
-        private fun inRightTop(width: Int, x: Int, y: Int): Boolean {
+        fun inRightTop(width: Int, x: Int, y: Int): Boolean {
             return ((width - x) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1 && y < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
         }
 
         /**
          * 左下角定位点
          */
-        private fun inLeftBottom(height: Int, x: Int, y: Int): Boolean {
+        fun inLeftBottom(height: Int, x: Int, y: Int): Boolean {
             return (x < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && (height - y) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1)
         }
 
         /**
          * Timing Pattern基准线
          */
-        private fun inTimingPattern(x: Int, y: Int): Boolean {
+        fun inTimingPattern(x: Int, y: Int): Boolean {
             return x == BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1 || y == BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1
         }
 
         /**
          * 是否位于格式化数据分区
          */
-        private fun inFormatInformation(width: Int, x: Int, y: Int): Boolean {
+        fun inFormatInformation(width: Int, x: Int, y: Int): Boolean {
             if (getVersion(width) < 7) {
                 return false
             }
@@ -65,7 +65,7 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         /**
          * 判断是否在辅助定位点上
          */
-        private fun isAlignmentPattern(version: Version, width: Int, x: Int, y: Int): Boolean {
+        fun isAlignmentPattern(version: Version, width: Int, x: Int, y: Int): Boolean {
             val apcCenterArray = version.alignmentPatternCenters
             if (apcCenterArray.isEmpty()) {
                 return false
@@ -88,10 +88,6 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
                     if ((x <= i + 2 && x >= i - 2) && (y <= j + 2 && y >= j - 2)) {
                         return true
                     }
-//                //判断是否是在范围内
-//                if(( x < j+2 && x > j-2 ) && ( y < i+2 && y > i-2 )){
-//                    return true
-//                }
                 }
             }
             return false
