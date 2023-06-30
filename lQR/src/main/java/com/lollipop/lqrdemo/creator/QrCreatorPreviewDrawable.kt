@@ -3,19 +3,24 @@ package com.lollipop.lqrdemo.creator
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import com.lollipop.lqrdemo.writer.QrWriter
 
-class QrCreatorPreviewDrawable: Drawable() {
+class QrCreatorPreviewDrawable(private val writer: QrWriter): Drawable() {
     override fun draw(canvas: Canvas) {
-        TODO("Not yet implemented")
+        writer.onDraw(canvas)
     }
 
     override fun setAlpha(alpha: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
-        TODO("Not yet implemented")
+    }
+
+    override fun onBoundsChange(bounds: Rect) {
+        super.onBoundsChange(bounds)
+        writer.setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
     override fun getOpacity(): Int {
