@@ -12,6 +12,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.bridge.OnCodeMatrixChangedListener
+import com.lollipop.lqrdemo.writer.QrWriter
+import com.lollipop.lqrdemo.writer.QrWriterDistributor
 import com.lollipop.qr.writer.BarcodeWriter
 import com.lollipop.qr.writer.LBitMatrix
 import java.io.OutputStream
@@ -78,13 +80,20 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
         }
     }
 
+    private val previewWriterDistributor = QrWriterDistributor()
+
+    val previewWriter: QrWriter
+        get() {
+            return previewWriterDistributor
+        }
+
 
     private fun onContentChanged() {
         val content = contentValue
         codeContentChangedListener.invoke { it.onCodeContentChanged(content) }
         val matrix = createBitMatrix()
         codeMatrixChangedListener.invoke { it.onCodeMatrixChanged(matrix) }
-        // TODO
+        // TODO 也许二维码定制本身是一个伪需求
     }
 
     private fun createBitMatrix(): LBitMatrix? {
