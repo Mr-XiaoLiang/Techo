@@ -3,15 +3,16 @@ package com.lollipop.lqrdemo.writer
 import android.graphics.Canvas
 import android.graphics.Rect
 import com.google.zxing.common.BitMatrix
+import com.lollipop.qr.writer.LBitMatrix
 
 abstract class QrWriter {
 
     protected val bounds: Rect = Rect()
 
-    protected var bitMatrix: BitMatrix? = null
+    protected var bitMatrix: LBitMatrix? = null
         private set
 
-    fun setBitMatrix(matrix: BitMatrix) {
+    fun setBitMatrix(matrix: LBitMatrix?) {
         this.bitMatrix = matrix
         onBitMatrixChanged()
     }

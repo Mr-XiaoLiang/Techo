@@ -10,11 +10,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
+import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
-import com.lollipop.lqrdemo.creator.bridge.OnCodeMatrixChangedListener
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
-import com.lollipop.qr.writer.BarcodeWriter
+import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.writer.LBitMatrix
 import java.io.OutputStream
 import kotlin.random.Random
@@ -29,8 +30,8 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
 
     private var bitMatrix: LBitMatrix? = null
 
-    private val codeMatrixChangedListener = ListenerManager<OnCodeMatrixChangedListener>()
     private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
+    private val loadStatusChangedListener = ListenerManager<OnLoadStatusChangedListener>()
 
     companion object {
 
@@ -91,16 +92,27 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
     private fun onContentChanged() {
         val content = contentValue
         codeContentChangedListener.invoke { it.onCodeContentChanged(content) }
-        val matrix = createBitMatrix()
-        codeMatrixChangedListener.invoke { it.onCodeMatrixChanged(matrix) }
-        // TODO 也许二维码定制本身是一个伪需求
+        loadStatusChangedListener.invoke { it.onLoadStatusChanged(true) }
+        doAsync {
+            val matrix = createBitMatrix()
+            previewWriterDistributor.setBitMatrix(matrix)
+            onUI {
+                loadStatusChangedListener.invoke { it.onLoadStatusChanged(false) }
+            }
+        }
     }
 
     private fun createBitMatrix(): LBitMatrix? {
-        val result = BarcodeWriter(lifecycleOwner).encode(contentValue).build()
+        val result = BarcodeHelper.createWriter(lifecycleOwner).encode(contentValue).build()
         val matrix = result.getOrNull()
         bitMatrix = matrix
         return matrix
+    }
+
+    fun interface OnLoadStatusChangedListener {
+
+        fun onLoadStatusChanged(isLading: Boolean)
+
     }
 
 }
