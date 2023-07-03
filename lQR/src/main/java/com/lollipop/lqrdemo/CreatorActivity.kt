@@ -25,7 +25,7 @@ import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
-class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
+class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback, OnCodeContentChangedListener, QrCreatorHelper.OnLoadStatusChangedListener {
 
     private val binding: ActivityCreatorBinding by lazyBind()
 
@@ -49,6 +49,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
         ) { tab, position ->
             tab.setText(SubPage.values()[position].tab)
         }.attach()
+        creatorHelper.addContentChangedListener(this)
     }
 
     /**
@@ -70,9 +71,13 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback {
         )
     }
 
-    private fun onCodeContentChanged(value: String) {
+    override fun onCodeContentChanged(value: String) {
         creatorHelper.contentValue = value
         findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
+    }
+
+    override fun onLoadStatusChanged(isLading: Boolean) {
+        // TODO("Not yet implemented")
     }
 
     private fun openBuildPage() {

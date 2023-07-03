@@ -22,16 +22,6 @@ import kotlin.random.Random
 
 class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
 
-    var contentValue: String = ""
-        set(value) {
-            field = value
-            onContentChanged()
-        }
-
-    private var bitMatrix: LBitMatrix? = null
-
-    private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
-    private val loadStatusChangedListener = ListenerManager<OnLoadStatusChangedListener>()
 
     companion object {
 
@@ -81,6 +71,18 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
         }
     }
 
+    var contentValue: String = ""
+        set(value) {
+            field = value
+            onContentChanged()
+        }
+
+    private var bitMatrix: LBitMatrix? = null
+
+    private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
+    private val loadStatusChangedListener = ListenerManager<OnLoadStatusChangedListener>()
+
+
     private val previewWriterDistributor = QrWriterDistributor()
 
     val previewWriter: QrWriter
@@ -88,6 +90,21 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
             return previewWriterDistributor
         }
 
+    fun addLoadStatusChangedListener(listener: OnLoadStatusChangedListener) {
+        this.loadStatusChangedListener.addListener(listener)
+    }
+
+    fun removeLoadStatusChangedListener(listener: OnLoadStatusChangedListener) {
+        this.loadStatusChangedListener.removeListener(listener)
+    }
+
+    fun addContentChangedListener(listener: OnCodeContentChangedListener) {
+        this.codeContentChangedListener.addListener(listener)
+    }
+
+    fun removeContentChangedListener(listener: OnCodeContentChangedListener) {
+        this.codeContentChangedListener.removeListener(listener)
+    }
 
     private fun onContentChanged() {
         val content = contentValue
