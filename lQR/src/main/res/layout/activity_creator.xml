@@ -83,28 +83,11 @@
         app:leftTop="20dp"
         app:rightTop="20dp">
 
-        <LinearLayout
-            android:id="@+id/panelGroup"
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorBackgroundFloating"
-            android:orientation="vertical">
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/subpageGroup"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                style="@style/Widget.Material3.TabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabGravity="start"
-                app:tabMode="scrollable" />
-
-        </LinearLayout>
+            android:name="com.lollipop.lqrdemo.creator.QrContentValueFragment"
+            android:tag="contentValueFragment"/>
 
     </com.lollipop.clip.RoundClipLayout>
 

@@ -25,7 +25,8 @@ import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
-class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback, OnCodeContentChangedListener, QrCreatorHelper.OnLoadStatusChangedListener {
+class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
+    OnCodeContentChangedListener, QrCreatorHelper.OnLoadStatusChangedListener {
 
     private val binding: ActivityCreatorBinding by lazyBind()
 
@@ -40,15 +41,15 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback, On
         setContentView(binding.root)
         WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
-        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
-        binding.subpageGroup.adapter = SubPageAdapter(this)
-        TabLayoutMediator(
-            binding.tabLayout,
-            binding.subpageGroup,
-            true
-        ) { tab, position ->
-            tab.setText(SubPage.values()[position].tab)
-        }.attach()
+//        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
+//        binding.subpageGroup.adapter = SubPageAdapter(this)
+//        TabLayoutMediator(
+//            binding.tabLayout,
+//            binding.subpageGroup,
+//            true
+//        ) { tab, position ->
+//            tab.setText(SubPage.values()[position].tab)
+//        }.attach()
         creatorHelper.addContentChangedListener(this)
     }
 
@@ -63,17 +64,17 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback, On
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
         binding.saveBtn.setBackgroundColor(pigment.secondaryVariant)
         binding.saveBtn.setTextColor(pigment.onSecondaryTitle)
-        binding.panelGroup.setBackgroundColor(pigment.extreme)
-        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
-        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
-        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
-            BlendMode.blend(pigment.primaryColor, pigment.extreme, 0.8F)
-        )
+//        binding.panelGroup.setBackgroundColor(pigment.extreme)
+//        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
+//        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
+//        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
+//            BlendMode.blend(pigment.primaryColor, pigment.extreme, 0.8F)
+//        )
     }
 
     override fun onCodeContentChanged(value: String) {
         creatorHelper.contentValue = value
-        findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
+        findContentValueFragment()?.onCodeContentChanged(value)
     }
 
     override fun onLoadStatusChanged(isLading: Boolean) {
@@ -84,28 +85,36 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback, On
         contentBuilderLauncher.launch(null)
     }
 
-    private fun findFragment(position: Int = -1): Fragment? {
-        val pager2 = binding.subpageGroup
-        val adapter = pager2.adapter ?: return null
-        val itemCount = adapter.itemCount
-        if (itemCount < 1) {
-            return null
-        }
-        val pagePosition = if (position < 0 || position >= itemCount) {
-            pager2.currentItem
-        } else {
-            position
-        }
-        if (pagePosition < 0 || pagePosition >= itemCount) {
-            return null
-        }
-        val itemId = adapter.getItemId(pagePosition)
-        return supportFragmentManager.findFragmentByTag("f$itemId")
-    }
+//    private fun findFragment(position: Int = -1): Fragment? {
+//        val pager2 = binding.subpageGroup
+//        val adapter = pager2.adapter ?: return null
+//        val itemCount = adapter.itemCount
+//        if (itemCount < 1) {
+//            return null
+//        }
+//        val pagePosition = if (position < 0 || position >= itemCount) {
+//            pager2.currentItem
+//        } else {
+//            position
+//        }
+//        if (pagePosition < 0 || pagePosition >= itemCount) {
+//            return null
+//        }
+//        val itemId = adapter.getItemId(pagePosition)
+//        return supportFragmentManager.findFragmentByTag("f$itemId")
+//    }
 
-    private inline fun <reified T : Any> findTypedFragment(position: Int = -1): T? {
-        val fragment = findFragment(position) ?: return null
-        if (fragment is T) {
+//    private inline fun <reified T : Any> findTypedFragment(position: Int = -1): T? {
+//        val fragment = findFragment(position) ?: return null
+//        if (fragment is T) {
+//            return fragment
+//        }
+//        return null
+//    }
+
+    private fun findContentValueFragment(): QrContentValueFragment? {
+        val fragment = supportFragmentManager.findFragmentByTag("contentValueFragment")
+        if (fragment is QrContentValueFragment) {
             return fragment
         }
         return null
