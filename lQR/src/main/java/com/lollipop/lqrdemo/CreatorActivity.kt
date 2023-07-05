@@ -17,6 +17,7 @@ import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
+import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
 import com.lollipop.lqrdemo.creator.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
@@ -36,6 +37,8 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         onCodeContentChanged(it ?: "")
     }
 
+    private val previewDrawable = QrCreatorPreviewDrawable(creatorHelper.previewWriter)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -51,6 +54,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
 //            tab.setText(SubPage.values()[position].tab)
 //        }.attach()
         creatorHelper.addContentChangedListener(this)
+        binding.previewImageView.setImageDrawable(previewDrawable)
     }
 
     /**
@@ -78,7 +82,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     override fun onLoadStatusChanged(isLading: Boolean) {
-        // TODO("Not yet implemented")
+        if (isLading) {
+            binding.contentLoadingView.show()
+        } else {
+            binding.contentLoadingView.hide()
+            previewDrawable.invalidateSelf()
+        }
     }
 
     private fun openBuildPage() {
