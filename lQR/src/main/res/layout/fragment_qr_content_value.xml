@@ -7,16 +7,23 @@
     android:id="@+id/contentGroup"
     android:background="?attr/colorBackgroundFloating">
 
-    <TextView
-        android:id="@+id/inputEditView"
+    <com.lollipop.clip.RoundClipLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:hint="@string/hint_input_value"
-        android:maxLength="984"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:textSize="16sp"
-        tools:text="asfajshf\najksh\nfakshdf" />
+        android:radius="16dp"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/inputEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:background="#3f00"
+            android:hint="@string/hint_input_value"
+            android:maxLength="984"
+            android:minLines="3"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:textSize="16sp"
+            tools:text="asfajshf" />
+    </com.lollipop.clip.RoundClipLayout>
 
 </androidx.core.widget.NestedScrollView>

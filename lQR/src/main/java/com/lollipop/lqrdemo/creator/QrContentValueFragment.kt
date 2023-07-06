@@ -58,7 +58,8 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         binding.contentGroup.setBackgroundColor(pigment.extreme)
-        binding.inputEditView.setTextColor(pigment.onExtremeTitle)
+        binding.inputEditView.setTextColor(pigment.onPrimaryTitle)
+        binding.inputEditView.setBackgroundColor(pigment.primaryColor)
     }
 
     interface Callback {

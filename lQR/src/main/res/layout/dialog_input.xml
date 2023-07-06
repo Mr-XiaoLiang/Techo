@@ -24,13 +24,11 @@
             android:textColor="?attr/colorSecondary"
             android:textSize="12sp" />
 
-        <com.lollipop.widget.RoundBackgroundView
+        <com.lollipop.clip.RoundClipLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            app:color="@color/colorBackgroundInput"
-            app:round_radius="16dp"
-            app:round_type="absolute">
+            android:radius="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputEditView"
@@ -38,13 +36,16 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:maxLength="984"
-                android:maxLines="4"
+                android:maxLines="6"
                 android:hint="@string/hint_input_value"
+                android:gravity="start|top"
+                tools:background="#3f00"
+                android:minLines="3"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                tools:text="asfajshf\najksh\nfakshdf" />
+                tools:text="asfajshf\najk\ns\nh\nf\na\nks\nhdf" />
 
-        </com.lollipop.widget.RoundBackgroundView>
+        </com.lollipop.clip.RoundClipLayout>
 
         <FrameLayout
             android:layout_width="match_parent"

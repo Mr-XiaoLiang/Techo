@@ -19,6 +19,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
+import com.lollipop.pigment.PigmentWallpaperCenter
 
 class QrContentInputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
 
@@ -66,6 +67,11 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         binding.builderButton.onClick {
             option.openBuildPage()
             dismiss()
+        }
+
+        PigmentWallpaperCenter.pigment?.let { pigment ->
+            binding.inputEditView.setBackgroundColor(pigment.primaryColor)
+            binding.inputEditView.setTextColor(pigment.onPrimaryTitle)
         }
     }
 
