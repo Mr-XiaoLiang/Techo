@@ -109,14 +109,22 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
     private fun onContentChanged() {
         val content = contentValue
         codeContentChangedListener.invoke { it.onCodeContentChanged(content) }
-        loadStatusChangedListener.invoke { it.onLoadStatusChanged(true) }
+        notifyLoadingStart()
         doAsync {
             val matrix = createBitMatrix()
             previewWriterDistributor.setBitMatrix(matrix)
             onUI {
-                loadStatusChangedListener.invoke { it.onLoadStatusChanged(false) }
+                notifyLoadingEnd()
             }
         }
+    }
+
+    private fun notifyLoadingStart() {
+        loadStatusChangedListener.invoke { it.onLoadStatusChanged(true) }
+    }
+
+    private fun notifyLoadingEnd() {
+        loadStatusChangedListener.invoke { it.onLoadStatusChanged(false) }
     }
 
     private fun createBitMatrix(): LBitMatrix? {

@@ -161,7 +161,7 @@ inline fun <reified T> T.task(
  * 异步任务
  */
 inline fun <reified T> T.doAsync(
-    noinline err: ((Throwable) -> Unit) = {},
+    noinline err: ((Throwable) -> Unit) = { it.printStackTrace() },
     noinline run: T.() -> Unit
 ): CommonUtil.Task<T> {
     val task = task(err, run)

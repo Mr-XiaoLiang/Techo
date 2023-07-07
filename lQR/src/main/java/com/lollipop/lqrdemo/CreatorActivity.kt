@@ -10,6 +10,7 @@ import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.registerResult
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrAlignmentFragment
@@ -39,6 +40,8 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
 
     private val previewDrawable = QrCreatorPreviewDrawable(creatorHelper.previewWriter)
 
+    private val log by lazyLogD()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -54,6 +57,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
 //            tab.setText(SubPage.values()[position].tab)
 //        }.attach()
         creatorHelper.addContentChangedListener(this)
+        creatorHelper.addLoadStatusChangedListener(this)
         binding.previewImageView.setImageDrawable(previewDrawable)
     }
 
@@ -77,11 +81,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     override fun onCodeContentChanged(value: String) {
-        creatorHelper.contentValue = value
+        log("onCodeContentChanged： $value")
         findContentValueFragment()?.onCodeContentChanged(value)
     }
 
     override fun onLoadStatusChanged(isLading: Boolean) {
+        log("onLoadStatusChanged： $isLading")
         if (isLading) {
             binding.contentLoadingView.show()
         } else {
@@ -91,6 +96,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     private fun openBuildPage() {
+        log("openBuildPage")
         contentBuilderLauncher.launch(null)
     }
 
@@ -129,6 +135,22 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         return null
     }
 
+    override fun getQrContentInfo(): String {
+        log("getQrContentInfo: ${creatorHelper.contentValue}")
+        return creatorHelper.contentValue
+    }
+
+    override fun requestChangeContent() {
+        log("requestChangeContent")
+        QrContentInputPopupWindow.show(
+            this,
+            getQrContentInfo(),
+            ::openBuildPage
+        ) {
+            creatorHelper.contentValue = it
+        }
+    }
+
     private class SubPageAdapter(
         fragmentActivity: FragmentActivity,
     ) : FragmentStateAdapter(fragmentActivity) {
@@ -159,19 +181,6 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
         BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java)
 
-    }
-
-    override fun getQrContentInfo(): String {
-        return creatorHelper.contentValue
-    }
-
-    override fun requestChangeContent() {
-        QrContentInputPopupWindow.show(
-            this,
-            getQrContentInfo(),
-            ::openBuildPage,
-            ::onCodeContentChanged
-        )
     }
 
 }

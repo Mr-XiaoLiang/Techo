@@ -1,120 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:radius="20dp">
-
-    <LinearLayout
-        android:id="@+id/inputContent"
+    android:layout_height="wrap_content">
+    <com.lollipop.clip.RoundClipLayout
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorBackgroundFloating"
-        android:orientation="vertical">
+        android:radius="20dp">
 
-        <TextView
-            android:id="@+id/warnTextView"
+        <LinearLayout
+            android:id="@+id/inputContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:paddingHorizontal="32dp"
-            android:text="@string/app_name"
-            android:textColor="?attr/colorSecondary"
-            android:textSize="12sp" />
+            android:background="?attr/colorBackgroundFloating"
+            android:orientation="vertical">
 
-        <com.lollipop.clip.RoundClipLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:radius="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputEditView"
+            <TextView
+                android:id="@+id/warnTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:maxLength="984"
-                android:maxLines="6"
-                android:hint="@string/hint_input_value"
-                android:gravity="start|top"
-                tools:background="#3f00"
-                android:minLines="3"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                tools:text="asfajshf\najk\ns\nh\nf\na\nks\nhdf" />
-
-        </com.lollipop.clip.RoundClipLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
-
-            <LinearLayout
-                android:id="@+id/builderButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp">
-
-                <ImageView
-                    android:id="@+id/builderButtonIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:padding="2dp"
-                    android:src="@drawable/ic_baseline_build_24"
-                    tools:tint="@color/black" />
-
-                <TextView
-                    android:id="@+id/builderButtonText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="@string/btn_content_builder" />
-            </LinearLayout>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="32dp"
+                android:text="@string/app_name"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="12sp" />
 
             <com.lollipop.clip.RoundClipLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="16dp"
-                android:radius="24dp">
+                android:layout_marginHorizontal="16dp"
+                android:radius="16dp">
 
-                <LinearLayout
-                    android:id="@+id/doneButton"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputEditView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:background="@android:color/transparent"
+                    android:maxLength="984"
+                    android:maxLines="6"
+                    android:hint="@string/hint_input_value"
+                    android:gravity="start|top"
+                    tools:background="#3f00"
+                    android:minLines="3"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="8dp"
-                    tools:background="?attr/colorPrimary">
-
-                    <ImageView
-                        android:id="@+id/doneButtonIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_baseline_done_24"
-                        tools:tint="@color/black" />
-
-                    <TextView
-                        android:id="@+id/doneButtonText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/btn_content_done" />
-                </LinearLayout>
+                    tools:text="asfajshf\najk\ns\nh\nf\na\nks\nhdf" />
 
             </com.lollipop.clip.RoundClipLayout>
 
-        </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
 
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/builderButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp">
 
-</com.lollipop.clip.RoundClipLayout>
+                    <ImageView
+                        android:id="@+id/builderButtonIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:padding="2dp"
+                        android:src="@drawable/ic_baseline_build_24"
+                        tools:tint="@color/black" />
+
+                    <TextView
+                        android:id="@+id/builderButtonText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/btn_content_builder" />
+                </LinearLayout>
+
+                <com.lollipop.clip.RoundClipLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="16dp"
+                    android:radius="24dp">
+
+                    <LinearLayout
+                        android:id="@+id/doneButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        tools:background="?attr/colorPrimary">
+
+                        <ImageView
+                            android:id="@+id/doneButtonIcon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_baseline_done_24"
+                            tools:tint="@color/black" />
+
+                        <TextView
+                            android:id="@+id/doneButtonText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/btn_content_done" />
+                    </LinearLayout>
+
+                </com.lollipop.clip.RoundClipLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </com.lollipop.clip.RoundClipLayout>
+</FrameLayout>

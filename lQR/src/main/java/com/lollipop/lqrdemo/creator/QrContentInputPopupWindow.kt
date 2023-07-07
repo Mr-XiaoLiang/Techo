@@ -46,8 +46,8 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             it.setGravity(Gravity.TOP)
             it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            WindowInsetsHelper.fitsSystemWindows(it)
-            updateWindowAttributes(it)
+//            WindowInsetsHelper.fitsSystemWindows(it)
+//            updateWindowAttributes(it)
         }
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.IME
@@ -83,11 +83,6 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
         }
-    }
-
-    override fun dismiss() {
-        option.callback(binding.inputEditView.text?.toString() ?: "")
-        super.dismiss()
     }
 
     class Option(
