@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.creator
 
 import android.app.Dialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -17,6 +18,7 @@ import com.lollipop.base.util.insets.WindowInsetsType
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.base.util.requestBoard
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 import com.lollipop.pigment.PigmentWallpaperCenter
@@ -46,8 +48,6 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             it.setGravity(Gravity.TOP)
             it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//            WindowInsetsHelper.fitsSystemWindows(it)
-//            updateWindowAttributes(it)
         }
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.IME
@@ -70,18 +70,23 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         }
 
         PigmentWallpaperCenter.pigment?.let { pigment ->
+            binding.inputContent.setBackgroundColor(pigment.extreme)
+
             binding.inputEditView.setBackgroundColor(pigment.primaryColor)
             binding.inputEditView.setTextColor(pigment.onPrimaryTitle)
+
+            binding.doneButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onExtremeBody)
+            binding.doneButtonText.setTextColor(pigment.onExtremeBody)
+
+            binding.builderButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onExtremeBody)
+            binding.builderButtonText.setTextColor(pigment.onExtremeBody)
         }
     }
 
-    private fun updateWindowAttributes(window: Window) {
-        window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)
-        window.attributes = window.attributes.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                layoutInDisplayCutoutMode =
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            binding.inputEditView.requestBoard()
         }
     }
 

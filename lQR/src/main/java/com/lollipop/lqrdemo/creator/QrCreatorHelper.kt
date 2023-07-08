@@ -85,6 +85,8 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
 
     private val previewWriterDistributor = QrWriterDistributor()
 
+    private val writer = BarcodeHelper.createWriter(lifecycleOwner)
+
     val previewWriter: QrWriter
         get() {
             return previewWriterDistributor
@@ -128,7 +130,7 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
     }
 
     private fun createBitMatrix(): LBitMatrix? {
-        val result = BarcodeHelper.createWriter(lifecycleOwner).encode(contentValue).build()
+        val result = writer.encode(contentValue).build()
         val matrix = result.getOrNull()
         bitMatrix = matrix
         return matrix

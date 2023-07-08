@@ -73,7 +73,8 @@ open class BarcodeWriter(
                 MultiFormatWriter().encode(
                     info,
                     format,
-                    width,
+                    // 其他的码不确定尺寸，就固定最小为144吧
+                    max(width, 144),
                     height,
                     hints
                 )
@@ -127,8 +128,8 @@ open class BarcodeWriter(
         private val content: String
     ) {
 
-        private var width = 144
-        private var height = 144
+        private var width = 0
+        private var height = 0
         private var format = BarcodeFormat.QR_CODE
         private var miniDataPoint = false
         private var hints = HashMap<com.google.zxing.EncodeHintType, Any>()

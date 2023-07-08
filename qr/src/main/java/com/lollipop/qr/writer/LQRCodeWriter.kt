@@ -23,6 +23,11 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         fun getVersion(width: Int) = (width - 21) / 4 + 1
 
         /**
+         * getVersion 的反向操作，计算最小可用宽度
+         */
+        fun getMinWidth(version: Int) = ((version - 1) * 4) + 21
+
+        /**
          * 左上角定位点
          */
         fun inLeftTop(x: Int, y: Int): Boolean {
@@ -174,7 +179,10 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
             }
         }
         val code = encodeOriginal(contents, hints)
-        return CodeBean(code, width, height, quietZone)
+        val minWidth = getMinWidth(code.version.versionNumber)
+        val codeWidth = max(minWidth, width)
+        val codeHeight = max(minWidth, height)
+        return CodeBean(code, codeWidth, codeHeight, quietZone)
     }
 
     private class CodeBean(val qrCode: QRCode, val width: Int, val height: Int, val quietZone: Int)

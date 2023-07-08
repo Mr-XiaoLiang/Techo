@@ -35,7 +35,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     private val creatorHelper = QrCreatorHelper(this)
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
-        onCodeContentChanged(it ?: "")
+        creatorHelper.contentValue = it?:""
     }
 
     private val previewDrawable = QrCreatorPreviewDrawable(creatorHelper.previewWriter)
@@ -59,6 +59,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         creatorHelper.addContentChangedListener(this)
         creatorHelper.addLoadStatusChangedListener(this)
         binding.previewImageView.setImageDrawable(previewDrawable)
+        onLoadStatusChanged(false)
     }
 
     /**
