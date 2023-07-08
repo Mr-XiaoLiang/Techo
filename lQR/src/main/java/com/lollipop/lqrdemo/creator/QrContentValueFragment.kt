@@ -14,6 +14,7 @@ import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
+import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
 class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
@@ -61,8 +62,12 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         binding.contentGroup.setBackgroundColor(pigment.extreme)
-        binding.inputEditView.setTextColor(pigment.onPrimaryTitle)
-        binding.inputEditView.setBackgroundColor(pigment.primaryColor)
+        BlendMode.flow(pigment.primaryColor)
+            .blend(pigment.extreme, 0.7F) {
+                binding.inputEditView.setBackgroundColor(it)
+            }.content {
+                binding.inputEditView.setTextColor(it)
+            }
     }
 
     interface Callback {

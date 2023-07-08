@@ -54,6 +54,38 @@ sealed class BlendMode {
             }
             return target
         }
+
+        fun flow(baseColor: Int): Builder {
+            return Builder(baseColor)
+        }
+    }
+
+    class Builder(private var themeColor: Int) {
+
+        fun blend(color2: Int, ratio: Float = 0.5F, callback: (Int) -> Unit): Builder {
+            val color = blend(themeColor, color2, ratio)
+            themeColor = color
+            callback(color)
+            return this
+        }
+
+        fun title(callback: (Int) -> Unit): Builder {
+            callback(titleOnColor(themeColor))
+            return this
+        }
+
+        fun content(callback: (Int) -> Unit): Builder {
+            callback(contentOnColor(themeColor))
+            return this
+        }
+
+        fun limit(maxS: Float, minS: Float, maxL: Float, minL: Float, callback: (Int) -> Unit): Builder {
+            val color = limit(themeColor, maxS, minS, maxL, minL)
+            themeColor = color
+            callback(color)
+            return this
+        }
+
     }
 
     abstract val extreme: Int

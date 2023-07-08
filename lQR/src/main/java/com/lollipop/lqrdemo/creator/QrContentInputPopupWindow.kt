@@ -21,6 +21,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.base.util.requestBoard
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
+import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.PigmentWallpaperCenter
 
 class QrContentInputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
@@ -72,8 +73,12 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         PigmentWallpaperCenter.pigment?.let { pigment ->
             binding.inputContent.setBackgroundColor(pigment.extreme)
 
-            binding.inputEditView.setBackgroundColor(pigment.primaryColor)
-            binding.inputEditView.setTextColor(pigment.onPrimaryTitle)
+            BlendMode.flow(pigment.primaryColor)
+                .blend(pigment.extreme, 0.7F) {
+                    binding.inputEditView.setBackgroundColor(it)
+                }.content {
+                    binding.inputEditView.setTextColor(it)
+                }
 
             binding.doneButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onExtremeBody)
             binding.doneButtonText.setTextColor(pigment.onExtremeBody)
