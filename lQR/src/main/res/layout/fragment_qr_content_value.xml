@@ -8,6 +8,7 @@
     android:background="?attr/colorBackgroundFloating">
 
     <com.lollipop.clip.RoundClipLayout
+        android:id="@+id/inputValueScrollGroup"
         android:layout_width="match_parent"
         android:radius="16dp"
         android:layout_margin="16dp"
