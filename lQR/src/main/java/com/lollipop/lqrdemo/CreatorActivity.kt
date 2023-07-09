@@ -2,15 +2,19 @@ package com.lollipop.lqrdemo
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayoutMediator
+import com.lollipop.base.util.ShareSheet
+import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
+import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrAlignmentFragment
@@ -24,7 +28,6 @@ import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
-import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
 class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
@@ -35,10 +38,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     private val creatorHelper = QrCreatorHelper(this)
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
-        creatorHelper.contentValue = it?:""
+        creatorHelper.contentValue = it ?: ""
     }
 
     private val previewDrawable = QrCreatorPreviewDrawable(creatorHelper.previewWriter)
+
+    private var isLoading = false
 
     private val log by lazyLogD()
 
@@ -59,20 +64,60 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         creatorHelper.addContentChangedListener(this)
         creatorHelper.addLoadStatusChangedListener(this)
         binding.previewImageView.setImageDrawable(previewDrawable)
+        binding.saveBtn.onClick {
+            saveQrBitmap()
+        }
         onLoadStatusChanged(false)
     }
 
-    /**
-     *
-     */
+    private fun saveQrBitmap() {
+        if (creatorHelper.contentValue.isEmpty()) {
+            return
+        }
+        if (isLoading) {
+            return
+        }
+        startLoading()
+        doAsync({
+            stopLoading()
+            Toast.makeText(
+                this, R.string.toast_error_create_qr_bitmap, Toast.LENGTH_SHORT
+            ).show()
+        }) {
+            val result = creatorHelper.createQrBitmap()
+            val bitmap = result.getOrNull()
+            if (bitmap == null) {
+                onUI {
+                    stopLoading()
+                    Toast.makeText(
+                        this, R.string.toast_error_create_qr_bitmap, Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                val uri = QrCreatorHelper.saveToMediaStore(this, bitmap)
+                onUI {
+                    stopLoading()
+                    if (uri == null) {
+                        Toast.makeText(
+                            this, R.string.toast_error_save_qr_bitmap, Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        ShareSheet.shareImage(this, uri)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         binding.root.setBackgroundColor(pigment.backgroundColor)
         binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
-        binding.shareButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
+
         binding.saveBtn.setBackgroundColor(pigment.secondaryVariant)
-        binding.saveBtn.setTextColor(pigment.onSecondaryTitle)
+        binding.saveBtnText.setTextColor(pigment.onSecondaryTitle)
+        binding.saveBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
 //        binding.panelGroup.setBackgroundColor(pigment.extreme)
 //        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
 //        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
@@ -89,11 +134,21 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     override fun onLoadStatusChanged(isLading: Boolean) {
         log("onLoadStatusChanged： $isLading")
         if (isLading) {
-            binding.contentLoadingView.show()
+            startLoading()
         } else {
-            binding.contentLoadingView.hide()
+            stopLoading()
             previewDrawable.invalidateSelf()
         }
+    }
+
+    private fun startLoading() {
+        isLoading = true
+        binding.contentLoadingView.show()
+    }
+
+    private fun stopLoading() {
+        isLoading = false
+        binding.contentLoadingView.hide()
     }
 
     private fun openBuildPage() {

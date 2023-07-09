@@ -38,32 +38,39 @@
             android:textSize="20sp"
             app:fontFamily="@font/font_logo" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/shareButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:src="@drawable/ic_baseline_share_24"
-            app:tint="?attr/colorSecondary" />
-
         <com.lollipop.clip.RoundClipLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:radius="28dp">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/saveBtn"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:background="?attr/colorSecondary"
-                android:foreground="?attr/selectableItemBackground"
-                android:paddingHorizontal="24dp"
-                android:paddingVertical="8dp"
-                android:text="@string/save"
-                android:textColor="?attr/colorOnSecondary"
-                android:textSize="16sp" />
+                android:gravity="center_vertical"
+                android:foreground="?attr/selectableItemBackground">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/saveBtnIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_baseline_share_24"
+                    app:tint="?attr/colorOnSecondary" />
+
+                <TextView
+                    android:id="@+id/saveBtnText"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
         </com.lollipop.clip.RoundClipLayout>
 

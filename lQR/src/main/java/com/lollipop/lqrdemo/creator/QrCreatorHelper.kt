@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -15,12 +16,13 @@ import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
+import com.lollipop.lqrdemo.writer.QrWriterGroup
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.writer.LBitMatrix
 import java.io.OutputStream
 import kotlin.random.Random
 
-class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
+class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
 
 
     companion object {
@@ -30,16 +32,17 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
             return "LQR_$fileCode.png"
         }
 
-        fun saveToMediaStore(context: Context, bitmap: Bitmap) {
+        fun saveToMediaStore(context: Context, bitmap: Bitmap): Uri? {
             val contentResolver = context.applicationContext.contentResolver
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 saveImageInQ(bitmap, contentResolver)
             } else {
-                MediaStore.Images.Media.insertImage(
+                val uri = MediaStore.Images.Media.insertImage(
                     contentResolver, bitmap,
                     getFileName(),
                     ""
                 )
+                Uri.parse(uri)
             }
         }
 
@@ -84,13 +87,20 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
 
 
     private val previewWriterDistributor = QrWriterDistributor()
+    private val saveWriterDistributor = QrWriterDistributor()
+    private val writerGroup = QrWriterGroup()
 
-    private val writer = BarcodeHelper.createWriter(lifecycleOwner)
+    private val barcodeWriter = BarcodeHelper.createWriter(lifecycleOwner)
 
     val previewWriter: QrWriter
         get() {
             return previewWriterDistributor
         }
+
+    init {
+        writerGroup.addWriter(saveWriterDistributor)
+        writerGroup.addWriter(previewWriterDistributor)
+    }
 
     fun addLoadStatusChangedListener(listener: OnLoadStatusChangedListener) {
         this.loadStatusChangedListener.addListener(listener)
@@ -108,13 +118,35 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
         this.codeContentChangedListener.removeListener(listener)
     }
 
+    fun createQrBitmap(width: Int = 512): Result<Bitmap> {
+        return try {
+            saveWriterDistributor.setBounds(0, 0, width, width)
+            val outBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(outBitmap)
+            saveWriterDistributor.onDraw(canvas)
+            Result.success(outBitmap)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    fun getQrBitmapAsync(width: Int = 512, callback: (Result<Bitmap>) -> Unit) {
+        doAsync {
+            val qrBitmap = createQrBitmap(width)
+            onUI {
+                callback(qrBitmap)
+            }
+        }
+    }
+
     private fun onContentChanged() {
         val content = contentValue
         codeContentChangedListener.invoke { it.onCodeContentChanged(content) }
         notifyLoadingStart()
         doAsync {
             val matrix = createBitMatrix()
-            previewWriterDistributor.setBitMatrix(matrix)
+            writerGroup.setBitMatrix(matrix)
             onUI {
                 notifyLoadingEnd()
             }
@@ -130,7 +162,7 @@ class QrCreatorHelper(private val lifecycleOwner: LifecycleOwner) {
     }
 
     private fun createBitMatrix(): LBitMatrix? {
-        val result = writer.encode(contentValue).build()
+        val result = barcodeWriter.encode(contentValue).build()
         val matrix = result.getOrNull()
         bitMatrix = matrix
         return matrix

@@ -95,5 +95,7 @@
     <string name="geo_lng">经度</string>
     <string name="btn_content_builder">构建内容</string>
     <string name="btn_content_done">完成</string>
+    <string name="toast_error_create_qr_bitmap">创建二维码图片失败</string>
+    <string name="toast_error_save_qr_bitmap">保存二维码图片失败</string>
 
 </resources>

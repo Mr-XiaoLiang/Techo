@@ -14,7 +14,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lollipop.base.util.Clipboard
-import com.lollipop.base.util.Sharesheet
+import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.WindowInsetsType
@@ -76,7 +76,7 @@ class BarcodeDetailDialog(
             dismiss()
         }
         binding.shareButton.onClick {
-            Sharesheet.shareText(context, rawValue)
+            ShareSheet.shareText(context, rawValue)
             dismiss()
         }
         binding.openButton.onClick {

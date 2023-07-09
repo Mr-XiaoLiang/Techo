@@ -71,13 +71,13 @@
 
                     <ImageView
                         android:id="@+id/builderButtonIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:padding="2dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:src="@drawable/ic_baseline_build_24"
                         tools:tint="@color/black" />
 
                     <TextView
+                        android:textSize="16sp"
                         android:id="@+id/builderButtonText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -104,8 +104,8 @@
 
                         <ImageView
                             android:id="@+id/doneButtonIcon"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
                             android:src="@drawable/ic_baseline_done_24"
                             tools:tint="@color/black" />
 
@@ -114,6 +114,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
+                            android:textSize="16sp"
                             android:text="@string/btn_content_done" />
                     </LinearLayout>
 
