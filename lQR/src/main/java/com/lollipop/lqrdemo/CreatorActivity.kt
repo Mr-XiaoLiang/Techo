@@ -52,6 +52,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         setContentView(binding.root)
         WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
+        bindByBack(binding.backButton)
 //        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
 //        binding.subpageGroup.adapter = SubPageAdapter(this)
 //        TabLayoutMediator(
