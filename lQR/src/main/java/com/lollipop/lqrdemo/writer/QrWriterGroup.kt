@@ -13,6 +13,7 @@ class QrWriterGroup: QrWriter() {
         val b = bounds
         writer.setBounds(b.left, b.top, b.right, b.bottom)
         writer.setBitMatrix(bitMatrix)
+        writer.setBackground(backgroundLayer.get()?.javaClass)
         writerArray.add(writer)
     }
 
@@ -43,6 +44,14 @@ class QrWriterGroup: QrWriter() {
         val b = bounds
         writerArray.forEach {
             it.setBounds(b.left, b.top, b.right, b.bottom)
+        }
+    }
+
+    override fun onBackgroundChanged() {
+        super.onBackgroundChanged()
+        val clazz = backgroundLayer.get()?.javaClass
+        writerArray.forEach {
+            it.setBackground(clazz)
         }
     }
 

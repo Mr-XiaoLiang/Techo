@@ -12,6 +12,8 @@ abstract class QrWriter {
     protected var bitMatrix: LBitMatrix? = null
         private set
 
+    protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>()
+
     fun setBitMatrix(matrix: LBitMatrix?) {
         this.bitMatrix = matrix
         onBitMatrixChanged()
@@ -21,11 +23,25 @@ abstract class QrWriter {
 
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         bounds.set(left, top, right, bottom)
+        updateLayoutBounds()
         onBoundsChanged()
     }
 
-    open fun onDraw(canvas: Canvas) {}
+    open fun onDraw(canvas: Canvas) {
+        backgroundLayer.get()?.onDraw(canvas)
+    }
 
-    open fun onBoundsChanged() {}
+    open fun onBoundsChanged() { }
+
+    fun setBackground(layer: Class<BackgroundWriterLayer>?) {
+        backgroundLayer.setLayer(layer)
+        updateLayoutBounds()
+    }
+
+    protected fun updateLayoutBounds() {
+        backgroundLayer.get()?.onBoundsChanged(bounds)
+    }
+
+    protected open fun onBackgroundChanged() {}
 
 }
