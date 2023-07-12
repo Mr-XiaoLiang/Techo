@@ -3,9 +3,8 @@ package com.lollipop.lqrdemo.writer.background
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import com.lollipop.lqrdemo.writer.BackgroundWriterLayer
 
-class ColorBackgroundWriterLayer: BackgroundWriterLayer {
+class ColorBackgroundWriterLayer: BackgroundWriterLayer() {
 
     companion object {
 

@@ -2,7 +2,7 @@ package com.lollipop.lqrdemo.writer
 
 import android.graphics.Canvas
 import android.graphics.Rect
-import com.google.zxing.common.BitMatrix
+import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 
 abstract class QrWriter {
@@ -27,9 +27,12 @@ abstract class QrWriter {
         onBoundsChanged()
     }
 
-    open fun onDraw(canvas: Canvas) {
-        backgroundLayer.get()?.onDraw(canvas)
+    open fun draw(canvas: Canvas) {
+        backgroundLayer.get()?.draw(canvas)
+        onDraw(canvas)
     }
+
+    open fun onDraw(canvas: Canvas) { }
 
     open fun onBoundsChanged() { }
 

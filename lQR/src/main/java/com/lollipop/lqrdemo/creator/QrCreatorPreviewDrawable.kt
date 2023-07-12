@@ -9,7 +9,7 @@ import com.lollipop.lqrdemo.writer.QrWriter
 
 class QrCreatorPreviewDrawable(private val writer: QrWriter): Drawable() {
     override fun draw(canvas: Canvas) {
-        writer.onDraw(canvas)
+        writer.draw(canvas)
     }
 
     override fun setAlpha(alpha: Int) {

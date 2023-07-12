@@ -123,7 +123,7 @@ class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
             saveWriterDistributor.setBounds(0, 0, width, width)
             val outBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(outBitmap)
-            saveWriterDistributor.onDraw(canvas)
+            saveWriterDistributor.draw(canvas)
             Result.success(outBitmap)
         } catch (e: Throwable) {
             e.printStackTrace()

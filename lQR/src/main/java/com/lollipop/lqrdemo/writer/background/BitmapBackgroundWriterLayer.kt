@@ -2,15 +2,11 @@ package com.lollipop.lqrdemo.writer.background
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.Rect
-import android.view.Gravity
-import com.lollipop.lqrdemo.writer.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.BitmapId
 import kotlin.math.max
 
-class BitmapBackgroundWriterLayer : BackgroundWriterLayer {
+class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
 
     companion object {
 
@@ -20,7 +16,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer {
     }
 
     private val matrix = Matrix()
-    private val bounds = Rect()
     private var bitmapId = BitmapId()
     private var currentGravity = gravity
 
@@ -30,10 +25,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer {
                 canvas.drawBitmap(it, matrix, null)
             }
         }
-    }
-
-    override fun onBoundsChanged(bounds: Rect) {
-        this.bounds.set(bounds)
     }
 
     private fun updateMatrix(bitmap: Bitmap) {
@@ -49,8 +40,8 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer {
             resetMatrix()
             return
         }
-        val left = bounds.left.toFloat()
-        val top = bounds.top.toFloat()
+        val left = bounds.left
+        val top = bounds.top
         var scale = 1F
         var offsetX = 0F
         var offsetY = 0F
