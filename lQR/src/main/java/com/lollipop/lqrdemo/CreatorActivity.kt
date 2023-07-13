@@ -28,6 +28,7 @@ import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
+import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.Pigment
 
 class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
@@ -206,6 +207,11 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         ) {
             creatorHelper.contentValue = it
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        BitmapBackgroundWriterLayer.destroyBitmap()
     }
 
     private class SubPageAdapter(

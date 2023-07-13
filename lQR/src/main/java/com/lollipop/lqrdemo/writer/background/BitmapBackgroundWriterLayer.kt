@@ -13,6 +13,15 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
         var bitmap: Bitmap? = null
         var gravity = Gravity.CENTER
 
+        fun destroyBitmap() {
+            try {
+                bitmap?.recycle()
+                bitmap = null
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+
     }
 
     private val matrix = Matrix()
