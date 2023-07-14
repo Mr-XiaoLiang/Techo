@@ -36,7 +36,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
 
     private val binding: ActivityCreatorBinding by lazyBind()
 
-    private val creatorHelper = QrCreatorHelper(this)
+    private val creatorHelper = QrCreatorHelper(this, ::notifyQrChanged, ::onQrCheckResult)
 
     private val contentBuilderLauncher = registerResult(ContentBuilderActivity.LAUNCHER) {
         creatorHelper.contentValue = it ?: ""
@@ -70,6 +70,14 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             saveQrBitmap()
         }
         onLoadStatusChanged(false)
+    }
+
+    private fun notifyQrChanged() {
+        previewDrawable.invalidateSelf()
+    }
+
+    private fun onQrCheckResult(result: QrCreatorHelper.CheckResult) {
+        // TODO
     }
 
     private fun saveQrBitmap() {
@@ -139,7 +147,6 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             startLoading()
         } else {
             stopLoading()
-            previewDrawable.invalidateSelf()
         }
     }
 

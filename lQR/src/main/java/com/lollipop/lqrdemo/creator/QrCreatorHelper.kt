@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.LifecycleOwner
+import com.google.zxing.qrcode.QRCodeReader
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
@@ -17,12 +18,19 @@ import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
 import com.lollipop.lqrdemo.writer.QrWriterGroup
+import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.qr.BarcodeHelper
+import com.lollipop.qr.comm.BarcodeResult
+import com.lollipop.qr.reader.OnBarcodeScanResultListener
 import com.lollipop.qr.writer.LBitMatrix
 import java.io.OutputStream
 import kotlin.random.Random
 
-class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
+class QrCreatorHelper(
+    lifecycleOwner: LifecycleOwner,
+    private val onQrChangedCallback: () -> Unit,
+    private val qrCheckResult: (CheckResult) -> Unit
+): OnBarcodeScanResultListener {
 
 
     companion object {
@@ -91,6 +99,9 @@ class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
     private val writerGroup = QrWriterGroup()
 
     private val barcodeWriter = BarcodeHelper.createWriter(lifecycleOwner)
+    private val barcodeReader = BarcodeHelper.createLocalReader(lifecycleOwner)
+
+    private var qrCheckMode = 0
 
     val previewWriter: QrWriter
         get() {
@@ -131,12 +142,39 @@ class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
         }
     }
 
-    fun getQrBitmapAsync(width: Int = 512, callback: (Result<Bitmap>) -> Unit) {
-        doAsync {
-            val qrBitmap = createQrBitmap(width)
+    fun checkQr() {
+        if (contentValue.isEmpty()) {
+            qrCheckResult(CheckResult.EMPTY)
+            return
+        }
+        qrCheckMode++
+        val currentMode = qrCheckMode
+        val modeKey = currentMode.toString()
+        doAsync({
             onUI {
-                callback(qrBitmap)
+                setCheckResult(currentMode, CheckResult.ERROR)
             }
+        }) {
+            val bitmap = createQrBitmap().getOrNull()
+            if (bitmap != null) {
+                barcodeReader.read(bitmap, 0, modeKey)
+            } else {
+                onUI {
+                    setCheckResult(currentMode, CheckResult.ERROR)
+                }
+            }
+        }
+    }
+
+    private fun setCheckResult(modeKey: Int, result: CheckResult) {
+        if (qrCheckMode == modeKey) {
+            qrCheckResult(result)
+        }
+    }
+
+    private fun setCheckResult(modeKey: String, result: CheckResult) {
+        if (qrCheckMode.toString() == modeKey) {
+            qrCheckResult(result)
         }
     }
 
@@ -149,8 +187,14 @@ class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
             writerGroup.setBitMatrix(matrix)
             onUI {
                 notifyLoadingEnd()
+                onChanged()
             }
         }
+    }
+
+    fun setBackground(layer: Class<BackgroundWriterLayer>) {
+        writerGroup.setBackground(layer)
+        onChanged()
     }
 
     private fun notifyLoadingStart() {
@@ -168,10 +212,37 @@ class QrCreatorHelper(lifecycleOwner: LifecycleOwner) {
         return matrix
     }
 
+    private fun onChanged() {
+        onQrChangedCallback()
+        checkQr()
+    }
+
+    override fun onBarcodeScanResult(result: BarcodeResult) {
+       val type = if (result.isEmpty) {
+           CheckResult.ERROR
+        } else {
+           val barcode = result.list.getOrNull(0)
+           val value = barcode?.info?.rawValue?:""
+           if (value != contentValue) {
+               CheckResult.ERROR
+           } else {
+               CheckResult.SUCCESSFUL
+           }
+       }
+        setCheckResult(result.tag, type)
+    }
+
     fun interface OnLoadStatusChangedListener {
 
         fun onLoadStatusChanged(isLading: Boolean)
 
     }
+
+    enum class CheckResult {
+        SUCCESSFUL,
+        ERROR,
+        EMPTY
+    }
+
 
 }
