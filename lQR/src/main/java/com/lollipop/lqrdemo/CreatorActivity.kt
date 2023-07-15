@@ -77,7 +77,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     private fun onQrCheckResult(result: QrCreatorHelper.CheckResult) {
-        // TODO
+        // TODO UI上提示用户二维码识别率过低！！
     }
 
     private fun saveQrBitmap() {
