@@ -10,7 +10,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer {
 
     protected val bounds = RectF()
 
-    protected var corner: Corner? = null
+    protected var backgroundCorner: Corner? = null
 
     protected val clipPath = Path()
 
@@ -33,13 +33,13 @@ abstract class BackgroundWriterLayer : QrWriterLayer {
     }
 
     fun setCorner(c: Corner) {
-        this.corner = c
+        this.backgroundCorner = c
         buildClipPath()
     }
 
     protected fun buildClipPath() {
         clipPath.reset()
-        val c = corner
+        val c = backgroundCorner
         if (bounds.isEmpty || c == null || c is Corner.None) {
             return
         }

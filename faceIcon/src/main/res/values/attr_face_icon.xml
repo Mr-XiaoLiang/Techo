@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FaceIconView">
+
+        <attr name="faceColor" format="color"/>
+        <attr name="strokeWidth"/>
+        <attr name="faceIcon" format="enum">
+            <enum name="happy" value="1"/>
+            <enum name="sadness" value="2"/>
+            <enum name="calm" value="3"/>
+        </attr>
+    </declare-styleable>
+</resources>

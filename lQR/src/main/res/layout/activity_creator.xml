@@ -44,12 +44,15 @@
             android:layout_marginStart="8dp"
             android:layout_height="24dp"
             android:radius="12dp">
-            <ImageView
+            <com.lollipop.faceicon.FaceIconView
+                app:faceIcon="calm"
+                app:strokeWidth="2dp"
+                app:faceColor="#f00"
+                android:padding="2dp"
+                android:background="#3f00"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:background="#3f00"
-                android:padding="4dp"
-                tools:src="@drawable/ic_baseline_done_24"/>
+                android:layout_gravity="center"/>
         </com.lollipop.clip.RoundClipLayout>
 
         <com.lollipop.clip.RoundClipLayout
