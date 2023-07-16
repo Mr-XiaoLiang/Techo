@@ -8,22 +8,25 @@ sealed class FaceIcons(
 
     companion object {
         const val EYES_BASE_Y = 0.29F
+        const val MOUTH_STROKE_WIDTH = 0.08F
     }
 
-    object HAPPY: FaceIcons(
-        FaceEyes.open(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.065F),
-        FaceEyes.open(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.065F),
-        FaceMouth.happy(center = FacePoint(0.5F, 0.75F), width = 0.6F, depth = 0.2F)
+    object HAPPY : FaceIcons(
+        FaceEyes.pop(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.080F),
+        FaceEyes.pop(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.080F),
+        FaceMouth.happy(center = FacePoint(0.5F, 0.75F), width = 0.6F, MOUTH_STROKE_WIDTH, depth = 0.2F)
     )
-    object SADNESS: FaceIcons(
-        FaceEyes.open(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.065F),
-        FaceEyes.open(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.065F),
-        FaceMouth.sadness(center = FacePoint(0.5F, 0.75F), width = 0.6F, depth = 0.2F)
+
+    object SADNESS : FaceIcons(
+        FaceEyes.open(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.080F),
+        FaceEyes.open(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.080F),
+        FaceMouth.sadness(center = FacePoint(0.5F, 0.75F), width = 0.6F, MOUTH_STROKE_WIDTH, depth = 0.2F)
     )
-    object CALM: FaceIcons(
-        FaceEyes.open(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.065F),
-        FaceEyes.open(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.065F),
-        FaceMouth.calm(center = FacePoint(0.5F, 0.75F), width = 0.6F, depth = 0.2F)
+
+    object CALM : FaceIcons(
+        FaceEyes.close(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.080F),
+        FaceEyes.close(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.080F),
+        FaceMouth.calm(center = FacePoint(0.5F, 0.75F), width = 0.6F, MOUTH_STROKE_WIDTH, depth = 0.2F)
     )
 
 }

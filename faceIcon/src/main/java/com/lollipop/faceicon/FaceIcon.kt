@@ -16,9 +16,14 @@ interface FaceIcon {
     }
 
     interface Mouth {
-        val left: Point
-        val middle: Point
-        val right: Point
+
+        val leftTop: Point
+        val leftBottom: Point
+        val middleTop: Point
+        val middleBottom: Point
+        val rightTop: Point
+        val rightBottom: Point
+
     }
 
     interface Point {

@@ -99,7 +99,7 @@ class FaceBuilder {
                 bounds: RectF
             ): PathBuilder {
                 val builder = PathBuilder(path, current, RectF(bounds))
-                builder.moveTo(path, current)
+                builder.moveTo(current)
                 return builder
             }
         }
@@ -137,7 +137,6 @@ class FaceBuilder {
         }
 
         fun lineTo(
-            path: Path,
             end: FaceIcon.Point
         ): PathBuilder {
             current = end
@@ -146,7 +145,6 @@ class FaceBuilder {
         }
 
         fun moveTo(
-            path: Path,
             end: FaceIcon.Point
         ) {
             current = end
@@ -272,37 +270,44 @@ class FaceBuilder {
 
     private class ProgressFaceMouth : FaceIcon.Mouth {
 
-        override val left = ProgressFacePoint()
-        override val middle = ProgressFacePoint()
-        override val right = ProgressFacePoint()
+        override val leftTop = ProgressFacePoint()
+        override val leftBottom = ProgressFacePoint()
+        override val middleTop = ProgressFacePoint()
+        override val middleBottom = ProgressFacePoint()
+        override val rightTop = ProgressFacePoint()
+        override val rightBottom = ProgressFacePoint()
 
         fun build(progress: Float, from: FaceIcon.Mouth?, end: FaceIcon.Mouth?) {
-            left.build(progress, from?.left, end?.left)
-            middle.build(progress, from?.middle, end?.middle)
-            right.build(progress, from?.right, end?.right)
+            leftTop.build(progress, from?.leftTop, end?.leftTop)
+            leftBottom.build(progress, from?.leftBottom, end?.leftBottom)
+            middleTop.build(progress, from?.middleTop, end?.middleTop)
+            middleBottom.build(progress, from?.middleBottom, end?.middleBottom)
+            rightTop.build(progress, from?.rightTop, end?.rightTop)
+            rightBottom.build(progress, from?.rightBottom, end?.rightBottom)
         }
 
         fun buildPath(path: Path, bounds: RectF) {
-            PathBuilder.moveTo(path, left, bounds)
+            PathBuilder.moveTo(path, leftTop, bounds)
                 .cubicTo(
                     PathBuilder.Direction.Vertical(0.5F),
                     PathBuilder.Direction.Horizontal(0.5F),
-                    middle
+                    middleTop
                 )
                 .cubicTo(
                     PathBuilder.Direction.Horizontal(0.5F),
                     PathBuilder.Direction.Vertical(0.5F),
-                    right
+                    rightTop
                 )
+                .lineTo(rightBottom)
                 .cubicTo(
                     PathBuilder.Direction.Vertical(0.5F),
                     PathBuilder.Direction.Horizontal(0.5F),
-                    middle
+                    middleBottom
                 )
                 .cubicTo(
                     PathBuilder.Direction.Horizontal(0.5F),
                     PathBuilder.Direction.Vertical(0.5F),
-                    left
+                    leftBottom
                 )
                 .close()
         }

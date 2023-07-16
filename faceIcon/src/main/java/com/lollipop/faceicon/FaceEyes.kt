@@ -13,6 +13,17 @@ class FaceEyes(
     override val bottom: FacePoint = center + bottomOffset
 
     companion object {
+
+        fun pop(center: FacePoint, radius: Float): FaceEyes {
+            return FaceEyes(
+                center = center,
+                leftOffset = FacePoint(-radius, 0F),
+                topOffset = FacePoint(0F, -radius * 1.5F),
+                rightOffset = FacePoint(radius, 0F),
+                bottomOffset = FacePoint(0F, radius * 1.5F)
+            )
+        }
+
         fun open(center: FacePoint, radius: Float): FaceEyes {
             return FaceEyes(
                 center = center,
@@ -27,9 +38,9 @@ class FaceEyes(
             return FaceEyes(
                 center = center,
                 leftOffset = FacePoint(radius * -1.5F, 0F),
-                topOffset = FacePoint(0F, 0F),
+                topOffset = FacePoint(0F, -radius * 0.5F),
                 rightOffset = FacePoint(radius * 1.5F, 0F),
-                bottomOffset = FacePoint(0F, 0F)
+                bottomOffset = FacePoint(0F, radius * 0.5F)
             )
         }
     }

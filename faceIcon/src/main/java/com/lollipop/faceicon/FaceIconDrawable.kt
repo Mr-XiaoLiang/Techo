@@ -17,7 +17,7 @@ class FaceIconDrawable : Drawable() {
         isAntiAlias = true
         isDither = true
         strokeCap = Paint.Cap.ROUND
-        style = Paint.Style.FILL_AND_STROKE
+        style = Paint.Style.FILL
     }
 
     var color: Int
