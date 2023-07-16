@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--  见鬼，哪里来的网络权限，我们需要把他移除掉  -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove"/>
+    <!--  见鬼，哪里来的特殊权限，我们需要把他移除掉  -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove"/>
 
     <application
         android:name=".QrApplication"
