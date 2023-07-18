@@ -43,6 +43,16 @@ class FaceIconView @JvmOverloads constructor(
             faceIconDrawable.strokeWidth = value
         }
 
+    var animationDuration: Long
+        set(value) {
+            animator.animationDuration = value
+        }
+        get() {
+            return animator.animationDuration
+        }
+
+    private val animator = FaceAnimator(::postNextFace, ::progress)
+
     init {
         val typeArray = context.obtainStyledAttributes(attributeSet, R.styleable.FaceIconView)
         color = typeArray.getColor(R.styleable.FaceIconView_faceColor, Color.WHITE)
@@ -60,8 +70,12 @@ class FaceIconView @JvmOverloads constructor(
         )
     }
 
-    fun nextFace(faceIcon: FaceIcon, progress: Float = 0F) {
+    private fun postNextFace(faceIcon: FaceIcon, progress: Float) {
         faceIconDrawable.next(faceIcon, progress)
+    }
+
+    fun nextFace(faceIcon: FaceIcon) {
+        animator.post(faceIcon)
     }
 
     fun progress(progress: Float) {
@@ -70,6 +84,11 @@ class FaceIconView @JvmOverloads constructor(
 
     fun update() {
         faceIconDrawable.rebuild()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        animator.end()
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
