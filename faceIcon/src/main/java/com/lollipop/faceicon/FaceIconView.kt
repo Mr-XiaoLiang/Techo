@@ -75,11 +75,20 @@ class FaceIconView @JvmOverloads constructor(
     }
 
     fun nextFace(faceIcon: FaceIcon) {
-        animator.post(faceIcon)
+        post {
+            animator.post(faceIcon)
+        }
     }
 
     fun progress(progress: Float) {
         faceIconDrawable.progress(progress)
+    }
+
+    fun setFace(faceIcon: FaceIcon) {
+        post {
+            animator.post(faceIcon)
+            animator.end()
+        }
     }
 
     fun update() {

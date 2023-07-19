@@ -16,6 +16,7 @@ import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
+import com.lollipop.faceicon.FaceIcons
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
@@ -70,6 +71,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             saveQrBitmap()
         }
         onLoadStatusChanged(false)
+        binding.faceIconView.setFace(FaceIcons.CALM)
     }
 
     private fun notifyQrChanged() {
@@ -77,7 +79,18 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     private fun onQrCheckResult(result: QrCreatorHelper.CheckResult) {
-        // TODO UI上提示用户二维码识别率过低！！
+        val faceIcon = when (result) {
+            QrCreatorHelper.CheckResult.SUCCESSFUL -> {
+                FaceIcons.HAPPY
+            }
+            QrCreatorHelper.CheckResult.ERROR -> {
+                FaceIcons.SADNESS
+            }
+            QrCreatorHelper.CheckResult.EMPTY -> {
+                FaceIcons.CALM
+            }
+        }
+        binding.faceIconView.nextFace(faceIcon)
     }
 
     private fun saveQrBitmap() {
