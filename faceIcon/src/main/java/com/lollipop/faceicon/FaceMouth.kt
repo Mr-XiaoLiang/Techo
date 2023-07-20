@@ -74,8 +74,8 @@ class FaceMouth(
             val halfStroke = stroke * 0.5F
             val top = 0 - halfStroke
             val bottom = 0 + halfStroke
-            val left = width * -0.2F
-            val right = width * 0.2F
+            val left = width * -0.3F
+            val right = width * 0.3F
             return FaceMouth(
                 center = center,
                 leftTopOffset = FacePoint(left, top),

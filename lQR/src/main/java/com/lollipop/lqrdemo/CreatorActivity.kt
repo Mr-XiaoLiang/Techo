@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -30,6 +31,7 @@ import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
+import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
 class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
@@ -48,6 +50,8 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     private var isLoading = false
 
     private val log by lazyLogD()
+
+    private var currentCheckResult = QrCreatorHelper.CheckResult.EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,8 +74,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         binding.saveBtn.onClick {
             saveQrBitmap()
         }
+        binding.resultCheckBtn.onClick {
+            onCheckResultClick()
+        }
         onLoadStatusChanged(false)
-        binding.faceIconView.setFace(FaceIcons.CALM)
+
+        onQrCheckResult(QrCreatorHelper.CheckResult.EMPTY)
     }
 
     private fun notifyQrChanged() {
@@ -79,18 +87,36 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     }
 
     private fun onQrCheckResult(result: QrCreatorHelper.CheckResult) {
+        this.currentCheckResult = result
         val faceIcon = when (result) {
             QrCreatorHelper.CheckResult.SUCCESSFUL -> {
                 FaceIcons.HAPPY
             }
+
             QrCreatorHelper.CheckResult.ERROR -> {
                 FaceIcons.SADNESS
             }
+
             QrCreatorHelper.CheckResult.EMPTY -> {
                 FaceIcons.CALM
             }
         }
         binding.faceIconView.nextFace(faceIcon)
+    }
+
+    private fun onCheckResultClick() {
+        val message = when (currentCheckResult) {
+            QrCreatorHelper.CheckResult.SUCCESSFUL -> R.string.message_qr_check_result_success
+            QrCreatorHelper.CheckResult.ERROR -> R.string.message_qr_check_result_error
+            QrCreatorHelper.CheckResult.EMPTY -> R.string.message_qr_check_result_empty
+        }
+        MaterialAlertDialogBuilder(this)
+            .setMessage(message)
+            .setPositiveButton(R.string.known) {dialog, which ->
+                dialog.dismiss()
+            }
+            // Add customization options here
+            .show()
     }
 
     private fun saveQrBitmap() {
@@ -141,6 +167,14 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         binding.saveBtn.setBackgroundColor(pigment.secondaryVariant)
         binding.saveBtnText.setTextColor(pigment.onSecondaryTitle)
         binding.saveBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
+
+        BlendMode.flow(pigment.primaryColor)
+            .blend(pigment.backgroundColor, remember = false) {
+                binding.faceIconView.setBackgroundColor(it)
+            }
+            .blend(pigment.onBackgroundTitle, remember = false) {
+                binding.faceIconView.color = it
+            }
 //        binding.panelGroup.setBackgroundColor(pigment.extreme)
 //        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
 //        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)

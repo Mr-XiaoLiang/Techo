@@ -98,4 +98,10 @@
     <string name="toast_error_create_qr_bitmap">创建二维码图片失败</string>
     <string name="toast_error_save_qr_bitmap">保存二维码图片失败</string>
 
+    <string name="message_qr_check_result_success">二维码检测成功，能够被准确识别</string>
+    <string name="message_qr_check_result_error">二维码检测失败，也许是二维码不容易识别，也许是检测过程中出错了</string>
+    <string name="message_qr_check_result_empty">需要先创建一个二维码才能开始检测</string>
+
+    <string name="known">知道了</string>
+
 </resources>

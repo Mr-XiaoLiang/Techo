@@ -5,12 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.LifecycleOwner
-import com.google.zxing.qrcode.QRCodeReader
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
@@ -30,7 +30,7 @@ class QrCreatorHelper(
     lifecycleOwner: LifecycleOwner,
     private val onQrChangedCallback: () -> Unit,
     private val qrCheckResult: (CheckResult) -> Unit
-): OnBarcodeScanResultListener {
+) : OnBarcodeScanResultListener {
 
 
     companion object {
@@ -111,6 +111,7 @@ class QrCreatorHelper(
     init {
         writerGroup.addWriter(saveWriterDistributor)
         writerGroup.addWriter(previewWriterDistributor)
+        barcodeReader.addOnBarcodeScanResultListener(this)
     }
 
     fun addLoadStatusChangedListener(listener: OnLoadStatusChangedListener) {
@@ -151,19 +152,34 @@ class QrCreatorHelper(
         val currentMode = qrCheckMode
         val modeKey = currentMode.toString()
         doAsync({
+            it.printStackTrace()
             onUI {
                 setCheckResult(currentMode, CheckResult.ERROR)
             }
         }) {
-            val bitmap = createQrBitmap().getOrNull()
-            if (bitmap != null) {
-                barcodeReader.read(bitmap, 0, modeKey)
-            } else {
-                onUI {
+
+            val bitmap = createScanBitmap()
+
+            onUI {
+                if (bitmap != null) {
+                    barcodeReader.read(bitmap, 0, modeKey)
+                } else {
                     setCheckResult(currentMode, CheckResult.ERROR)
                 }
             }
         }
+    }
+
+    private fun createScanBitmap(): Bitmap? {
+        val qrSize = 256
+        val bitmapSize = 512
+        val bitmap = createQrBitmap(qrSize).getOrNull() ?: return null
+        val scanBitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(scanBitmap)
+        canvas.drawColor(Color.WHITE)
+        canvas.drawBitmap(bitmap, 128F, 128F, null)
+        bitmap.recycle()
+        return scanBitmap
     }
 
     private fun setCheckResult(modeKey: Int, result: CheckResult) {
@@ -218,17 +234,17 @@ class QrCreatorHelper(
     }
 
     override fun onBarcodeScanResult(result: BarcodeResult) {
-       val type = if (result.isEmpty) {
-           CheckResult.ERROR
+        val type = if (result.isEmpty) {
+            CheckResult.ERROR
         } else {
-           val barcode = result.list.getOrNull(0)
-           val value = barcode?.info?.rawValue?:""
-           if (value != contentValue) {
-               CheckResult.ERROR
-           } else {
-               CheckResult.SUCCESSFUL
-           }
-       }
+            val barcode = result.list.getOrNull(0)
+            val value = barcode?.info?.rawValue ?: ""
+            if (value != contentValue) {
+                CheckResult.ERROR
+            } else {
+                CheckResult.SUCCESSFUL
+            }
+        }
         setCheckResult(result.tag, type)
     }
 

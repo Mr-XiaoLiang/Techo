@@ -62,9 +62,16 @@ sealed class BlendMode {
 
     class Builder(private var themeColor: Int) {
 
-        fun blend(color2: Int, ratio: Float = 0.5F, callback: (Int) -> Unit): Builder {
+        fun blend(
+            color2: Int,
+            ratio: Float = 0.5F,
+            remember: Boolean = true,
+            callback: (Int) -> Unit = {}
+        ): Builder {
             val color = blend(themeColor, color2, ratio)
-            themeColor = color
+            if (remember) {
+                themeColor = color
+            }
             callback(color)
             return this
         }
@@ -79,9 +86,18 @@ sealed class BlendMode {
             return this
         }
 
-        fun limit(maxS: Float, minS: Float, maxL: Float, minL: Float, callback: (Int) -> Unit): Builder {
+        fun limit(
+            maxS: Float,
+            minS: Float,
+            maxL: Float,
+            minL: Float,
+            remember: Boolean = true,
+            callback: (Int) -> Unit = {}
+        ): Builder {
             val color = limit(themeColor, maxS, minS, maxL, minL)
-            themeColor = color
+            if (remember) {
+                themeColor = color
+            }
             callback(color)
             return this
         }

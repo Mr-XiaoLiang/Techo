@@ -38,24 +38,30 @@
             android:textSize="20sp"
             app:fontFamily="@font/font_logo" />
 
-        <com.lollipop.clip.RoundClipLayout
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="12dp"
-            android:radius="12dp">
+        <FrameLayout
+            android:id="@+id/resultCheckBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <com.lollipop.faceicon.FaceIconView
-                android:id="@+id/faceIconView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="#3f00"
-                android:padding="2dp"
-                app:faceColor="#f00"
-                app:faceIcon="happy"
-                app:strokeWidth="2dp" />
-        </com.lollipop.clip.RoundClipLayout>
+            <com.lollipop.clip.RoundClipLayout
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginVertical="12dp"
+                android:layout_marginHorizontal="12dp"
+                android:radius="12dp">
+
+                <com.lollipop.faceicon.FaceIconView
+                    android:id="@+id/faceIconView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:padding="2dp"
+                    app:faceIcon="happy"
+                    app:strokeWidth="2dp"
+                    tools:background="#3f00"
+                    tools:faceColor="#f00" />
+            </com.lollipop.clip.RoundClipLayout>
+        </FrameLayout>
 
         <com.lollipop.clip.RoundClipLayout
             android:layout_width="wrap_content"
