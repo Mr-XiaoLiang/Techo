@@ -34,6 +34,16 @@ class FaceEyes(
             )
         }
 
+        fun girl(center: FacePoint, radius: Float): FaceEyes {
+            return FaceEyes(
+                center = center,
+                leftOffset = FacePoint(-radius, radius * 0.9F),
+                topOffset = FacePoint(0F, -radius * 1.2F),
+                rightOffset = FacePoint(radius, radius * 0.9F),
+                bottomOffset = FacePoint(0F, radius * 1.2F)
+            )
+        }
+
         fun close(center: FacePoint, radius: Float): FaceEyes {
             return FaceEyes(
                 center = center,

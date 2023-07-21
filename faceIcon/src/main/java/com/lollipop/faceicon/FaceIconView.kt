@@ -54,20 +54,31 @@ class FaceIconView @JvmOverloads constructor(
     private val animator = FaceAnimator(::postNextFace, ::progress)
 
     init {
-        val typeArray = context.obtainStyledAttributes(attributeSet, R.styleable.FaceIconView)
-        color = typeArray.getColor(R.styleable.FaceIconView_faceColor, Color.WHITE)
-        strokeWidth = typeArray.getDimensionPixelSize(R.styleable.FaceIconView_strokeWidth, 1).toFloat()
-        val faceCode = typeArray.getInt(R.styleable.FaceIconView_faceIcon, 1)
+        val typeArray = context.obtainStyledAttributes(
+            attributeSet, R.styleable.FaceIconView
+        )
+        color = typeArray.getColor(
+            R.styleable.FaceIconView_faceColor, Color.WHITE
+        )
+        strokeWidth = typeArray.getDimensionPixelSize(
+            R.styleable.FaceIconView_strokeWidth, 1
+        ).toFloat()
+        val faceCode = typeArray.getInt(
+            R.styleable.FaceIconView_faceIcon, 1
+        )
         typeArray.recycle()
         super.setImageDrawable(faceIconDrawable)
-        nextFace(
-            when (faceCode) {
-                1 -> FaceIcons.HAPPY
-                2 -> FaceIcons.SADNESS
-                3 -> FaceIcons.CALM
-                else -> FaceIcons.HAPPY
-            }
-        )
+        val faceIcon = when (faceCode) {
+            1 -> FaceIcons.HAPPY
+            2 -> FaceIcons.SADNESS
+            3 -> FaceIcons.CALM
+            else -> FaceIcons.HAPPY
+        }
+        if (isInEditMode) {
+            faceIconDrawable.next(faceIcon, 0F)
+        } else {
+            nextFace(faceIcon)
+        }
     }
 
     private fun postNextFace(faceIcon: FaceIcon, progress: Float) {
