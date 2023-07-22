@@ -1,8 +1,10 @@
 package com.lollipop.lqrdemo.writer
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 
 abstract class QrWriter {
@@ -13,6 +15,10 @@ abstract class QrWriter {
         private set
 
     protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>()
+
+    private val defaultBackgroundWriterLayer by lazy {
+        ColorBackgroundWriterLayer()
+    }
 
     fun setBitMatrix(matrix: LBitMatrix?) {
         this.bitMatrix = matrix
@@ -28,13 +34,26 @@ abstract class QrWriter {
     }
 
     open fun draw(canvas: Canvas) {
-        backgroundLayer.get()?.draw(canvas)
+        getBackgroundLayer().draw(canvas)
         onDraw(canvas)
     }
 
-    open fun onDraw(canvas: Canvas) { }
+    private fun getBackgroundLayer(): BackgroundWriterLayer {
+        return backgroundLayer.get() ?: getDefaultBackgroundLayer()
+    }
 
-    open fun onBoundsChanged() { }
+    protected open fun getDefaultBackgroundColor(): Int {
+        return Color.WHITE
+    }
+
+    protected open fun getDefaultBackgroundLayer(): BackgroundWriterLayer {
+        defaultBackgroundWriterLayer.customColor(getDefaultBackgroundColor())
+        return defaultBackgroundWriterLayer
+    }
+
+    open fun onDraw(canvas: Canvas) {}
+
+    open fun onBoundsChanged() {}
 
     fun setBackground(layer: Class<BackgroundWriterLayer>?) {
         backgroundLayer.setLayer(layer)

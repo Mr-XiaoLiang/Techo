@@ -193,13 +193,14 @@ class QrCreatorHelper(
     }
 
     private fun createScanBitmap(): Bitmap? {
-        val qrSize = getQrWidthByVersion()
-        val bitmapSize = qrSize * 2
+        val qrSize = getQrWidthByVersion() * 4
+        val bitmapSize = qrSize + 100
         val bitmap = createQrBitmap(qrSize).getOrNull() ?: return null
         val scanBitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(scanBitmap)
         canvas.drawColor(Color.WHITE)
-        canvas.drawBitmap(bitmap, qrSize * 0.5F, qrSize * 0.5F, null)
+        canvas.translate(50F, 50F)
+        canvas.drawBitmap(bitmap, 0F, 0F, null)
         bitmap.recycle()
         return scanBitmap
     }
