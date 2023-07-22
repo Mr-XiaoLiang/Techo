@@ -23,7 +23,10 @@ import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
 import com.lollipop.qr.writer.LBitMatrix
+import com.lollipop.qr.writer.LQrBitMatrix
 import java.io.OutputStream
+import java.lang.RuntimeException
+import kotlin.math.max
 import kotlin.random.Random
 
 class QrCreatorHelper(
@@ -130,10 +133,29 @@ class QrCreatorHelper(
         this.codeContentChangedListener.removeListener(listener)
     }
 
-    fun createQrBitmap(width: Int = 512): Result<Bitmap> {
+    private fun getQrWidthByVersion(): Int {
+        val matrix = bitMatrix ?: return 0
+        if (matrix is LQrBitMatrix) {
+            return matrix.qrWidthByVersion()
+        }
+        return 0
+    }
+
+    fun createShareQrBitmap(weight: Int = 10): Result<Bitmap> {
+        return createQrBitmap(getQrWidthByVersion() * weight)
+    }
+
+    private fun createQrBitmap(width: Int = -1): Result<Bitmap> {
         return try {
-            saveWriterDistributor.setBounds(0, 0, width, width)
-            val outBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+            val matrix = bitMatrix ?: return Result.failure(RuntimeException("BitMatrix is null"))
+            val widthByVersion = getQrWidthByVersion()
+
+            var qrWidth = max(widthByVersion, width)
+            if (qrWidth < 21) {
+                qrWidth = matrix.width
+            }
+            saveWriterDistributor.setBounds(0, 0, qrWidth, qrWidth)
+            val outBitmap = Bitmap.createBitmap(qrWidth, qrWidth, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(outBitmap)
             saveWriterDistributor.draw(canvas)
             Result.success(outBitmap)
@@ -171,13 +193,13 @@ class QrCreatorHelper(
     }
 
     private fun createScanBitmap(): Bitmap? {
-        val qrSize = 256
-        val bitmapSize = 512
+        val qrSize = getQrWidthByVersion()
+        val bitmapSize = qrSize * 2
         val bitmap = createQrBitmap(qrSize).getOrNull() ?: return null
         val scanBitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(scanBitmap)
         canvas.drawColor(Color.WHITE)
-        canvas.drawBitmap(bitmap, 128F, 128F, null)
+        canvas.drawBitmap(bitmap, qrSize * 0.5F, qrSize * 0.5F, null)
         bitmap.recycle()
         return scanBitmap
     }

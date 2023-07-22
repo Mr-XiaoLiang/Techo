@@ -133,7 +133,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
                 this, R.string.toast_error_create_qr_bitmap, Toast.LENGTH_SHORT
             ).show()
         }) {
-            val result = creatorHelper.createQrBitmap()
+            val result = creatorHelper.createShareQrBitmap()
             val bitmap = result.getOrNull()
             if (bitmap == null) {
                 onUI {

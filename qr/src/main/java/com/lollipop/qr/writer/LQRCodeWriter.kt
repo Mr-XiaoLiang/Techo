@@ -133,7 +133,7 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         width: Int,
         height: Int,
         hints: Map<EncodeHintType, *>? = null
-    ): LBitMatrix {
+    ): LQrBitMatrix {
         val bean = encodeTo(contents, format, width, height, hints)
         return renderResultLQR(bean.qrCode, bean.width, bean.height, bean.quietZone)
     }
@@ -228,7 +228,7 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         return output
     }
 
-    private fun renderResultLQR(code: QRCode, w: Int, h: Int, quietZone: Int): LBitMatrix {
+    private fun renderResultLQR(code: QRCode, w: Int, h: Int, quietZone: Int): LQrBitMatrix {
         val input = code.matrix ?: throw IllegalStateException()
         val version = code.version
         val inputWidth = input.width
@@ -266,7 +266,7 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         val leftPadding = (outputWidth - inputWidth * multiple) / 2
         val topPadding = (outputHeight - inputHeight * multiple) / 2
 
-        val output = LBitMatrix(outputWidth, outputHeight)
+        val output = LQrBitMatrix(code, outputWidth, outputHeight)
 
         var outputY = topPadding
 

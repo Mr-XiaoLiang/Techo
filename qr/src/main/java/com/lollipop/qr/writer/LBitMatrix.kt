@@ -3,6 +3,7 @@ package com.lollipop.qr.writer
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.encoder.QRCode
 
 
 /**
@@ -11,10 +12,10 @@ import com.google.zxing.common.BitMatrix
  * 一个包装的矩阵，因为在二维码缩放模式下，
  * 需要标记清除允许透明的部分，黑色部分，白色部分
  */
-class LBitMatrix(val width: Int, val height: Int = width) {
+open class LBitMatrix(val width: Int, val height: Int = width) {
 
-    private val nullableMatrix = BitMatrix(width, height)
-    private val blackMatrix = BitMatrix(width, height)
+    protected val nullableMatrix = BitMatrix(width, height)
+    protected val blackMatrix = BitMatrix(width, height)
 
     companion object {
         fun copyOf(bitMatrix: BitMatrix): LBitMatrix {
