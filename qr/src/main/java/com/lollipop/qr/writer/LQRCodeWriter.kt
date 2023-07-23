@@ -266,7 +266,7 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
         val leftPadding = (outputWidth - inputWidth * multiple) / 2
         val topPadding = (outputHeight - inputHeight * multiple) / 2
 
-        val output = LQrBitMatrix(code, outputWidth, outputHeight)
+        val output = LQrBitMatrix(code, quietZone, outputWidth, outputHeight)
 
         var outputY = topPadding
 

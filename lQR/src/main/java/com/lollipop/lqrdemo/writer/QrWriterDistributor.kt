@@ -3,11 +3,14 @@ package com.lollipop.lqrdemo.writer
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import kotlin.math.min
 
 class QrWriterDistributor : QrWriter() {
 
     private var bitmap: Bitmap? = null
     private val bitmapMatrix = Matrix()
+
+    override var scaleValue: Float = 1F
 
     override fun onDraw(canvas: Canvas) {
         bitmap?.let {
@@ -30,7 +33,9 @@ class QrWriterDistributor : QrWriter() {
         val b = bitmap ?: return
         val scaleX = bounds.width() * 1F / b.width
         val scaleY = bounds.height() * 1F / b.height
-        bitmapMatrix.setScale(scaleX, scaleY)
+        val scale = min(scaleX, scaleY)
+        bitmapMatrix.setScale(scale, scale)
+        scaleValue = scale
     }
 
 }

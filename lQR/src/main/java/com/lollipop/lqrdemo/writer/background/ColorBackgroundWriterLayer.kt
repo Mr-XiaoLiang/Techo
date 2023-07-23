@@ -37,7 +37,4 @@ class ColorBackgroundWriterLayer : BackgroundWriterLayer() {
         this.currentColor = 0
     }
 
-    override fun onBoundsChanged(bounds: Rect) {
-        // 不用做任何事情，只要绘制就好了
-    }
 }

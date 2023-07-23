@@ -12,11 +12,21 @@ import com.google.zxing.qrcode.encoder.QRCode
  * 一个包装的矩阵，因为在二维码缩放模式下，
  * 需要标记清除允许透明的部分，黑色部分，白色部分
  */
-class LQrBitMatrix(private val qrCode: QRCode, width: Int, height: Int = width): LBitMatrix(width, height) {
+class LQrBitMatrix(
+    private val qrCode: QRCode,
+    val quietZone: Int,
+    width: Int,
+    height: Int = width
+) : LBitMatrix(width, height) {
 
     companion object {
         fun copyOf(bitMatrix: LQrBitMatrix): LQrBitMatrix {
-            val lqrMatrix = LQrBitMatrix(bitMatrix.qrCode, bitMatrix.width, bitMatrix.height)
+            val lqrMatrix = LQrBitMatrix(
+                bitMatrix.qrCode,
+                bitMatrix.quietZone,
+                bitMatrix.width,
+                bitMatrix.height
+            )
             val blackMatrix = bitMatrix.blackMatrix
             val nullableMatrix = bitMatrix.nullableMatrix
             for (width in 0 until bitMatrix.width) {

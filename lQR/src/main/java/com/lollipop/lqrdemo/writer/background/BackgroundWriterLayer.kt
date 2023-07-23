@@ -19,7 +19,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer {
             onDraw(canvas)
         } else {
             val saveCount = canvas.save()
-            canvas.clipOutPath(clipPath)
+            canvas.clipPath(clipPath)
             onDraw(canvas)
             canvas.restoreToCount(saveCount)
         }
@@ -73,6 +73,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer {
                 // 闭合
                 clipPath.close()
             }
+
             Corner.None -> {
                 // 不做任何事情
                 return
