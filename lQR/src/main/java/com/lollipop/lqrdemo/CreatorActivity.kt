@@ -3,6 +3,7 @@ package com.lollipop.lqrdemo
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -79,7 +80,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         }
         onLoadStatusChanged(false)
 
-        onQrCheckResult(QrCreatorHelper.CheckResult.EMPTY)
+        creatorHelper.contentValue = ""
     }
 
     private fun notifyQrChanged() {
@@ -186,6 +187,10 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     override fun onCodeContentChanged(value: String) {
         log("onCodeContentChanged： $value")
         findContentValueFragment()?.onCodeContentChanged(value)
+        val empty = value.isEmpty()
+        binding.saveBtn.isEnabled = !empty
+        binding.saveBtn.alpha = if (empty) { 0.2F } else { 1F }
+        binding.previewImageView.isInvisible = empty
     }
 
     override fun onLoadStatusChanged(isLading: Boolean) {

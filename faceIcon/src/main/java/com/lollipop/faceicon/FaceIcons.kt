@@ -24,8 +24,8 @@ sealed class FaceIcons(
     )
 
     object CALM : FaceIcons(
-        FaceEyes.girl(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.080F),
-        FaceEyes.girl(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.080F),
+        FaceEyes.open(center = FacePoint(0.25F, EYES_BASE_Y), radius = 0.080F),
+        FaceEyes.open(center = FacePoint(0.75F, EYES_BASE_Y), radius = 0.080F),
         FaceMouth.calm(center = FacePoint(0.5F, 0.75F), width = 0.6F, MOUTH_STROKE_WIDTH, depth = 0.2F)
     )
 

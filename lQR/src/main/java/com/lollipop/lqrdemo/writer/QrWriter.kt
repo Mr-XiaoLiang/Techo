@@ -56,10 +56,10 @@ abstract class QrWriter {
         backgroundWriterLayer.customColor(getDefaultBackgroundColor())
         val matrix = bitMatrix
         if (matrix is LQrBitMatrix) {
-            val quietZone = matrix.quietZone
+            val quietZone = (matrix.quietZone * scaleValue).toInt()
             if (quietZone != lastQuietZone) {
                 lastQuietZone = quietZone
-                val radius = BackgroundWriterLayer.Radius.Absolute(quietZone * scaleValue)
+                val radius = BackgroundWriterLayer.Radius.Absolute(quietZone.toFloat())
                 val corner = BackgroundWriterLayer.Corner.Round(radius, radius, radius, radius)
                 backgroundWriterLayer.setCorner(corner)
                 backgroundWriterLayer.onBoundsChanged(bounds)

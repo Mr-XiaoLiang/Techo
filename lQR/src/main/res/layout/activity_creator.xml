@@ -56,7 +56,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:padding="2dp"
-                    app:faceIcon="sadness"
+                    tools:faceIcon="happy"
                     app:strokeWidth="2dp"
                     tools:background="#3f00"
                     tools:faceColor="#f00" />
