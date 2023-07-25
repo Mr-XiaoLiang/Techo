@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -60,15 +61,15 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
         bindByBack(binding.backButton)
-//        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
-//        binding.subpageGroup.adapter = SubPageAdapter(this)
-//        TabLayoutMediator(
-//            binding.tabLayout,
-//            binding.subpageGroup,
-//            true
-//        ) { tab, position ->
-//            tab.setText(SubPage.values()[position].tab)
-//        }.attach()
+        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
+        binding.subpageGroup.adapter = SubPageAdapter(this)
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.subpageGroup,
+            true
+        ) { tab, position ->
+            tab.setText(SubPage.values()[position].tab)
+        }.attach()
         creatorHelper.addContentChangedListener(this)
         creatorHelper.addLoadStatusChangedListener(this)
         binding.previewImageView.setImageDrawable(previewDrawable)
@@ -116,7 +117,6 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             .setPositiveButton(R.string.known) {dialog, which ->
                 dialog.dismiss()
             }
-            // Add customization options here
             .show()
     }
 
@@ -176,17 +176,17 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             .blend(pigment.onBackgroundTitle, remember = false) {
                 binding.faceIconView.color = it
             }
-//        binding.panelGroup.setBackgroundColor(pigment.extreme)
-//        binding.tabLayout.setTabTextColors(pigment.onExtremeBody, pigment.primaryColor)
-//        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
-//        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
-//            BlendMode.blend(pigment.primaryColor, pigment.extreme, 0.8F)
-//        )
+        binding.panelGroup.setBackgroundColor(pigment.extreme)
+        binding.tabLayout.setTabTextColors(pigment.onBackgroundBody, pigment.primaryColor)
+        binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
+        binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
+            BlendMode.blend(pigment.primaryColor, pigment.backgroundColor, 0.8F)
+        )
     }
 
     override fun onCodeContentChanged(value: String) {
         log("onCodeContentChanged： $value")
-        findContentValueFragment()?.onCodeContentChanged(value)
+        findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
         val empty = value.isEmpty()
         binding.saveBtn.isEnabled = !empty
         binding.saveBtn.alpha = if (empty) { 0.2F } else { 1F }
@@ -217,36 +217,28 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         contentBuilderLauncher.launch(null)
     }
 
-//    private fun findFragment(position: Int = -1): Fragment? {
-//        val pager2 = binding.subpageGroup
-//        val adapter = pager2.adapter ?: return null
-//        val itemCount = adapter.itemCount
-//        if (itemCount < 1) {
-//            return null
-//        }
-//        val pagePosition = if (position < 0 || position >= itemCount) {
-//            pager2.currentItem
-//        } else {
-//            position
-//        }
-//        if (pagePosition < 0 || pagePosition >= itemCount) {
-//            return null
-//        }
-//        val itemId = adapter.getItemId(pagePosition)
-//        return supportFragmentManager.findFragmentByTag("f$itemId")
-//    }
+    private fun findFragment(position: Int = -1): Fragment? {
+        val pager2 = binding.subpageGroup
+        val adapter = pager2.adapter ?: return null
+        val itemCount = adapter.itemCount
+        if (itemCount < 1) {
+            return null
+        }
+        val pagePosition = if (position < 0 || position >= itemCount) {
+            pager2.currentItem
+        } else {
+            position
+        }
+        if (pagePosition < 0 || pagePosition >= itemCount) {
+            return null
+        }
+        val itemId = adapter.getItemId(pagePosition)
+        return supportFragmentManager.findFragmentByTag("f$itemId")
+    }
 
-//    private inline fun <reified T : Any> findTypedFragment(position: Int = -1): T? {
-//        val fragment = findFragment(position) ?: return null
-//        if (fragment is T) {
-//            return fragment
-//        }
-//        return null
-//    }
-
-    private fun findContentValueFragment(): QrContentValueFragment? {
-        val fragment = supportFragmentManager.findFragmentByTag("contentValueFragment")
-        if (fragment is QrContentValueFragment) {
+    private inline fun <reified T : Any> findTypedFragment(position: Int = -1): T? {
+        val fragment = findFragment(position) ?: return null
+        if (fragment is T) {
             return fragment
         }
         return null
@@ -295,13 +287,10 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     ) {
 
         CONTENT(R.string.tab_content, QrContentValueFragment::class.java),
-        POSITION_DETECTION(
-            R.string.tab_position_detection,
-            QrPositionDetectionFragment::class.java
-        ),
-        ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
-        DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
-        BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java)
+        BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java),
+        // POSITION_DETECTION(R.string.tab_position_detection,QrPositionDetectionFragment::class.java),
+        // ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
+        // DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
 
     }
 

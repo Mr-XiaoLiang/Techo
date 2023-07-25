@@ -70,6 +70,11 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
             }
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.inputEditView.text = callback?.getQrContentInfo() ?: ""
+    }
+
     interface Callback {
         fun getQrContentInfo(): String
 

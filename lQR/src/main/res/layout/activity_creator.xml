@@ -46,8 +46,8 @@
             <com.lollipop.clip.RoundClipLayout
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginVertical="12dp"
                 android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="12dp"
                 android:radius="12dp">
 
                 <com.lollipop.faceicon.FaceIconView
@@ -56,10 +56,10 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:padding="2dp"
-                    tools:faceIcon="happy"
                     app:strokeWidth="2dp"
                     tools:background="#3f00"
-                    tools:faceColor="#f00" />
+                    tools:faceColor="#f00"
+                    tools:faceIcon="happy" />
             </com.lollipop.clip.RoundClipLayout>
         </FrameLayout>
 
@@ -133,11 +133,23 @@
         app:leftTop="20dp"
         app:rightTop="20dp">
 
-        <fragment
-            android:name="com.lollipop.lqrdemo.creator.QrContentValueFragment"
+        <LinearLayout
+            android:id="@+id/panelGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:tag="contentValueFragment" />
+            android:orientation="vertical">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"
+                android:id="@+id/subpageGroup"/>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </com.lollipop.clip.RoundClipLayout>
 
