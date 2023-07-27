@@ -48,4 +48,5 @@ dependencies {
     implementation project(path: ':pigment')
     implementation project(path: ':privacy')
     implementation project(path: ':faceIcon')
+    implementation project(path: ':palette')
 }

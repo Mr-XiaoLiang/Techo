@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:radius="20dp"
+    tools:layout_width="320dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="#3f00">
+
+        <com.lollipop.palette.ColorWheelView
+            android:id="@+id/colorWheelView"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:padding="20dp"
+            app:alphaSlideBarEnable="false"
+            app:anchorRadius="10dp"
+            app:anchorStrokeColor="@color/gray_0"
+            app:anchorStrokeWidth="2dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:slideBarInterval="16dp"
+            app:slideBarWidth="5dp"
+            app:valueSlideBarColor="@color/brand_4" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/colorHistoryGroup"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/colorWheelView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.lollipop.clip.RoundClipLayout>
