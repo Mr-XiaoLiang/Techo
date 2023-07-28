@@ -88,10 +88,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/developer"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/copyrightView"
             app:layout_constraintEnd_toEndOf="@id/andrewView"
             app:layout_constraintStart_toStartOf="@id/andrewView"
             app:layout_constraintTop_toBottomOf="@id/andrewView" />
+
+        <TextView
+            android:id="@+id/copyrightView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:paddingVertical="10dp"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/versionView"
+            app:layout_constraintStart_toStartOf="@id/versionView"
+            app:layout_constraintTop_toBottomOf="@id/lollipopView"
+            tools:text="copyrightView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
