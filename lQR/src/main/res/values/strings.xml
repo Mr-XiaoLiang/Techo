@@ -103,5 +103,6 @@
     <string name="message_qr_check_result_empty">需要先创建一个二维码才能开始检测</string>
 
     <string name="known">知道了</string>
+    <string name="confirm">确定</string>
 
 </resources>

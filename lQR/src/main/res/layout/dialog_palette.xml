@@ -29,14 +29,61 @@
             app:slideBarWidth="5dp"
             app:valueSlideBarColor="@color/brand_4" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/colorHistoryGroup"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/colorInputView"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            android:lines="1"
+            android:maxLength="6"
+            android:maxLines="1"
+            android:minLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="6dp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/colorWheelView" />
+            app:layout_constraintTop_toBottomOf="@id/colorWheelView"
+            app:layout_constraintWidth_percent="0.4F"
+            tools:text="FFFFFF" />
+
+        <ImageView
+            android:id="@+id/numberIconView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_baseline_numbers_24"
+            app:layout_constraintBottom_toBottomOf="@id/colorInputView"
+            app:layout_constraintStart_toStartOf="@id/colorInputView"
+            app:layout_constraintTop_toTopOf="@id/colorInputView" />
+
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/confirmButton"
+            android:layout_width="0px"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colorInputView"
+            app:layout_constraintTop_toBottomOf="@id/colorWheelView"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="8dp"
+            android:radius="8dp">
+            <TextView
+                android:id="@+id/confirmButtonText"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="6dp"
+                android:text="@string/confirm"
+                android:gravity="center"
+                tools:background="#f00"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.lollipop.clip.RoundClipLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.lollipop.clip.RoundClipLayout>
