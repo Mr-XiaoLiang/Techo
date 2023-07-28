@@ -1,4 +1,4 @@
-package com.lollipop.techo.util
+package com.lollipop.base.util.richtext
 
 import android.content.Context
 import android.graphics.Canvas
