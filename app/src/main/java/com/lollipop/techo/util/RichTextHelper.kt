@@ -15,6 +15,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.dp2px
+import com.lollipop.base.util.richtext.CenterAlignImageSpan
 import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TextSpan
@@ -130,15 +131,19 @@ class RichTextHelper {
             is TechoItem.Text -> {
                 info.value
             }
+
             is TechoItem.Photo -> {
                 "[^_^]"
             }
+
             is TechoItem.Split -> {
                 "[---]"
             }
+
             is TechoItem.Recording -> {
                 info.value
             }
+
             is TechoItem.Vcr -> {
                 info.value
             }
@@ -481,12 +486,15 @@ class RichTextHelper {
                 bold && italic -> {
                     Typeface.BOLD_ITALIC
                 }
+
                 bold -> {
                     Typeface.BOLD
                 }
+
                 italic -> {
                     Typeface.ITALIC
                 }
+
                 else -> {
                     Typeface.NORMAL
                 }
@@ -736,12 +744,14 @@ class RichTextHelper {
                         return false
                     }
                 }
+
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     // 多指操作，放弃点击事件
                     cancelClick = true
                     Selection.removeSelection(spannable)
                     return false
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     // 如果已经放弃，那么就直接返回，如果没有，那么就检查手指的移动范围，
                     // 超过范围之后，认为发生滑动事件，放弃点击事件的触发
@@ -759,6 +769,7 @@ class RichTextHelper {
                         return false
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     // 如果已经被放弃事件，那么不再处理
                     if (cancelClick) {
