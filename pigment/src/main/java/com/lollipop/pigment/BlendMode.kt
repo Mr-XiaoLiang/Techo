@@ -2,7 +2,6 @@ package com.lollipop.pigment
 
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
-import com.lollipop.pigment.BlendMode.Dark.limitColor
 
 
 sealed class BlendMode {

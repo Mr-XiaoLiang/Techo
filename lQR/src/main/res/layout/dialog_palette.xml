@@ -10,7 +10,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="#3f00">
+        tools:background="#3f00"
+        android:id="@+id/contentGroup"
+        android:focusable="true">
 
         <com.lollipop.palette.ColorWheelView
             android:id="@+id/colorWheelView"
@@ -44,6 +46,7 @@
             android:paddingStart="20dp"
             android:paddingEnd="6dp"
             android:textSize="16sp"
+            android:digits="0123456789abcdefABCDEF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
