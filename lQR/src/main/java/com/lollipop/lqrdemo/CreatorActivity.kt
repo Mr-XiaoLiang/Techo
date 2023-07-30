@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
@@ -39,6 +40,10 @@ import com.lollipop.pigment.Pigment
 class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     OnCodeContentChangedListener, QrCreatorHelper.OnLoadStatusChangedListener {
 
+    companion object {
+        private const val STATE_QR_VALUE = "STATE_QR_VALUE"
+    }
+
     private val binding: ActivityCreatorBinding by lazyBind()
 
     private val creatorHelper = QrCreatorHelper(this, ::notifyQrChanged, ::onQrCheckResult)
@@ -61,7 +66,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         WindowInsetsHelper.fitsSystemWindows(this)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
         bindByBack(binding.backButton)
-        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
+        binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.BOTTOM)
         binding.subpageGroup.adapter = SubPageAdapter(this)
         TabLayoutMediator(
             binding.tabLayout,
@@ -81,7 +86,12 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         }
         onLoadStatusChanged(false)
 
-        creatorHelper.contentValue = ""
+        creatorHelper.contentValue = savedInstanceState?.getString(STATE_QR_VALUE, "") ?: ""
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_QR_VALUE, creatorHelper.contentValue)
     }
 
     private fun notifyQrChanged() {
@@ -114,7 +124,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         }
         MaterialAlertDialogBuilder(this)
             .setMessage(message)
-            .setPositiveButton(R.string.known) {dialog, which ->
+            .setPositiveButton(R.string.known) { dialog, which ->
                 dialog.dismiss()
             }
             .show()
@@ -189,7 +199,11 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         findTypedFragment<OnCodeContentChangedListener>()?.onCodeContentChanged(value)
         val empty = value.isEmpty()
         binding.saveBtn.isEnabled = !empty
-        binding.saveBtn.alpha = if (empty) { 0.2F } else { 1F }
+        binding.saveBtn.alpha = if (empty) {
+            0.2F
+        } else {
+            1F
+        }
         binding.previewImageView.isInvisible = empty
     }
 

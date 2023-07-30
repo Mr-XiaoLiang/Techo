@@ -46,7 +46,6 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
         binding.inputEditView.onClick {
             openInputDialog()
         }
-        binding.inputValueScrollGroup.fixInsetsByMargin(WindowInsetsEdge.CONTENT)
     }
 
     private fun openInputDialog() {

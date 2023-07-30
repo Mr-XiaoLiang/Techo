@@ -28,6 +28,13 @@ class WindowInsetsEdge(
             bottom = WindowInsetsEdgeStrategy.COMPARE
         )
 
+        val BOTTOM = WindowInsetsEdge(
+            left = WindowInsetsEdgeStrategy.ORIGINAL,
+            top = WindowInsetsEdgeStrategy.ORIGINAL,
+            right = WindowInsetsEdgeStrategy.ORIGINAL,
+            bottom = WindowInsetsEdgeStrategy.COMPARE
+        )
+
         fun build(callback: Builder.() -> Unit): WindowInsetsEdge {
             val builder = Builder()
             callback(builder)
