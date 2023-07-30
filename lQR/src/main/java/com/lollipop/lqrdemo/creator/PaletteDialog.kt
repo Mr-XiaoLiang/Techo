@@ -41,7 +41,7 @@ class PaletteDialog(
         setContentView(binding.root)
 
         window?.let {
-            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            it.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             it.setGravity(Gravity.CENTER)
             it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
@@ -57,6 +57,7 @@ class PaletteDialog(
 
         getThemeColor { fg, bg ->
             binding.numberIconView.imageTintList = ColorStateList.valueOf(fg)
+            binding.colorInputView.setTextColor(fg)
             binding.contentGroup.setBackgroundColor(bg)
             binding.colorWheelView.setValueSlideBarColor(fg)
             binding.colorWheelView.setAnchorStrokeColor(bg)
@@ -84,6 +85,7 @@ class PaletteDialog(
     private fun resetColor(color: Int) {
         val newColor = color.or(0xFF000000.toInt())
         onColorChanged(newColor, false)
+        binding.colorWheelView.reset(color)
     }
 
     private fun onColorChanged(color: Int, fromUser: Boolean) {
