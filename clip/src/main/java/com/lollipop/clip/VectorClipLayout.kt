@@ -1,16 +1,12 @@
 package com.lollipop.clip
 
 import android.content.Context
-import android.graphics.Canvas
+import android.graphics.Path
 import android.util.AttributeSet
-import android.widget.FrameLayout
 
-class VectorClipLayout(
-    context: Context, attrs: AttributeSet?, style: Int
-) : FrameLayout(context, attrs, style) {
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context) : this(context, null)
+class VectorClipLayout @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : ClipLayout(context, attrs) {
 
     private var vectorInfo: VectorHelper.VectorInfo? = null
 
@@ -27,38 +23,26 @@ class VectorClipLayout(
         }
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        vectorInfo?.onBoundsChanged(width, height, paddingLeft, paddingTop)
+    override fun rebuildClipPathWithStroke(path: Path) {
+        val info = vectorInfo ?: return
+        val vWidth = width - strokeWidth
+        val vHeight = height - strokeWidth
+        val halfStroke = (strokeWidth * 0.5F).toInt()
+        info.onBoundsChanged(vWidth, vHeight, halfStroke, halfStroke)
+        path.addPath(info.path)
     }
+
+    override fun rebuildClipPathNotStroke(path: Path) {
+        val info = vectorInfo ?: return
+        info.onBoundsChanged(width, height, paddingLeft, paddingTop)
+        path.addPath(info.path)
+    }
+
 
     fun setVector(vectorData: VectorHelper.VectorData) {
         vectorInfo = VectorHelper.parse(vectorData)
-        requestLayout()
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        val vector = vectorInfo
-        if (vector == null || vector.path.isEmpty) {
-            super.onDraw(canvas)
-            return
-        }
-        val saveCount = canvas.save()
-        canvas.clipPath(vector.path)
-        super.onDraw(canvas)
-        canvas.restoreToCount(saveCount)
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        val vector = vectorInfo
-        if (vector == null || vector.path.isEmpty) {
-            super.dispatchDraw(canvas)
-            return
-        }
-        val saveCount = canvas.save()
-        canvas.clipPath(vector.path)
-        super.dispatchDraw(canvas)
-        canvas.restoreToCount(saveCount)
+        rebuildStrokePath()
+        rebuildDefaultPath()
     }
 
 }

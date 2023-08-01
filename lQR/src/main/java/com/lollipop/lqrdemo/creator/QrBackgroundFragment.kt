@@ -30,12 +30,12 @@ class QrBackgroundFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tempButton.onClick {
-            PaletteDialog.show(view.context, color) {
-                color = it
-                Toast.makeText(view.context, it.toString(16), Toast.LENGTH_SHORT).show()
-            }
-        }
+//        binding.tempButton.onClick {
+//            PaletteDialog.show(view.context, color) {
+//                color = it
+//                Toast.makeText(view.context, it.toString(16), Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
 }

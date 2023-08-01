@@ -18,6 +18,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:radius="16dp"
+            app:clipStrokeEnable="true"
             app:clipStrokeColor="#000"
             app:clipStrokeWidth="2dp">
 
