@@ -424,8 +424,8 @@ fun String.parseColor(): Int {
 inline fun <reified T : EditText> T.onActionDone(noinline run: T.() -> Unit) {
     this.imeOptions = EditorInfo.IME_ACTION_DONE
     this.setOnEditorActionListener { _, actionId, event ->
-        if (actionId == EditorInfo.IME_ACTION_DONE
-            || event.keyCode == KeyEvent.KEYCODE_ENTER
+        if (actionId.and(EditorInfo.IME_ACTION_DONE) != 0
+            || event?.keyCode == KeyEvent.KEYCODE_ENTER
         ) {
             run.invoke(this)
             true

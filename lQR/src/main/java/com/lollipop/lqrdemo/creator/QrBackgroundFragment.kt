@@ -36,6 +36,12 @@ class QrBackgroundFragment : BaseFragment() {
 //                Toast.makeText(view.context, it.toString(16), Toast.LENGTH_SHORT).show()
 //            }
 //        }
+        binding.colorModeButton.onClick {
+            PaletteDialog.show(view.context, color) {
+                color = it
+                Toast.makeText(view.context, it.toString(16), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onActionDone
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.parseColor
 import com.lollipop.lqrdemo.databinding.DialogPaletteBinding
@@ -34,8 +35,6 @@ class PaletteDialog(
 
     private var currentColor = color
 
-    private var colorTextWatchLock = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -47,8 +46,8 @@ class PaletteDialog(
         }
 
         binding.colorWheelView.setOnColorChangedListener(this)
-        binding.colorInputView.doAfterTextChanged {
-            onColorInputTextChanged(it)
+        binding.colorInputView.onActionDone {
+            onColorInputTextChanged(binding.colorInputView.text ?: "")
         }
 
         binding.confirmButtonText.onClick {
@@ -79,24 +78,24 @@ class PaletteDialog(
 
     override fun onColorChanged(h: Float, s: Float, v: Float, a: Float) {
         val color = Color.HSVToColor(floatArrayOf(h, s, v))
-        onColorChanged(color, true)
+        onColorChanged(color)
     }
 
     private fun resetColor(color: Int) {
         val newColor = color.or(0xFF000000.toInt())
-        onColorChanged(newColor, false)
+        onColorChanged(newColor)
         binding.colorWheelView.reset(color)
     }
 
-    private fun onColorChanged(color: Int, fromUser: Boolean) {
+    private fun onColorChanged(color: Int) {
         currentColor = color
         binding.confirmButtonText.setBackgroundColor(color)
         binding.confirmButtonText.setTextColor(BlendMode.titleOnColor(color))
-        if (!fromUser) {
-            colorTextWatchLock = true
+        val colorValue = formatColorValue(color)
+        binding.colorInputView.setText(colorValue)
+        if (binding.colorInputView.hasFocus()) {
+            binding.colorInputView.setSelection(colorValue.length)
         }
-        binding.colorInputView.setText(formatColorValue(color))
-        colorTextWatchLock = false
     }
 
     private fun formatColorValue(color: Int): String {
@@ -123,12 +122,8 @@ class PaletteDialog(
         return builder.toString().uppercase()
     }
 
-    private fun onColorInputTextChanged(value: Editable?) {
-        if (colorTextWatchLock) {
-            return
-        }
-        value ?: return
-        if (value.length != 3 && value.length != 6) {
+    private fun onColorInputTextChanged(value: CharSequence) {
+        if (value.length < 6) {
             return
         }
         try {
