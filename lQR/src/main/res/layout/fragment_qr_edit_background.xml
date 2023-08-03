@@ -29,6 +29,28 @@
                 android:scaleType="centerCrop"
                 tools:src="#f00" />
 
+            <ImageView
+                android:id="@+id/imageModeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_outline_insert_photo_24" />
+
+            <com.lollipop.clip.RoundClipLayout
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:leftTop="16dp"
+                android:layout_gravity="end|bottom">
+                <ImageView
+                    android:id="@+id/imageGravityButton"
+                    android:background="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_baseline_done_24"/>
+            </com.lollipop.clip.RoundClipLayout>
+
         </com.lollipop.clip.RoundClipLayout>
 
         <com.lollipop.clip.RoundClipLayout
@@ -47,6 +69,41 @@
                 android:layout_height="72dp"
                 android:scaleType="centerCrop"
                 tools:src="#f00" />
+
+            <ImageView
+                android:id="@+id/colorModeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_palette_24" />
+
+        </com.lollipop.clip.RoundClipLayout>
+
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/noneModeButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:radius="16dp"
+            app:clipStrokeColor="#000"
+            app:clipStrokeWidth="2dp">
+
+            <ImageView
+                android:id="@+id/noneModePreview"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:scaleType="centerCrop"
+                tools:src="#f00" />
+
+            <ImageView
+                android:id="@+id/noneModeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_close_24" />
 
         </com.lollipop.clip.RoundClipLayout>
 
