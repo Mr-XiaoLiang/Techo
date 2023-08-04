@@ -6,7 +6,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import com.lollipop.lqrdemo.writer.QrWriterLayer
 
-abstract class BackgroundWriterLayer : QrWriterLayer {
+abstract class BackgroundWriterLayer : QrWriterLayer() {
 
     protected val bounds = RectF()
 

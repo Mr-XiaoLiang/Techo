@@ -3,40 +3,74 @@ package com.lollipop.lqrdemo.writer.background
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
-import com.lollipop.lqrdemo.writer.BitmapId
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
+import android.view.Gravity
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import kotlin.math.max
 
 class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
 
-    companion object {
+    private val matrix = Matrix()
+    private var bitmapId = ""
+    private var currentGravity = Gravity.CENTER
+    private var currentBitmap: Bitmap? = null
 
-        var bitmap: Bitmap? = null
-        var gravity = Gravity.CENTER
-
-        fun destroyBitmap() {
-            try {
-                bitmap?.recycle()
-                bitmap = null
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+    fun setBitmapUrl(url: String) {
+        if (url != bitmapId) {
+            currentBitmap = null
         }
-
+        bitmapId = url
+        loadBitmap()
     }
 
-    private val matrix = Matrix()
-    private var bitmapId = BitmapId()
-    private var currentGravity = gravity
+    private fun loadBitmap() {
+        val url = bitmapId
+        if (url.isEmpty()) {
+            return
+        }
+        var targetWidth = bounds.width().toInt()
+        var targetHeight = bounds.height().toInt()
+        if (targetWidth < 21) {
+            targetWidth = Target.SIZE_ORIGINAL
+        }
+        if (targetHeight < 21) {
+            targetHeight = Target.SIZE_ORIGINAL
+        }
+        glide()?.asBitmap()?.load(url)
+            ?.into(BitmapTarget(targetWidth, targetHeight, ::onBitmapLoaded))
+    }
+
+    fun setGravity(gravity: Gravity) {
+        this.currentGravity = gravity
+        updateMatrix()
+        invalidateSelf()
+    }
+
+    override fun onBoundsChanged(bounds: Rect) {
+        super.onBoundsChanged(bounds)
+        updateMatrix()
+        invalidateSelf()
+    }
+
+    private fun onBitmapLoaded(b: Bitmap?) {
+        this.currentBitmap = b
+        updateMatrix()
+        invalidateSelf()
+    }
 
     override fun onDraw(canvas: Canvas) {
-        bitmap?.let {
+        currentBitmap?.let {
             if (checkBitmap(it)) {
                 canvas.drawBitmap(it, matrix, null)
             }
         }
     }
 
-    private fun updateMatrix(bitmap: Bitmap) {
+    private fun updateMatrix() {
+        val bitmap = this.currentBitmap ?: return
         if (bitmap.isRecycled) {
             resetMatrix()
             return
@@ -54,7 +88,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
         var scale = 1F
         var offsetX = 0F
         var offsetY = 0F
-        currentGravity = gravity
         when (currentGravity) {
             Gravity.LEFT -> {
                 scale = bHeight * 1F / vHeight
@@ -96,9 +129,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
     }
 
     private fun checkBitmap(bitmap: Bitmap): Boolean {
-        if (bitmapId.isChanged(bitmap, true) || currentGravity != gravity) {
-            updateMatrix(bitmap)
-        }
         return !bitmap.isRecycled
     }
 
@@ -109,6 +139,22 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
         RIGHT,
         BOTTOM,
         CENTER
+
+    }
+
+    private class BitmapTarget(
+        width: Int,
+        height: Int,
+        private val callback: (Bitmap?) -> Unit
+    ) : CustomTarget<Bitmap>(width, height) {
+
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            callback(resource)
+        }
+
+        override fun onLoadCleared(placeholder: Drawable?) {
+            callback(null)
+        }
 
     }
 

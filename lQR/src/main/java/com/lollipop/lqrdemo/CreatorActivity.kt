@@ -2,7 +2,6 @@ package com.lollipop.lqrdemo
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
@@ -22,18 +21,14 @@ import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
 import com.lollipop.faceicon.FaceIcons
 import com.lollipop.lqrdemo.base.ColorModeActivity
-import com.lollipop.lqrdemo.creator.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
-import com.lollipop.lqrdemo.creator.QrDataPointFragment
-import com.lollipop.lqrdemo.creator.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
@@ -276,7 +271,6 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
 
     override fun onDestroy() {
         super.onDestroy()
-        BitmapBackgroundWriterLayer.destroyBitmap()
     }
 
     private class SubPageAdapter(
