@@ -23,12 +23,17 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
             currentBitmap = null
         }
         bitmapId = url
+        notifyResourceChanged()
+    }
+
+    override fun onUpdateResource() {
         loadBitmap()
     }
 
     private fun loadBitmap() {
         val url = bitmapId
         if (url.isEmpty()) {
+            onResourceReady()
             return
         }
         var targetWidth = bounds.width().toInt()
@@ -58,6 +63,7 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
     private fun onBitmapLoaded(b: Bitmap?) {
         this.currentBitmap = b
         updateMatrix()
+        onResourceReady()
         invalidateSelf()
     }
 
