@@ -1,6 +1,5 @@
 package com.lollipop.lqrdemo.writer
 
-import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
 import com.lollipop.base.util.task
@@ -57,9 +56,9 @@ abstract class QrWriterLayer {
     interface Callback {
         fun invalidateLayer(layer: QrWriterLayer)
 
-        fun getLifecycle(): Lifecycle
+        fun getLifecycle(): Lifecycle?
 
-        fun createGlideBuilder(): RequestManager
+        fun createGlideBuilder(): RequestManager?
 
         fun onResourceReady(layer: QrWriterLayer)
 
