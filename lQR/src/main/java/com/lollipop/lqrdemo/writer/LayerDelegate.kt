@@ -44,6 +44,15 @@ class LayerDelegate<T : QrWriterLayer> : QrWriterLayer.Callback {
         return current
     }
 
+    fun updateResource() {
+        get()?.updateResource()
+    }
+
+    fun isResourceReady(): Boolean {
+        val impl = get() ?: return true
+        return impl.isResourceReady
+    }
+
     private fun getKey(clazz: Class<*>): String {
         return clazz.name
     }

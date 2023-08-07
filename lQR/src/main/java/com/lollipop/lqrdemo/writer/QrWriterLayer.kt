@@ -9,8 +9,6 @@ abstract class QrWriterLayer {
     protected var callback: Callback? = null
         private set
 
-    protected var lifecycle: Lifecycle? = null
-
     var isResourceReady: Boolean = false
         private set
 

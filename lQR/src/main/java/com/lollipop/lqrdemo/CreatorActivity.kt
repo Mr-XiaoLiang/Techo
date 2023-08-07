@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isInvisible
@@ -82,6 +83,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         onLoadStatusChanged(false)
 
         creatorHelper.contentValue = savedInstanceState?.getString(STATE_QR_VALUE, "") ?: ""
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -133,13 +135,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
             return
         }
         startLoading()
-        doAsync({
-            stopLoading()
-            Toast.makeText(
-                this, R.string.toast_error_create_qr_bitmap, Toast.LENGTH_SHORT
-            ).show()
-        }) {
-            val result = creatorHelper.createShareQrBitmap()
+        creatorHelper.createShareQrBitmap { result ->
             val bitmap = result.getOrNull()
             if (bitmap == null) {
                 onUI {
@@ -149,16 +145,29 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
                     ).show()
                 }
             } else {
-                val uri = QrCreatorHelper.saveToMediaStore(this, bitmap)
-                onUI {
-                    stopLoading()
-                    if (uri == null) {
-                        Toast.makeText(
-                            this, R.string.toast_error_save_qr_bitmap, Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        ShareSheet.shareImage(this, uri)
-                    }
+                saveBitmap(bitmap)
+            }
+        }
+    }
+
+    private fun saveBitmap(bitmap: Bitmap) {
+        doAsync({
+            onUI {
+                stopLoading()
+                Toast.makeText(
+                    this, R.string.toast_error_create_qr_bitmap, Toast.LENGTH_SHORT
+                ).show()
+            }
+        }) {
+            val uri = QrCreatorHelper.saveToMediaStore(this, bitmap)
+            onUI {
+                stopLoading()
+                if (uri == null) {
+                    Toast.makeText(
+                        this, R.string.toast_error_save_qr_bitmap, Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    ShareSheet.shareImage(this, uri)
                 }
             }
         }

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
@@ -61,7 +62,12 @@ class QrBackgroundFragment : BaseFragment() {
         updateSelectedButton(currentMode)
         color = ColorBackgroundWriterLayer.color
         updateColorPreview(color)
-        updateImageGravity(ImageGravity.find(BitmapBackgroundWriterLayer.gravity))
+        updateImageGravity(
+            ImageGravity.find(
+                callback?.getCurrentBackgroundGravity()
+                    ?: BitmapBackgroundWriterLayer.Gravity.CENTER
+            )
+        )
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -142,7 +148,13 @@ class QrBackgroundFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.imageModePreview.setImageBitmap(BitmapBackgroundWriterLayer.bitmap)
+        val background = callback?.getCurrentBackground() ?: ""
+        if (background.isEmpty()) {
+            Glide.with(this).clear(binding.imageModePreview)
+            binding.imageModePreview.setImageDrawable(null)
+        } else {
+            Glide.with(this).load(background).into(binding.imageModePreview)
+        }
     }
 
     private fun onModeButtonClick(mode: Mode) {
@@ -221,6 +233,10 @@ class QrBackgroundFragment : BaseFragment() {
         fun onBackgroundModeChanged(layer: Class<out BackgroundWriterLayer>?)
 
         fun onBackgroundChanged()
+
+        fun getCurrentBackground(): String
+
+        fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity
     }
 
 }
