@@ -11,6 +11,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
     protected val bounds = RectF()
 
     protected var backgroundCorner: Corner? = null
+        private set
 
     protected val clipPath = Path()
 
