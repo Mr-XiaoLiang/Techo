@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp"
-                    android:src="@drawable/ic_baseline_done_24"/>
+                    android:src="@drawable/ic_baseline_keyboard_double_arrow_down_24"/>
             </com.lollipop.clip.RoundClipLayout>
 
         </com.lollipop.clip.RoundClipLayout>
