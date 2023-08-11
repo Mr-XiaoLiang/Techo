@@ -45,13 +45,15 @@ class QrBackgroundFragment : BaseFragment() {
 
     private var callback: Callback? = null
 
+    private var currentGravity = ImageGravity.CENTER
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.colorModeButton.onClick {
             onModeButtonClick(Mode.COLOR)
         }
         binding.imageGravityButton.onClick {
-
+            nextImageGravity()
         }
         binding.imageModeButton.onClick {
             onModeButtonClick(Mode.IMAGE)
@@ -62,12 +64,6 @@ class QrBackgroundFragment : BaseFragment() {
         updateSelectedButton(currentMode)
         color = ColorBackgroundWriterLayer.color
         updateColorPreview(color)
-        updateImageGravity(
-            ImageGravity.find(
-                callback?.getCurrentBackgroundGravity()
-                    ?: BitmapBackgroundWriterLayer.Gravity.CENTER
-            )
-        )
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -95,6 +91,22 @@ class QrBackgroundFragment : BaseFragment() {
             binding.imageGravityButton
         )
         binding.imageGravityButton.setBackgroundColor(pigment.extreme)
+    }
+
+    private fun nextImageGravity() {
+        var index = 0
+        val current = currentGravity
+        val gravities = ImageGravity.values()
+        gravities.forEachIndexed { i, item ->
+            if (item == current) {
+                index = i
+            }
+        }
+        index++
+        index %= gravities.size
+        currentGravity = gravities[index]
+        updateImageGravity()
+        callback?.onBackgroundGravityChanged(currentGravity.gravity)
     }
 
     private fun setModePreviewBackground(pigment: Pigment, vararg views: View) {
@@ -132,8 +144,8 @@ class QrBackgroundFragment : BaseFragment() {
         binding.noneModeButton.isStrokeEnable = mode == Mode.NONE
     }
 
-    private fun updateImageGravity(gravity: ImageGravity) {
-        binding.imageGravityButton.setImageResource(gravity.icon)
+    private fun updateImageGravity() {
+        binding.imageGravityButton.setImageResource(currentGravity.icon)
     }
 
     private fun updateColorPreview(newColor: Int) {
@@ -155,6 +167,11 @@ class QrBackgroundFragment : BaseFragment() {
         } else {
             Glide.with(this).load(background).into(binding.imageModePreview)
         }
+        currentGravity = ImageGravity.find(
+            callback?.getCurrentBackgroundGravity()
+                ?: BitmapBackgroundWriterLayer.Gravity.CENTER
+        )
+        updateImageGravity()
     }
 
     private fun onModeButtonClick(mode: Mode) {
@@ -237,6 +254,8 @@ class QrBackgroundFragment : BaseFragment() {
         fun getCurrentBackground(): String
 
         fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity
+
+        fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity)
     }
 
 }
