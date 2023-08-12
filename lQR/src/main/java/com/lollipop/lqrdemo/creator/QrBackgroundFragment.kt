@@ -16,6 +16,9 @@ import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.clip.ClipLayout
+import com.lollipop.filechooser.FileChooseLauncher
+import com.lollipop.filechooser.FileChooseResult
+import com.lollipop.filechooser.FileChooser
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
@@ -138,6 +141,10 @@ class QrBackgroundFragment : BaseFragment() {
         callback = null
     }
 
+    fun onPhotoResult(result: FileChooseResult) {
+        // TODO
+    }
+
     private fun updateSelectedButton(mode: Mode) {
         binding.colorModeButton.isStrokeEnable = mode == Mode.COLOR
         binding.imageModeButton.isStrokeEnable = mode == Mode.IMAGE
@@ -175,18 +182,23 @@ class QrBackgroundFragment : BaseFragment() {
     }
 
     private fun onModeButtonClick(mode: Mode) {
+        val lastMode = currentMode
         currentMode = mode
         updateSelectedButton(mode)
         callback?.onBackgroundModeChanged(mode.modeLayer)
         when (mode) {
             Mode.IMAGE -> {
-                // TODO()
+                if (lastMode == mode) {
+                    callback?.requestPhoto()
+                }
             }
 
             Mode.COLOR -> {
-                context?.let { c ->
-                    PaletteDialog.show(c, color) {
-                        onColorChanged(it)
+                if (lastMode == mode) {
+                    context?.let { c ->
+                        PaletteDialog.show(c, color) {
+                            onColorChanged(it)
+                        }
                     }
                 }
             }
@@ -256,6 +268,8 @@ class QrBackgroundFragment : BaseFragment() {
         fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity
 
         fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity)
+
+        fun requestPhoto()
     }
 
 }

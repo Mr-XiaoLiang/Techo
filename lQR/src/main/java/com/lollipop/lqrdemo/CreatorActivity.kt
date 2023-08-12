@@ -21,6 +21,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
 import com.lollipop.faceicon.FaceIcons
+import com.lollipop.filechooser.FileChooser
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
@@ -55,6 +56,10 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     private val log by lazyLogD()
 
     private var currentCheckResult = QrCreatorHelper.CheckResult.EMPTY
+
+    private val backgroundChooser = FileChooser.registerChooserLauncher(this) {
+        findTypedFragment<QrBackgroundFragment>()?.onPhotoResult(it)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
