@@ -6,6 +6,7 @@ import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
@@ -112,7 +113,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     open fun onBoundsChanged() {}
 
-    fun setBackground(layer: Class<BackgroundWriterLayer>?) {
+    fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         backgroundLayer.setLayer(layer)
         backgroundLayer.get()?.onBoundsChanged(bounds)
         onBackgroundChanged()
@@ -145,6 +146,14 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     override fun onResourceReady(layer: QrWriterLayer) {
         onAnyLayerReady()
+    }
+
+    fun setBackgroundPhoto(url: String) {
+        backgroundLayer.get()?.let {
+            if (it is BitmapBackgroundWriterLayer) {
+                it.setBitmapUrl(url)
+            }
+        }
     }
 
     fun interface ResourceReadyCallback {

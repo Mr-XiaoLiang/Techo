@@ -24,6 +24,7 @@ import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
+import java.io.File
 import java.io.OutputStream
 import kotlin.math.max
 import kotlin.random.Random
@@ -36,6 +37,25 @@ class QrCreatorHelper(
 
 
     companion object {
+
+        private fun getQrBackgroundDir(context: Context): File {
+            return File(context.filesDir, "qr_background")
+        }
+
+        fun getQrBackgroundFile(context: Context): File {
+            return File(getQrBackgroundDir(context), getFileName())
+        }
+
+        fun clearQrBackground(context: Context) {
+            try {
+                val dir = getQrBackgroundDir(context)
+                dir.listFiles()?.forEach {
+                    it.delete()
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
 
         private fun getFileName(): String {
             val fileCode = Random.nextInt(0xF0000, 0xFFFFF).toString(16).uppercase()
@@ -88,6 +108,12 @@ class QrCreatorHelper(
         set(value) {
             field = value
             onContentChanged()
+        }
+
+    var currentBackgroundPhoto: String = ""
+        set(value) {
+            field = value
+            onBackgroundChanged()
         }
 
     private var bitMatrix: LBitMatrix? = null
@@ -242,8 +268,13 @@ class QrCreatorHelper(
         }
     }
 
-    fun setBackground(layer: Class<BackgroundWriterLayer>) {
+    fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         writerGroup.setBackground(layer)
+        onChanged()
+    }
+
+    fun onBackgroundChanged() {
+        writerGroup.setBackgroundPhoto(currentBackgroundPhoto)
         onChanged()
     }
 

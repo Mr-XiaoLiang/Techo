@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
@@ -141,10 +142,6 @@ class QrBackgroundFragment : BaseFragment() {
         callback = null
     }
 
-    fun onPhotoResult(result: FileChooseResult) {
-        // TODO
-    }
-
     private fun updateSelectedButton(mode: Mode) {
         binding.colorModeButton.isStrokeEnable = mode == Mode.COLOR
         binding.imageModeButton.isStrokeEnable = mode == Mode.IMAGE
@@ -167,12 +164,18 @@ class QrBackgroundFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        onBackgroundPhotoChanged()
+    }
+
+    fun onBackgroundPhotoChanged() {
         val background = callback?.getCurrentBackground() ?: ""
         if (background.isEmpty()) {
             Glide.with(this).clear(binding.imageModePreview)
             binding.imageModePreview.setImageDrawable(null)
         } else {
-            Glide.with(this).load(background).into(binding.imageModePreview)
+            Glide.with(this)
+                .load(background)
+                .into(binding.imageModePreview)
         }
         currentGravity = ImageGravity.find(
             callback?.getCurrentBackgroundGravity()
@@ -189,7 +192,7 @@ class QrBackgroundFragment : BaseFragment() {
         when (mode) {
             Mode.IMAGE -> {
                 if (lastMode == mode) {
-                    callback?.requestPhoto()
+                    callback?.requestBackgroundPhoto()
                 }
             }
 
@@ -269,7 +272,7 @@ class QrBackgroundFragment : BaseFragment() {
 
         fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity)
 
-        fun requestPhoto()
+        fun requestBackgroundPhoto()
     }
 
 }

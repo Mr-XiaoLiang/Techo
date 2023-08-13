@@ -16,7 +16,7 @@ class LayerDelegate<T : QrWriterLayer> : QrWriterLayer.Callback {
         this.layerCallback = callback
     }
 
-    fun setLayer(clazz: Class<T>?) {
+    fun setLayer(clazz: Class<out T>?) {
         if (clazz == null) {
             current = null
             return

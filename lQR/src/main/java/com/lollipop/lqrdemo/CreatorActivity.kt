@@ -8,6 +8,7 @@ import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ShareSheet
@@ -21,6 +22,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
 import com.lollipop.faceicon.FaceIcons
+import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
@@ -31,11 +33,17 @@ import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
+import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
+import java.io.File
 
-class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
-    OnCodeContentChangedListener, QrCreatorHelper.OnLoadStatusChangedListener {
+class CreatorActivity : ColorModeActivity(),
+    QrContentValueFragment.Callback,
+    OnCodeContentChangedListener,
+    QrCreatorHelper.OnLoadStatusChangedListener,
+    QrBackgroundFragment.Callback {
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -58,7 +66,7 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
     private var currentCheckResult = QrCreatorHelper.CheckResult.EMPTY
 
     private val backgroundChooser = FileChooser.registerChooserLauncher(this) {
-        findTypedFragment<QrBackgroundFragment>()?.onPhotoResult(it)
+        onBackgroundPhotoSelected(it)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -283,8 +291,56 @@ class CreatorActivity : ColorModeActivity(), QrContentValueFragment.Callback,
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onBackgroundModeChanged(layer: Class<out BackgroundWriterLayer>?) {
+        creatorHelper.setBackground(layer)
+    }
+
+    override fun onBackgroundChanged() {
+        creatorHelper.onBackgroundChanged()
+    }
+
+    override fun getCurrentBackground(): String {
+        return creatorHelper.currentBackgroundPhoto
+    }
+
+    override fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity {
+        TODO("Not yet implemented")
+    }
+
+    override fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity) {
+        TODO("Not yet implemented")
+    }
+
+    override fun requestBackgroundPhoto() {
+        backgroundChooser.launch()
+    }
+
+    private fun onBackgroundPhotoSelected(fileChooseResult: FileChooseResult) {
+        doAsync {
+            var isChanged = false
+            when (fileChooseResult) {
+                is FileChooseResult.Single -> {
+                    isChanged = true
+                    QrCreatorHelper.clearQrBackground(this)
+                    val tempFile = QrCreatorHelper.getQrBackgroundFile(this)
+                    fileChooseResult.save(this, tempFile)
+                }
+                is FileChooseResult.Multiple -> {
+                    isChanged = true
+                    QrCreatorHelper.clearQrBackground(this)
+                    val tempFile = QrCreatorHelper.getQrBackgroundFile(this)
+                    fileChooseResult.save(this, 0, tempFile)
+                }
+                else -> {}
+            }
+            if (isChanged) {
+                onUI {
+                    onBackgroundChanged()
+                    findTypedFragment<QrBackgroundFragment>()?.onBackgroundPhotoChanged()
+                }
+            }
+        }
     }
 
     private class SubPageAdapter(

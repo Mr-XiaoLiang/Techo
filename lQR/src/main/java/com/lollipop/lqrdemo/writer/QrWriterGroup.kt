@@ -12,7 +12,7 @@ class QrWriterGroup {
 
     private var bitMatrix: LBitMatrix? = null
 
-    private var backgroundLayer: Class<BackgroundWriterLayer>? = null
+    private var backgroundLayer: Class<out BackgroundWriterLayer>? = null
 
     fun addWriter(writer: QrWriter) {
         val b = bounds
@@ -36,10 +36,16 @@ class QrWriterGroup {
         }
     }
 
-    fun setBackground(layer: Class<BackgroundWriterLayer>?) {
+    fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         backgroundLayer = layer
         writerArray.forEach {
             it.setBackground(layer)
+        }
+    }
+
+    fun setBackgroundPhoto(url: String) {
+        writerArray.forEach {
+            it.setBackgroundPhoto(url)
         }
     }
 
