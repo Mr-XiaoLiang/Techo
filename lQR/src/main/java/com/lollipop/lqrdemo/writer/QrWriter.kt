@@ -156,6 +156,14 @@ abstract class QrWriter : QrWriterLayer.Callback {
         }
     }
 
+    fun setBackgroundGravity(gravity: BitmapBackgroundWriterLayer.Gravity) {
+        backgroundLayer.get()?.let {
+            if (it is BitmapBackgroundWriterLayer) {
+                it.setGravity(gravity)
+            }
+        }
+    }
+
     fun interface ResourceReadyCallback {
         fun onResourceReady()
     }

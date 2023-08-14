@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.writer
 
 import android.graphics.Rect
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 
 class QrWriterGroup {
@@ -46,6 +47,12 @@ class QrWriterGroup {
     fun setBackgroundPhoto(url: String) {
         writerArray.forEach {
             it.setBackgroundPhoto(url)
+        }
+    }
+
+    fun setBackgroundGravity(gravity: BitmapBackgroundWriterLayer.Gravity) {
+        writerArray.forEach {
+            it.setBackgroundGravity(gravity)
         }
     }
 

@@ -24,6 +24,7 @@ import com.lollipop.base.util.registerResult
 import com.lollipop.faceicon.FaceIcons
 import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
+import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
@@ -305,38 +306,38 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity {
-        TODO("Not yet implemented")
+        return creatorHelper.currentBackgroundGravity
     }
 
     override fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity) {
-        TODO("Not yet implemented")
+        creatorHelper.currentBackgroundGravity = gravity
     }
 
     override fun requestBackgroundPhoto() {
-        backgroundChooser.launch()
+        backgroundChooser.launch().localOnly().type(FileMime.Image.ALL).start()
     }
 
     private fun onBackgroundPhotoSelected(fileChooseResult: FileChooseResult) {
         doAsync {
-            var isChanged = false
+            var filePath = ""
             when (fileChooseResult) {
                 is FileChooseResult.Single -> {
-                    isChanged = true
                     QrCreatorHelper.clearQrBackground(this)
                     val tempFile = QrCreatorHelper.getQrBackgroundFile(this)
                     fileChooseResult.save(this, tempFile)
+                    filePath = tempFile.path
                 }
                 is FileChooseResult.Multiple -> {
-                    isChanged = true
                     QrCreatorHelper.clearQrBackground(this)
                     val tempFile = QrCreatorHelper.getQrBackgroundFile(this)
                     fileChooseResult.save(this, 0, tempFile)
+                    filePath = tempFile.path
                 }
                 else -> {}
             }
-            if (isChanged) {
+            if (filePath.isNotEmpty()) {
                 onUI {
-                    onBackgroundChanged()
+                    creatorHelper.currentBackgroundPhoto = filePath
                     findTypedFragment<QrBackgroundFragment>()?.onBackgroundPhotoChanged()
                 }
             }

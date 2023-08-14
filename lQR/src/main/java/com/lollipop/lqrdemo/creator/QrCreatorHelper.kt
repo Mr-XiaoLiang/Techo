@@ -19,6 +19,7 @@ import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
 import com.lollipop.lqrdemo.writer.QrWriterGroup
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
@@ -111,6 +112,12 @@ class QrCreatorHelper(
         }
 
     var currentBackgroundPhoto: String = ""
+        set(value) {
+            field = value
+            onBackgroundChanged()
+        }
+
+    var currentBackgroundGravity: BitmapBackgroundWriterLayer.Gravity = BitmapBackgroundWriterLayer.Gravity.CENTER
         set(value) {
             field = value
             onBackgroundChanged()
@@ -275,6 +282,7 @@ class QrCreatorHelper(
 
     fun onBackgroundChanged() {
         writerGroup.setBackgroundPhoto(currentBackgroundPhoto)
+        writerGroup.setBackgroundGravity(currentBackgroundGravity)
         onChanged()
     }
 
