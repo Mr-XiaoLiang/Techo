@@ -21,7 +21,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
     fun setBitmapUrl(url: String) {
         if (url != bitmapId) {
             currentBitmap = null
-        } else {
             bitmapId = url
             notifyResourceChanged()
         }

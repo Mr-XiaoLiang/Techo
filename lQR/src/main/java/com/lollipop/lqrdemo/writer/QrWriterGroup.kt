@@ -15,11 +15,21 @@ class QrWriterGroup {
 
     private var backgroundLayer: Class<out BackgroundWriterLayer>? = null
 
+    private var contextProvider: QrWriter.ContextProvider? = null
+
+    fun setContextProvider(provider: QrWriter.ContextProvider?) {
+        this.contextProvider = provider
+        writerArray.forEach {
+            it.setContextProvider(provider)
+        }
+    }
+
     fun addWriter(writer: QrWriter) {
         val b = bounds
         writer.setBounds(b.left, b.top, b.right, b.bottom)
         writer.setBitMatrix(bitMatrix)
         writer.setBackground(backgroundLayer)
+        writer.setContextProvider(contextProvider)
         writerArray.add(writer)
     }
 

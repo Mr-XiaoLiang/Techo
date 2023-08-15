@@ -149,6 +149,10 @@ class QrCreatorHelper(
         barcodeReader.addOnBarcodeScanResultListener(this)
     }
 
+    fun setContextProvider(provider: QrWriter.ContextProvider?) {
+        this.writerGroup.setContextProvider(provider)
+    }
+
     fun addLoadStatusChangedListener(listener: OnLoadStatusChangedListener) {
         this.loadStatusChangedListener.addListener(listener)
     }
@@ -277,7 +281,7 @@ class QrCreatorHelper(
 
     fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         writerGroup.setBackground(layer)
-        onChanged()
+        onBackgroundChanged()
     }
 
     fun onBackgroundChanged() {

@@ -36,7 +36,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
         initLayerCallback()
     }
 
-    fun setContextProvider(provider: ContextProvider) {
+    fun setContextProvider(provider: ContextProvider?) {
         this.contextProvider = provider
     }
 

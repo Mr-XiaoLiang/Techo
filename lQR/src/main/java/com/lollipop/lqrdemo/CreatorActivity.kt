@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ShareSheet
@@ -34,6 +35,7 @@ import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
+import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
@@ -44,7 +46,8 @@ class CreatorActivity : ColorModeActivity(),
     QrContentValueFragment.Callback,
     OnCodeContentChangedListener,
     QrCreatorHelper.OnLoadStatusChangedListener,
-    QrBackgroundFragment.Callback {
+    QrBackgroundFragment.Callback,
+    QrWriter.ContextProvider{
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -87,6 +90,7 @@ class CreatorActivity : ColorModeActivity(),
         }.attach()
         creatorHelper.addContentChangedListener(this)
         creatorHelper.addLoadStatusChangedListener(this)
+        creatorHelper.setContextProvider(this)
         binding.previewImageView.setImageDrawable(previewDrawable)
         binding.saveBtn.onClick {
             saveQrBitmap()
@@ -371,6 +375,14 @@ class CreatorActivity : ColorModeActivity(),
         // ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
         // DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
 
+    }
+
+    override fun createGlideBuilder(): RequestManager {
+        return Glide.with(this)
+    }
+
+    override fun invalidateWriter() {
+        binding.previewImageView.invalidate()
     }
 
 }
