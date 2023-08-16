@@ -4,13 +4,15 @@ import androidx.collection.LruCache
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
 
-class LayerDelegate<T : QrWriterLayer> : QrWriterLayer.Callback {
+class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Callback {
 
     private val cache = LruCache<String, T>(3)
 
     private var current: T? = null
 
     private var layerCallback: QrWriterLayer.Callback? = null
+
+    private var defaultLayer: T? = null
 
     fun setLayerCallback(callback: QrWriterLayer.Callback) {
         this.layerCallback = callback
@@ -40,16 +42,26 @@ class LayerDelegate<T : QrWriterLayer> : QrWriterLayer.Callback {
         current?.setLayerCallback(this)
     }
 
-    fun get(): T? {
-        return current
+    fun get(): T {
+        val c = current
+        if (c != null) {
+            return c
+        }
+        val d = defaultLayer
+        if (d != null) {
+            return d
+        }
+        val n = def.newInstance()
+        defaultLayer = n
+        return n
     }
 
     fun updateResource() {
-        get()?.updateResource()
+        get().updateResource()
     }
 
     fun isResourceReady(): Boolean {
-        val impl = get() ?: return true
+        val impl = get()
         return impl.isResourceReady
     }
 

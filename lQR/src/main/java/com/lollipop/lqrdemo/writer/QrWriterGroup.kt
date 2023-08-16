@@ -17,10 +17,19 @@ class QrWriterGroup {
 
     private var contextProvider: QrWriter.ContextProvider? = null
 
+    private var backgroundCorner: BackgroundWriterLayer.Corner? = null
+
     fun setContextProvider(provider: QrWriter.ContextProvider?) {
         this.contextProvider = provider
         writerArray.forEach {
             it.setContextProvider(provider)
+        }
+    }
+
+    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+        this.backgroundCorner = corner
+        writerArray.forEach {
+            it.setBackgroundCorner(corner)
         }
     }
 

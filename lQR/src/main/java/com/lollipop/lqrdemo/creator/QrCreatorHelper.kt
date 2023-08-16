@@ -149,6 +149,10 @@ class QrCreatorHelper(
         barcodeReader.addOnBarcodeScanResultListener(this)
     }
 
+    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+        this.writerGroup.setBackgroundCorner(corner)
+    }
+
     fun setContextProvider(provider: QrWriter.ContextProvider?) {
         this.writerGroup.setContextProvider(provider)
     }

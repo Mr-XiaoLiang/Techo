@@ -20,11 +20,9 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     protected open val scaleValue = 1F
 
-    protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>()
-
-    private val defaultBackgroundWriterLayer by lazy {
-        ColorBackgroundWriterLayer()
-    }
+    protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>(
+        ColorBackgroundWriterLayer::class.java
+    )
 
     protected var lastQuietZone = 0
 
@@ -32,12 +30,20 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     private var contextProvider: ContextProvider? = null
 
+    private var backgroundCorner: BackgroundWriterLayer.Corner? = null
+
     init {
         initLayerCallback()
     }
 
     fun setContextProvider(provider: ContextProvider?) {
         this.contextProvider = provider
+    }
+
+    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+        this.backgroundCorner = corner
+        updateLayerCorner(backgroundLayer.get())
+        onBackgroundChanged()
     }
 
     private fun initLayerCallback() {
@@ -55,6 +61,14 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     protected open fun checkLayerReady(): Boolean {
         return isAllReady(backgroundLayer)
+    }
+
+    private fun onLayerChanged() {
+        initLayerCallback()
+        updateLayerCorner(backgroundLayer.get())
+        backgroundLayer.get().onBoundsChanged(bounds)
+        backgroundLayer.updateResource()
+        onBackgroundChanged()
     }
 
     protected fun isAllReady(vararg layer: LayerDelegate<*>): Boolean {
@@ -85,28 +99,24 @@ abstract class QrWriter : QrWriterLayer.Callback {
     }
 
     private fun getBackgroundLayer(): BackgroundWriterLayer {
-        return backgroundLayer.get() ?: getDefaultBackgroundLayer()
+        return backgroundLayer.get()
     }
 
-    protected open fun getDefaultBackgroundColor(): Int {
-        return Color.WHITE
-    }
-
-    protected open fun getDefaultBackgroundLayer(): BackgroundWriterLayer {
-        val backgroundWriterLayer = defaultBackgroundWriterLayer
-        backgroundWriterLayer.customColor(getDefaultBackgroundColor())
+    private fun updateLayerCorner(layer: BackgroundWriterLayer) {
         val matrix = bitMatrix
         if (matrix is LQrBitMatrix) {
             val quietZone = (matrix.quietZone * scaleValue).toInt()
-            if (quietZone != lastQuietZone) {
-                lastQuietZone = quietZone
-                val radius = BackgroundWriterLayer.Radius.Absolute(quietZone.toFloat())
-                val corner = BackgroundWriterLayer.Corner.Round(radius, radius, radius, radius)
-                backgroundWriterLayer.setCorner(corner)
-                backgroundWriterLayer.onBoundsChanged(bounds)
-            }
+            lastQuietZone = quietZone
+            val radius = BackgroundWriterLayer.Radius.Absolute(quietZone.toFloat())
+            val corner = backgroundCorner ?: BackgroundWriterLayer.Corner.Round(
+                radius,
+                radius,
+                radius,
+                radius
+            )
+            layer.setCorner(corner)
+            layer.onBoundsChanged(bounds)
         }
-        return backgroundWriterLayer
     }
 
     open fun onDraw(canvas: Canvas) {}
@@ -115,8 +125,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         backgroundLayer.setLayer(layer)
-        backgroundLayer.get()?.onBoundsChanged(bounds)
-        onBackgroundChanged()
+        onLayerChanged()
     }
 
     fun updateLayerResource(callback: ResourceReadyCallback) {
@@ -126,8 +135,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
     }
 
     protected fun updateLayoutBounds() {
-        backgroundLayer.get()?.onBoundsChanged(bounds)
-        getDefaultBackgroundLayer().onBoundsChanged(bounds)
+        backgroundLayer.get().onBoundsChanged(bounds)
     }
 
     protected open fun onBackgroundChanged() {}
@@ -149,7 +157,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
     }
 
     fun setBackgroundPhoto(url: String) {
-        backgroundLayer.get()?.let {
+        backgroundLayer.get().let {
             if (it is BitmapBackgroundWriterLayer) {
                 it.setBitmapUrl(url)
             }
@@ -157,7 +165,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
     }
 
     fun setBackgroundGravity(gravity: BitmapBackgroundWriterLayer.Gravity) {
-        backgroundLayer.get()?.let {
+        backgroundLayer.get().let {
             if (it is BitmapBackgroundWriterLayer) {
                 it.setGravity(gravity)
             }
