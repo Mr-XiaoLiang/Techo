@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.writer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import kotlin.math.min
 
@@ -20,7 +21,7 @@ class QrWriterDistributor : QrWriter() {
 
     override fun onBitMatrixChanged() {
         super.onBitMatrixChanged()
-        bitmap = bitMatrix?.createBitmap()
+        bitmap = bitMatrix?.createBitmap(lightColor = Color.TRANSPARENT)
         updateBitmapMatrix()
     }
 
