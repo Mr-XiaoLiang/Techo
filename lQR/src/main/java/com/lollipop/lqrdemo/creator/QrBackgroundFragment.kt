@@ -32,7 +32,7 @@ import com.lollipop.pigment.Pigment
 /**
  * 背景的设置
  */
-class QrBackgroundFragment : BaseFragment() {
+class QrBackgroundFragment : QrBaseSubpageFragment() {
 
     private val binding: FragmentQrEditBackgroundBinding by lazyBind()
 
@@ -72,7 +72,6 @@ class QrBackgroundFragment : BaseFragment() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        binding.root.setBackgroundColor(pigment.extreme)
         setModePreviewBackground(
             pigment,
             binding.imageModePreview,

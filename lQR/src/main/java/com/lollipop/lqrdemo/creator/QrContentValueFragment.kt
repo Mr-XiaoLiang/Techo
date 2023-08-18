@@ -12,12 +12,13 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.base.BaseFragment
+import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
-class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
+class QrContentValueFragment : QrBaseSubpageFragment(), OnCodeContentChangedListener {
 
     private val binding: FragmentQrContentValueBinding by lazyBind()
 
@@ -60,13 +61,11 @@ class QrContentValueFragment : BaseFragment(), OnCodeContentChangedListener {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        binding.contentGroup.setBackgroundColor(pigment.extreme)
-        BlendMode.flow(pigment.primaryColor)
-            .blend(pigment.extreme, 0.7F) {
-                binding.inputEditView.setBackgroundColor(it)
-            }.content {
-                binding.inputEditView.setTextColor(it)
-            }
+        PigmentTheme.getForePanelInputBar(pigment) { bg, text ->
+            binding.inputEditView.setBackgroundColor(bg)
+            binding.inputEditView.setTextColor(text)
+            binding.inputEditView.setHintTextColor(text)
+        }
     }
 
     override fun onResume() {

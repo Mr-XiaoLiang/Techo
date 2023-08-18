@@ -27,6 +27,7 @@ import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ColorModeActivity
+import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
@@ -40,14 +41,13 @@ import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
-import java.io.File
 
 class CreatorActivity : ColorModeActivity(),
     QrContentValueFragment.Callback,
     OnCodeContentChangedListener,
     QrCreatorHelper.OnLoadStatusChangedListener,
     QrBackgroundFragment.Callback,
-    QrWriter.ContextProvider{
+    QrWriter.ContextProvider {
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -193,7 +193,7 @@ class CreatorActivity : ColorModeActivity(),
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        binding.root.setBackgroundColor(pigment.backgroundColor)
+        binding.root.setBackgroundColor(pigment.extreme)
         binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.titleView.setTextColor(pigment.onBackgroundTitle)
 
@@ -201,15 +201,28 @@ class CreatorActivity : ColorModeActivity(),
         binding.saveBtnText.setTextColor(pigment.onSecondaryTitle)
         binding.saveBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
 
-        BlendMode.flow(pigment.primaryColor)
+        BlendMode.flow(pigment.secondaryColor)
             .blend(pigment.backgroundColor, remember = false) {
                 binding.faceIconView.setBackgroundColor(it)
             }
             .blend(pigment.onBackgroundTitle, remember = false) {
                 binding.faceIconView.color = it
             }
-        binding.panelGroup.setBackgroundColor(pigment.extreme)
-        binding.tabLayout.setTabTextColors(pigment.onBackgroundBody, pigment.primaryColor)
+
+        binding.panelGroup.setBackgroundColor(
+            BlendMode.blend(
+                pigment.primaryColor,
+                pigment.extremeReversal
+            )
+        )
+        PigmentTheme.getForePanelBackground(pigment) { bg, btn ->
+            binding.tabLayout.setBackgroundColor(bg)
+            binding.panelGroup.setBackgroundColor(bg)
+        }
+        binding.tabLayout.setTabTextColors(
+            pigment.onBackgroundBody,
+            BlendMode.blend(pigment.onBackgroundBody, pigment.primaryColor)
+        )
         binding.tabLayout.setSelectedTabIndicatorColor(pigment.primaryColor)
         binding.tabLayout.tabRippleColor = ColorStateList.valueOf(
             BlendMode.blend(pigment.primaryColor, pigment.backgroundColor, 0.8F)
@@ -331,12 +344,14 @@ class CreatorActivity : ColorModeActivity(),
                     fileChooseResult.save(this, tempFile)
                     filePath = tempFile.path
                 }
+
                 is FileChooseResult.Multiple -> {
                     QrCreatorHelper.clearQrBackground(this)
                     val tempFile = QrCreatorHelper.getQrBackgroundFile(this)
                     fileChooseResult.save(this, 0, tempFile)
                     filePath = tempFile.path
                 }
+
                 else -> {}
             }
             if (filePath.isNotEmpty()) {

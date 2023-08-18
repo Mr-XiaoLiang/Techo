@@ -20,8 +20,10 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.requestBoard
 import com.lollipop.lqrdemo.R
+import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 import com.lollipop.pigment.BlendMode
+import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentWallpaperCenter
 
 class QrContentInputPopupWindow(context: Context, private val option: Option) : Dialog(context) {
@@ -71,20 +73,24 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
         }
 
         PigmentWallpaperCenter.pigment?.let { pigment ->
-            binding.inputContent.setBackgroundColor(pigment.extreme)
+            PigmentTheme.getForePanelBackground(pigment) { bg, btn ->
+                binding.inputContent.setBackgroundColor(bg)
 
-            BlendMode.flow(pigment.primaryColor)
-                .blend(pigment.extreme, 0.7F) {
-                    binding.inputEditView.setBackgroundColor(it)
-                }.content {
-                    binding.inputEditView.setTextColor(it)
-                }
+                binding.doneButtonIcon.imageTintList = ColorStateList.valueOf(btn)
+                binding.doneButtonText.setTextColor(btn)
 
-            binding.doneButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onExtremeBody)
-            binding.doneButtonText.setTextColor(pigment.onExtremeBody)
+                binding.builderButtonIcon.imageTintList = ColorStateList.valueOf(btn)
+                binding.builderButtonText.setTextColor(btn)
 
-            binding.builderButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onExtremeBody)
-            binding.builderButtonText.setTextColor(pigment.onExtremeBody)
+                binding.warnTextView.setTextColor(BlendMode.blend(btn, pigment.secondaryColor))
+            }
+
+            PigmentTheme.getForePanelInputBar(pigment) { bg, text ->
+                binding.inputEditView.setBackgroundColor(bg)
+                binding.inputEditView.setTextColor(text)
+                binding.inputEditView.setHintTextColor(text)
+            }
+
         }
     }
 

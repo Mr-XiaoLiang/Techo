@@ -143,6 +143,13 @@ class Pigment(
     }
 
     /**
+     * 极致色彩的反转色
+     */
+    val extremeReversal: Int by lazy {
+        blendMode.extremeReversal
+    }
+
+    /**
      * 极致色彩为背景时的标题颜色
      */
     val onExtremeTitle: Int by lazy {
