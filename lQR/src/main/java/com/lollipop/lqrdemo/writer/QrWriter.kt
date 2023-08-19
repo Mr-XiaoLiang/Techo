@@ -32,12 +32,23 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     private var backgroundCorner: BackgroundWriterLayer.Corner? = null
 
+    protected var darkColor: Int = Color.BLACK
+        private set
+    protected var lightColor: Int = Color.WHITE
+        private set
+
     init {
         initLayerCallback()
     }
 
     fun setContextProvider(provider: ContextProvider?) {
         this.contextProvider = provider
+    }
+
+    fun setQrPointColor(dark: Int = this.darkColor, light: Int = this.lightColor) {
+        this.darkColor = dark
+        this.lightColor = light
+        onBitMatrixChanged()
     }
 
     fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {

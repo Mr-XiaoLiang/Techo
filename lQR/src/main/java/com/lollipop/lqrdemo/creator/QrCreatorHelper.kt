@@ -285,6 +285,12 @@ class QrCreatorHelper(
 
     fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         writerGroup.setBackground(layer)
+        // 这样其实是不对的, 但是先这样写吧。背景内容的方式应该再改改，不能各弄各的
+        if (layer == BitmapBackgroundWriterLayer::class.java) {
+            writerGroup.setQrPointColor(Color.BLACK, Color.TRANSPARENT)
+        } else {
+            writerGroup.setQrPointColor(Color.BLACK, Color.WHITE)
+        }
         onBackgroundChanged()
     }
 

@@ -21,7 +21,7 @@ class QrWriterDistributor : QrWriter() {
 
     override fun onBitMatrixChanged() {
         super.onBitMatrixChanged()
-        bitmap = bitMatrix?.createBitmap(lightColor = Color.TRANSPARENT)
+        bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
         updateBitmapMatrix()
     }
 

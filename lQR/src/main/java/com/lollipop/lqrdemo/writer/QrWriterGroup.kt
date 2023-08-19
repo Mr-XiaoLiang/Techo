@@ -49,6 +49,12 @@ class QrWriterGroup {
         }
     }
 
+    fun setQrPointColor(dark: Int, light: Int) {
+        writerArray.forEach {
+            it.setQrPointColor(dark, light)
+        }
+    }
+
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         bounds.set(left, top, right, bottom)
         writerArray.forEach {
