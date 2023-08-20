@@ -1,6 +1,8 @@
 package com.lollipop.lqrdemo.writer
 
 import android.graphics.Rect
+import com.lollipop.lqrdemo.creator.background.BackgroundCorner
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
@@ -17,7 +19,7 @@ class QrWriterGroup {
 
     private var contextProvider: QrWriter.ContextProvider? = null
 
-    private var backgroundCorner: BackgroundWriterLayer.Corner? = null
+    private var backgroundCorner: BackgroundCorner? = null
 
     fun setContextProvider(provider: QrWriter.ContextProvider?) {
         this.contextProvider = provider
@@ -26,7 +28,7 @@ class QrWriterGroup {
         }
     }
 
-    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+    fun setBackgroundCorner(corner: BackgroundCorner?) {
         this.backgroundCorner = corner
         writerArray.forEach {
             it.setBackgroundCorner(corner)
@@ -75,7 +77,7 @@ class QrWriterGroup {
         }
     }
 
-    fun setBackgroundGravity(gravity: BitmapBackgroundWriterLayer.Gravity) {
+    fun setBackgroundGravity(gravity: BackgroundGravity) {
         writerArray.forEach {
             it.setBackgroundGravity(gravity)
         }

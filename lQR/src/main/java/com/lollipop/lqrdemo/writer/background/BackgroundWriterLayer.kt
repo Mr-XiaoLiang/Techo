@@ -4,13 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
+import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.writer.QrWriterLayer
 
 abstract class BackgroundWriterLayer : QrWriterLayer() {
 
     protected val bounds = RectF()
 
-    protected var backgroundCorner: Corner? = null
+    protected var backgroundCorner: BackgroundCorner? = null
         private set
 
     protected val clipPath = Path()
@@ -33,7 +34,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
         buildClipPath()
     }
 
-    fun setCorner(c: Corner) {
+    fun setCorner(c: BackgroundCorner) {
         this.backgroundCorner = c
         buildClipPath()
     }
@@ -41,7 +42,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
     protected fun buildClipPath() {
         clipPath.reset()
         val c = backgroundCorner
-        if (bounds.isEmpty || c == null || c is Corner.None) {
+        if (bounds.isEmpty || c == null || c is BackgroundCorner.None) {
             return
         }
         // 8个坐标信息，分别对应了：
@@ -49,7 +50,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
         // 因此，左上角是[0,1]，右上角是[2,3]，右下角是[4,5]，左下角是[6,7]
         val radius = getRadius(c)
         when (c) {
-            is Corner.Cut -> {
+            is BackgroundCorner.Cut -> {
                 // 切角模式，其实是把四边形变成了八边形（相邻点聚合可能变成四边形或者三角形，但是本质上是8个点了）
                 val left = bounds.left
                 val top = bounds.top
@@ -75,18 +76,18 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
                 clipPath.close()
             }
 
-            Corner.None -> {
+            BackgroundCorner.None -> {
                 // 不做任何事情
                 return
             }
 
-            is Corner.Round -> {
+            is BackgroundCorner.Round -> {
                 clipPath.addRoundRect(bounds, radius, Path.Direction.CW)
             }
         }
     }
 
-    protected fun getRadius(c: Corner): FloatArray {
+    protected fun getRadius(c: BackgroundCorner): FloatArray {
         val result = FloatArray(8)
         val width = bounds.width()
         val height = bounds.height()
@@ -105,59 +106,24 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
         return result
     }
 
-    protected fun getRadiusValue(radius: Radius, edge: Float): Float {
+    protected fun getRadiusValue(radius: BackgroundCorner.Radius, edge: Float): Float {
         return when (radius) {
-            is Radius.Absolute -> {
+            is BackgroundCorner.Radius.Absolute -> {
                 radius.value
             }
 
-            Radius.None -> {
+            BackgroundCorner.Radius.None -> {
                 0F
             }
 
-            is Radius.Weight -> {
+            is BackgroundCorner.Radius.Weight -> {
                 radius.value * edge
             }
         }
     }
 
-    sealed class Corner(
-        val leftTop: Radius,
-        val rightTop: Radius,
-        val rightBottom: Radius,
-        val leftBottom: Radius
-    ) {
 
-        class Cut(
-            leftTop: Radius,
-            rightTop: Radius,
-            rightBottom: Radius,
-            leftBottom: Radius
-        ) : Corner(leftTop, rightTop, rightBottom, leftBottom)
 
-        class Round(
-            leftTop: Radius,
-            rightTop: Radius,
-            rightBottom: Radius,
-            leftBottom: Radius
-        ) : Corner(leftTop, rightTop, rightBottom, leftBottom)
 
-        object None : Corner(
-            Radius.None,
-            Radius.None,
-            Radius.None,
-            Radius.None
-        )
-
-    }
-
-    sealed class Radius {
-
-        class Absolute(val value: Float) : Radius()
-        class Weight(val value: Float) : Radius()
-
-        object None : Radius()
-
-    }
 
 }

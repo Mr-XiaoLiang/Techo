@@ -14,6 +14,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
+import com.lollipop.lqrdemo.creator.background.BackgroundCorner
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
@@ -117,7 +119,7 @@ class QrCreatorHelper(
             onBackgroundChanged()
         }
 
-    var currentBackgroundGravity: BitmapBackgroundWriterLayer.Gravity = BitmapBackgroundWriterLayer.Gravity.CENTER
+    var currentBackgroundGravity: BackgroundGravity = BackgroundGravity.CENTER
         set(value) {
             field = value
             onBackgroundChanged()
@@ -149,7 +151,7 @@ class QrCreatorHelper(
         barcodeReader.addOnBarcodeScanResultListener(this)
     }
 
-    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+    fun setBackgroundCorner(corner: BackgroundCorner?) {
         this.writerGroup.setBackgroundCorner(corner)
     }
 

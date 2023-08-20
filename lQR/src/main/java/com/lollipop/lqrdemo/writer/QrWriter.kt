@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
+import com.lollipop.lqrdemo.creator.background.BackgroundCorner
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
@@ -30,7 +32,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     private var contextProvider: ContextProvider? = null
 
-    private var backgroundCorner: BackgroundWriterLayer.Corner? = null
+    private var backgroundCorner: BackgroundCorner? = null
 
     protected var darkColor: Int = Color.BLACK
         private set
@@ -51,7 +53,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
         onBitMatrixChanged()
     }
 
-    fun setBackgroundCorner(corner: BackgroundWriterLayer.Corner?) {
+    fun setBackgroundCorner(corner: BackgroundCorner?) {
         this.backgroundCorner = corner
         updateLayerCorner(backgroundLayer.get())
         onBackgroundChanged()
@@ -118,8 +120,8 @@ abstract class QrWriter : QrWriterLayer.Callback {
         if (matrix is LQrBitMatrix) {
             val quietZone = (matrix.quietZone * scaleValue).toInt()
             lastQuietZone = quietZone
-            val radius = BackgroundWriterLayer.Radius.Absolute(quietZone.toFloat())
-            val corner = backgroundCorner ?: BackgroundWriterLayer.Corner.Round(
+            val radius = BackgroundCorner.Radius.Absolute(quietZone.toFloat())
+            val corner = backgroundCorner ?: BackgroundCorner.Round(
                 radius,
                 radius,
                 radius,
@@ -175,7 +177,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
         }
     }
 
-    fun setBackgroundGravity(gravity: BitmapBackgroundWriterLayer.Gravity) {
+    fun setBackgroundGravity(gravity: BackgroundGravity) {
         backgroundLayer.get().let {
             if (it is BitmapBackgroundWriterLayer) {
                 it.setGravity(gravity)

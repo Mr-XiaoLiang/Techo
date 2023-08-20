@@ -5,17 +5,17 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.view.Gravity
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import kotlin.math.max
 
 class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
 
     private val matrix = Matrix()
     private var bitmapId = ""
-    private var currentGravity = Gravity.CENTER
+    private var currentGravity = BackgroundGravity.CENTER
     private var currentBitmap: Bitmap? = null
 
     fun setBitmapUrl(url: String) {
@@ -48,7 +48,7 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
             ?.into(BitmapTarget(targetWidth, targetHeight, ::onBitmapLoaded))
     }
 
-    fun setGravity(gravity: Gravity) {
+    fun setGravity(gravity: BackgroundGravity) {
         this.currentGravity = gravity
         updateMatrix()
         invalidateSelf()
@@ -95,31 +95,31 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
         var offsetX = 0F
         var offsetY = 0F
         when (currentGravity) {
-            Gravity.LEFT -> {
+            BackgroundGravity.LEFT -> {
                 scale = bHeight * 1F / vHeight
                 offsetX = left
                 offsetY = top
             }
 
-            Gravity.Top -> {
+            BackgroundGravity.Top -> {
                 scale = bWidth * 1F / vWidth
                 offsetX = left
                 offsetY = top
             }
 
-            Gravity.RIGHT -> {
+            BackgroundGravity.RIGHT -> {
                 scale = bHeight * 1F / vHeight
                 offsetX = vWidth - (scale * bWidth) + left
                 offsetY = top
             }
 
-            Gravity.BOTTOM -> {
+            BackgroundGravity.BOTTOM -> {
                 scale = bWidth * 1F / vWidth
                 offsetX = left
                 offsetY = vHeight - (scale * bHeight) + top
             }
 
-            Gravity.CENTER -> {
+            BackgroundGravity.CENTER -> {
                 scale = max(bWidth * 1F / vWidth, bHeight * 1F / vHeight)
                 offsetX = (vWidth - (scale * bWidth)) * 0.5F + left
                 offsetY = (vHeight - (scale * bHeight)) * 0.5F + top
@@ -136,16 +136,6 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
 
     private fun checkBitmap(bitmap: Bitmap): Boolean {
         return !bitmap.isRecycled
-    }
-
-    enum class Gravity {
-
-        LEFT,
-        Top,
-        RIGHT,
-        BOTTOM,
-        CENTER
-
     }
 
     private class BitmapTarget(

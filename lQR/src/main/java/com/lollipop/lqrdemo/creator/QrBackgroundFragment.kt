@@ -4,24 +4,18 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.Image
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.clip.ClipLayout
-import com.lollipop.filechooser.FileChooseLauncher
-import com.lollipop.filechooser.FileChooseResult
-import com.lollipop.filechooser.FileChooser
 import com.lollipop.lqrdemo.R
-import com.lollipop.lqrdemo.base.BaseFragment
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
@@ -178,7 +172,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         }
         currentGravity = ImageGravity.find(
             callback?.getCurrentBackgroundGravity()
-                ?: BitmapBackgroundWriterLayer.Gravity.CENTER
+                ?: BackgroundGravity.CENTER
         )
         updateImageGravity()
     }
@@ -218,32 +212,32 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
 
 
     private enum class ImageGravity(
-        val gravity: BitmapBackgroundWriterLayer.Gravity,
+        val gravity: BackgroundGravity,
         val icon: Int
     ) {
         LEFT(
-            BitmapBackgroundWriterLayer.Gravity.LEFT,
+            BackgroundGravity.LEFT,
             R.drawable.ic_baseline_keyboard_double_arrow_right_24
         ),
         Top(
-            BitmapBackgroundWriterLayer.Gravity.Top,
+            BackgroundGravity.Top,
             R.drawable.ic_baseline_keyboard_double_arrow_down_24
         ),
         RIGHT(
-            BitmapBackgroundWriterLayer.Gravity.RIGHT,
+            BackgroundGravity.RIGHT,
             R.drawable.ic_baseline_keyboard_double_arrow_left_24
         ),
         BOTTOM(
-            BitmapBackgroundWriterLayer.Gravity.BOTTOM,
+            BackgroundGravity.BOTTOM,
             R.drawable.ic_baseline_keyboard_double_arrow_up_24
         ),
         CENTER(
-            BitmapBackgroundWriterLayer.Gravity.CENTER,
+            BackgroundGravity.CENTER,
             R.drawable.ic_baseline_fullscreen_24
         );
 
         companion object {
-            fun find(gravity: BitmapBackgroundWriterLayer.Gravity): ImageGravity {
+            fun find(gravity: BackgroundGravity): ImageGravity {
                 return values().find { it.gravity == gravity } ?: CENTER
             }
         }
@@ -267,9 +261,9 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
 
         fun getCurrentBackground(): String
 
-        fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity
+        fun getCurrentBackgroundGravity(): BackgroundGravity
 
-        fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity)
+        fun onBackgroundGravityChanged(gravity: BackgroundGravity)
 
         fun requestBackgroundPhoto()
     }

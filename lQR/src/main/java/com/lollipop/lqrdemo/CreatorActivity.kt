@@ -33,6 +33,7 @@ import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
+import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
@@ -322,11 +323,11 @@ class CreatorActivity : ColorModeActivity(),
         return creatorHelper.currentBackgroundPhoto
     }
 
-    override fun getCurrentBackgroundGravity(): BitmapBackgroundWriterLayer.Gravity {
+    override fun getCurrentBackgroundGravity(): BackgroundGravity {
         return creatorHelper.currentBackgroundGravity
     }
 
-    override fun onBackgroundGravityChanged(gravity: BitmapBackgroundWriterLayer.Gravity) {
+    override fun onBackgroundGravityChanged(gravity: BackgroundGravity) {
         creatorHelper.currentBackgroundGravity = gravity
     }
 
