@@ -4,13 +4,45 @@ import java.io.File
 
 sealed class BackgroundInfo {
 
-    object None: BackgroundInfo()
+    fun getCornerOrNull(): BackgroundCorner? {
+        if (this is CornerProvider) {
+            return corner
+        }
+        return null
+    }
 
-    class Local(val file: File, val gravity: BackgroundGravity, val corner: BackgroundCorner)
+    fun getGravityOrNull(): BackgroundGravity? {
+        if (this is GravityProvider) {
+            return gravity
+        }
+        return null
+    }
 
-    class Remote(val path: String, val gravity: BackgroundGravity, val corner: BackgroundCorner)
+    object None : BackgroundInfo()
 
-    class Color(val color: Int, val corner: BackgroundCorner)
+    class Local(
+        val file: File,
+        override val gravity: BackgroundGravity,
+        override val corner: BackgroundCorner?
+    ) : BackgroundInfo(), GravityProvider, CornerProvider
 
+//    class Remote(
+//        val path: String,
+//        override val gravity: BackgroundGravity,
+//        override val corner: BackgroundCorner?
+//    ) : BackgroundInfo(), GravityProvider, CornerProvider
+
+    class Color(
+        val color: Int,
+        override val corner: BackgroundCorner?
+    ) : BackgroundInfo(), CornerProvider
+
+    interface CornerProvider {
+        val corner: BackgroundCorner?
+    }
+
+    interface GravityProvider {
+        val gravity: BackgroundGravity
+    }
 
 }

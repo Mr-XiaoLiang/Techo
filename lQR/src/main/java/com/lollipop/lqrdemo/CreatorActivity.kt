@@ -34,6 +34,8 @@ import com.lollipop.lqrdemo.creator.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
+import com.lollipop.lqrdemo.creator.background.BackgroundInfo
+import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
@@ -42,6 +44,7 @@ import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
+import java.io.File
 
 class CreatorActivity : ColorModeActivity(),
     QrContentValueFragment.Callback,
@@ -319,18 +322,6 @@ class CreatorActivity : ColorModeActivity(),
         creatorHelper.onBackgroundChanged()
     }
 
-    override fun getCurrentBackground(): String {
-        return creatorHelper.currentBackgroundPhoto
-    }
-
-    override fun getCurrentBackgroundGravity(): BackgroundGravity {
-        return creatorHelper.currentBackgroundGravity
-    }
-
-    override fun onBackgroundGravityChanged(gravity: BackgroundGravity) {
-        creatorHelper.currentBackgroundGravity = gravity
-    }
-
     override fun requestBackgroundPhoto() {
         backgroundChooser.launch().localOnly().type(FileMime.Image.ALL).start()
     }
@@ -357,8 +348,15 @@ class CreatorActivity : ColorModeActivity(),
             }
             if (filePath.isNotEmpty()) {
                 onUI {
-                    creatorHelper.currentBackgroundPhoto = filePath
-                    findTypedFragment<QrBackgroundFragment>()?.onBackgroundPhotoChanged()
+                    val lastInfo = BackgroundStore.getByType<BackgroundInfo.Local>()
+                    creatorHelper.setBackground(
+                        BackgroundInfo.Local(
+                            file = File(filePath),
+                            gravity = lastInfo?.getGravityOrNull() ?: BackgroundGravity.DEFAULT,
+                            corner = lastInfo?.getCornerOrNull()
+                        )
+                    )
+                    findTypedFragment<QrBackgroundFragment>()?.onBackgroundChanged()
                 }
             }
         }

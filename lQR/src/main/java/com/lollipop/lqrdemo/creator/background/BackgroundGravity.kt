@@ -6,6 +6,10 @@ enum class BackgroundGravity {
     Top,
     RIGHT,
     BOTTOM,
-    CENTER
+    CENTER;
+
+    companion object {
+        val DEFAULT = CENTER
+    }
 
 }

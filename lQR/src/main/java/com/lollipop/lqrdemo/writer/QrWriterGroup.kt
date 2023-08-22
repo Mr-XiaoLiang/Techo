@@ -28,13 +28,6 @@ class QrWriterGroup {
         }
     }
 
-    fun setBackgroundCorner(corner: BackgroundCorner?) {
-        this.backgroundCorner = corner
-        writerArray.forEach {
-            it.setBackgroundCorner(corner)
-        }
-    }
-
     fun addWriter(writer: QrWriter) {
         val b = bounds
         writer.setBounds(b.left, b.top, b.right, b.bottom)
@@ -71,15 +64,9 @@ class QrWriterGroup {
         }
     }
 
-    fun setBackgroundPhoto(url: String) {
+    fun notifyBackgroundChanged() {
         writerArray.forEach {
-            it.setBackgroundPhoto(url)
-        }
-    }
-
-    fun setBackgroundGravity(gravity: BackgroundGravity) {
-        writerArray.forEach {
-            it.setBackgroundGravity(gravity)
+            it.notifyBackgroundChanged()
         }
     }
 

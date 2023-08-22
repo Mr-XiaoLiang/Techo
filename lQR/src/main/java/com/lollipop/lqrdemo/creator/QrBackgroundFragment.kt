@@ -2,7 +2,6 @@ package com.lollipop.lqrdemo.creator
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +15,8 @@ import com.lollipop.base.util.onClick
 import com.lollipop.clip.ClipLayout
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
+import com.lollipop.lqrdemo.creator.background.BackgroundInfo
+import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
@@ -38,12 +39,9 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         return binding.root
     }
 
-    private var color = Color.GREEN
     private var currentMode = Mode.NONE
 
     private var callback: Callback? = null
-
-    private var currentGravity = ImageGravity.CENTER
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -60,8 +58,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
             onModeButtonClick(Mode.NONE)
         }
         updateSelectedButton(currentMode)
-        color = ColorBackgroundWriterLayer.color
-        updateColorPreview(color)
+        updateColorPreview(ColorBackgroundWriterLayer.loadCurrentColor())
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -91,19 +88,33 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
     }
 
     private fun nextImageGravity() {
+        val lastInfo = BackgroundStore.getByType<BackgroundInfo.Local>()
+        if (lastInfo == null) {
+            callback?.requestBackgroundPhoto()
+            return
+        }
         var index = 0
-        val current = currentGravity
+        val current = lastInfo.gravity
         val gravities = ImageGravity.values()
-        gravities.forEachIndexed { i, item ->
-            if (item == current) {
+        for (i in gravities.indices) {
+            val item = gravities[i]
+            if (item.gravity == current) {
                 index = i
+                break
             }
         }
         index++
         index %= gravities.size
-        currentGravity = gravities[index]
-        updateImageGravity()
-        callback?.onBackgroundGravityChanged(currentGravity.gravity)
+        val newGravity = gravities[index]
+        BackgroundStore.set(
+            BackgroundInfo.Local(
+                lastInfo.file,
+                newGravity.gravity,
+                lastInfo.corner
+            )
+        )
+        updateImageGravity(newGravity)
+        callback?.onBackgroundChanged()
     }
 
     private fun setModePreviewBackground(pigment: Pigment, vararg views: View) {
@@ -136,13 +147,23 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
     }
 
     private fun updateSelectedButton(mode: Mode) {
+        currentMode = mode
         binding.colorModeButton.isStrokeEnable = mode == Mode.COLOR
         binding.imageModeButton.isStrokeEnable = mode == Mode.IMAGE
         binding.noneModeButton.isStrokeEnable = mode == Mode.NONE
     }
 
-    private fun updateImageGravity() {
-        binding.imageGravityButton.setImageResource(currentGravity.icon)
+    private fun updateImageGravity(gravity: ImageGravity? = null) {
+        val imageGravity = if (gravity == null) {
+            val imageBgInfo = BackgroundStore.getByType<BackgroundInfo.Local>()
+            val backgroundGravity = imageBgInfo?.getGravityOrNull() ?: BackgroundGravity.DEFAULT
+            ImageGravity.values().find {
+                it.gravity == backgroundGravity
+            } ?: ImageGravity.CENTER
+        } else {
+            gravity
+        }
+        binding.imageGravityButton.setImageResource(imageGravity.icon)
     }
 
     private fun updateColorPreview(newColor: Int) {
@@ -157,29 +178,38 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
 
     override fun onResume() {
         super.onResume()
-        onBackgroundPhotoChanged()
+        onBackgroundChanged()
     }
 
-    fun onBackgroundPhotoChanged() {
-        val background = callback?.getCurrentBackground() ?: ""
-        if (background.isEmpty()) {
+    fun onBackgroundChanged() {
+        when (BackgroundStore.get()) {
+            is BackgroundInfo.Color -> {
+                updateSelectedButton(Mode.COLOR)
+            }
+
+            is BackgroundInfo.Local -> {
+                updateSelectedButton(Mode.IMAGE)
+            }
+
+            BackgroundInfo.None, null -> {
+                updateSelectedButton(Mode.NONE)
+            }
+        }
+        val imageBgInfo = BackgroundStore.getByType<BackgroundInfo.Local>()
+        if (imageBgInfo == null || !imageBgInfo.file.exists()) {
             Glide.with(this).clear(binding.imageModePreview)
             binding.imageModePreview.setImageDrawable(null)
         } else {
             Glide.with(this)
-                .load(background)
+                .load(imageBgInfo.file)
                 .into(binding.imageModePreview)
         }
-        currentGravity = ImageGravity.find(
-            callback?.getCurrentBackgroundGravity()
-                ?: BackgroundGravity.CENTER
-        )
         updateImageGravity()
+        updateColorPreview(ColorBackgroundWriterLayer.loadCurrentColor())
     }
 
     private fun onModeButtonClick(mode: Mode) {
         val lastMode = currentMode
-        currentMode = mode
         updateSelectedButton(mode)
         callback?.onBackgroundModeChanged(mode.modeLayer)
         when (mode) {
@@ -192,7 +222,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
             Mode.COLOR -> {
                 if (lastMode == mode) {
                     context?.let { c ->
-                        PaletteDialog.show(c, color) {
+                        PaletteDialog.show(c, ColorBackgroundWriterLayer.loadCurrentColor()) {
                             onColorChanged(it)
                         }
                     }
@@ -204,9 +234,9 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
     }
 
     private fun onColorChanged(newColor: Int) {
-        color = newColor
-        updateColorPreview(color)
-        ColorBackgroundWriterLayer.color = color
+        updateColorPreview(newColor)
+        val lastInfo = BackgroundStore.getByType<BackgroundInfo.Color>()
+        BackgroundStore.set(BackgroundInfo.Color(newColor, lastInfo?.corner))
         callback?.onBackgroundChanged()
     }
 
@@ -258,12 +288,6 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         fun onBackgroundModeChanged(layer: Class<out BackgroundWriterLayer>?)
 
         fun onBackgroundChanged()
-
-        fun getCurrentBackground(): String
-
-        fun getCurrentBackgroundGravity(): BackgroundGravity
-
-        fun onBackgroundGravityChanged(gravity: BackgroundGravity)
 
         fun requestBackgroundPhoto()
     }

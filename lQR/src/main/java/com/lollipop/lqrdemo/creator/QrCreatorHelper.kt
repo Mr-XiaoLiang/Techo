@@ -16,6 +16,8 @@ import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
+import com.lollipop.lqrdemo.creator.background.BackgroundInfo
+import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
@@ -113,18 +115,6 @@ class QrCreatorHelper(
             onContentChanged()
         }
 
-    var currentBackgroundPhoto: String = ""
-        set(value) {
-            field = value
-            onBackgroundChanged()
-        }
-
-    var currentBackgroundGravity: BackgroundGravity = BackgroundGravity.CENTER
-        set(value) {
-            field = value
-            onBackgroundChanged()
-        }
-
     private var bitMatrix: LBitMatrix? = null
 
     private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
@@ -151,8 +141,9 @@ class QrCreatorHelper(
         barcodeReader.addOnBarcodeScanResultListener(this)
     }
 
-    fun setBackgroundCorner(corner: BackgroundCorner?) {
-        this.writerGroup.setBackgroundCorner(corner)
+    fun setBackground(backgroundInfo: BackgroundInfo) {
+        BackgroundStore.set(backgroundInfo, true)
+        onBackgroundChanged()
     }
 
     fun setContextProvider(provider: QrWriter.ContextProvider?) {
@@ -297,8 +288,7 @@ class QrCreatorHelper(
     }
 
     fun onBackgroundChanged() {
-        writerGroup.setBackgroundPhoto(currentBackgroundPhoto)
-        writerGroup.setBackgroundGravity(currentBackgroundGravity)
+        writerGroup.notifyBackgroundChanged()
         onChanged()
     }
 
