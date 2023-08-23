@@ -41,7 +41,6 @@ import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import java.io.File
@@ -396,7 +395,7 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun invalidateWriter() {
-        binding.previewImageView.invalidate()
+        previewDrawable.invalidateSelf()
     }
 
 }

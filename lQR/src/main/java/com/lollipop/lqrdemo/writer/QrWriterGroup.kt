@@ -1,10 +1,7 @@
 package com.lollipop.lqrdemo.writer
 
 import android.graphics.Rect
-import com.lollipop.lqrdemo.creator.background.BackgroundCorner
-import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 
 class QrWriterGroup {
@@ -18,8 +15,6 @@ class QrWriterGroup {
     private var backgroundLayer: Class<out BackgroundWriterLayer>? = null
 
     private var contextProvider: QrWriter.ContextProvider? = null
-
-    private var backgroundCorner: BackgroundCorner? = null
 
     fun setContextProvider(provider: QrWriter.ContextProvider?) {
         this.contextProvider = provider

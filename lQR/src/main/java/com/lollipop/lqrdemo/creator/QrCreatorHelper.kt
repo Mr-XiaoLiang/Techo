@@ -14,8 +14,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
-import com.lollipop.lqrdemo.creator.background.BackgroundCorner
-import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
@@ -23,7 +21,7 @@ import com.lollipop.lqrdemo.writer.QrWriter
 import com.lollipop.lqrdemo.writer.QrWriterDistributor
 import com.lollipop.lqrdemo.writer.QrWriterGroup
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.BaseBitmapBackgroundWriterLayer
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
@@ -278,12 +276,13 @@ class QrCreatorHelper(
 
     fun setBackground(layer: Class<out BackgroundWriterLayer>?) {
         writerGroup.setBackground(layer)
-        // 这样其实是不对的, 但是先这样写吧。背景内容的方式应该再改改，不能各弄各的
-        if (layer == BitmapBackgroundWriterLayer::class.java) {
-            writerGroup.setQrPointColor(Color.BLACK, Color.TRANSPARENT)
-        } else {
-            writerGroup.setQrPointColor(Color.BLACK, Color.WHITE)
-        }
+        // 目前浅色就直接写成了透明的。反正用户必须要选一个背景
+//        // 这样其实是不对的, 但是先这样写吧。背景内容的方式应该再改改，不能各弄各的
+//        if (layer?.isAssignableFrom(BaseBitmapBackgroundWriterLayer::class.java) == true) {
+//            writerGroup.setQrPointColor(Color.BLACK, Color.TRANSPARENT)
+//        } else {
+//            writerGroup.setQrPointColor(Color.BLACK, Color.WHITE)
+//        }
         onBackgroundChanged()
     }
 

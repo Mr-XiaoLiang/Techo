@@ -11,12 +11,13 @@ import com.bumptech.glide.request.transition.Transition
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import kotlin.math.max
 
-class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
+abstract class BaseBitmapBackgroundWriterLayer : BackgroundWriterLayer() {
 
     private val matrix = Matrix()
     private var bitmapId = ""
     private var currentGravity = BackgroundGravity.CENTER
     private var currentBitmap: Bitmap? = null
+    var useBackgroundStore = true
 
     fun setBitmapUrl(url: String) {
         if (url != bitmapId) {
@@ -26,7 +27,17 @@ class BitmapBackgroundWriterLayer : BackgroundWriterLayer() {
         }
     }
 
+    fun checkBitmapUtl() {
+        if (useBackgroundStore) {
+            val photoPath = getPhotoPathFromStore()
+            setBitmapUrl(photoPath)
+        }
+    }
+
+    protected abstract fun getPhotoPathFromStore(): String
+
     override fun onUpdateResource() {
+        checkBitmapUtl()
         loadBitmap()
     }
 

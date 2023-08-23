@@ -6,12 +6,9 @@ import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
-import com.lollipop.lqrdemo.creator.background.BackgroundGravity
-import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
 
@@ -25,7 +22,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
     protected open val scaleValue = 1F
 
     protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>(
-        ColorBackgroundWriterLayer::class.java
+        DefaultBackgroundWriterLayer::class.java
     )
 
     protected var lastQuietZone = 0
@@ -36,7 +33,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     protected var darkColor: Int = Color.BLACK
         private set
-    protected var lightColor: Int = Color.WHITE
+    protected var lightColor: Int = Color.TRANSPARENT
         private set
 
     init {
@@ -93,7 +90,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         bounds.set(left, top, right, bottom)
-        updateLayoutBounds()
+        updateLayerBounds()
         onBoundsChanged()
     }
 
@@ -108,7 +105,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     private fun updateLayerCorner(layer: BackgroundWriterLayer) {
         val matrix = bitMatrix
-        val backgroundCorner = BackgroundStore.get()?.getCornerOrNull()
+        val backgroundCorner: BackgroundCorner? = BackgroundStore.get().getCornerOrNull()
         if (matrix is LQrBitMatrix) {
             val quietZone = (matrix.quietZone * scaleValue).toInt()
             lastQuietZone = quietZone
@@ -139,7 +136,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
         backgroundLayer.updateResource()
     }
 
-    protected fun updateLayoutBounds() {
+    protected fun updateLayerBounds() {
         backgroundLayer.get().onBoundsChanged(bounds)
     }
 
@@ -167,14 +164,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
         writerLayer.updateResource()
         updateLayerCorner(writerLayer)
         onBackgroundChanged()
-    }
-
-    fun setBackgroundGravity(gravity: BackgroundGravity) {
-        backgroundLayer.get().let {
-            if (it is BitmapBackgroundWriterLayer) {
-                it.setGravity(gravity)
-            }
-        }
+        writerLayer.invalidateSelf()
     }
 
     fun interface ResourceReadyCallback {

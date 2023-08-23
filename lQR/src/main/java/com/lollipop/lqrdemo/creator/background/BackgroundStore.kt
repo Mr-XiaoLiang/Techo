@@ -19,8 +19,8 @@ object BackgroundStore {
         }
     }
 
-    fun get(type: String = currentType): BackgroundInfo? {
-        return store[type]
+    fun get(type: String = currentType): BackgroundInfo {
+        return store[type] ?: BackgroundInfo.None
     }
 
     inline fun <reified T : BackgroundInfo> getByType(): T? {

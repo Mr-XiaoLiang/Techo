@@ -19,8 +19,9 @@ import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BitmapBackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.DefaultBackgroundWriterLayer
+import com.lollipop.lqrdemo.writer.background.LocalBitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
@@ -216,20 +217,34 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
             Mode.IMAGE -> {
                 if (lastMode == mode) {
                     callback?.requestBackgroundPhoto()
+                } else {
+                    val local = BackgroundStore.getByType<BackgroundInfo.Local>()
+                    if (local == null || !local.file.exists()) {
+                        callback?.requestBackgroundPhoto()
+                    }
                 }
             }
 
             Mode.COLOR -> {
                 if (lastMode == mode) {
-                    context?.let { c ->
-                        PaletteDialog.show(c, ColorBackgroundWriterLayer.loadCurrentColor()) {
-                            onColorChanged(it)
-                        }
+                    requestNewColor()
+                } else {
+                    val info = BackgroundStore.getByType<BackgroundInfo.Color>()
+                    if (info == null || info.color == 0) {
+                        requestNewColor()
                     }
                 }
             }
 
             Mode.NONE -> {}
+        }
+    }
+
+    private fun requestNewColor() {
+        context?.let { c ->
+            PaletteDialog.show(c, ColorBackgroundWriterLayer.loadCurrentColor()) {
+                onColorChanged(it)
+            }
         }
     }
 
@@ -278,8 +293,8 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         val modeLayer: Class<out BackgroundWriterLayer>?
     ) {
 
-        NONE(null),
-        IMAGE(BitmapBackgroundWriterLayer::class.java),
+        NONE(DefaultBackgroundWriterLayer::class.java),
+        IMAGE(LocalBitmapBackgroundWriterLayer::class.java),
         COLOR(ColorBackgroundWriterLayer::class.java)
 
     }

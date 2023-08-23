@@ -37,6 +37,7 @@ class QrWriterDistributor : QrWriter() {
         val scale = min(scaleX, scaleY)
         bitmapMatrix.setScale(scale, scale)
         scaleValue = scale
+        notifyBackgroundChanged()
     }
 
 }
