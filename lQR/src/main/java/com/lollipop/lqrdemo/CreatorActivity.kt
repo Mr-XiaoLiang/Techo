@@ -318,6 +318,7 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun onBackgroundChanged() {
+        log("onBackgroundChanged")
         creatorHelper.onBackgroundChanged()
     }
 
@@ -395,6 +396,7 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun invalidateWriter() {
+        log("invalidateWriter")
         previewDrawable.invalidateSelf()
     }
 

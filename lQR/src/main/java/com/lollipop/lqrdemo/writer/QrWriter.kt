@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
+import kotlin.math.log
 
 abstract class QrWriter : QrWriterLayer.Callback {
 
@@ -35,6 +37,8 @@ abstract class QrWriter : QrWriterLayer.Callback {
         private set
     protected var lightColor: Int = Color.TRANSPARENT
         private set
+
+    protected val log by lazyLogD()
 
     init {
         initLayerCallback()
@@ -159,6 +163,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
     }
 
     fun notifyBackgroundChanged() {
+        log("notifyBackgroundChanged")
         val writerLayer = backgroundLayer.get()
         writerLayer.onBoundsChanged(bounds)
         writerLayer.updateResource()

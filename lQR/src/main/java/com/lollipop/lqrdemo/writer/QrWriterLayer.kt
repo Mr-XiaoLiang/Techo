@@ -2,9 +2,12 @@ package com.lollipop.lqrdemo.writer
 
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.task
 
 abstract class QrWriterLayer {
+
+    protected val log by lazyLogD()
 
     protected var callback: Callback? = null
         private set
@@ -21,6 +24,7 @@ abstract class QrWriterLayer {
     }
 
     fun invalidateSelf() {
+        log("invalidateSelf")
         callback?.invalidateLayer(this)
     }
 
@@ -35,6 +39,7 @@ abstract class QrWriterLayer {
     protected fun onResourceReady() {
         isResourceReady = true
         callback?.onResourceReady(this)
+        invalidateSelf()
     }
 
     protected fun notifyResourceChanged() {
