@@ -18,10 +18,10 @@ import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
-import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.ColorBackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.DefaultBackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.LocalBitmapBackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.ColorBackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.LocalBitmapBackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 

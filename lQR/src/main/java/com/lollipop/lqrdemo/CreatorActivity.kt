@@ -39,8 +39,8 @@ import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
-import com.lollipop.lqrdemo.writer.QrWriter
-import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.QrWriter
+import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import java.io.File

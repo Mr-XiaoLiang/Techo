@@ -1,11 +1,11 @@
-package com.lollipop.lqrdemo.writer.background
+package com.lollipop.lqrdemo.creator.writer.background
 
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
-import com.lollipop.lqrdemo.writer.QrWriterLayer
+import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
 abstract class BackgroundWriterLayer : QrWriterLayer() {
 

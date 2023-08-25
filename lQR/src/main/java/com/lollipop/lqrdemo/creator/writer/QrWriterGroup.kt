@@ -1,7 +1,7 @@
-package com.lollipop.lqrdemo.writer
+package com.lollipop.lqrdemo.creator.writer
 
 import android.graphics.Rect
-import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 
 class QrWriterGroup {

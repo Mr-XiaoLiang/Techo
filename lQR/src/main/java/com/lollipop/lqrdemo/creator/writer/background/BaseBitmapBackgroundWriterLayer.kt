@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.writer.background
+package com.lollipop.lqrdemo.creator.writer.background
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

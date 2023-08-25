@@ -17,11 +17,11 @@ import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
-import com.lollipop.lqrdemo.writer.QrWriter
-import com.lollipop.lqrdemo.writer.QrWriterDistributor
-import com.lollipop.lqrdemo.writer.QrWriterGroup
-import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.BaseBitmapBackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.QrWriter
+import com.lollipop.lqrdemo.creator.writer.QrWriterDistributor
+import com.lollipop.lqrdemo.creator.writer.QrWriterGroup
+import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.BaseBitmapBackgroundWriterLayer
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.reader.OnBarcodeScanResultListener

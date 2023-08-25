@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.writer.background
+package com.lollipop.lqrdemo.creator.writer.background
 
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore

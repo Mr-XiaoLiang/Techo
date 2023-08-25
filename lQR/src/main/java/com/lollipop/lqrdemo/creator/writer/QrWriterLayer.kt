@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.writer
+package com.lollipop.lqrdemo.creator.writer
 
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager

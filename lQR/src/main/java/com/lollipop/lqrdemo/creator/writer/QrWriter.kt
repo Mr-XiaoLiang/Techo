@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.writer
+package com.lollipop.lqrdemo.creator.writer
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,8 +8,8 @@ import com.bumptech.glide.RequestManager
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
-import com.lollipop.lqrdemo.writer.background.BackgroundWriterLayer
-import com.lollipop.lqrdemo.writer.background.DefaultBackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
 import kotlin.math.log

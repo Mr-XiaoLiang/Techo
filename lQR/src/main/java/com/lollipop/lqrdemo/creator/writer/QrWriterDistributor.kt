@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.writer
+package com.lollipop.lqrdemo.creator.writer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

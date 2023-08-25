@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
-import com.lollipop.lqrdemo.writer.QrWriter
+import com.lollipop.lqrdemo.creator.writer.QrWriter
 
 class QrCreatorPreviewDrawable(private val writer: QrWriter): Drawable() {
 
