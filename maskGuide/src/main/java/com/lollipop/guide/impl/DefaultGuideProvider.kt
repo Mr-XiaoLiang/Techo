@@ -9,10 +9,11 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
-import com.lollipop.base.util.visibleOrInvisible
 import com.lollipop.guide.GuideProvider
 import com.lollipop.guide.GuideStep
 import kotlin.math.max
@@ -133,13 +134,13 @@ class DefaultGuideProvider : GuideProvider() {
 
     override fun onAnimationStart(isPositive: Boolean) {
         super.onAnimationStart(isPositive)
-        guideView?.visibleOrInvisible(true)
+        guideView?.isVisible = true
     }
 
     override fun onAnimationEnd(isPositive: Boolean) {
         super.onAnimationEnd(isPositive)
         if (!isPositive) {
-            guideView?.visibleOrInvisible(false)
+            guideView?.isInvisible = true
         }
     }
 
@@ -160,7 +161,7 @@ class DefaultGuideProvider : GuideProvider() {
             HorizontalDirection.Right
         }
         guideView?.changeTargetBounds(left, top, right, bottom)
-        guideView?.visibleOrInvisible(false)
+        guideView?.isInvisible = true
         guideView?.invalidate()
     }
 
