@@ -46,3 +46,21 @@ sealed class BackgroundInfo {
     }
 
 }
+
+inline fun <reified T: BackgroundInfo> T.changeCorner(corner: BackgroundCorner?): T {
+    val src = this
+    if (src is BackgroundInfo.CornerProvider) {
+        when (src) {
+            is BackgroundInfo.Local -> {
+                return BackgroundInfo.Local(file = src.file, gravity = src.gravity, corner = corner) as T
+            }
+            is BackgroundInfo.Color -> {
+                return BackgroundInfo.Color(color = src.color, corner = corner) as T
+            }
+            else -> {
+
+            }
+        }
+    }
+    return src
+}
