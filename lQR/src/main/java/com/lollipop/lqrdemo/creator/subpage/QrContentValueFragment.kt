@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.creator
+package com.lollipop.lqrdemo.creator.subpage
 
 import android.content.Context
 import android.os.Bundle
@@ -6,16 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lollipop.base.util.checkCallback
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
-import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.databinding.FragmentQrContentValueBinding
-import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
 class QrContentValueFragment : QrBaseSubpageFragment(), OnCodeContentChangedListener {

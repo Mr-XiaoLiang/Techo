@@ -28,9 +28,9 @@ import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.base.PigmentTheme
-import com.lollipop.lqrdemo.creator.QrBackgroundFragment
+import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
-import com.lollipop.lqrdemo.creator.QrContentValueFragment
+import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity

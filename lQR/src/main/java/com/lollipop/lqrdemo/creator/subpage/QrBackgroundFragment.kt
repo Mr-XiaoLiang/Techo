@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.creator
+package com.lollipop.lqrdemo.creator.subpage
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -14,6 +14,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.clip.ClipLayout
 import com.lollipop.lqrdemo.R
+import com.lollipop.lqrdemo.creator.PaletteDialog
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore

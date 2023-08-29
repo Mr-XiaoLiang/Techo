@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.creator
+package com.lollipop.lqrdemo.creator.subpage
 
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.base.PigmentTheme
