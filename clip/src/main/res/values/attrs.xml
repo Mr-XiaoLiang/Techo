@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="leftTop" format="dimension" />
+    <attr name="leftBottom" format="dimension" />
+    <attr name="rightTop" format="dimension" />
+    <attr name="rightBottom" format="dimension" />
+
+
     <declare-styleable name="VectorClipLayout">
         <attr name="viewportWidth" format="integer" />
         <attr name="viewportHeight" format="integer" />
@@ -8,10 +15,10 @@
 
     <declare-styleable name="RoundClipLayout">
         <attr name="android:radius" format="dimension" />
-        <attr name="leftTop" format="dimension" />
-        <attr name="leftBottom" format="dimension" />
-        <attr name="rightTop" format="dimension" />
-        <attr name="rightBottom" format="dimension" />
+        <attr name="leftTop" />
+        <attr name="leftBottom" />
+        <attr name="rightTop" />
+        <attr name="rightBottom" />
     </declare-styleable>
 
     <declare-styleable name="ClipLayout">
@@ -19,4 +26,18 @@
         <attr name="clipStrokeColor" format="color" />
         <attr name="clipStrokeEnable" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="SquircleClipLayout">
+        <attr name="android:radius" format="dimension" />
+        <attr name="leftTop" />
+        <attr name="leftBottom" />
+        <attr name="rightTop" />
+        <attr name="rightBottom" />
+        <attr name="radiusWeight" format="float" />
+        <attr name="leftTopWeight" format="float" />
+        <attr name="leftBottomWeight" format="float" />
+        <attr name="rightTopWeight" format="float" />
+        <attr name="rightBottomWeight" format="float" />
+    </declare-styleable>
+
 </resources>

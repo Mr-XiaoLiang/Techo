@@ -38,13 +38,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.lollipop.clip.RoundClipLayout
+        <com.lollipop.clip.SquircleClipLayout
             android:id="@+id/logoView"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="20dp"
             android:radius="12dp"
+            app:radiusWeight="0.8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +59,7 @@
                 android:src="@drawable/ic_logo"
                 tools:background="@android:color/holo_red_dark"
                 tools:tint="@android:color/white" />
-        </com.lollipop.clip.RoundClipLayout>
+        </com.lollipop.clip.SquircleClipLayout>
 
         <TextView
             android:id="@+id/versionView"
