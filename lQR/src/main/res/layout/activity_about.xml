@@ -44,7 +44,7 @@
             android:layout_height="72dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="20dp"
-            android:radius="12dp"
+            android:radius="30dp"
             app:radiusWeight="0.8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
