@@ -22,4 +22,6 @@ class QrCornerFragment : QrBaseSubpageFragment() {
         return binding.root
     }
 
+
+
 }
