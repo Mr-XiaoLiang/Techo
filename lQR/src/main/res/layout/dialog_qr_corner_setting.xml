@@ -1,90 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:radius="20dp">
 
     <LinearLayout
+        android:id="@+id/contentGroup"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
-        tools:background="#3f00"
-        android:id="@+id/contentGroup"
         android:focusable="true"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="20dp">
+        android:paddingVertical="20dp"
+        tools:background="#3f00">
 
         <TextView
+            android:id="@+id/titleView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            tools:textColor="#fff"
-            tools:text="@string/app_name"
             android:gravity="center"
-            android:id="@+id/titleView"/>
+            android:textSize="16sp"
+            tools:text="@string/app_name"
+            tools:textColor="#fff" />
 
         <com.google.android.material.slider.Slider
+            android:id="@+id/slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:thumbRadius="10dp"
-            app:trackHeight="20dp"
-            android:id="@+id/slider"
+            android:layout_marginTop="12dp"
+            android:stepSize="1.0"
             android:valueFrom="0"
             android:valueTo="100"
-            android:stepSize="1.0"
+            app:thumbRadius="10dp"
             app:tickVisible="false"
-            android:layout_marginTop="12dp"/>
+            app:trackHeight="20dp" />
 
         <com.lollipop.clip.RoundClipLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:radius="12dp"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:radius="12dp">
+
             <LinearLayout
-                android:background="#3fff"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#3fff"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="10dp"
-                    android:background="#888"/>
+                    android:background="#888" />
 
                 <ImageView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="10dp"
-                    android:background="#888"/>
+                    android:background="#888" />
 
                 <ImageView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="10dp"
-                    android:background="#888"/>
+                    android:background="#888" />
 
                 <ImageView
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
 
             </LinearLayout>
         </com.lollipop.clip.RoundClipLayout>

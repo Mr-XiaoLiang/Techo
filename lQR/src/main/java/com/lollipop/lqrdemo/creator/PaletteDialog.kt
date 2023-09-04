@@ -8,12 +8,14 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onActionDone
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.parseColor
+import com.lollipop.lqrdemo.base.BaseCenterDialog
 import com.lollipop.lqrdemo.databinding.DialogPaletteBinding
 import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.BlendMode
@@ -23,7 +25,7 @@ class PaletteDialog(
     context: Context,
     color: Int,
     private val selectedColorCallback: (Int) -> Unit
-) : Dialog(context), ColorWheelView.OnColorChangedListener {
+) : BaseCenterDialog(context), ColorWheelView.OnColorChangedListener {
 
     companion object {
         fun show(context: Context, color: Int, callback: (Int) -> Unit) {
@@ -37,14 +39,6 @@ class PaletteDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-        window?.let {
-            it.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            it.setGravity(Gravity.CENTER)
-            it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-
         binding.colorWheelView.setOnColorChangedListener(this)
         binding.colorInputView.onActionDone {
             onColorInputTextChanged(binding.colorInputView.text ?: "")
@@ -54,26 +48,20 @@ class PaletteDialog(
             onConfirmClick()
         }
 
-        getThemeColor { fg, bg ->
-            binding.numberIconView.imageTintList = ColorStateList.valueOf(fg)
-            binding.colorInputView.setTextColor(fg)
-            binding.contentGroup.setBackgroundColor(bg)
-            binding.colorWheelView.setValueSlideBarColor(fg)
-            binding.colorWheelView.setAnchorStrokeColor(bg)
-        }
         resetColor(currentColor)
     }
 
-    private fun getThemeColor(callback: (fg: Int, bg: Int) -> Unit) {
-        val pigment = PigmentWallpaperCenter.pigment
-        if (pigment == null) {
-            callback(Color.WHITE, Color.BLACK)
-            return
-        }
-        callback(
-            pigment.backgroundColor,
-            BlendMode.blend(pigment.onBackgroundTitle, pigment.primaryColor)
-        )
+    override fun onCreateDialogView(): View {
+        return binding.root
+    }
+
+    override fun onThemeChanged(fg: Int, bg: Int) {
+        super.onThemeChanged(fg, bg)
+        binding.numberIconView.imageTintList = ColorStateList.valueOf(fg)
+        binding.colorInputView.setTextColor(fg)
+        binding.contentGroup.setBackgroundColor(bg)
+        binding.colorWheelView.setValueSlideBarColor(fg)
+        binding.colorWheelView.setAnchorStrokeColor(bg)
     }
 
     override fun onColorChanged(h: Float, s: Float, v: Float, a: Float) {
