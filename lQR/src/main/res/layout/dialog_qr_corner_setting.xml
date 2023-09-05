@@ -49,11 +49,20 @@
                 android:background="#3fff"
                 android:orientation="horizontal">
 
-                <ImageView
+                <FrameLayout
+                    android:id="@+id/noneModeButton"
                     android:layout_width="0px"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/noneModeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_do_not_disturb_24" />
+                </FrameLayout>
 
                 <View
                     android:layout_width="1dp"
@@ -61,11 +70,20 @@
                     android:layout_marginVertical="10dp"
                     android:background="#888" />
 
-                <ImageView
+                <FrameLayout
+                    android:id="@+id/cutModeButton"
                     android:layout_width="0px"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/cutModeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_do_not_disturb_24" />
+                </FrameLayout>
 
                 <View
                     android:layout_width="1dp"
@@ -73,11 +91,20 @@
                     android:layout_marginVertical="10dp"
                     android:background="#888" />
 
-                <ImageView
+                <FrameLayout
+                    android:id="@+id/roundModeButton"
                     android:layout_width="0px"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/roundModeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_do_not_disturb_24" />
+                </FrameLayout>
 
                 <View
                     android:layout_width="1dp"
@@ -85,11 +112,20 @@
                     android:layout_marginVertical="10dp"
                     android:background="#888" />
 
-                <ImageView
+                <FrameLayout
+                    android:id="@+id/squircleModeButton"
                     android:layout_width="0px"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:id="@+id/squircleModeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_do_not_disturb_24" />
+                </FrameLayout>
 
             </LinearLayout>
         </com.lollipop.clip.RoundClipLayout>
