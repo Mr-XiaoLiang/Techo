@@ -35,16 +35,17 @@ abstract class BaseCenterDialog(context: Context) : Dialog(context) {
 
     protected open fun onDecorationChanged(pigment: Pigment?) {
         if (pigment == null) {
-            onThemeChanged(Color.WHITE, Color.BLACK)
+            onThemeChanged(null, Color.WHITE, Color.BLACK)
             return
         }
         onThemeChanged(
+            pigment,
             pigment.backgroundColor,
             BlendMode.blend(pigment.onBackgroundTitle, pigment.primaryColor)
         )
     }
 
-    protected open fun onThemeChanged(fg: Int, bg: Int) {
+    protected open fun onThemeChanged(pigment: Pigment?, fg: Int, bg: Int) {
 
     }
 

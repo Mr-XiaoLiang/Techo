@@ -1,16 +1,10 @@
 package com.lollipop.lqrdemo.creator
 
-import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onActionDone
 import com.lollipop.base.util.onClick
@@ -19,7 +13,7 @@ import com.lollipop.lqrdemo.base.BaseCenterDialog
 import com.lollipop.lqrdemo.databinding.DialogPaletteBinding
 import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.BlendMode
-import com.lollipop.pigment.PigmentWallpaperCenter
+import com.lollipop.pigment.Pigment
 
 class PaletteDialog(
     context: Context,
@@ -55,8 +49,8 @@ class PaletteDialog(
         return binding.root
     }
 
-    override fun onThemeChanged(fg: Int, bg: Int) {
-        super.onThemeChanged(fg, bg)
+    override fun onThemeChanged(pigment: Pigment?, fg: Int, bg: Int) {
+        super.onThemeChanged(pigment, fg, bg)
         binding.numberIconView.imageTintList = ColorStateList.valueOf(fg)
         binding.colorInputView.setTextColor(fg)
         binding.contentGroup.setBackgroundColor(bg)

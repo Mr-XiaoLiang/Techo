@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.creator
 
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.Paint
@@ -102,10 +103,30 @@ object QrCornerSettingHelper {
                 paint.strokeWidth = value
             }
 
+        private var colorStateList: ColorStateList? = null
+
         protected val path = Path()
 
         override fun draw(canvas: Canvas) {
             canvas.drawPaint(paint)
+        }
+
+        override fun setTintList(tint: ColorStateList?) {
+            super.setTintList(tint)
+            this.colorStateList = tint
+            onStateChange(state)
+        }
+
+        override fun onStateChange(state: IntArray): Boolean {
+            val stateList = colorStateList
+            if (stateList != null) {
+                val newColor = stateList.getColorForState(state, color)
+                if (color != newColor) {
+                    color = newColor
+                    return true
+                }
+            }
+            return super.onStateChange(state)
         }
 
         override fun setAlpha(alpha: Int) {
