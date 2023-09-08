@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import androidx.core.graphics.alpha
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseCenterDialog
@@ -52,13 +53,15 @@ class QrCornerSettingDialog(private val option: Option) : BaseCenterDialog(optio
         binding.cutModeIcon.imageTintList = btnTintList
         binding.squircleModeIcon.imageTintList = btnTintList
         binding.titleView.setTextColor(fg)
-        // 这些都是啥呀。。。。
-        binding.slider.tickInactiveTintList
-        binding.slider.trackInactiveTintList
-        binding.slider.haloTintList
-        binding.slider.thumbTintList
-        binding.slider.tickActiveTintList
-        binding.slider.trackActiveTintList
+
+//        binding.slider.tickInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
+//        binding.slider.tickActiveTintList = ColorStateList.valueOf(fg)
+
+        binding.slider.trackActiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
+        binding.slider.trackInactiveTintList = ColorStateList.valueOf(fg)
+
+        binding.slider.haloTintList = ColorStateList.valueOf(fg.changeAlpha(0.24F))
+        binding.slider.thumbTintList = ColorStateList.valueOf(fg)
     }
 
     class Option(
