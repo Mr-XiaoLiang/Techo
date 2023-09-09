@@ -37,6 +37,14 @@
             app:tickVisible="false"
             app:trackHeight="20dp" />
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:id="@+id/weightModeSwitch"
+            android:text="@string/weight_mode"
+            android:layout_marginTop="12dp"/>
+
         <com.lollipop.clip.RoundClipLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"

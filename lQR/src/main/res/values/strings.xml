@@ -104,5 +104,6 @@
 
     <string name="known">知道了</string>
     <string name="confirm">确定</string>
+    <string name="weight_mode">比例模式</string>
 
 </resources>

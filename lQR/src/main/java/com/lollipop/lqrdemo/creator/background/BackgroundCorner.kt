@@ -21,6 +21,13 @@ sealed class BackgroundCorner(
         leftBottom: Radius
     ) : BackgroundCorner(leftTop, rightTop, rightBottom, leftBottom)
 
+    class Squircle(
+        leftTop: Radius,
+        rightTop: Radius,
+        rightBottom: Radius,
+        leftBottom: Radius
+    ) : BackgroundCorner(leftTop, rightTop, rightBottom, leftBottom)
+
     object None : BackgroundCorner(
         Radius.None,
         Radius.None,
