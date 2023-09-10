@@ -16,8 +16,8 @@
         android:paddingBottom="24dp">
 
         <com.lollipop.widget.RoundBackgroundView
-            android:layout_width="24dp"
             android:id="@+id/dialogTouchHolder"
+            android:layout_width="24dp"
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
@@ -27,12 +27,32 @@
             app:round_type="smaller"
             app:round_weight="0.5" />
 
+        <com.lollipop.clip.RoundClipLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:radius="20dp">
+
+            <TextView
+                android:id="@+id/charsetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#3f00"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="12sp"
+                tools:text="Adobe-standard-Encoding" />
+        </com.lollipop.clip.RoundClipLayout>
+
         <TextView
             android:id="@+id/hintView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:paddingHorizontal="16dp"
-            android:paddingTop="26dp"
+            android:paddingTop="4dp"
             android:textColor="?attr/colorOnBackground"
             android:textSize="16sp"
             tools:text="驾照" />

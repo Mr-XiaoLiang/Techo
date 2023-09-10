@@ -1,26 +1,21 @@
 package com.lollipop.lqrdemo
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lollipop.base.util.Clipboard
 import com.lollipop.base.util.ShareSheet
+import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.WindowInsetsType
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.lqrdemo.base.BaseBottomDialog
 import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
 import com.lollipop.lqrdemo.router.CalendarEventRouter
 import com.lollipop.lqrdemo.router.ContactRouter
@@ -30,8 +25,6 @@ import com.lollipop.lqrdemo.router.PhoneRouter
 import com.lollipop.lqrdemo.router.SmsRouter
 import com.lollipop.lqrdemo.router.WifiRouter
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentPage
-import com.lollipop.pigment.PigmentProvider
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 
@@ -39,7 +32,7 @@ class BarcodeDetailDialog(
     context: Context,
     private val info: BarcodeWrapper,
     private var openCallback: OpenBarcodeCallback?,
-) : BottomSheetDialog(context), PigmentPage {
+) : BaseBottomDialog(context) {
 
     companion object {
         fun show(context: Context, info: BarcodeWrapper, openCallback: OpenBarcodeCallback?) {
@@ -57,14 +50,11 @@ class BarcodeDetailDialog(
             info.describe.displayValue
         }
     }
+    override val contentView: View
+        get() = binding.root
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        window?.let {
-            WindowInsetsHelper.fitsSystemWindows(it)
-            updateWindowAttributes(it)
-        }
         binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
             windowInsetsOperator.insetsType = WindowInsetsType.SYSTEM_GESTURES
         }
@@ -83,25 +73,16 @@ class BarcodeDetailDialog(
             openBarcode()
             dismiss()
         }
-        binding.root.post {
-            findViewById<View>(R.id.design_bottom_sheet)?.setBackgroundColor(Color.TRANSPARENT)
+
+        binding.charsetButton.onClick {
+            showCharsetPopMenu()
         }
-        findPigmentProvider()?.registerPigment(this)
     }
 
-    override fun dismiss() {
-        super.dismiss()
-        findPigmentProvider()?.unregisterPigment(this)
-    }
-
-    private fun updateWindowAttributes(window: Window) {
-        window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)
-        window.attributes = window.attributes.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                layoutInDisplayCutoutMode =
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            }
-        }
+    private fun showCharsetPopMenu() {
+        val byteArray: ByteArray
+        // 修改 rawValue 和 displayValue 的内容吧
+        // TODO
     }
 
     private fun openBarcode() {
@@ -252,20 +233,6 @@ class BarcodeDetailDialog(
         return info.describe.displayValue
     }
 
-    private fun findPigmentProvider(): PigmentProvider? {
-        var c = context
-        while (true) {
-            if (c is PigmentProvider) {
-                return c
-            }
-            if (c is ContextWrapper) {
-                c = c.baseContext
-            } else {
-                return null
-            }
-        }
-    }
-
     override fun onDecorationChanged(pigment: Pigment) {
         binding.contentLayout.setBackgroundColor(pigment.backgroundColor)
         binding.dialogTouchHolder.color = pigment.onBackgroundBody
@@ -277,6 +244,8 @@ class BarcodeDetailDialog(
         binding.copyButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
         binding.openButton.setTextColor(pigment.onBackgroundTitle)
         binding.openButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
+        binding.charsetButton.setBackgroundColor(pigment.primaryColor.changeAlpha(0.25F))
+        binding.charsetButton.setTextColor(pigment.onBackgroundBody)
     }
 
     fun interface OpenBarcodeCallback {
