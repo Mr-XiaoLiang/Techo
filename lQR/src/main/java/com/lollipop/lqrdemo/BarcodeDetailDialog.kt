@@ -10,13 +10,11 @@ import android.widget.Toast
 import com.lollipop.base.util.Clipboard
 import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.changeAlpha
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsType
-import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.BaseBottomDialog
 import com.lollipop.lqrdemo.databinding.DialogBarCodeDetailBinding
+import com.lollipop.lqrdemo.other.CharsetMenuDialog
 import com.lollipop.lqrdemo.router.CalendarEventRouter
 import com.lollipop.lqrdemo.router.ContactRouter
 import com.lollipop.lqrdemo.router.EmailRouter
@@ -55,9 +53,6 @@ class BarcodeDetailDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
-            windowInsetsOperator.insetsType = WindowInsetsType.SYSTEM_GESTURES
-        }
         binding.contentValueView.text = getBarcodeDisplay()
         binding.hintView.setText(getBarcodeType())
         binding.copyButton.onClick {
@@ -83,6 +78,9 @@ class BarcodeDetailDialog(
         val byteArray: ByteArray
         // 修改 rawValue 和 displayValue 的内容吧
         // TODO
+        CharsetMenuDialog(context) {
+            Toast.makeText(context, it.name(), Toast.LENGTH_SHORT).show()
+        }.show()
     }
 
     private fun openBarcode() {
@@ -234,8 +232,7 @@ class BarcodeDetailDialog(
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
-        binding.contentLayout.setBackgroundColor(pigment.backgroundColor)
-        binding.dialogTouchHolder.color = pigment.onBackgroundBody
+        super.onDecorationChanged(pigment)
         binding.hintView.setTextColor(pigment.onBackgroundTitle)
         binding.contentValueView.setTextColor(pigment.onBackgroundBody)
         binding.shareButton.setTextColor(pigment.onBackgroundTitle)

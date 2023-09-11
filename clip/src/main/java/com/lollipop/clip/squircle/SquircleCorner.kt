@@ -3,8 +3,8 @@ package com.lollipop.clip.squircle
 class SquircleCorner(
     val inEdgeRadius: Float,
     val outEdgeRadius: Float,
-    val inEdgeWeight: Float = 1F,
-    val outEdgeWeight: Float = 1F,
+    val inEdgeWeight: Float = 0.8F,
+    val outEdgeWeight: Float = 0.8F,
 ) {
 
     fun clone(

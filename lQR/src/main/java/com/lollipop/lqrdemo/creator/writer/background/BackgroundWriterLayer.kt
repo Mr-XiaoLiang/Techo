@@ -4,6 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
+import com.lollipop.clip.squircle.RectangleSquircle
+import com.lollipop.clip.squircle.SquircleCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
@@ -13,6 +15,10 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
 
     protected var backgroundCorner: BackgroundCorner? = null
         private set
+
+    protected val rectangleSquircle by lazy {
+        RectangleSquircle()
+    }
 
     protected val clipPath = Path()
 
@@ -84,6 +90,22 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
             is BackgroundCorner.Round -> {
                 clipPath.addRoundRect(bounds, radius, Path.Direction.CW)
             }
+
+            is BackgroundCorner.Squircle -> {
+                rectangleSquircle.setCorner(
+                    SquircleCorner(radius[0], radius[1]),
+                    SquircleCorner(radius[2], radius[3]),
+                    SquircleCorner(radius[4], radius[5]),
+                    SquircleCorner(radius[6], radius[7]),
+                )
+                rectangleSquircle.build(
+                    bounds.left.toInt(),
+                    bounds.top.toInt(),
+                    bounds.right.toInt(),
+                    bounds.bottom.toInt(),
+                    clipPath
+                )
+            }
         }
     }
 
@@ -121,9 +143,6 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
             }
         }
     }
-
-
-
 
 
 }
