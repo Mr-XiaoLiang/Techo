@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.other
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.BaseBottomDialog
 import com.lollipop.lqrdemo.databinding.DialogCharsetMenuBinding
 import com.lollipop.lqrdemo.databinding.ItemDialogCharsetMenuBinding
+import com.lollipop.pigment.Pigment
 import java.nio.charset.Charset
 
 class CharsetMenuDialog(
@@ -47,10 +49,24 @@ class CharsetMenuDialog(
         dismiss()
     }
 
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        adapter.setTextColor(pigment.onBackgroundBody)
+    }
+
     private class Adapter(
         private val list: List<Item>,
         private val onClick: (Item) -> Unit
     ) : RecyclerView.Adapter<Holder>() {
+
+        private var textColor = Color.BLACK
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun setTextColor(color: Int) {
+            this.textColor = color
+            notifyDataSetChanged()
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             return Holder(parent.bind(), ::onItemClick)
         }
@@ -60,7 +76,7 @@ class CharsetMenuDialog(
         }
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
-            holder.bind(list[position])
+            holder.bind(list[position], textColor)
         }
 
         private fun onItemClick(position: Int) {
@@ -87,8 +103,9 @@ class CharsetMenuDialog(
             onClick(adapterPosition)
         }
 
-        fun bind(item: Item) {
+        fun bind(item: Item, textColor: Int) {
             binding.textView.text = item.name
+            binding.textView.setTextColor(textColor)
         }
 
     }

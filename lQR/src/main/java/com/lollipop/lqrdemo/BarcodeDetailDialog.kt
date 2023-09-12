@@ -25,6 +25,7 @@ import com.lollipop.lqrdemo.router.WifiRouter
 import com.lollipop.pigment.Pigment
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
+import java.nio.charset.Charset
 
 class BarcodeDetailDialog(
     context: Context,
@@ -40,6 +41,8 @@ class BarcodeDetailDialog(
 
     private val binding: DialogBarCodeDetailBinding by lazyBind()
 
+    private var charset: Charset? = null
+
     private val rawValue by lazy {
         try {
             String(info.describe.bytes)
@@ -51,17 +54,26 @@ class BarcodeDetailDialog(
     override val contentView: View
         get() = binding.root
 
+    private var decodeValue: String = ""
+
+    private fun getRaw(): String {
+        if (decodeValue.isNotEmpty()) {
+            return decodeValue
+        }
+        return rawValue
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.contentValueView.text = getBarcodeDisplay()
         binding.hintView.setText(getBarcodeType())
         binding.copyButton.onClick {
-            Clipboard.copy(context, value = info.info.rawValue)
+            Clipboard.copy(context, value = getRaw())
             Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
             dismiss()
         }
         binding.shareButton.onClick {
-            ShareSheet.shareText(context, rawValue)
+            ShareSheet.shareText(context, getRaw())
             dismiss()
         }
         binding.openButton.onClick {
@@ -72,14 +84,30 @@ class BarcodeDetailDialog(
         binding.charsetButton.onClick {
             showCharsetPopMenu()
         }
+        updateCharsetButton()
+    }
+
+    private fun updateCharsetButton() {
+        val c = charset
+        binding.charsetButton.text = if (c == null) {
+            context.getString(R.string.garbled)
+        } else {
+            c.name()
+        }
+    }
+
+    private fun updateCharset(c: Charset) {
+        charset = c
+        // 修改 rawValue 和 displayValue 的内容吧
+        val newValue = String(info.describe.bytes, c)
+        decodeValue = newValue
+        binding.contentValueView.text = newValue
+        updateCharsetButton()
     }
 
     private fun showCharsetPopMenu() {
-        val byteArray: ByteArray
-        // 修改 rawValue 和 displayValue 的内容吧
-        // TODO
         CharsetMenuDialog(context) {
-            Toast.makeText(context, it.name(), Toast.LENGTH_SHORT).show()
+            updateCharset(it)
         }.show()
     }
 
@@ -141,7 +169,7 @@ class BarcodeDetailDialog(
             is BarcodeInfo.Unknown,
             -> {
                 tryOpen {
-                    openByViewAction(rawValue)
+                    openByViewAction(getRaw())
                 }
                 return
             }
@@ -161,7 +189,7 @@ class BarcodeDetailDialog(
         }
         // 以上都没做实现，所以先无脑跳
         tryOpen {
-            openByViewAction(rawValue)
+            openByViewAction(getRaw())
         }
     }
 
