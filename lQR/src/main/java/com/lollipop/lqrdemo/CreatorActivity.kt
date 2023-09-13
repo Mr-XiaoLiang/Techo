@@ -38,6 +38,7 @@ import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
+import com.lollipop.lqrdemo.creator.subpage.QrCornerFragment
 import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.lqrdemo.creator.writer.QrWriter
 import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
@@ -385,6 +386,7 @@ class CreatorActivity : ColorModeActivity(),
 
         CONTENT(R.string.tab_content, QrContentValueFragment::class.java),
         BACKGROUND(R.string.tab_background, QrBackgroundFragment::class.java),
+        CORNER(R.string.tab_corner, QrCornerFragment::class.java)
         // POSITION_DETECTION(R.string.tab_position_detection,QrPositionDetectionFragment::class.java),
         // ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
         // DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
