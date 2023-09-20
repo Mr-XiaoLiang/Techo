@@ -108,4 +108,8 @@
     <string name="weight_mode">比例模式</string>
     <string name="garbled">乱码?</string>
 
+    <string name="radius_none">无</string>
+    <string name="radius_absolute">%1$dDP</string>
+    <string name="radius_percentage">%1$d&#037;</string>
+
 </resources>

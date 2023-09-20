@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:layout_height="360dp">
 
     <com.lollipop.widget.RoundBackgroundView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1"
         app:round_radius="20dp"
         app:round_type="absolute"
         tools:color="#3f00">
@@ -20,159 +22,172 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/leftTopButton"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/leftTopRadius"
                 android:layout_width="0px"
                 android:layout_height="0px"
-                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="6dp"
+                app:autoSizeMaxTextSize="80sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1px"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:background="#30A0">
+                tools:background="#30A0"
+                tools:text="24" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/leftTopRadius"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:gravity="center"
-                    android:paddingVertical="6dp"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeStepGranularity="1px"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintBottom_toTopOf="@id/leftTopIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="24" />
-
-                <ImageView
-                    android:id="@+id/leftTopIcon"
-                    android:layout_width="0px"
-                    android:layout_height="0px"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_max="64dp"
-                    tools:src="@drawable/ic_logo" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/rightTopButton"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/rightTopRadius"
                 android:layout_width="0px"
                 android:layout_height="0px"
+                android:gravity="center"
+                android:paddingVertical="6dp"
+                app:autoSizeMaxTextSize="80sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1px"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:background="#300A">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/rightTopRadius"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:gravity="center"
-                    android:paddingVertical="6dp"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeStepGranularity="1px"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintBottom_toTopOf="@id/rightTopIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="24" />
+                tools:background="#300A"
+                tools:text="24" />
 
-                <ImageView
-                    android:id="@+id/rightTopIcon"
-                    android:layout_width="0px"
-                    android:layout_height="0px"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_max="64dp"
-                    tools:src="@drawable/ic_logo" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/leftBottomButton"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/leftBottomRadius"
                 android:layout_width="0px"
                 android:layout_height="0px"
+                android:gravity="center"
+                android:paddingVertical="6dp"
+                app:autoSizeMaxTextSize="80sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1px"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:background="#30AA">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/leftBottomRadius"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:gravity="center"
-                    android:paddingVertical="6dp"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeStepGranularity="1px"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintTop_toBottomOf="@id/leftBottomIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="24" />
+                tools:background="#30AA"
+                tools:text="24" />
 
-                <ImageView
-                    android:id="@+id/leftBottomIcon"
-                    android:layout_width="0px"
-                    android:layout_height="0px"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_max="64dp"
-                    tools:src="@drawable/ic_logo" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/rightBottomButton"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/rightBottomRadius"
                 android:layout_width="0px"
                 android:layout_height="0px"
+                android:gravity="center"
+                android:paddingVertical="6dp"
+                app:autoSizeMaxTextSize="80sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1px"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:background="#3A0A">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/rightBottomRadius"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:gravity="center"
-                    android:paddingVertical="6dp"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeStepGranularity="1px"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintTop_toBottomOf="@id/rightBottomIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="24" />
-
-                <ImageView
-                    android:id="@+id/rightBottomIcon"
-                    android:layout_width="0px"
-                    android:layout_height="0px"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_max="64dp"
-                    tools:src="@drawable/ic_logo" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:background="#3A0A"
+                tools:text="24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.lollipop.widget.RoundBackgroundView>
 
-</FrameLayout>
+    <com.lollipop.clip.RoundClipLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:radius="12dp"
+        app:layout_constraintTop_toBottomOf="@id/rightBottomButton">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#3fff"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/noneModeButton"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:id="@+id/noneModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_do_not_disturb_24" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:background="#888" />
+
+            <FrameLayout
+                android:id="@+id/cutModeButton"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:id="@+id/cutModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_do_not_disturb_24" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:background="#888" />
+
+            <FrameLayout
+                android:id="@+id/roundModeButton"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:id="@+id/roundModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_do_not_disturb_24" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:background="#888" />
+
+            <FrameLayout
+                android:id="@+id/squircleModeButton"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:id="@+id/squircleModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_do_not_disturb_24" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </com.lollipop.clip.RoundClipLayout>
+
+</LinearLayout>
