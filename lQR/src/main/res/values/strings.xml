@@ -109,7 +109,10 @@
     <string name="garbled">乱码?</string>
 
     <string name="radius_none">无</string>
-    <string name="radius_absolute">%1$dDP</string>
-    <string name="radius_percentage">%1$d&#037;</string>
+
+    <string name="corner_left_top">左上角</string>
+    <string name="corner_left_bottom">左下角</string>
+    <string name="corner_right_top">右上角</string>
+    <string name="corner_right_bottom">右下角</string>
 
 </resources>
