@@ -28,20 +28,22 @@ import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.base.PigmentTheme
-import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
-import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
+import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
+import com.lollipop.lqrdemo.creator.background.changeCorner
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
+import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
+import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.subpage.QrCornerFragment
-import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.lqrdemo.creator.writer.QrWriter
 import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
+import com.lollipop.lqrdemo.databinding.ActivityCreatorBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import java.io.File
@@ -51,7 +53,8 @@ class CreatorActivity : ColorModeActivity(),
     OnCodeContentChangedListener,
     QrCreatorHelper.OnLoadStatusChangedListener,
     QrBackgroundFragment.Callback,
-    QrWriter.ContextProvider {
+    QrWriter.ContextProvider,
+    QrCornerFragment.Callback {
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -400,6 +403,23 @@ class CreatorActivity : ColorModeActivity(),
     override fun invalidateWriter() {
         log("invalidateWriter")
         previewDrawable.invalidateSelf()
+    }
+
+    override fun getCorner(): BackgroundCorner {
+        return BackgroundStore.get().getCornerOrNull() ?: BackgroundCorner.None
+    }
+
+    override fun onCornerChanged(corner: BackgroundCorner) {
+        val info = BackgroundStore.get()
+        if (info == BackgroundInfo.None || info !is BackgroundInfo.CornerProvider) {
+            Toast.makeText(
+                this,
+                R.string.background_corner_unsupported, Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        BackgroundStore.set(info.changeCorner(corner))
+        onBackgroundChanged()
     }
 
 }

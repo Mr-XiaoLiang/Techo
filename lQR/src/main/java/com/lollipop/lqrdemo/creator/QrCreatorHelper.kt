@@ -118,7 +118,6 @@ class QrCreatorHelper(
     private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
     private val loadStatusChangedListener = ListenerManager<OnLoadStatusChangedListener>()
 
-
     private val previewWriterDistributor = QrWriterDistributor()
     private val saveWriterDistributor = QrWriterDistributor()
     private val writerGroup = QrWriterGroup()
