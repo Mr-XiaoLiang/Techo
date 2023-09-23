@@ -109,7 +109,7 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     private fun updateLayerCorner(layer: BackgroundWriterLayer) {
         val matrix = bitMatrix
-        val backgroundCorner: BackgroundCorner? = BackgroundStore.get().getCornerOrNull()
+        val backgroundCorner: BackgroundCorner? = BackgroundStore.getCorner()
         if (matrix is LQrBitMatrix) {
             val quietZone = (matrix.quietZone * scaleValue).toInt()
             lastQuietZone = quietZone

@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.creator.background
 
+import androidx.lifecycle.MutableLiveData
 import com.lollipop.base.util.ListenerManager
 
 object BackgroundStore {
@@ -8,8 +9,18 @@ object BackgroundStore {
 
     private val listenerManager = ListenerManager<OnBackgroundChangedListener>()
 
+    private val cornerInfo = MutableLiveData<BackgroundCorner>()
+
     var currentType: String = ""
         private set
+
+    fun getCorner(): BackgroundCorner? {
+        return cornerInfo.value
+    }
+
+    fun setCorner(c: BackgroundCorner) {
+        cornerInfo.value = c
+    }
 
     fun set(info: BackgroundInfo, select: Boolean = true) {
         val clazz = info.javaClass

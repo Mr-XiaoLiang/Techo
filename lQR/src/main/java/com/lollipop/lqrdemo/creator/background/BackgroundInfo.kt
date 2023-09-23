@@ -4,13 +4,6 @@ import java.io.File
 
 sealed class BackgroundInfo {
 
-    fun getCornerOrNull(): BackgroundCorner? {
-        if (this is CornerProvider) {
-            return corner
-        }
-        return null
-    }
-
     fun getGravityOrNull(): BackgroundGravity? {
         if (this is GravityProvider) {
             return gravity
@@ -23,8 +16,7 @@ sealed class BackgroundInfo {
     class Local(
         val file: File,
         override val gravity: BackgroundGravity,
-        override val corner: BackgroundCorner?
-    ) : BackgroundInfo(), GravityProvider, CornerProvider
+    ) : BackgroundInfo(), GravityProvider
 
 //    class Remote(
 //        val path: String,
@@ -34,33 +26,10 @@ sealed class BackgroundInfo {
 
     class Color(
         val color: Int,
-        override val corner: BackgroundCorner?
-    ) : BackgroundInfo(), CornerProvider
-
-    interface CornerProvider {
-        val corner: BackgroundCorner?
-    }
+    ) : BackgroundInfo()
 
     interface GravityProvider {
         val gravity: BackgroundGravity
     }
 
-}
-
-inline fun <reified T: BackgroundInfo> T.changeCorner(corner: BackgroundCorner?): T {
-    val src = this
-    if (src is BackgroundInfo.CornerProvider) {
-        when (src) {
-            is BackgroundInfo.Local -> {
-                return BackgroundInfo.Local(file = src.file, gravity = src.gravity, corner = corner) as T
-            }
-            is BackgroundInfo.Color -> {
-                return BackgroundInfo.Color(color = src.color, corner = corner) as T
-            }
-            else -> {
-
-            }
-        }
-    }
-    return src
 }

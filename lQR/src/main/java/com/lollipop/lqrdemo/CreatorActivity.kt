@@ -35,7 +35,6 @@ import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
-import com.lollipop.lqrdemo.creator.background.changeCorner
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
@@ -357,7 +356,6 @@ class CreatorActivity : ColorModeActivity(),
                         BackgroundInfo.Local(
                             file = File(filePath),
                             gravity = lastInfo?.getGravityOrNull() ?: BackgroundGravity.DEFAULT,
-                            corner = lastInfo?.getCornerOrNull()
                         )
                     )
                     findTypedFragment<QrBackgroundFragment>()?.onBackgroundChanged()
@@ -406,19 +404,11 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun getCorner(): BackgroundCorner {
-        return BackgroundStore.get().getCornerOrNull() ?: BackgroundCorner.None
+        return BackgroundStore.getCorner() ?: BackgroundCorner.None
     }
 
     override fun onCornerChanged(corner: BackgroundCorner) {
-        val info = BackgroundStore.get()
-        if (info == BackgroundInfo.None || info !is BackgroundInfo.CornerProvider) {
-            Toast.makeText(
-                this,
-                R.string.background_corner_unsupported, Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-        BackgroundStore.set(info.changeCorner(corner))
+        BackgroundStore.setCorner(corner)
         onBackgroundChanged()
     }
 

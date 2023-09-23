@@ -114,6 +114,5 @@
     <string name="corner_left_bottom">左下角</string>
     <string name="corner_right_top">右上角</string>
     <string name="corner_right_bottom">右下角</string>
-    <string name="background_corner_unsupported">当前背景不支持角落设置</string>
 
 </resources>

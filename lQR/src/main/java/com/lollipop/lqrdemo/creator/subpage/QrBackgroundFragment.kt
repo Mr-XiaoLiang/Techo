@@ -18,11 +18,11 @@ import com.lollipop.lqrdemo.creator.PaletteDialog
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
-import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
 import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.ColorBackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.LocalBitmapBackgroundWriterLayer
+import com.lollipop.lqrdemo.databinding.FragmentQrEditBackgroundBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
@@ -112,7 +112,6 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
             BackgroundInfo.Local(
                 lastInfo.file,
                 newGravity.gravity,
-                lastInfo.corner
             )
         )
         updateImageGravity(newGravity)
@@ -251,8 +250,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
 
     private fun onColorChanged(newColor: Int) {
         updateColorPreview(newColor)
-        val lastInfo = BackgroundStore.getByType<BackgroundInfo.Color>()
-        BackgroundStore.set(BackgroundInfo.Color(newColor, lastInfo?.corner))
+        BackgroundStore.set(BackgroundInfo.Color(newColor))
         callback?.onBackgroundChanged()
     }
 
