@@ -42,7 +42,7 @@ object QrCornerSettingHelper {
     }
 
     class RoundModeDrawable : ModeDrawable() {
-        override fun draw(canvas: Canvas) {
+        override fun onBoundsChange(bounds: Rect) {
             val height = bounds.height()
             val width = bounds.width()
             val thirdHeight = height * 0.3F
@@ -61,7 +61,7 @@ object QrCornerSettingHelper {
     }
 
     class SquircleModeDrawable : ModeDrawable() {
-        override fun draw(canvas: Canvas) {
+        override fun onBoundsChange(bounds: Rect) {
             val height = bounds.height()
             val width = bounds.width()
             val thirdHeight = height * 0.3F
@@ -108,7 +108,7 @@ object QrCornerSettingHelper {
         protected val path = Path()
 
         override fun draw(canvas: Canvas) {
-            canvas.drawPaint(paint)
+            canvas.drawPath(path, paint)
         }
 
         override fun setTintList(tint: ColorStateList?) {
@@ -123,10 +123,15 @@ object QrCornerSettingHelper {
                 val newColor = stateList.getColorForState(state, color)
                 if (color != newColor) {
                     color = newColor
+                    invalidateSelf()
                     return true
                 }
             }
             return super.onStateChange(state)
+        }
+
+        override fun isStateful(): Boolean {
+            return true
         }
 
         override fun setAlpha(alpha: Int) {
@@ -140,7 +145,6 @@ object QrCornerSettingHelper {
         override fun getOpacity(): Int {
             return PixelFormat.TRANSPARENT
         }
-
 
     }
 

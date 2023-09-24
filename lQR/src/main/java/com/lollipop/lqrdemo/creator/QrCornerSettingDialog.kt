@@ -38,14 +38,15 @@ class QrCornerSettingDialog(private val option: Option) : BaseCenterDialog(optio
 //        binding.slider.tickInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
 //        binding.slider.tickActiveTintList = ColorStateList.valueOf(fg)
 
-        binding.slider.trackActiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
-        binding.slider.trackInactiveTintList = ColorStateList.valueOf(fg)
+        binding.slider.trackActiveTintList = ColorStateList.valueOf(fg)
+        binding.slider.trackInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
 
         binding.slider.haloTintList = ColorStateList.valueOf(fg.changeAlpha(0.24F))
         binding.slider.thumbTintList = ColorStateList.valueOf(fg)
 
         binding.weightModeSwitch.thumbTintList = ColorStateList.valueOf(fg)
         binding.weightModeSwitch.trackTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
+        binding.weightModeSwitch.setTextColor(fg)
     }
 
     override fun dismiss() {

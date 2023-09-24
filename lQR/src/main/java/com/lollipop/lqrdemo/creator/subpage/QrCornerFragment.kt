@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.checkCallback
+import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.R
@@ -67,6 +68,10 @@ class QrCornerFragment : QrBaseSubpageFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val strokeWidth = 2F.dp2px
+        roundModeDrawable.strokeWidth = strokeWidth
+        cutModeDrawable.strokeWidth = strokeWidth
+        squircleModeDrawable.strokeWidth = strokeWidth
         binding.roundModeIcon.setImageDrawable(roundModeDrawable)
         binding.cutModeIcon.setImageDrawable(cutModeDrawable)
         binding.squircleModeIcon.setImageDrawable(squircleModeDrawable)
@@ -86,21 +91,25 @@ class QrCornerFragment : QrBaseSubpageFragment() {
         binding.leftTopRadius.onClick {
             showRadiusDialog(R.string.corner_left_top, radiusLeftTop) { weight, value ->
                 radiusLeftTop = getRadius(weight, value)
+                updateRadius()
             }
         }
         binding.rightTopRadius.onClick {
             showRadiusDialog(R.string.corner_right_top, radiusRightTop) { weight, value ->
                 radiusRightTop = getRadius(weight, value)
+                updateRadius()
             }
         }
         binding.rightBottomRadius.onClick {
             showRadiusDialog(R.string.corner_right_bottom, radiusRightBottom) { weight, value ->
                 radiusRightBottom = getRadius(weight, value)
+                updateRadius()
             }
         }
         binding.leftBottomRadius.onClick {
             showRadiusDialog(R.string.corner_left_bottom, radiusLeftBottom) { weight, value ->
                 radiusLeftBottom = getRadius(weight, value)
+                updateRadius()
             }
         }
     }
@@ -139,7 +148,12 @@ class QrCornerFragment : QrBaseSubpageFragment() {
     }
 
     private fun getRadius(weight: Boolean, value: Float): BackgroundCorner.Radius {
-        if (value < 1F) {
+        val progress = if (weight) {
+            value * 100
+        } else {
+            value
+        }
+        if (progress < 1F) {
             return BackgroundCorner.Radius.None
         }
         return if (weight) {
@@ -233,7 +247,7 @@ class QrCornerFragment : QrBaseSubpageFragment() {
             }
 
             is BackgroundCorner.Radius.Weight -> {
-                "${radius.value.toInt()}%"
+                "${(radius.value * 100).toInt()}%"
             }
         }
         textView.text = value
@@ -250,17 +264,24 @@ class QrCornerFragment : QrBaseSubpageFragment() {
     private fun getModeBtnTintList(pigment: Pigment): ColorStateList {
         return PigmentTint.getSelectStateList(
             pigment.primaryColor,
-            pigment.primaryColor.changeAlpha(0.5f)
+            pigment.primaryColor.changeAlpha(0.3f)
         )
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         val btnTintList = getModeBtnTintList(pigment)
+        binding.radiusPanelBackground.color = pigment.primaryColor.changeAlpha(0.3F)
         binding.noneModeIcon.imageTintList = btnTintList
         binding.roundModeIcon.imageTintList = btnTintList
         binding.cutModeIcon.imageTintList = btnTintList
         binding.squircleModeIcon.imageTintList = btnTintList
+
+        binding.leftTopRadius.setTextColor(pigment.onBackgroundTitle)
+        binding.rightTopRadius.setTextColor(pigment.onBackgroundTitle)
+        binding.rightBottomRadius.setTextColor(pigment.onBackgroundTitle)
+        binding.leftBottomRadius.setTextColor(pigment.onBackgroundTitle)
+
         binding.modeBar.setBackgroundColor(pigment.primaryColor.changeAlpha(0.3F))
     }
 
