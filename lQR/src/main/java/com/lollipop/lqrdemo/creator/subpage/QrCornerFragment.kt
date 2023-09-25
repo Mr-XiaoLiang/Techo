@@ -92,24 +92,28 @@ class QrCornerFragment : QrBaseSubpageFragment() {
             showRadiusDialog(R.string.corner_left_top, radiusLeftTop) { weight, value ->
                 radiusLeftTop = getRadius(weight, value)
                 updateRadius()
+                notifyCornerChanged()
             }
         }
         binding.rightTopRadius.onClick {
             showRadiusDialog(R.string.corner_right_top, radiusRightTop) { weight, value ->
                 radiusRightTop = getRadius(weight, value)
                 updateRadius()
+                notifyCornerChanged()
             }
         }
         binding.rightBottomRadius.onClick {
             showRadiusDialog(R.string.corner_right_bottom, radiusRightBottom) { weight, value ->
                 radiusRightBottom = getRadius(weight, value)
                 updateRadius()
+                notifyCornerChanged()
             }
         }
         binding.leftBottomRadius.onClick {
             showRadiusDialog(R.string.corner_left_bottom, radiusLeftBottom) { weight, value ->
                 radiusLeftBottom = getRadius(weight, value)
                 updateRadius()
+                notifyCornerChanged()
             }
         }
     }
@@ -247,7 +251,7 @@ class QrCornerFragment : QrBaseSubpageFragment() {
             }
 
             is BackgroundCorner.Radius.Weight -> {
-                "${(radius.value * 100).toInt()}%"
+                "${(radius.value * 100 + 0.5F).toInt()}%"
             }
         }
         textView.text = value
