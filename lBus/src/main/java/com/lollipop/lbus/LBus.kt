@@ -28,7 +28,7 @@ object LBus {
     }
 
     fun send(lBusEvent: LBusEvent) {
-        LBusManager.send(lBusEvent.intent)
+        LBusManager.send(lBusEvent)
     }
 
 }

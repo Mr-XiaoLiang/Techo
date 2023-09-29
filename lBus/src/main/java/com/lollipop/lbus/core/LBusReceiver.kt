@@ -9,7 +9,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.lollipop.lbus.LBus
 import java.util.LinkedList
 
-abstract class LBusReceiver<T : LBusEvent>(val minLifecycle: Lifecycle.State) : BroadcastReceiver(),
+abstract class LBusReceiver<T : LBusEvent>(
+    private val minLifecycle: Lifecycle.State
+) : BroadcastReceiver(),
     LifecycleEventObserver {
 
     companion object {
@@ -71,6 +73,7 @@ abstract class LBusReceiver<T : LBusEvent>(val minLifecycle: Lifecycle.State) : 
     }
 
     fun destroy() {
+        pendingIntentList.clear()
         LBusManager.unregister(this)
     }
 

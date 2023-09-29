@@ -30,8 +30,8 @@ object LBusManager {
         localBroadcastManager?.unregisterReceiver(receiver)
     }
 
-    fun send(intent: Intent) {
-        localBroadcastManager?.sendBroadcast(intent)
+    fun send(event: LBusEvent) {
+        localBroadcastManager?.sendBroadcast(event.intent)
     }
 
 }
