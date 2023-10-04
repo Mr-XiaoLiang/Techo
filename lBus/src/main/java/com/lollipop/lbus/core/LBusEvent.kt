@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 
 open class LBusEvent(initIntent: Intent = Intent()) {
 
-    var intent: Intent = initIntent
+    var intent: Intent
         private set
 
     var action: String
@@ -20,13 +20,19 @@ open class LBusEvent(initIntent: Intent = Intent()) {
         }
 
     init {
-        if (action.isEmpty()) {
-            action = getDefaultAction()
-        }
+        intent = initIntent
+        checkAction()
     }
 
     fun parse(intent: Intent) {
         this.intent = intent
+        checkAction()
+    }
+
+    private fun checkAction() {
+        if (action.isEmpty()) {
+            action = getDefaultAction()
+        }
     }
 
     private fun getDefaultAction(): String {

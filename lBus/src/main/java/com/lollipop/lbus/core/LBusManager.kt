@@ -1,8 +1,8 @@
 package com.lollipop.lbus.core
 
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 
@@ -31,6 +31,11 @@ object LBusManager {
     }
 
     fun send(event: LBusEvent) {
+        if (event.action.isEmpty()) {
+            // 如果Action为空，那么就不让它发出去了
+            Log.e("LBus", "LBusEvent action is empty")
+            return
+        }
         localBroadcastManager?.sendBroadcast(event.intent)
     }
 
