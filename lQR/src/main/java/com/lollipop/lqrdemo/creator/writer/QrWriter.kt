@@ -12,7 +12,6 @@ import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
-import kotlin.math.log
 
 abstract class QrWriter : QrWriterLayer.Callback {
 
@@ -100,6 +99,9 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     open fun draw(canvas: Canvas) {
         getBackgroundLayer().draw(canvas)
+        // 应该在这里剪裁和分发不同的绘制对象
+        // 比如在这里按顺序绘制每个部分，如果没有被正确绘制或者没有设置相关绘制器，那么就执行默认的绘制内容
+        // TODO
         onDraw(canvas)
     }
 
