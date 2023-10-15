@@ -109,7 +109,10 @@ abstract class QrWriter : QrWriterLayer.Callback {
         return backgroundLayer.get()
     }
 
-    private fun updateLayerCorner(layer: BackgroundWriterLayer) {
+    /**
+     * 更新绘制层的圆角属性信息
+     */
+    private fun updateLayerCorner(layer: QrWriterLayer) {
         val matrix = bitMatrix
         val backgroundCorner: BackgroundCorner? = BackgroundStore.getCorner()
         if (matrix is LQrBitMatrix) {
@@ -123,7 +126,6 @@ abstract class QrWriter : QrWriterLayer.Callback {
                 radius
             )
             layer.setCorner(corner)
-            layer.onBoundsChanged(bounds)
         }
     }
 

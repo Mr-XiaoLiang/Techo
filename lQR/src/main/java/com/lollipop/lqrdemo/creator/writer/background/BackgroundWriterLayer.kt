@@ -8,13 +8,11 @@ import com.lollipop.clip.squircle.RectangleSquircle
 import com.lollipop.clip.squircle.SquircleCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
+import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
 
 abstract class BackgroundWriterLayer : QrWriterLayer() {
 
-    protected val bounds = RectF()
-
-    protected var backgroundCorner: BackgroundCorner? = null
-        private set
+    override val layerType: Array<QrWriterLayerType> = arrayOf(QrWriterLayerType.BACKGROUND)
 
     protected val rectangleSquircle by lazy {
         RectangleSquircle()
@@ -22,7 +20,7 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
 
     protected val clipPath = Path()
 
-    open fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         if (clipPath.isEmpty) {
             onDraw(canvas)
         } else {
@@ -35,13 +33,13 @@ abstract class BackgroundWriterLayer : QrWriterLayer() {
 
     open fun onDraw(canvas: Canvas) {}
 
-    open fun onBoundsChanged(bounds: Rect) {
-        this.bounds.set(bounds)
+    override fun onBoundsChanged(bounds: Rect) {
+        super.onBoundsChanged(bounds)
         buildClipPath()
     }
 
-    fun setCorner(c: BackgroundCorner) {
-        this.backgroundCorner = c
+    override fun setCorner(c: BackgroundCorner) {
+        super.setCorner(c)
         buildClipPath()
     }
 
