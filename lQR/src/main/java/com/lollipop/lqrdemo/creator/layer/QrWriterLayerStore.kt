@@ -14,6 +14,10 @@ object QrWriterLayerStore {
         minLifecycle: Lifecycle.State = Lifecycle.State.DESTROYED
     ): Fork {
         val fork = Fork(minLifecycle)
+        if (lifecycle.currentState <= minLifecycle) {
+            return fork
+        }
+        listenerManager.addListener(fork)
         lifecycle.addObserver(fork)
         return fork
     }
@@ -23,7 +27,10 @@ object QrWriterLayerStore {
     ) : LifecycleEventObserver {
 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            TODO("Not yet implemented")
+            if (event.targetState <= minLifecycle) {
+                listenerManager.removeListener(this)
+                source.lifecycle.removeObserver(this)
+            }
         }
 
     }
