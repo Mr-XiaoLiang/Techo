@@ -4,7 +4,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
+import com.lollipop.lqrdemo.creator.writer.LayerDelegate
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
+import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
 
 object QrWriterLayerStore {
 
@@ -31,9 +33,10 @@ object QrWriterLayerStore {
 
     fun fork(
         lifecycle: Lifecycle,
-        minLifecycle: Lifecycle.State = Lifecycle.State.DESTROYED
+        minLifecycle: Lifecycle.State = Lifecycle.State.DESTROYED,
+        onLayerChangedCallback: (Fork, QrWriterLayerType) -> Unit
     ): Fork {
-        val fork = Fork(minLifecycle)
+        val fork = Fork(minLifecycle, onLayerChangedCallback)
         if (lifecycle.currentState <= minLifecycle) {
             return fork
         }
@@ -46,19 +49,35 @@ object QrWriterLayerStore {
     }
 
     class Fork(
-        private val minLifecycle: Lifecycle.State
+        private val minLifecycle: Lifecycle.State,
+        private val onLayerChangedCallback: (Fork, QrWriterLayerType) -> Unit
     ) : LifecycleEventObserver {
 
-        fun onAlignmentLayerChanged(clazz: Class<QrWriterLayer>?) {
-            // TODO
+        private val alignmentLayer = LayerDelegate<QrWriterLayer>(
+            TODO("需要真正的默认实现")
+        )
+
+        private val contentLayer = LayerDelegate<QrWriterLayer>(
+            TODO("需要真正的默认实现")
+        )
+
+        private val positionLayer = LayerDelegate<QrWriterLayer>(
+            TODO("需要真正的默认实现")
+        )
+
+        internal fun onAlignmentLayerChanged(clazz: Class<QrWriterLayer>?) {
+            alignmentLayer.setLayer(clazz)
+            onLayerChangedCallback(this, QrWriterLayerType.ALIGNMENT)
         }
 
-        fun onContentLayerChanged(clazz: Class<QrWriterLayer>?) {
-            // TODO
+        internal fun onContentLayerChanged(clazz: Class<QrWriterLayer>?) {
+            contentLayer.setLayer(clazz)
+            onLayerChangedCallback(this, QrWriterLayerType.CONTENT)
         }
 
-        fun onPositionLayerChanged(clazz: Class<QrWriterLayer>?) {
-            // TODO
+        internal fun onPositionLayerChanged(clazz: Class<QrWriterLayer>?) {
+            positionLayer.setLayer(clazz)
+            onLayerChangedCallback(this, QrWriterLayerType.POSITION)
         }
 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
