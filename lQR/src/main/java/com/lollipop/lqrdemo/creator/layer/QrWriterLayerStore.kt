@@ -5,31 +5,31 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.lqrdemo.creator.writer.LayerDelegate
-import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
 
 object QrWriterLayerStore {
 
     private val listenerManager = ListenerManager<Fork>()
 
-    private var alignment: Class<QrWriterLayer>? = null
-    private var content: Class<QrWriterLayer>? = null
-    private var position: Class<QrWriterLayer>? = null
+    private var alignment: Class<AlignmentWriterLayer>? = null
+    private var content: Class<ContentWriterLayer>? = null
+    private var position: Class<PositionWriterLayer>? = null
 
-    fun setAlignmentLayer(clazz: Class<QrWriterLayer>?) {
+    fun setAlignmentLayer(clazz: Class<AlignmentWriterLayer>?) {
         alignment = clazz
         listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
     }
 
-    fun setContentLayer(clazz: Class<QrWriterLayer>?) {
+    fun setContentLayer(clazz: Class<ContentWriterLayer>?) {
         content = clazz
         listenerManager.invoke { it.onContentLayerChanged(clazz) }
     }
 
-    fun setPositionLayer(clazz: Class<QrWriterLayer>?) {
+    fun setPositionLayer(clazz: Class<PositionWriterLayer>?) {
         position = clazz
         listenerManager.invoke { it.onPositionLayerChanged(clazz) }
     }
+
 
     fun fork(
         lifecycle: Lifecycle,
@@ -53,29 +53,29 @@ object QrWriterLayerStore {
         private val onLayerChangedCallback: (Fork, QrWriterLayerType) -> Unit
     ) : LifecycleEventObserver {
 
-        private val alignmentLayer = LayerDelegate<QrWriterLayer>(
+        private val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
             TODO("需要真正的默认实现")
         )
 
-        private val contentLayer = LayerDelegate<QrWriterLayer>(
+        private val contentLayer = LayerDelegate<ContentWriterLayer>(
             TODO("需要真正的默认实现")
         )
 
-        private val positionLayer = LayerDelegate<QrWriterLayer>(
+        private val positionLayer = LayerDelegate<PositionWriterLayer>(
             TODO("需要真正的默认实现")
         )
 
-        internal fun onAlignmentLayerChanged(clazz: Class<QrWriterLayer>?) {
+        internal fun onAlignmentLayerChanged(clazz: Class<AlignmentWriterLayer>?) {
             alignmentLayer.setLayer(clazz)
             onLayerChangedCallback(this, QrWriterLayerType.ALIGNMENT)
         }
 
-        internal fun onContentLayerChanged(clazz: Class<QrWriterLayer>?) {
+        internal fun onContentLayerChanged(clazz: Class<ContentWriterLayer>?) {
             contentLayer.setLayer(clazz)
             onLayerChangedCallback(this, QrWriterLayerType.CONTENT)
         }
 
-        internal fun onPositionLayerChanged(clazz: Class<QrWriterLayer>?) {
+        internal fun onPositionLayerChanged(clazz: Class<PositionWriterLayer>?) {
             positionLayer.setLayer(clazz)
             onLayerChangedCallback(this, QrWriterLayerType.POSITION)
         }
