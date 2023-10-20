@@ -54,15 +54,15 @@ object QrWriterLayerStore {
     ) : LifecycleEventObserver {
 
         private val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
-            TODO("需要真正的默认实现")
+            DefaultAlignmentWriterLayer::class.java
         )
 
         private val contentLayer = LayerDelegate<ContentWriterLayer>(
-            TODO("需要真正的默认实现")
+            DefaultContentWriterLayer::class.java
         )
 
         private val positionLayer = LayerDelegate<PositionWriterLayer>(
-            TODO("需要真正的默认实现")
+            DefaultPositionWriterLayer::class.java
         )
 
         internal fun onAlignmentLayerChanged(clazz: Class<AlignmentWriterLayer>?) {
