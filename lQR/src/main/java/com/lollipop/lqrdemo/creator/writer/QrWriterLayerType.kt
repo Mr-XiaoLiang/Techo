@@ -8,7 +8,6 @@ package com.lollipop.lqrdemo.creator.writer
  */
 enum class QrWriterLayerType {
 
-    BACKGROUND,
     ALIGNMENT,
     CONTENT,
     POSITION,

@@ -4,16 +4,20 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.RequestManager
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
+import com.lollipop.lqrdemo.creator.layer.QrWriterLayerStore
 import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
 
-abstract class QrWriter : QrWriterLayer.Callback {
+abstract class QrWriter(
+    private val lifecycleOwner: LifecycleOwner
+) : QrWriterLayer.Callback {
 
     protected val bounds: Rect = Rect()
 
@@ -24,6 +28,11 @@ abstract class QrWriter : QrWriterLayer.Callback {
 
     protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>(
         DefaultBackgroundWriterLayer::class.java
+    )
+
+    private val writerLayer = QrWriterLayerStore.fork(
+        lifecycleOwner.lifecycle,
+        onLayerChangedCallback = ::onLayerChanged
     )
 
     protected var lastQuietZone = 0
@@ -87,6 +96,14 @@ abstract class QrWriter : QrWriterLayer.Callback {
     fun setBitMatrix(matrix: LBitMatrix?) {
         this.bitMatrix = matrix
         onBitMatrixChanged()
+    }
+
+    protected open fun onLayerChanged(fork: QrWriterLayerStore.Fork, type: QrWriterLayerType) {
+        when (type) {
+            QrWriterLayerType.ALIGNMENT -> TODO()
+            QrWriterLayerType.CONTENT -> TODO()
+            QrWriterLayerType.POSITION -> TODO()
+        }
     }
 
     protected open fun onBitMatrixChanged() {}

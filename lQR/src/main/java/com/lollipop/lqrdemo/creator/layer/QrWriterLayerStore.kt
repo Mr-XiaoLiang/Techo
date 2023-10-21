@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.lqrdemo.creator.writer.LayerDelegate
+import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
 
 object QrWriterLayerStore {
@@ -34,7 +35,7 @@ object QrWriterLayerStore {
     fun fork(
         lifecycle: Lifecycle,
         minLifecycle: Lifecycle.State = Lifecycle.State.DESTROYED,
-        onLayerChangedCallback: (Fork, QrWriterLayerType) -> Unit
+        onLayerChangedCallback: OnLayerChangedCallback
     ): Fork {
         val fork = Fork(minLifecycle, onLayerChangedCallback)
         if (lifecycle.currentState <= minLifecycle) {
@@ -50,7 +51,7 @@ object QrWriterLayerStore {
 
     class Fork(
         private val minLifecycle: Lifecycle.State,
-        private val onLayerChangedCallback: (Fork, QrWriterLayerType) -> Unit
+        private val onLayerChangedCallback: OnLayerChangedCallback
     ) : LifecycleEventObserver {
 
         private val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
@@ -67,17 +68,17 @@ object QrWriterLayerStore {
 
         internal fun onAlignmentLayerChanged(clazz: Class<AlignmentWriterLayer>?) {
             alignmentLayer.setLayer(clazz)
-            onLayerChangedCallback(this, QrWriterLayerType.ALIGNMENT)
+            onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.ALIGNMENT)
         }
 
         internal fun onContentLayerChanged(clazz: Class<ContentWriterLayer>?) {
             contentLayer.setLayer(clazz)
-            onLayerChangedCallback(this, QrWriterLayerType.CONTENT)
+            onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.CONTENT)
         }
 
         internal fun onPositionLayerChanged(clazz: Class<PositionWriterLayer>?) {
             positionLayer.setLayer(clazz)
-            onLayerChangedCallback(this, QrWriterLayerType.POSITION)
+            onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.POSITION)
         }
 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
@@ -87,6 +88,12 @@ object QrWriterLayerStore {
             }
         }
 
+
+
+    }
+
+    fun interface OnLayerChangedCallback {
+        fun onLayerChanged(fork: Fork, type: QrWriterLayerType)
     }
 
 }
