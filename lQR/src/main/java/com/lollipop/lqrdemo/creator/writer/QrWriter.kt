@@ -64,6 +64,7 @@ abstract class QrWriter(
 
     private fun initLayerCallback() {
         backgroundLayer.setLayerCallback(this)
+        writerLayer.setLayerCallback(this)
     }
 
     private fun onAnyLayerReady() {
@@ -76,7 +77,12 @@ abstract class QrWriter(
     }
 
     protected open fun checkLayerReady(): Boolean {
-        return isAllReady(backgroundLayer)
+        return isAllReady(
+            backgroundLayer,
+            writerLayer.alignmentLayer,
+            writerLayer.contentLayer,
+            writerLayer.positionLayer
+        )
     }
 
     private fun onLayerChanged() {
@@ -159,10 +165,12 @@ abstract class QrWriter(
         this.readyCallback = callback
         // 所有的都需要触发一下
         backgroundLayer.updateResource()
+        writerLayer.updateResource()
     }
 
     protected fun updateLayerBounds() {
         backgroundLayer.get().onBoundsChanged(bounds)
+        writerLayer.onBoundsChanged(bounds)
     }
 
     protected open fun onBackgroundChanged() {}

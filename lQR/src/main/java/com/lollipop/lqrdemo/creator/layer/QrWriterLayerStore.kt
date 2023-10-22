@@ -1,8 +1,10 @@
 package com.lollipop.lqrdemo.creator.layer
 
+import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.bumptech.glide.RequestManager
 import com.lollipop.base.util.ListenerManager
 import com.lollipop.lqrdemo.creator.writer.LayerDelegate
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
@@ -52,32 +54,68 @@ object QrWriterLayerStore {
     class Fork(
         private val minLifecycle: Lifecycle.State,
         private val onLayerChangedCallback: OnLayerChangedCallback
-    ) : LifecycleEventObserver {
+    ) : LifecycleEventObserver, QrWriterLayer.Callback {
 
-        private val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
+        val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
             DefaultAlignmentWriterLayer::class.java
         )
 
-        private val contentLayer = LayerDelegate<ContentWriterLayer>(
+        val contentLayer = LayerDelegate<ContentWriterLayer>(
             DefaultContentWriterLayer::class.java
         )
 
-        private val positionLayer = LayerDelegate<PositionWriterLayer>(
+        val positionLayer = LayerDelegate<PositionWriterLayer>(
             DefaultPositionWriterLayer::class.java
         )
 
+        private var layerCallback: QrWriterLayer.Callback? = null
+
+        private val lastBounds = Rect()
+
+        init {
+            alignmentLayer.setLayerCallback(this)
+            contentLayer.setLayerCallback(this)
+            positionLayer.setLayerCallback(this)
+        }
+
+        fun setLayerCallback(callback: QrWriterLayer.Callback) {
+            this.layerCallback = callback
+        }
+
+        fun updateResource() {
+            alignmentLayer.updateResource()
+            contentLayer.updateResource()
+            positionLayer.updateResource()
+        }
+
+        fun onBoundsChanged(bounds: Rect) {
+            lastBounds.set(bounds)
+            alignmentLayer.get().onBoundsChanged(bounds)
+            contentLayer.get().onBoundsChanged(bounds)
+            positionLayer.get().onBoundsChanged(bounds)
+        }
+
         internal fun onAlignmentLayerChanged(clazz: Class<AlignmentWriterLayer>?) {
             alignmentLayer.setLayer(clazz)
+            if (!lastBounds.isEmpty) {
+                alignmentLayer.get().onBoundsChanged(lastBounds)
+            }
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.ALIGNMENT)
         }
 
         internal fun onContentLayerChanged(clazz: Class<ContentWriterLayer>?) {
             contentLayer.setLayer(clazz)
+            if (!lastBounds.isEmpty) {
+                contentLayer.get().onBoundsChanged(lastBounds)
+            }
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.CONTENT)
         }
 
         internal fun onPositionLayerChanged(clazz: Class<PositionWriterLayer>?) {
             positionLayer.setLayer(clazz)
+            if (!lastBounds.isEmpty) {
+                positionLayer.get().onBoundsChanged(lastBounds)
+            }
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.POSITION)
         }
 
@@ -88,7 +126,21 @@ object QrWriterLayerStore {
             }
         }
 
+        override fun invalidateLayer(layer: QrWriterLayer) {
+            layerCallback?.invalidateLayer(layer)
+        }
 
+        override fun getLifecycle(): Lifecycle? {
+            return layerCallback?.getLifecycle()
+        }
+
+        override fun createGlideBuilder(): RequestManager? {
+            return layerCallback?.createGlideBuilder()
+        }
+
+        override fun onResourceReady(layer: QrWriterLayer) {
+            layerCallback?.onResourceReady(layer)
+        }
 
     }
 
