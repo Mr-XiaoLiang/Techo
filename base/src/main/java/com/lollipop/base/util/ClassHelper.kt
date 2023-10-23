@@ -13,7 +13,7 @@ object ClassHelper {
         }
         val superclass = target.superclass
         if (superclass === other) {
-            return false
+            return true
         }
         if (superclass == null) {
             return false
@@ -23,6 +23,6 @@ object ClassHelper {
 
 }
 
-fun Class<*>.checkExtends(other: Class<*>): Boolean {
-    return ClassHelper.checkExtends(this, other)
+inline fun <reified O> Class<*>.checkExtends(): Boolean {
+    return ClassHelper.checkExtends(this, O::class.java)
 }

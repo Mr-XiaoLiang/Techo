@@ -21,15 +21,15 @@ object QrWriterLayerStore {
 
     fun setLayer(clazz: Class<QrWriterLayer>?) {
         clazz ?: return
-        if (clazz.checkExtends(AlignmentWriterLayer::class.java)) {
+        if (clazz.checkExtends<AlignmentWriterLayer>()) {
             alignment = clazz
             listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
         }
-        if (clazz.checkExtends(ContentWriterLayer::class.java)) {
+        if (clazz.checkExtends<ContentWriterLayer>()) {
             content = clazz
             listenerManager.invoke { it.onContentLayerChanged(clazz) }
         }
-        if (clazz.checkExtends(PositionWriterLayer::class.java)) {
+        if (clazz.checkExtends<PositionWriterLayer>()) {
             position = clazz
             listenerManager.invoke { it.onPositionLayerChanged(clazz) }
         }
