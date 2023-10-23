@@ -3,16 +3,12 @@ package com.lollipop.lqrdemo.creator.writer.background
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect
-import android.graphics.RectF
 import com.lollipop.clip.squircle.RectangleSquircle
 import com.lollipop.clip.squircle.SquircleCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
-import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
 
 abstract class BackgroundWriterLayer : QrWriterLayer() {
-
-    override val layerType: Array<QrWriterLayerType> = arrayOf(QrWriterLayerType.BACKGROUND)
 
     protected val rectangleSquircle by lazy {
         RectangleSquircle()

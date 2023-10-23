@@ -12,8 +12,6 @@ import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 
 abstract class QrWriterLayer {
 
-    abstract val layerType: Array<QrWriterLayerType>
-
     protected val log by lazyLogD()
 
     protected val bounds = RectF()

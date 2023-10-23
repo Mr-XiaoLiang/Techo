@@ -4,9 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
+import androidx.lifecycle.LifecycleOwner
 import kotlin.math.min
 
-class QrWriterDistributor : QrWriter() {
+class QrWriterDistributor(lifecycleOwner: LifecycleOwner) : QrWriter(lifecycleOwner) {
 
     private var bitmap: Bitmap? = null
     private val bitmapMatrix = Matrix()

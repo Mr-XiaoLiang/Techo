@@ -14,24 +14,31 @@ object QrWriterLayerStore {
 
     private val listenerManager = ListenerManager<Fork>()
 
-    private var alignment: Class<AlignmentWriterLayer>? = null
-    private var content: Class<ContentWriterLayer>? = null
-    private var position: Class<PositionWriterLayer>? = null
+    private var alignment: Class<QrWriterLayer>? = null
+    private var content: Class<QrWriterLayer>? = null
+    private var position: Class<QrWriterLayer>? = null
 
-    fun setAlignmentLayer(clazz: Class<AlignmentWriterLayer>?) {
+    fun setLayer(clazz: Class<QrWriterLayer>?) {
+//        if (clazz is AlignmentWriterLayer)
+        // TODO 需要通过接口来判断类型，这个需要测试一下
         alignment = clazz
         listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
     }
 
-    fun setContentLayer(clazz: Class<ContentWriterLayer>?) {
-        content = clazz
-        listenerManager.invoke { it.onContentLayerChanged(clazz) }
-    }
-
-    fun setPositionLayer(clazz: Class<PositionWriterLayer>?) {
-        position = clazz
-        listenerManager.invoke { it.onPositionLayerChanged(clazz) }
-    }
+//    fun setAlignmentLayer(clazz: Class<QrWriterLayer>?) {
+//        alignment = clazz
+//        listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
+//    }
+//
+//    fun setContentLayer(clazz: Class<QrWriterLayer>?) {
+//        content = clazz
+//        listenerManager.invoke { it.onContentLayerChanged(clazz) }
+//    }
+//
+//    fun setPositionLayer(clazz: Class<QrWriterLayer>?) {
+//        position = clazz
+//        listenerManager.invoke { it.onPositionLayerChanged(clazz) }
+//    }
 
 
     fun fork(
@@ -56,16 +63,16 @@ object QrWriterLayerStore {
         private val onLayerChangedCallback: OnLayerChangedCallback
     ) : LifecycleEventObserver, QrWriterLayer.Callback {
 
-        val alignmentLayer = LayerDelegate<AlignmentWriterLayer>(
-            DefaultAlignmentWriterLayer::class.java
+        val alignmentLayer = LayerDelegate<QrWriterLayer>(
+            DefaultWriterLayer::class.java
         )
 
-        val contentLayer = LayerDelegate<ContentWriterLayer>(
-            DefaultContentWriterLayer::class.java
+        val contentLayer = LayerDelegate<QrWriterLayer>(
+            DefaultWriterLayer::class.java
         )
 
-        val positionLayer = LayerDelegate<PositionWriterLayer>(
-            DefaultPositionWriterLayer::class.java
+        val positionLayer = LayerDelegate<QrWriterLayer>(
+            DefaultWriterLayer::class.java
         )
 
         private var layerCallback: QrWriterLayer.Callback? = null
@@ -95,7 +102,7 @@ object QrWriterLayerStore {
             positionLayer.get().onBoundsChanged(bounds)
         }
 
-        internal fun onAlignmentLayerChanged(clazz: Class<AlignmentWriterLayer>?) {
+        internal fun onAlignmentLayerChanged(clazz: Class<QrWriterLayer>?) {
             alignmentLayer.setLayer(clazz)
             if (!lastBounds.isEmpty) {
                 alignmentLayer.get().onBoundsChanged(lastBounds)
@@ -103,7 +110,7 @@ object QrWriterLayerStore {
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.ALIGNMENT)
         }
 
-        internal fun onContentLayerChanged(clazz: Class<ContentWriterLayer>?) {
+        internal fun onContentLayerChanged(clazz: Class<QrWriterLayer>?) {
             contentLayer.setLayer(clazz)
             if (!lastBounds.isEmpty) {
                 contentLayer.get().onBoundsChanged(lastBounds)
@@ -111,7 +118,7 @@ object QrWriterLayerStore {
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.CONTENT)
         }
 
-        internal fun onPositionLayerChanged(clazz: Class<PositionWriterLayer>?) {
+        internal fun onPositionLayerChanged(clazz: Class<QrWriterLayer>?) {
             positionLayer.setLayer(clazz)
             if (!lastBounds.isEmpty) {
                 positionLayer.get().onBoundsChanged(lastBounds)

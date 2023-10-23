@@ -118,8 +118,8 @@ class QrCreatorHelper(
     private val codeContentChangedListener = ListenerManager<OnCodeContentChangedListener>()
     private val loadStatusChangedListener = ListenerManager<OnLoadStatusChangedListener>()
 
-    private val previewWriterDistributor = QrWriterDistributor()
-    private val saveWriterDistributor = QrWriterDistributor()
+    private val previewWriterDistributor = QrWriterDistributor(lifecycleOwner)
+    private val saveWriterDistributor = QrWriterDistributor(lifecycleOwner)
     private val writerGroup = QrWriterGroup()
 
     private val barcodeWriter = BarcodeHelper.createWriter(lifecycleOwner)
