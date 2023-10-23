@@ -1,7 +1,15 @@
 package com.lollipop.lqrdemo.creator.layer
 
-interface PositionWriterLayer
+import android.graphics.Canvas
 
-interface AlignmentWriterLayer
+interface PositionWriterLayer {
+    fun onDrawPosition(canvas: Canvas)
+}
 
-interface ContentWriterLayer
+interface AlignmentWriterLayer {
+    fun onDrawAlignment(canvas: Canvas)
+}
+
+interface ContentWriterLayer {
+    fun onContentAlignment(canvas: Canvas)
+}

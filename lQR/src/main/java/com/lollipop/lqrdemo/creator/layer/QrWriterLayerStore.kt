@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.RequestManager
 import com.lollipop.base.util.ListenerManager
+import com.lollipop.base.util.checkExtends
 import com.lollipop.lqrdemo.creator.writer.LayerDelegate
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
@@ -19,27 +20,39 @@ object QrWriterLayerStore {
     private var position: Class<QrWriterLayer>? = null
 
     fun setLayer(clazz: Class<QrWriterLayer>?) {
-//        if (clazz is AlignmentWriterLayer)
-        // TODO 需要通过接口来判断类型，这个需要测试一下
-        alignment = clazz
-        listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
+        clazz ?: return
+        if (clazz.checkExtends(AlignmentWriterLayer::class.java)) {
+            alignment = clazz
+            listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
+        }
+        if (clazz.checkExtends(ContentWriterLayer::class.java)) {
+            content = clazz
+            listenerManager.invoke { it.onContentLayerChanged(clazz) }
+        }
+        if (clazz.checkExtends(PositionWriterLayer::class.java)) {
+            position = clazz
+            listenerManager.invoke { it.onPositionLayerChanged(clazz) }
+        }
     }
 
-//    fun setAlignmentLayer(clazz: Class<QrWriterLayer>?) {
-//        alignment = clazz
-//        listenerManager.invoke { it.onAlignmentLayerChanged(clazz) }
-//    }
-//
-//    fun setContentLayer(clazz: Class<QrWriterLayer>?) {
-//        content = clazz
-//        listenerManager.invoke { it.onContentLayerChanged(clazz) }
-//    }
-//
-//    fun setPositionLayer(clazz: Class<QrWriterLayer>?) {
-//        position = clazz
-//        listenerManager.invoke { it.onPositionLayerChanged(clazz) }
-//    }
+    fun clear(type: QrWriterLayerType) {
+        when (type) {
+            QrWriterLayerType.ALIGNMENT -> {
+                alignment = null
+                listenerManager.invoke { it.onAlignmentLayerChanged(null) }
+            }
 
+            QrWriterLayerType.CONTENT -> {
+                content = null
+                listenerManager.invoke { it.onContentLayerChanged(null) }
+            }
+
+            QrWriterLayerType.POSITION -> {
+                position = null
+                listenerManager.invoke { it.onPositionLayerChanged(null) }
+            }
+        }
+    }
 
     fun fork(
         lifecycle: Lifecycle,
