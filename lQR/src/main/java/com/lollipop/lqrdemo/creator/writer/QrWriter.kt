@@ -35,8 +35,6 @@ abstract class QrWriter(
         onLayerChangedCallback = ::onLayerChanged
     )
 
-    protected var lastQuietZone = 0
-
     private var readyCallback: ResourceReadyCallback? = null
 
     private var contextProvider: ContextProvider? = null
@@ -101,6 +99,7 @@ abstract class QrWriter(
 
     fun setBitMatrix(matrix: LBitMatrix?) {
         this.bitMatrix = matrix
+        writerLayer.setBitMatrix(matrix)
         onBitMatrixChanged()
     }
 
@@ -121,11 +120,12 @@ abstract class QrWriter(
     }
 
     open fun draw(canvas: Canvas) {
-        getBackgroundLayer().draw(canvas)
-        // 应该在这里剪裁和分发不同的绘制对象
-        // 比如在这里按顺序绘制每个部分，如果没有被正确绘制或者没有设置相关绘制器，那么就执行默认的绘制内容
-        // TODO
+        onDrawBackground(canvas)
         onDraw(canvas)
+    }
+
+    open fun onDrawBackground(canvas: Canvas) {
+        getBackgroundLayer().draw(canvas)
     }
 
     private fun getBackgroundLayer(): BackgroundWriterLayer {
@@ -138,21 +138,23 @@ abstract class QrWriter(
     private fun updateLayerCorner(layer: QrWriterLayer) {
         val matrix = bitMatrix
         val backgroundCorner: BackgroundCorner? = BackgroundStore.getCorner()
+        if (backgroundCorner != null) {
+            layer.setCorner(backgroundCorner)
+            return
+        }
         if (matrix is LQrBitMatrix) {
             val quietZone = (matrix.quietZone * scaleValue).toInt()
-            lastQuietZone = quietZone
             val radius = BackgroundCorner.Radius.Absolute(quietZone.toFloat())
-            val corner = backgroundCorner ?: BackgroundCorner.Round(
-                radius,
-                radius,
-                radius,
-                radius
-            )
+            val corner = BackgroundCorner.Round(radius, radius, radius, radius)
             layer.setCorner(corner)
         }
     }
 
-    open fun onDraw(canvas: Canvas) {}
+    open fun onDraw(canvas: Canvas) {
+        // 应该在这里剪裁和分发不同的绘制对象
+        // 比如在这里按顺序绘制每个部分，如果没有被正确绘制或者没有设置相关绘制器，那么就执行默认的绘制内容
+        writerLayer.draw(canvas)
+    }
 
     open fun onBoundsChanged() {}
 

@@ -1,8 +1,19 @@
 package com.lollipop.lqrdemo.creator.layer
 
-import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
+import android.graphics.Canvas
 
-class DefaultWriterLayer : QrWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
+class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
     PositionWriterLayer {
+    override fun drawPosition(canvas: Canvas) {
+        TODO("Not yet implemented")
+    }
+
+    override fun drawAlignment(canvas: Canvas) {
+        TODO("Not yet implemented")
+    }
+
+    override fun drawContent(canvas: Canvas) {
+        TODO("Not yet implemented")
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.creator.layer
 
+import android.graphics.Canvas
 import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -10,16 +11,17 @@ import com.lollipop.base.util.checkExtends
 import com.lollipop.lqrdemo.creator.writer.LayerDelegate
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayerType
+import com.lollipop.qr.writer.LBitMatrix
 
 object QrWriterLayerStore {
 
     private val listenerManager = ListenerManager<Fork>()
 
-    private var alignment: Class<QrWriterLayer>? = null
-    private var content: Class<QrWriterLayer>? = null
-    private var position: Class<QrWriterLayer>? = null
+    private var alignment: Class<BitMatrixWriterLayer>? = null
+    private var content: Class<BitMatrixWriterLayer>? = null
+    private var position: Class<BitMatrixWriterLayer>? = null
 
-    fun setLayer(clazz: Class<QrWriterLayer>?) {
+    fun setLayer(clazz: Class<BitMatrixWriterLayer>?) {
         clazz ?: return
         if (clazz.checkExtends<AlignmentWriterLayer>()) {
             alignment = clazz
@@ -76,26 +78,53 @@ object QrWriterLayerStore {
         private val onLayerChangedCallback: OnLayerChangedCallback
     ) : LifecycleEventObserver, QrWriterLayer.Callback {
 
-        val alignmentLayer = LayerDelegate<QrWriterLayer>(
+        val alignmentLayer = LayerDelegate<BitMatrixWriterLayer>(
             DefaultWriterLayer::class.java
         )
 
-        val contentLayer = LayerDelegate<QrWriterLayer>(
+        val contentLayer = LayerDelegate<BitMatrixWriterLayer>(
             DefaultWriterLayer::class.java
         )
 
-        val positionLayer = LayerDelegate<QrWriterLayer>(
+        val positionLayer = LayerDelegate<BitMatrixWriterLayer>(
             DefaultWriterLayer::class.java
         )
 
         private var layerCallback: QrWriterLayer.Callback? = null
 
         private val lastBounds = Rect()
+        private var lastMatrix: LBitMatrix? = null
 
         init {
             alignmentLayer.setLayerCallback(this)
             contentLayer.setLayerCallback(this)
             positionLayer.setLayerCallback(this)
+        }
+
+        inline fun <reified T> LayerDelegate<*>.typedLayer(): T? {
+            val layer = get()
+            if (layer is T) {
+                return layer
+            }
+            return null
+        }
+
+        fun findAlignmentLayer(): AlignmentWriterLayer? {
+            return alignmentLayer.typedLayer<AlignmentWriterLayer>()
+        }
+
+        fun findContentLayer(): ContentWriterLayer? {
+            return contentLayer.typedLayer<ContentWriterLayer>()
+        }
+
+        fun findPositionLayer(): PositionWriterLayer? {
+            return positionLayer.typedLayer<PositionWriterLayer>()
+        }
+
+        fun draw(canvas: Canvas) {
+            findAlignmentLayer()?.drawAlignment(canvas)
+            findContentLayer()?.drawContent(canvas)
+            findPositionLayer()?.drawPosition(canvas)
         }
 
         fun setLayerCallback(callback: QrWriterLayer.Callback) {
@@ -115,27 +144,35 @@ object QrWriterLayerStore {
             positionLayer.get().onBoundsChanged(bounds)
         }
 
-        internal fun onAlignmentLayerChanged(clazz: Class<QrWriterLayer>?) {
-            alignmentLayer.setLayer(clazz)
+        fun setBitMatrix(matrix: LBitMatrix?) {
+            lastMatrix = matrix
+            alignmentLayer.get().setBitMatrix(matrix)
+            contentLayer.get().setBitMatrix(matrix)
+            positionLayer.get().setBitMatrix(matrix)
+        }
+
+        private fun updateNewLayer(layer: BitMatrixWriterLayer) {
             if (!lastBounds.isEmpty) {
-                alignmentLayer.get().onBoundsChanged(lastBounds)
+                layer.onBoundsChanged(lastBounds)
             }
+            layer.setBitMatrix(lastMatrix)
+        }
+
+        internal fun onAlignmentLayerChanged(clazz: Class<BitMatrixWriterLayer>?) {
+            alignmentLayer.setLayer(clazz)
+            updateNewLayer(alignmentLayer.get())
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.ALIGNMENT)
         }
 
-        internal fun onContentLayerChanged(clazz: Class<QrWriterLayer>?) {
+        internal fun onContentLayerChanged(clazz: Class<BitMatrixWriterLayer>?) {
             contentLayer.setLayer(clazz)
-            if (!lastBounds.isEmpty) {
-                contentLayer.get().onBoundsChanged(lastBounds)
-            }
+            updateNewLayer(contentLayer.get())
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.CONTENT)
         }
 
-        internal fun onPositionLayerChanged(clazz: Class<QrWriterLayer>?) {
+        internal fun onPositionLayerChanged(clazz: Class<BitMatrixWriterLayer>?) {
             positionLayer.setLayer(clazz)
-            if (!lastBounds.isEmpty) {
-                positionLayer.get().onBoundsChanged(lastBounds)
-            }
+            updateNewLayer(positionLayer.get())
             onLayerChangedCallback.onLayerChanged(this, QrWriterLayerType.POSITION)
         }
 
