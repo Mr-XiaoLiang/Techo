@@ -105,9 +105,15 @@ abstract class QrWriter(
 
     protected open fun onLayerChanged(fork: QrWriterLayerStore.Fork, type: QrWriterLayerType) {
         when (type) {
-            QrWriterLayerType.ALIGNMENT -> TODO()
-            QrWriterLayerType.CONTENT -> TODO()
-            QrWriterLayerType.POSITION -> TODO()
+            QrWriterLayerType.ALIGNMENT -> {
+                invalidateLayer(fork.alignmentLayer.get())
+            }
+            QrWriterLayerType.CONTENT -> {
+                invalidateLayer(fork.contentLayer.get())
+            }
+            QrWriterLayerType.POSITION -> {
+                invalidateLayer(fork.positionLayer.get())
+            }
         }
     }
 
