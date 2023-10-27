@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo.creator.layer
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -94,6 +95,8 @@ object QrWriterLayerStore {
 
         private val lastBounds = Rect()
         private var lastMatrix: LBitMatrix? = null
+        protected var darkColor: Int = Color.BLACK
+        protected var lightColor: Int = Color.TRANSPARENT
 
         init {
             alignmentLayer.setLayerCallback(this)
@@ -151,11 +154,20 @@ object QrWriterLayerStore {
             positionLayer.get().setBitMatrix(matrix)
         }
 
+        fun setQrPointColor(dark: Int, light: Int) {
+            darkColor = dark
+            lightColor = light
+            alignmentLayer.get().setQrPointColor(dark, light)
+            contentLayer.get().setQrPointColor(dark, light)
+            positionLayer.get().setQrPointColor(dark, light)
+        }
+
         private fun updateNewLayer(layer: BitMatrixWriterLayer) {
             if (!lastBounds.isEmpty) {
                 layer.onBoundsChanged(lastBounds)
             }
             layer.setBitMatrix(lastMatrix)
+            layer.setQrPointColor(darkColor, lightColor)
         }
 
         internal fun onAlignmentLayerChanged(clazz: Class<BitMatrixWriterLayer>?) {

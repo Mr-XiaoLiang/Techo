@@ -14,6 +14,7 @@ import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
+import kotlin.math.min
 
 abstract class QrWriter(
     private val lifecycleOwner: LifecycleOwner
@@ -24,7 +25,7 @@ abstract class QrWriter(
     protected var bitMatrix: LBitMatrix? = null
         private set
 
-    protected open val scaleValue = 1F
+    protected var scaleValue = 1F
 
     protected val backgroundLayer = LayerDelegate<BackgroundWriterLayer>(
         DefaultBackgroundWriterLayer::class.java
@@ -57,6 +58,7 @@ abstract class QrWriter(
     fun setQrPointColor(dark: Int = this.darkColor, light: Int = this.lightColor) {
         this.darkColor = dark
         this.lightColor = light
+        writerLayer.setQrPointColor(dark, light)
         onBitMatrixChanged()
     }
 
@@ -108,16 +110,29 @@ abstract class QrWriter(
             QrWriterLayerType.ALIGNMENT -> {
                 invalidateLayer(fork.alignmentLayer.get())
             }
+
             QrWriterLayerType.CONTENT -> {
                 invalidateLayer(fork.contentLayer.get())
             }
+
             QrWriterLayerType.POSITION -> {
                 invalidateLayer(fork.positionLayer.get())
             }
         }
     }
 
-    protected open fun onBitMatrixChanged() {}
+    protected open fun onBitMatrixChanged() {
+        val matrix = bitMatrix
+        if (matrix == null) {
+            scaleValue = 1F
+            return
+        }
+        val scaleX = bounds.width() * 1F / matrix.width
+        val scaleY = bounds.height() * 1F / matrix.height
+        val scale = min(scaleX, scaleY)
+        scaleValue = scale
+        notifyBackgroundChanged()
+    }
 
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         bounds.set(left, top, right, bottom)
