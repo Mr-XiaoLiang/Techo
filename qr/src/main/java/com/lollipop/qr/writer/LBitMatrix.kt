@@ -3,7 +3,6 @@ package com.lollipop.qr.writer
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.encoder.QRCode
 
 
 /**
