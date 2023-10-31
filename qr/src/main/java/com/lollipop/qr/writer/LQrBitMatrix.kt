@@ -120,41 +120,46 @@ class LQrBitMatrix(
 
     /**
      * 判断是否在辅助定位点上
-     * TODO 应该跑一下代码，确定一下这个辅助定位点的参数协议
      */
-//    fun getAlignmentPattern(): List<Rect> {
-//        val apcCenterArray = version.alignmentPatternCenters
-//        if (apcCenterArray.isEmpty()) {
-//            return emptyList()
-//        }
-//        val leftTop = Rect()
-//        val leftBottom = Rect()
-//        val rightTop = Rect()
-//        getLeftTopPattern(leftTop)
-//        getLeftBottomPattern(leftBottom)
-//        getRightTopPattern(rightTop)
-//
-//        for (i in apcCenterArray) {
-//            for (j in apcCenterArray) {
-//                //如果这个点刚好在左上角
-//                if (leftTop.contains(i, j) || leftTop.contains(j, i)) {
-//                    continue
-//                }
-//                //如果这个点刚好在右上角
-//                if (inRightTop(width, i, j) || inRightTop(width, j, i)) {
-//                    continue
-//                }
-//                //如果这个点刚好在左下角
-//                if (inLeftBottom(width, i, j) || inLeftBottom(width, j, i)) {
-//                    continue
-//                }
-//                //判断是否是在范围内
-//                if ((x <= i + 2 && x >= i - 2) && (y <= j + 2 && y >= j - 2)) {
-//                    return true
-//                }
-//            }
-//        }
-//        return false
-//    }
+    fun getAlignmentPattern(): List<Rect> {
+        val apcCenterArray = version.alignmentPatternCenters
+        if (apcCenterArray.isEmpty()) {
+            return emptyList()
+        }
+        val leftTop = Rect()
+        val leftBottom = Rect()
+        val rightTop = Rect()
+        getLeftTopPattern(leftTop)
+        getLeftBottomPattern(leftBottom)
+        getRightTopPattern(rightTop)
+
+        val resultList = ArrayList<Rect>()
+
+        for (i in apcCenterArray) {
+            for (j in apcCenterArray) {
+                //如果这个点刚好在左上角
+                if (leftTop.contains(i, j) || leftTop.contains(j, i)) {
+                    continue
+                }
+                //如果这个点刚好在右上角
+                if (leftBottom.contains(i, j) || leftBottom.contains(j, i)) {
+                    continue
+                }
+                //如果这个点刚好在左下角
+                if (rightTop.contains(i, j) || rightTop.contains(j, i)) {
+                    continue
+                }
+                val left1 = i - 2
+                val top1 = j - 2
+                val left2 = j - 2
+                val top2 = i - 2
+                // 辅助定位点的边长是5，定位点的位置是中心点，
+                // 起点向左移动2格，右边就需要向右移动4格，加上本格，总共5格
+                resultList.add(Rect(left1, top1, left1 + 4, top1 + 4))
+                resultList.add(Rect(left2, top2, left2 + 4, top2 + 4))
+            }
+        }
+        return resultList
+    }
 
 }
