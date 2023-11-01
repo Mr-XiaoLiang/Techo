@@ -60,8 +60,6 @@ class LQrBitMatrix(
         return LQRCodeWriter.getMinWidth(version)
     }
 
-    // TODO 需要在这里做一些方法，来判断和区分不同定位点
-
     /**
      * 左上角定位点
      */
