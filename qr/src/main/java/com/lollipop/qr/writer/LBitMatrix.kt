@@ -3,6 +3,7 @@ package com.lollipop.qr.writer
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.google.zxing.common.BitMatrix
+import kotlin.math.min
 
 
 /**
@@ -49,6 +50,12 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
             }
             return pixelArray
         }
+    }
+
+    fun getScale(viewWidth: Float, viewHeight: Float): Float {
+        val scaleX = viewWidth / width
+        val scaleY = viewHeight / height
+        return min(scaleX, scaleY)
     }
 
     fun isBlack(x: Int, y: Int): Boolean {

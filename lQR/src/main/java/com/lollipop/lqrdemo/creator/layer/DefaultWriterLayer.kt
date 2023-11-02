@@ -11,11 +11,6 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
 
     private var bitmap: Bitmap? = null
     private val bitmapMatrix = Matrix()
-    private var scaleValue = 1F
-
-    private val positionRect = arrayOf(Rect(), Rect(), Rect())
-    private val timingPatternRect = arrayOf(Rect(), Rect())
-    private val alignmentPattern = ArrayList<Rect>()
 
     override fun drawPosition(canvas: Canvas) {
         TODO("Not yet implemented")
@@ -32,14 +27,6 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     override fun onBitMatrixChanged() {
         super.onBitMatrixChanged()
         bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
-        findQrBitMatrix {
-            it.getLeftTopPattern(positionRect[0])
-            it.getRightTopPattern(positionRect[1])
-            it.getLeftBottomPattern(positionRect[2])
-            it.getTimingPattern(timingPatternRect[0], timingPatternRect[1])
-            alignmentPattern.clear()
-            alignmentPattern.addAll(it.getAlignmentPattern())
-        }
         updateBitmapMatrix()
     }
 

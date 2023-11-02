@@ -14,7 +14,6 @@ import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
 import com.lollipop.lqrdemo.creator.writer.background.DefaultBackgroundWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
-import kotlin.math.min
 
 abstract class QrWriter(
     private val lifecycleOwner: LifecycleOwner
@@ -122,15 +121,7 @@ abstract class QrWriter(
     }
 
     protected open fun onBitMatrixChanged() {
-        val matrix = bitMatrix
-        if (matrix == null) {
-            scaleValue = 1F
-            return
-        }
-        val scaleX = bounds.width() * 1F / matrix.width
-        val scaleY = bounds.height() * 1F / matrix.height
-        val scale = min(scaleX, scaleY)
-        scaleValue = scale
+        scaleValue = bitMatrix?.getScale(bounds.width().toFloat(), bounds.height().toFloat()) ?: 1F
         notifyBackgroundChanged()
     }
 
