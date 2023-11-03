@@ -12,6 +12,10 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     private var bitmap: Bitmap? = null
     private val bitmapMatrix = Matrix()
 
+    override val positionBoundsEnable = true
+    override val timingPatternBoundsEnable = true
+    override val alignmentPatternBoundsEnable = true
+
     override fun drawPosition(canvas: Canvas) {
         TODO("Not yet implemented")
     }
