@@ -70,6 +70,28 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
         }
     }
 
+    fun getLeftEdgeByScale(value: Float): Float {
+        val half = scaleValue * 0.5F
+        return value * scaleValue - half
+    }
+
+    fun getTopEdgeByScale(value: Float): Float {
+        val half = scaleValue * 0.5F
+        return value * scaleValue - half
+    }
+
+
+    fun getRightEdgeByScale(value: Float): Float {
+        val half = scaleValue * 0.5F
+        return value * scaleValue + half
+    }
+
+
+    fun getBottomEdgeByScale(value: Float): Float {
+        val half = scaleValue * 0.5F
+        return value * scaleValue + half
+    }
+
     private fun updateScale() {
         scaleValue = bitMatrix?.getScale(bounds.width(), bounds.height()) ?: 1F
     }
