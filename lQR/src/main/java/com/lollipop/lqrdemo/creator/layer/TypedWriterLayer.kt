@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.creator.layer
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Path
 import android.graphics.Rect
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.qr.writer.LBitMatrix
@@ -68,6 +69,16 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
                 alignmentPatternBounds.addAll(it.getAlignmentPattern())
             }
         }
+    }
+
+    fun addRectToPathByScale(path: Path, rect: Rect) {
+        path.addRect(
+            getLeftEdgeByScale(rect.left.toFloat()),
+            getTopEdgeByScale(rect.top.toFloat()),
+            getRightEdgeByScale(rect.right.toFloat()),
+            getBottomEdgeByScale(rect.bottom.toFloat()),
+            Path.Direction.CW
+        )
     }
 
     fun getLeftEdgeByScale(value: Float): Float {
