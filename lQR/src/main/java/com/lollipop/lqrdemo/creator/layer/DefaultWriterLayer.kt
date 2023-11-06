@@ -2,9 +2,12 @@ package com.lollipop.lqrdemo.creator.layer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import com.lollipop.lqrdemo.BuildConfig
 import kotlin.math.min
 
 class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
@@ -21,7 +24,16 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     private val alignmentClipPath = Path()
     private val contentClipPath = Path()
 
+    private val debugPaint by lazy {
+        Paint().apply {
+            color = Color.RED
+        }
+    }
+
     override fun drawPosition(canvas: Canvas) {
+        if (BuildConfig.DEBUG) {
+            canvas.drawPath(positionClipPath, debugPaint)
+        }
         if (positionClipPath.isEmpty) {
             return
         }
@@ -33,6 +45,9 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     override fun drawAlignment(canvas: Canvas) {
+        if (BuildConfig.DEBUG) {
+            canvas.drawPath(alignmentClipPath, debugPaint)
+        }
         if (alignmentClipPath.isEmpty) {
             return
         }

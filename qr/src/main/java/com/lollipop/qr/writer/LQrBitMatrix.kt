@@ -85,7 +85,7 @@ class LQrBitMatrix(
     fun getLeftBottomPattern(out: Rect) {
         val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
         val top = height - size
-        out.set(0, top, size - 1, top - size - 1)
+        out.set(0, top, size - 1, top + size - 1)
         out.offset(quietZone, -quietZone)
     }
 
@@ -97,7 +97,7 @@ class LQrBitMatrix(
         horizontal: Rect,
         vertical: Rect
     ) {
-        val patternSize = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1
+        val patternSize = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1
         horizontal.set(
             patternSize,
             patternSize,
@@ -131,33 +131,54 @@ class LQrBitMatrix(
         getLeftBottomPattern(leftBottom)
         getRightTopPattern(rightTop)
 
+        val checkArray = arrayOf(leftTop, leftBottom, rightTop)
+
         val resultList = ArrayList<Rect>()
 
         for (i in apcCenterArray) {
             for (j in apcCenterArray) {
-                //如果这个点刚好在左上角
-                if (leftTop.contains(i, j) || leftTop.contains(j, i)) {
-                    continue
-                }
-                //如果这个点刚好在右上角
-                if (leftBottom.contains(i, j) || leftBottom.contains(j, i)) {
-                    continue
-                }
-                //如果这个点刚好在左下角
-                if (rightTop.contains(i, j) || rightTop.contains(j, i)) {
-                    continue
-                }
                 val left1 = i - 2
                 val top1 = j - 2
                 val left2 = j - 2
                 val top2 = i - 2
                 // 辅助定位点的边长是5，定位点的位置是中心点，
                 // 起点向左移动2格，右边就需要向右移动4格，加上本格，总共5格
-                resultList.add(Rect(left1, top1, left1 + 4, top1 + 4))
-                resultList.add(Rect(left2, top2, left2 + 4, top2 + 4))
+                val rect1 = Rect(left1, top1, left1 + 4, top1 + 4).apply {
+                    offset(quietZone, quietZone)
+                }
+                val rect2 = Rect(left2, top2, left2 + 4, top2 + 4).apply {
+                    offset(quietZone, quietZone)
+                }
+                if (safe(rect1, checkArray)) {
+                    resultList.add(rect1)
+                }
+                if (safe(rect2, checkArray)) {
+                    resultList.add(rect2)
+                }
             }
         }
         return resultList
+    }
+
+    private fun safe(target: Rect, anchorArray: Array<Rect>): Boolean {
+        anchorArray.forEach { rect ->
+            if (rect.contains(target)) {
+                return false
+            }
+            if (target.contains(rect)) {
+                return false
+            }
+            if (rect.intersects(
+                    target.left,
+                    target.top,
+                    target.right,
+                    target.bottom
+                )
+            ) {
+                return false
+            }
+        }
+        return true
     }
 
 }
