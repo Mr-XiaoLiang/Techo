@@ -82,21 +82,21 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     }
 
     fun getLeftEdgeByScale(value: Float): Float {
-        return (value) * scaleValue
+        return (value) * scaleValue - 0.5F
     }
 
     fun getTopEdgeByScale(value: Float): Float {
-        return (value) * scaleValue
+        return (value) * scaleValue - 0.5F
     }
 
 
     fun getRightEdgeByScale(value: Float): Float {
-        return (value + 1F) * scaleValue
+        return (value + 1F) * scaleValue + 0.5F
     }
 
 
     fun getBottomEdgeByScale(value: Float): Float {
-        return (value + 1F) * scaleValue
+        return (value + 1F) * scaleValue + 0.5F
     }
 
     private fun updateScale() {

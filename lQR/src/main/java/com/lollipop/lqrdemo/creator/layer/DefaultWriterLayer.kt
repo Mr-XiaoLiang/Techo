@@ -27,13 +27,11 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     private val debugPaint by lazy {
         Paint().apply {
             color = Color.RED
+            alpha = 0x33
         }
     }
 
     override fun drawPosition(canvas: Canvas) {
-        if (BuildConfig.DEBUG) {
-            canvas.drawPath(positionClipPath, debugPaint)
-        }
         if (positionClipPath.isEmpty) {
             return
         }
@@ -42,12 +40,12 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         canvas.clipPath(positionClipPath)
         canvas.drawBitmap(b, bitmapMatrix, null)
         canvas.restoreToCount(count)
+        if (BuildConfig.DEBUG) {
+            canvas.drawPath(positionClipPath, debugPaint)
+        }
     }
 
     override fun drawAlignment(canvas: Canvas) {
-        if (BuildConfig.DEBUG) {
-            canvas.drawPath(alignmentClipPath, debugPaint)
-        }
         if (alignmentClipPath.isEmpty) {
             return
         }
@@ -56,6 +54,9 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         canvas.clipPath(alignmentClipPath)
         canvas.drawBitmap(b, bitmapMatrix, null)
         canvas.restoreToCount(count)
+        if (BuildConfig.DEBUG) {
+            canvas.drawPath(alignmentClipPath, debugPaint)
+        }
     }
 
     override fun drawContent(canvas: Canvas) {
