@@ -276,9 +276,9 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
             for (inputX in 0 until inputWidth) {
 
                 val type = if (input.get(inputX, inputY).toInt() == 1) {
-                    LBitMatrix.TYPE.BLACK
+                    LBitMatrix.Type.BLACK
                 } else {
-                    LBitMatrix.TYPE.WHITE
+                    LBitMatrix.Type.WHITE
                 }
 
                 when (writerType) {
