@@ -66,14 +66,14 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         return nullableMatrix.get(x, y)
     }
 
-    fun setRegion(left: Int, top: Int, width: Int, height: Int, type: TYPE = TYPE.BLACK) {
+    fun setRegion(left: Int, top: Int, width: Int, height: Int, type: Type = Type.BLACK) {
         when (type) {
-            TYPE.BLACK -> {
+            Type.BLACK -> {
                 nullableMatrix.setRegion(left, top, width, height)
                 blackMatrix.setRegion(left, top, width, height)
             }
 
-            TYPE.WHITE -> {
+            Type.WHITE -> {
                 nullableMatrix.setRegion(left, top, width, height)
             }
 
@@ -81,7 +81,7 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         }
     }
 
-    fun setRegionOneInNine(left: Int, top: Int, width: Int, height: Int, type: TYPE) {
+    fun setRegionOneInNine(left: Int, top: Int, width: Int, height: Int, type: Type) {
         val widthMini = width / 3F
         val heightMini = height / 3F
         val x = (left + ((width - widthMini) / 2)).toInt().moreThan(0)
@@ -121,8 +121,145 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         return blackMatrix
     }
 
-    enum class TYPE {
+    fun getGrid(x: Int, y: Int, grid: Grid) {
+        grid.set(0, getType(x - 1, y - 1))
+        grid.set(1, getType(x, y - 1))
+        grid.set(2, getType(x + 1, y - 1))
+
+        grid.set(3, getType(x - 1, y))
+        grid.set(4, getType(x, y))
+        grid.set(5, getType(x + 1, y))
+
+        grid.set(6, getType(x - 1, y + 1))
+        grid.set(7, getType(x, y + 1))
+        grid.set(8, getType(x + 1, y + 1))
+    }
+
+    private fun getType(x: Int, y: Int): Type {
+        if (x < 0 || y < 0) {
+            return Type.NULL
+        }
+        if (x >= width || y >= height) {
+            return Type.NULL
+        }
+        if (isBlack(x, y)) {
+            return Type.BLACK
+        }
+        return Type.WHITE
+    }
+
+    enum class Type {
         NULL, BLACK, WHITE
+    }
+
+    class Grid {
+        private val bitTypeArray = Array<Type>(9) { Type.NULL }
+
+        fun get(index: Int): Type {
+            if (index < 0 || index >= bitTypeArray.size) {
+                return Type.NULL
+            }
+            return bitTypeArray[index]
+        }
+
+        fun set(index: Int, type: Type) {
+            if (index < 0 || index >= bitTypeArray.size) {
+                return
+            }
+            bitTypeArray[index] = type
+        }
+
+        /**
+         * 正北方
+         * 010
+         * 000
+         * 000
+         */
+        fun dueNorth(): Type {
+            return get(1)
+        }
+
+        /**
+         * 东北方
+         * 001
+         * 000
+         * 000
+         */
+        fun northeast(): Type {
+            return get(2)
+        }
+
+        /**
+         * 正东方
+         * 000
+         * 001
+         * 000
+         */
+        fun trueEast(): Type {
+            return get(5)
+        }
+
+        /**
+         * 东南方
+         * 000
+         * 000
+         * 001
+         */
+        fun southeast(): Type {
+            return get(8)
+        }
+
+        /**
+         * 正南方
+         * 000
+         * 000
+         * 010
+         */
+        fun dueSouth(): Type {
+            return get(7)
+        }
+
+        /**
+         * 西南方
+         * 000
+         * 000
+         * 100
+         */
+        fun southwest(): Type {
+            return get(6)
+        }
+
+        /**
+         * 正西方
+         * 000
+         * 100
+         * 000
+         */
+        fun dueWest(): Type {
+            return get(3)
+        }
+
+        /**
+         * 西北方
+         * 100
+         * 000
+         * 000
+         */
+        fun northwest(): Type {
+            return get(0)
+        }
+
+
+        /**
+         * 中间
+         * 000
+         * 010
+         * 000
+         */
+        fun center(): Type {
+            return get(4)
+        }
+
     }
 
     fun createBitmap(

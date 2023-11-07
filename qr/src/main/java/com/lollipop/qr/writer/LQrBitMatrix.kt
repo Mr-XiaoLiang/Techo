@@ -52,6 +52,62 @@ class LQrBitMatrix(
         version.versionNumber
     }
 
+    private val leftTopPatternBounds by lazy {
+        Rect().apply {
+            val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
+            set(0, 0, size - 1, size - 1)
+            offset(quietZone, quietZone)
+        }
+    }
+
+    private val rightTopPatternBounds by lazy {
+        Rect().apply {
+            val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
+            val left = width - size
+            set(left, 0, left + size - 1, size - 1)
+            offset(-quietZone, quietZone)
+        }
+    }
+
+    private val leftBottomPatternBounds by lazy {
+        Rect().apply {
+            val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
+            val top = height - size
+            set(0, top, size - 1, top + size - 1)
+            offset(quietZone, -quietZone)
+        }
+    }
+
+    private val horizontalTimingPatternBounds by lazy {
+        Rect().apply {
+            val patternSize = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1
+            set(
+                patternSize,
+                patternSize,
+                width - patternSize - quietZone - quietZone,
+                patternSize
+            )
+            offset(quietZone, quietZone)
+        }
+    }
+
+    private val verticalTimingPatternBounds by lazy {
+        Rect().apply {
+            val patternSize = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1
+            set(
+                patternSize,
+                patternSize,
+                patternSize,
+                height - patternSize - quietZone - quietZone,
+            )
+            offset(quietZone, quietZone)
+        }
+    }
+
+    private val alignmentPatternBounds by lazy {
+        createAlignmentPattern()
+    }
+
     fun qrWidthByVersion(): Int {
         val version = versionNumber
         if (version < 1) {
@@ -64,29 +120,21 @@ class LQrBitMatrix(
      * 左上角定位点
      */
     fun getLeftTopPattern(out: Rect) {
-        val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
-        out.set(0, 0, size - 1, size - 1)
-        out.offset(quietZone, quietZone)
+        out.set(leftTopPatternBounds)
     }
 
     /**
      * 右上角定位点
      */
     fun getRightTopPattern(out: Rect) {
-        val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
-        val left = width - size
-        out.set(left, 0, left + size - 1, size - 1)
-        out.offset(-quietZone, quietZone)
+        out.set(rightTopPatternBounds)
     }
 
     /**
      * 左下角定位点
      */
     fun getLeftBottomPattern(out: Rect) {
-        val size = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE
-        val top = height - size
-        out.set(0, top, size - 1, top + size - 1)
-        out.offset(quietZone, -quietZone)
+        out.set(leftBottomPatternBounds)
     }
 
 
@@ -97,29 +145,15 @@ class LQrBitMatrix(
         horizontal: Rect,
         vertical: Rect
     ) {
-        val patternSize = BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE - 1
-        horizontal.set(
-            patternSize,
-            patternSize,
-            width - patternSize - quietZone - quietZone,
-            patternSize
-        )
-        horizontal.offset(quietZone, quietZone)
-
-        vertical.set(
-            patternSize,
-            patternSize,
-            patternSize,
-            height - patternSize - quietZone - quietZone,
-        )
-        vertical.offset(quietZone, quietZone)
+        horizontal.set(horizontalTimingPatternBounds)
+        vertical.set(verticalTimingPatternBounds)
     }
 
 
     /**
      * 判断是否在辅助定位点上
      */
-    fun getAlignmentPattern(): List<Rect> {
+    private fun createAlignmentPattern(): List<Rect> {
         val apcCenterArray = version.alignmentPatternCenters
         if (apcCenterArray.isEmpty()) {
             return emptyList()
@@ -179,6 +213,17 @@ class LQrBitMatrix(
             }
         }
         return true
+    }
+
+    fun getAlignmentPattern(): List<Rect> {
+        return alignmentPatternBounds.map { it.clone() }
+    }
+
+    private fun Rect.clone(): Rect {
+        val src = this
+        val rect = Rect()
+        rect.set(src)
+        return rect
     }
 
 }
