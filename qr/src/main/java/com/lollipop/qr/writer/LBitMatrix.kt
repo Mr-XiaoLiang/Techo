@@ -135,6 +135,78 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         grid.set(8, getType(x + 1, y + 1))
     }
 
+    fun getVerticalEdge(x: Int, y: Int, type: Type): Int {
+        if (x < 0 || y < 0) {
+            return -1
+        }
+        if (x >= width || y >= height) {
+            return -1
+        }
+        when (type) {
+            Type.NULL -> {
+                return -1
+            }
+
+            Type.BLACK -> {
+                var next = -1
+                for (i in y + 1 until height) {
+                    if (getType(x, i) != Type.BLACK) {
+                        return next
+                    }
+                    next = i
+                }
+                return next
+            }
+
+            Type.WHITE -> {
+                var next = -1
+                for (i in y + 1 until height) {
+                    if (getType(x, i) != Type.WHITE) {
+                        return next
+                    }
+                    next = i
+                }
+                return next
+            }
+        }
+    }
+
+    fun getHorizontalEdge(x: Int, y: Int, type: Type): Int {
+        if (x < 0 || y < 0) {
+            return -1
+        }
+        if (x >= width || y >= height) {
+            return -1
+        }
+        when (type) {
+            Type.NULL -> {
+                return -1
+            }
+
+            Type.BLACK -> {
+                var next = -1
+                for (i in x + 1 until width) {
+                    if (getType(i, y) != Type.BLACK) {
+                        return next
+                    }
+                    next = i
+                }
+                return next
+            }
+
+            Type.WHITE -> {
+                var next = -1
+                for (i in x + 1 until width) {
+                    if (getType(i, y) != Type.WHITE) {
+                        return next
+                    }
+                    next = i
+                }
+                return next
+            }
+        }
+    }
+
     private fun getType(x: Int, y: Int): Type {
         if (x < 0 || y < 0) {
             return Type.NULL
