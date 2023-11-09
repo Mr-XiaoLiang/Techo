@@ -106,4 +106,20 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         }
     }
 
+    private fun updateDataPointPath(updateMap: Boolean) {
+        // 应该选择一个性能更好的办法
+//        findQrBitMatrix { matrix ->
+//            matrix.forEach { x, y, type ->
+//                if (LQrBitMatrix.inLeftTop(x, y)
+//                    || LQrBitMatrix.inRightTop(matrix.width, x, y)
+//                    || LQrBitMatrix.inLeftBottom(matrix.height, x, y)
+//                ) {
+//                    // 跳过
+//                } else {
+//
+//                }
+//            }
+//        }
+    }
+
 }

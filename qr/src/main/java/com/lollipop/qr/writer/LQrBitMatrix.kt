@@ -41,6 +41,51 @@ class LQrBitMatrix(
             return lqrMatrix
         }
 
+        /**
+         * 获取二维码的Version
+         * 通过宽度来计算宽度
+         */
+        fun getVersion(width: Int) = LQRCodeWriter.getVersion(width)
+
+        /**
+         * getVersion 的反向操作，计算最小可用宽度
+         */
+        fun getMinWidth(version: Int) = LQRCodeWriter.getMinWidth(version)
+
+        /**
+         * 左上角定位点
+         */
+        fun inLeftTop(x: Int, y: Int) = LQRCodeWriter.inLeftTop(x, y)
+
+        /**
+         * 右上角定位点
+         */
+        fun inRightTop(width: Int, x: Int, y: Int) = LQRCodeWriter.inRightTop(width, x, y)
+
+        /**
+         * 左下角定位点
+         */
+        fun inLeftBottom(height: Int, x: Int, y: Int) = LQRCodeWriter.inLeftBottom(height, x, y)
+
+        /**
+         * Timing Pattern基准线
+         */
+        fun inTimingPattern(x: Int, y: Int) = LQRCodeWriter.inTimingPattern(x, y)
+
+        /**
+         * 是否位于格式化数据分区
+         */
+        fun inFormatInformation(
+            width: Int, x: Int, y: Int
+        ) = LQRCodeWriter.inFormatInformation(width, x, y)
+
+        /**
+         * 判断是否在辅助定位点上
+         */
+        fun isAlignmentPattern(
+            version: Version, width: Int, x: Int, y: Int
+        ) = LQRCodeWriter.isAlignmentPattern(version, width, x, y)
+
     }
 
     val version: Version
@@ -224,6 +269,15 @@ class LQrBitMatrix(
         val rect = Rect()
         rect.set(src)
         return rect
+    }
+
+    fun forEach(callback: (x: Int, y: Int, type: Type) -> Unit) {
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                val type = getType(x, y)
+                callback(x, y, type)
+            }
+        }
     }
 
 }

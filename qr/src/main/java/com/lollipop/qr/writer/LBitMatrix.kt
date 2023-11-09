@@ -207,7 +207,7 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         }
     }
 
-    private fun getType(x: Int, y: Int): Type {
+    protected fun getType(x: Int, y: Int): Type {
         if (x < 0 || y < 0) {
             return Type.NULL
         }
