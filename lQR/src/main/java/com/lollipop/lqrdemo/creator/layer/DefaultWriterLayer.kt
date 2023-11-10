@@ -8,6 +8,8 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import com.lollipop.lqrdemo.BuildConfig
+import com.lollipop.qr.writer.LBitMatrix
+import com.lollipop.qr.writer.LQrBitMatrix
 import kotlin.math.min
 
 class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
@@ -24,11 +26,17 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     private val alignmentClipPath = Path()
     private val contentClipPath = Path()
 
+    private val contentDataPath = Path()
+
     private val debugPaint by lazy {
         Paint().apply {
             color = Color.RED
             alpha = 0x33
         }
+    }
+
+    private val contentPaint = Paint().apply {
+        style = Paint.Style.FILL
     }
 
     override fun drawPosition(canvas: Canvas) {
@@ -60,12 +68,14 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     override fun drawContent(canvas: Canvas) {
-        val b = bitmap ?: return
-        val count = canvas.save()
-        canvas.clipOutPath(positionClipPath)
-        canvas.clipOutPath(alignmentClipPath)
-        canvas.drawBitmap(b, bitmapMatrix, null)
-        canvas.restoreToCount(count)
+        // TODO
+//        val b = bitmap ?: return
+//        val count = canvas.save()
+//        canvas.clipOutPath(positionClipPath)
+//        canvas.clipOutPath(alignmentClipPath)
+//        canvas.drawBitmap(b, bitmapMatrix, null)
+//        canvas.restoreToCount(count)
+        canvas.drawPath(contentDataPath, contentPaint)
     }
 
     override fun onBitMatrixChanged() {
@@ -73,12 +83,20 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
         updateBitmapMatrix()
         updateClipPath()
+        updateDataPointPath()
+    }
+
+    override fun onPointColorChanged() {
+        super.onPointColorChanged()
+        contentPaint.setColor(darkColor)
+        bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
     }
 
     override fun onBoundsChanged(bounds: Rect) {
         super.onBoundsChanged(bounds)
         updateBitmapMatrix()
         updateClipPath()
+        updateDataPointPath()
     }
 
     private fun updateBitmapMatrix() {
@@ -106,20 +124,52 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         }
     }
 
-    private fun updateDataPointPath(updateMap: Boolean) {
-        // 应该选择一个性能更好的办法
-//        findQrBitMatrix { matrix ->
-//            matrix.forEach { x, y, type ->
-//                if (LQrBitMatrix.inLeftTop(x, y)
-//                    || LQrBitMatrix.inRightTop(matrix.width, x, y)
-//                    || LQrBitMatrix.inLeftBottom(matrix.height, x, y)
-//                ) {
-//                    // 跳过
-//                } else {
-//
-//                }
-//            }
-//        }
+    private fun updateDataPointPath() {
+        val path = contentDataPath
+        path.reset()
+        findQrBitMatrix { matrix ->
+            val width = matrix.width
+            val height = matrix.height
+            val tempRect = Rect()
+            for (x in 0 until width) {
+                var y = 0
+                while (y < height) {
+                    if (isInAlignmentPattern(matrix, x, y)) {
+                        y++
+                        continue
+                    }
+                    val currentType = matrix.getType(x, y)
+                    if (currentType == LBitMatrix.Type.BLACK) {
+                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.BLACK)
+                        if (edge < 0) {
+                            y++
+                            continue
+                        }
+                        val offsetY = edge - y
+                        if (offsetY > 0) {
+                            tempRect.set(x, y, x, edge)
+                            tempRect.offset(matrix.quietZone, matrix.quietZone)
+                            addRectToPathByScale(path, tempRect)
+                        }
+                        y = edge + 1
+                    } else {
+                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.WHITE)
+                        y = if (edge < 0) {
+                            y + 1
+                        } else {
+                            edge + 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun isInAlignmentPattern(matrix: LQrBitMatrix, x: Int, y: Int): Boolean {
+        return LQrBitMatrix.inLeftTop(x, y)
+                || LQrBitMatrix.inRightTop(matrix.width, x, y)
+                || LQrBitMatrix.inLeftBottom(matrix.height, x, y)
+                || LQrBitMatrix.isAlignmentPattern(matrix.version, matrix.width, x, y)
     }
 
 }

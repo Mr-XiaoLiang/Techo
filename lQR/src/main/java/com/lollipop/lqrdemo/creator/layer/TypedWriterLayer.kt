@@ -51,7 +51,7 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     fun setQrPointColor(dark: Int, light: Int) {
         this.darkColor = dark
         this.lightColor = light
-        onBitMatrixChanged()
+        onPointColorChanged()
     }
 
     private fun updatePositionBounds() {
@@ -104,6 +104,8 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     }
 
     protected open fun onBitMatrixChanged() {}
+
+    protected open fun onPointColorChanged() {}
 
 }
 
