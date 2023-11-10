@@ -68,7 +68,6 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     override fun drawContent(canvas: Canvas) {
-        // TODO
 //        val b = bitmap ?: return
 //        val count = canvas.save()
 //        canvas.clipOutPath(positionClipPath)
@@ -125,6 +124,7 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     private fun updateDataPointPath() {
+        // TODO 改改算法，错位了
         val path = contentDataPath
         path.reset()
         findQrBitMatrix { matrix ->
