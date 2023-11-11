@@ -124,15 +124,16 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     private fun updateDataPointPath() {
-        // TODO 改改算法，错位了
         val path = contentDataPath
         path.reset()
         findQrBitMatrix { matrix ->
-            val width = matrix.width
-            val height = matrix.height
+            val quietZone = matrix.quietZone
+            val width = matrix.width - quietZone
+            val height = matrix.height - quietZone
             val tempRect = Rect()
-            for (x in 0 until width) {
-                var y = 0
+            val top = quietZone
+            for (x in quietZone until width) {
+                var y = top
                 while (y < height) {
                     if (isInAlignmentPattern(matrix, x, y)) {
                         y++
@@ -145,10 +146,8 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
                             y++
                             continue
                         }
-                        val offsetY = edge - y
-                        if (offsetY > 0) {
+                        if (edge >= y) {
                             tempRect.set(x, y, x, edge)
-                            tempRect.offset(matrix.quietZone, matrix.quietZone)
                             addRectToPathByScale(path, tempRect)
                         }
                         y = edge + 1
@@ -166,10 +165,15 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     private fun isInAlignmentPattern(matrix: LQrBitMatrix, x: Int, y: Int): Boolean {
-        return LQrBitMatrix.inLeftTop(x, y)
-                || LQrBitMatrix.inRightTop(matrix.width, x, y)
-                || LQrBitMatrix.inLeftBottom(matrix.height, x, y)
-                || LQrBitMatrix.isAlignmentPattern(matrix.version, matrix.width, x, y)
+        val quietZone = matrix.quietZone
+        val realX = x - quietZone
+        val realY = y - quietZone
+        val width = matrix.width - quietZone - quietZone
+        val height = matrix.height - quietZone - quietZone
+        return LQrBitMatrix.inLeftTop(realX, realY)
+                || LQrBitMatrix.inRightTop(width, realX, realY)
+                || LQrBitMatrix.inLeftBottom(height, realX, realY)
+                || LQrBitMatrix.isAlignmentPattern(matrix.version, width, realX, realY)
     }
 
 }
