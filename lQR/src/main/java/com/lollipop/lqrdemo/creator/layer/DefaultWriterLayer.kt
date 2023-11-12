@@ -22,11 +22,12 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     override val timingPatternBoundsEnable = true
     override val alignmentPatternBoundsEnable = true
 
-    private val positionClipPath = Path()
+    //    private val positionClipPath = Path()
     private val alignmentClipPath = Path()
     private val contentClipPath = Path()
 
     private val contentDataPath = Path()
+    private val positionDataPath = Path()
 
     private val debugPaint by lazy {
         Paint().apply {
@@ -40,17 +41,18 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     override fun drawPosition(canvas: Canvas) {
-        if (positionClipPath.isEmpty) {
+        if (positionDataPath.isEmpty) {
             return
         }
-        val b = bitmap ?: return
-        val count = canvas.save()
-        canvas.clipPath(positionClipPath)
-        canvas.drawBitmap(b, bitmapMatrix, null)
-        canvas.restoreToCount(count)
-        if (BuildConfig.DEBUG) {
-            canvas.drawPath(positionClipPath, debugPaint)
-        }
+        canvas.drawPath(positionDataPath, contentPaint)
+//        val b = bitmap ?: return
+//        val count = canvas.save()
+//        canvas.clipPath(positionClipPath)
+//        canvas.drawBitmap(b, bitmapMatrix, null)
+//        canvas.restoreToCount(count)
+//        if (BuildConfig.DEBUG) {
+//            canvas.drawPath(positionClipPath, debugPaint)
+//        }
     }
 
     override fun drawAlignment(canvas: Canvas) {
@@ -68,12 +70,6 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     override fun drawContent(canvas: Canvas) {
-//        val b = bitmap ?: return
-//        val count = canvas.save()
-//        canvas.clipOutPath(positionClipPath)
-//        canvas.clipOutPath(alignmentClipPath)
-//        canvas.drawBitmap(b, bitmapMatrix, null)
-//        canvas.restoreToCount(count)
         canvas.drawPath(contentDataPath, contentPaint)
     }
 
@@ -83,6 +79,7 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         updateBitmapMatrix()
         updateClipPath()
         updateDataPointPath()
+        initPositionPointPath()
     }
 
     override fun onPointColorChanged() {
@@ -96,6 +93,7 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         updateBitmapMatrix()
         updateClipPath()
         updateDataPointPath()
+        initPositionPointPath()
     }
 
     private fun updateBitmapMatrix() {
@@ -107,13 +105,13 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     }
 
     private fun updateClipPath() {
-        positionClipPath.reset()
+//        positionClipPath.reset()
         alignmentClipPath.reset()
         contentClipPath.reset()
 
-        positionBounds.forEach { rect ->
-            addRectToPathByScale(positionClipPath, rect)
-        }
+//        positionBounds.forEach { rect ->
+//            addRectToPathByScale(positionClipPath, rect)
+//        }
 
         alignmentPatternBounds.forEach { rect ->
             addRectToPathByScale(alignmentClipPath, rect)
@@ -131,9 +129,8 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
             val width = matrix.width - quietZone
             val height = matrix.height - quietZone
             val tempRect = Rect()
-            val top = quietZone
             for (x in quietZone until width) {
-                var y = top
+                var y = quietZone
                 while (y < height) {
                     if (isInAlignmentPattern(matrix, x, y)) {
                         y++
@@ -161,6 +158,60 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
                     }
                 }
             }
+        }
+    }
+
+    private fun initPositionPointPath() {
+        val path = positionDataPath
+        path.reset()
+        positionBounds.forEach { rect ->
+            val lineWidth = scaleValue
+            val leftEdgeByScale = getLeftEdgeByScale(rect.left.toFloat())
+            val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
+            val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
+            val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
+            // 添加外框
+            // 左
+            path.addRect(
+                leftEdgeByScale,
+                topEdgeByScale,
+                leftEdgeByScale + lineWidth,
+                bottomEdgeByScale,
+                Path.Direction.CW
+            )
+            // 右
+            path.addRect(
+                rightEdgeByScale - lineWidth,
+                topEdgeByScale,
+                rightEdgeByScale,
+                bottomEdgeByScale,
+                Path.Direction.CW
+            )
+            // 上
+            path.addRect(
+                leftEdgeByScale,
+                topEdgeByScale,
+                rightEdgeByScale,
+                topEdgeByScale + lineWidth,
+                Path.Direction.CW
+            )
+            // 下
+            path.addRect(
+                leftEdgeByScale,
+                bottomEdgeByScale - lineWidth,
+                rightEdgeByScale,
+                bottomEdgeByScale,
+                Path.Direction.CW
+            )
+            val coreOffset = lineWidth * 2
+            // 中心
+            path.addRect(
+                leftEdgeByScale + coreOffset,
+                topEdgeByScale + coreOffset,
+                rightEdgeByScale - coreOffset,
+                bottomEdgeByScale - coreOffset,
+                Path.Direction.CW
+            )
         }
     }
 
