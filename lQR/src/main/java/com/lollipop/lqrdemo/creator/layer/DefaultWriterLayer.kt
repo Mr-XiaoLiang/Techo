@@ -1,38 +1,28 @@
 package com.lollipop.lqrdemo.creator.layer
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
-import com.lollipop.lqrdemo.BuildConfig
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
-import kotlin.math.min
+import kotlin.math.max
 
 class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
     PositionWriterLayer {
-
-    private var bitmap: Bitmap? = null
-    private val bitmapMatrix = Matrix()
 
     override val positionBoundsEnable = true
     override val timingPatternBoundsEnable = true
     override val alignmentPatternBoundsEnable = true
 
-    //    private val positionClipPath = Path()
-    private val alignmentClipPath = Path()
-    private val contentClipPath = Path()
-
     private val contentDataPath = Path()
     private val positionDataPath = Path()
+    private val alignmentDataPath = Path()
 
     private val debugPaint by lazy {
         Paint().apply {
             color = Color.RED
-            alpha = 0x33
         }
     }
 
@@ -45,28 +35,13 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
             return
         }
         canvas.drawPath(positionDataPath, contentPaint)
-//        val b = bitmap ?: return
-//        val count = canvas.save()
-//        canvas.clipPath(positionClipPath)
-//        canvas.drawBitmap(b, bitmapMatrix, null)
-//        canvas.restoreToCount(count)
-//        if (BuildConfig.DEBUG) {
-//            canvas.drawPath(positionClipPath, debugPaint)
-//        }
     }
 
     override fun drawAlignment(canvas: Canvas) {
-        if (alignmentClipPath.isEmpty) {
+        if (alignmentDataPath.isEmpty) {
             return
         }
-        val b = bitmap ?: return
-        val count = canvas.save()
-        canvas.clipPath(alignmentClipPath)
-        canvas.drawBitmap(b, bitmapMatrix, null)
-        canvas.restoreToCount(count)
-        if (BuildConfig.DEBUG) {
-            canvas.drawPath(alignmentClipPath, debugPaint)
-        }
+        canvas.drawPath(alignmentDataPath, contentPaint)
     }
 
     override fun drawContent(canvas: Canvas) {
@@ -75,50 +50,23 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
 
     override fun onBitMatrixChanged() {
         super.onBitMatrixChanged()
-        bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
-        updateBitmapMatrix()
-        updateClipPath()
-        updateDataPointPath()
-        initPositionPointPath()
+        buildContentPath()
     }
 
     override fun onPointColorChanged() {
         super.onPointColorChanged()
         contentPaint.setColor(darkColor)
-        bitmap = bitMatrix?.createBitmap(darkColor = darkColor, lightColor = lightColor)
     }
 
     override fun onBoundsChanged(bounds: Rect) {
         super.onBoundsChanged(bounds)
-        updateBitmapMatrix()
-        updateClipPath()
+        buildContentPath()
+    }
+
+    private fun buildContentPath() {
         updateDataPointPath()
-        initPositionPointPath()
-    }
-
-    private fun updateBitmapMatrix() {
-        val b = bitmap ?: return
-        val scaleX = bounds.width() * 1F / b.width
-        val scaleY = bounds.height() * 1F / b.height
-        val scale = min(scaleX, scaleY)
-        bitmapMatrix.setScale(scale, scale)
-    }
-
-    private fun updateClipPath() {
-//        positionClipPath.reset()
-        alignmentClipPath.reset()
-        contentClipPath.reset()
-
-//        positionBounds.forEach { rect ->
-//            addRectToPathByScale(positionClipPath, rect)
-//        }
-
-        alignmentPatternBounds.forEach { rect ->
-            addRectToPathByScale(alignmentClipPath, rect)
-        }
-        timingPatternBounds.forEach { rect ->
-            addRectToPathByScale(alignmentClipPath, rect)
-        }
+        updatePositionPointPath()
+        updateAlignmentPatternPath()
     }
 
     private fun updateDataPointPath() {
@@ -161,58 +109,92 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         }
     }
 
-    private fun initPositionPointPath() {
+    private fun updatePositionPointPath() {
         val path = positionDataPath
         path.reset()
         positionBounds.forEach { rect ->
             val lineWidth = scaleValue
-            val leftEdgeByScale = getLeftEdgeByScale(rect.left.toFloat())
-            val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
-            val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
-            val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
-            // 添加外框
-            // 左
-            path.addRect(
-                leftEdgeByScale,
-                topEdgeByScale,
-                leftEdgeByScale + lineWidth,
-                bottomEdgeByScale,
-                Path.Direction.CW
-            )
-            // 右
-            path.addRect(
-                rightEdgeByScale - lineWidth,
-                topEdgeByScale,
-                rightEdgeByScale,
-                bottomEdgeByScale,
-                Path.Direction.CW
-            )
-            // 上
-            path.addRect(
-                leftEdgeByScale,
-                topEdgeByScale,
-                rightEdgeByScale,
-                topEdgeByScale + lineWidth,
-                Path.Direction.CW
-            )
-            // 下
-            path.addRect(
-                leftEdgeByScale,
-                bottomEdgeByScale - lineWidth,
-                rightEdgeByScale,
-                bottomEdgeByScale,
-                Path.Direction.CW
-            )
-            val coreOffset = lineWidth * 2
-            // 中心
-            path.addRect(
-                leftEdgeByScale + coreOffset,
-                topEdgeByScale + coreOffset,
-                rightEdgeByScale - coreOffset,
-                bottomEdgeByScale - coreOffset,
-                Path.Direction.CW
-            )
+            addBoxToPath(path, rect, lineWidth, lineWidth * 2)
         }
+    }
+
+    private fun updateAlignmentPatternPath() {
+        val path = alignmentDataPath
+        path.reset()
+        alignmentPatternBounds.forEach { rect ->
+            val lineWidth = scaleValue
+            addBoxToPath(path, rect, lineWidth, lineWidth * 2)
+        }
+        // 基准线暂时交给content绘制
+//        val tempRect = Rect()
+//        timingPatternBounds.forEach { rect ->
+//            if (rect.width() != 0 || rect.height() != 0) {
+//                val offsetY = if (rect.width() == 0) {
+//                    2
+//                } else {
+//                    0
+//                }
+//                val offsetX = if (rect.height() == 0) {
+//                    2
+//                } else {
+//                    0
+//                }
+//                val max = max(rect.right, rect.bottom)
+//                tempRect.set(rect.left, rect.top, rect.left, rect.top)
+//                while (tempRect.top <= max && tempRect.left <= max) {
+//                    addRectToPathByScale(path, rect)
+//                    tempRect.offset(offsetX, offsetY)
+//                }
+//            }
+//        }
+    }
+
+    private fun addBoxToPath(path: Path, rect: Rect, lineWidth: Float, coreOffset: Float) {
+        val leftEdgeByScale = getLeftEdgeByScale(rect.left.toFloat())
+        val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
+        val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
+        val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
+        // 添加外框
+        // 左
+        path.addRect(
+            leftEdgeByScale,
+            topEdgeByScale,
+            leftEdgeByScale + lineWidth,
+            bottomEdgeByScale,
+            Path.Direction.CW
+        )
+        // 右
+        path.addRect(
+            rightEdgeByScale - lineWidth,
+            topEdgeByScale,
+            rightEdgeByScale,
+            bottomEdgeByScale,
+            Path.Direction.CW
+        )
+        // 上
+        path.addRect(
+            leftEdgeByScale,
+            topEdgeByScale,
+            rightEdgeByScale,
+            topEdgeByScale + lineWidth,
+            Path.Direction.CW
+        )
+        // 下
+        path.addRect(
+            leftEdgeByScale,
+            bottomEdgeByScale - lineWidth,
+            rightEdgeByScale,
+            bottomEdgeByScale,
+            Path.Direction.CW
+        )
+        // 中心
+        path.addRect(
+            leftEdgeByScale + coreOffset,
+            topEdgeByScale + coreOffset,
+            rightEdgeByScale - coreOffset,
+            bottomEdgeByScale - coreOffset,
+            Path.Direction.CW
+        )
     }
 
     private fun isInAlignmentPattern(matrix: LQrBitMatrix, x: Int, y: Int): Boolean {
