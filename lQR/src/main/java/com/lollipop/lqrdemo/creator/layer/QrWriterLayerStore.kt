@@ -140,6 +140,19 @@ object QrWriterLayerStore {
             positionLayer.updateResource()
         }
 
+        fun isResourceReady(): Boolean {
+            if (!alignmentLayer.isResourceReady()) {
+                return false
+            }
+            if (!contentLayer.isResourceReady()) {
+                return false
+            }
+            if (!positionLayer.isResourceReady()) {
+                return false
+            }
+            return true
+        }
+
         fun onBoundsChanged(bounds: Rect) {
             lastBounds.set(bounds)
             alignmentLayer.get().onBoundsChanged(bounds)

@@ -76,11 +76,11 @@ abstract class QrWriter(
     }
 
     protected open fun checkLayerReady(): Boolean {
+        if (!writerLayer.isResourceReady()) {
+            return false
+        }
         return isAllReady(
-            backgroundLayer,
-            writerLayer.alignmentLayer,
-            writerLayer.contentLayer,
-            writerLayer.positionLayer
+            backgroundLayer
         )
     }
 
