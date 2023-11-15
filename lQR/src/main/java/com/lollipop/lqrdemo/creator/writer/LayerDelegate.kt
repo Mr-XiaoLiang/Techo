@@ -30,16 +30,16 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
         // 缓存不为空，那么使用缓存
         if (ins != null) {
             current = ins
-            current?.setLayerCallback(this)
+            bindInstance(ins)
             return
         }
         // 如果没有缓存，那么创建新的实例
         val newInstance = clazz.newInstance()
+        bindInstance(newInstance)
         // 并且放入缓存
         cache.put(key, newInstance)
         // 将新实例记录为当前
         current = newInstance
-        current?.setLayerCallback(this)
     }
 
     fun get(): T {
@@ -52,8 +52,13 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
             return d
         }
         val n = def.newInstance()
+        bindInstance(n)
         defaultLayer = n
         return n
+    }
+
+    private fun bindInstance(ins: T) {
+        ins.setLayerCallback(this)
     }
 
     fun updateResource() {
@@ -84,7 +89,7 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
     }
 
     override fun onResourceReady(layer: QrWriterLayer) {
-        if (layer === current) {
+        if (layer === current || layer === defaultLayer) {
             layerCallback?.onResourceReady(layer)
         }
     }
