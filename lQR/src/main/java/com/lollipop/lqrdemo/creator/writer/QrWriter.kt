@@ -121,12 +121,17 @@ abstract class QrWriter(
     }
 
     protected open fun onBitMatrixChanged() {
-        scaleValue = bitMatrix?.getScale(bounds.width().toFloat(), bounds.height().toFloat()) ?: 1F
+        updateScale()
         notifyBackgroundChanged()
+    }
+
+    private fun updateScale() {
+        scaleValue = bitMatrix?.getScale(bounds.width().toFloat(), bounds.height().toFloat()) ?: 1F
     }
 
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         bounds.set(left, top, right, bottom)
+        updateScale()
         updateLayerBounds()
         onBoundsChanged()
     }
@@ -183,7 +188,10 @@ abstract class QrWriter(
     }
 
     protected fun updateLayerBounds() {
-        backgroundLayer.get().onBoundsChanged(bounds)
+        backgroundLayer.get().let {
+            it.onBoundsChanged(bounds)
+            updateLayerCorner(it)
+        }
         writerLayer.onBoundsChanged(bounds)
     }
 
