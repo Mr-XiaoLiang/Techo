@@ -79,14 +79,14 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
             binding.noneModeButton,
         )
 
-        setModeIconColor(
-            pigment,
-            binding.colorModeIcon,
-            binding.imageModeIcon,
-            binding.noneModeIcon,
-            binding.imageGravityButton
-        )
-        binding.imageGravityButton.setBackgroundColor(pigment.extreme)
+//        setModeIconColor(
+//            pigment,
+//            binding.colorModeIcon,
+//            binding.imageModeIcon,
+//            binding.noneModeIcon,
+//            binding.imageGravityButton
+//        )
+//        binding.imageGravityButton.setBackgroundColor(pigment.extreme)
     }
 
     private fun nextImageGravity() {

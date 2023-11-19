@@ -18,8 +18,8 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:radius="16dp"
-            app:clipStrokeEnable="true"
             app:clipStrokeColor="#000"
+            app:clipStrokeEnable="true"
             app:clipStrokeWidth="2dp">
 
             <ImageView
@@ -29,26 +29,38 @@
                 android:scaleType="centerCrop"
                 tools:src="#f00" />
 
-            <ImageView
-                android:id="@+id/imageModeIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
+            <com.lollipop.widget.RoundBackgroundView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_outline_insert_photo_24" />
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="8dp"
+                app:color="#8000"
+                app:round_radius="12dp"
+                app:round_type="absolute">
+
+                <ImageView
+                    android:id="@+id/imageModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_outline_insert_photo_24" />
+
+            </com.lollipop.widget.RoundBackgroundView>
 
             <com.lollipop.clip.RoundClipLayout
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                app:leftTop="16dp"
-                android:layout_gravity="end|bottom">
+                android:layout_gravity="end|bottom"
+                app:leftTop="16dp">
+
                 <ImageView
                     android:id="@+id/imageGravityButton"
-                    android:background="#000"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="#8000"
                     android:padding="6dp"
-                    android:src="@drawable/ic_baseline_keyboard_double_arrow_down_24"/>
+                    android:src="@drawable/ic_baseline_keyboard_double_arrow_down_24" />
             </com.lollipop.clip.RoundClipLayout>
 
         </com.lollipop.clip.RoundClipLayout>
@@ -70,13 +82,25 @@
                 android:scaleType="centerCrop"
                 tools:src="#f00" />
 
-            <ImageView
-                android:id="@+id/colorModeIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
+            <com.lollipop.widget.RoundBackgroundView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_palette_24" />
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="8dp"
+                app:color="#8000"
+                app:round_radius="12dp"
+                app:round_type="absolute">
+
+                <ImageView
+                    android:id="@+id/colorModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_palette_24" />
+
+            </com.lollipop.widget.RoundBackgroundView>
 
         </com.lollipop.clip.RoundClipLayout>
 
@@ -97,13 +121,24 @@
                 android:scaleType="centerCrop"
                 tools:src="#f00" />
 
-            <ImageView
-                android:id="@+id/noneModeIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
+            <com.lollipop.widget.RoundBackgroundView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_close_24" />
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="8dp"
+                app:color="#8000"
+                app:round_radius="12dp"
+                app:round_type="absolute">
+
+                <ImageView
+                    android:id="@+id/noneModeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_close_24" />
+            </com.lollipop.widget.RoundBackgroundView>
 
         </com.lollipop.clip.RoundClipLayout>
 
