@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="64dp"
+    android:layout_height="64dp">
+
+    <com.lollipop.clip.RoundClipLayout
+        android:id="@+id/tabIconClip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="6dp"
+        android:radius="8dp"
+        app:clipStrokeWidth="2dp"
+        tools:clipStrokeColor="@android:color/holo_green_dark">
+
+        <ImageView
+            android:id="@+id/tabIconView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#6000" />
+
+    </com.lollipop.clip.RoundClipLayout>
+
+</FrameLayout>

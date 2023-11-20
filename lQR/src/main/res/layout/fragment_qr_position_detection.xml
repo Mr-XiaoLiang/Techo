@@ -16,6 +16,7 @@
         android:id="@+id/styleTabGroup"
         android:layout_width="match_parent"
         android:layout_height="64dp"
+        android:layout_marginBottom="16dp"
         tools:background="#30f0" />
 
 </LinearLayout>

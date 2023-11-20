@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentQrPositionDetectionBinding
+import com.lollipop.lqrdemo.databinding.ItemQrPositionDetectionTabBinding
 
 /**
  * 主要定位点的设置
@@ -25,6 +27,13 @@ class QrPositionDetectionFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+    }
+
+    private class TabHolder(
+        val binding: ItemQrPositionDetectionTabBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
 
     }
 
