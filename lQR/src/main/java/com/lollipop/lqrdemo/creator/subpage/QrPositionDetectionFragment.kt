@@ -9,11 +9,5 @@ import com.lollipop.lqrdemo.databinding.ItemQrPositionDetectionTabBinding
  */
 class QrPositionDetectionFragment : StyleAdjustFragment() {
 
-    private class TabHolder(
-        val binding: ItemQrPositionDetectionTabBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-
-    }
 
 }
