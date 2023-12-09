@@ -1,7 +1,6 @@
 package com.lollipop.fragment
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -35,6 +34,10 @@ class FragmentPager private constructor(
 
     init {
         setHasStableIds(true)
+    }
+
+    fun bind(viewPager2: ViewPager2) {
+        viewPager2.adapter = this
     }
 
     @SuppressLint("NotifyDataSetChanged")
