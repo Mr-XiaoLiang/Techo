@@ -15,11 +15,10 @@ import com.lollipop.base.util.onClick
 import com.lollipop.fragment.FragmentInfo
 import com.lollipop.fragment.FragmentPager
 import com.lollipop.lqrdemo.base.BaseFragment
-import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentStyleAdjustBinding
 import com.lollipop.lqrdemo.databinding.ItemQrPositionDetectionTabBinding
 
-open class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.Callback {
+abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.Callback {
 
     private val binding: FragmentStyleAdjustBinding by lazyBind()
 
@@ -89,14 +88,6 @@ open class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.Call
     ) : FragmentInfo {
         override val fragment: Class<out Fragment> = panel
         override val tag: String = key
-    }
-
-    override fun notifyContentChanged() {
-        TODO("Not yet implemented")
-    }
-
-    override fun notifyLayerChanged(layer: Class<out QrWriterLayer>) {
-        TODO("Not yet implemented")
     }
 
     private class TabAdapter(
