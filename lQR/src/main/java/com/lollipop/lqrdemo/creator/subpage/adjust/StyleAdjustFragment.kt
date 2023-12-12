@@ -48,6 +48,7 @@ abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.
             RecyclerView.HORIZONTAL,
             false
         )
+        setContentTabs(getContentTabs())
     }
 
     private fun isTabSelected(tabInfo: TabInfo): Boolean {
@@ -68,6 +69,8 @@ abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.
             binding.styleAdjustGroup.currentItem = position
         }
     }
+
+    abstract fun getContentTabs(): List<TabInfo>
 
     protected fun setContentTabs(tabs: List<TabInfo>) {
         tabList.clear()
