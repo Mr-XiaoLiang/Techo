@@ -15,6 +15,7 @@ import com.lollipop.base.util.onClick
 import com.lollipop.fragment.FragmentInfo
 import com.lollipop.fragment.FragmentPager
 import com.lollipop.lqrdemo.base.BaseFragment
+import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentStyleAdjustBinding
 import com.lollipop.lqrdemo.databinding.ItemQrPositionDetectionTabBinding
 
@@ -87,7 +88,7 @@ abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.
     class TabInfo(
         val tabIcon: Int,
         val panel: Class<out StyleAdjustContentFragment>,
-        val key: String
+        val key: String,
     ) : FragmentInfo {
         override val fragment: Class<out Fragment> = panel
         override val tag: String = key
