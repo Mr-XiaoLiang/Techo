@@ -1,12 +1,9 @@
 package com.lollipop.lqrdemo.creator.subpage.position
 
 import android.graphics.Canvas
-import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
-import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
-import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
-class QrPositionOvalFragment : StyleAdjustContentFragment() {
+class QrPositionOvalFragment : QrPositionRectangleBaseFragment() {
 
     override fun getWriterLayer(): Class<out QrWriterLayer> {
         return Layer::class.java
@@ -14,7 +11,14 @@ class QrPositionOvalFragment : StyleAdjustContentFragment() {
 
     // notifyContentChanged()
 
-    class Layer : BitMatrixWriterLayer(), PositionWriterLayer {
+    class Layer : BaseLayer() {
+
+        override val borderRadius: Float
+            get() = BORDER_RADIUS_MAX
+
+        override val coreRadius: Float
+            get() = CORE_RADIUS_MAX
+
         override fun drawPosition(canvas: Canvas) {
             TODO("Not yet implemented")
         }

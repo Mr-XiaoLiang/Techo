@@ -6,7 +6,7 @@ import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
-class QrPositionRectangleFragment : StyleAdjustContentFragment() {
+open class QrPositionRectangleFragment : QrPositionRectangleBaseFragment() {
 
     override fun getWriterLayer(): Class<out QrWriterLayer> {
         return Layer::class.java
@@ -14,7 +14,8 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     // notifyContentChanged()
 
-    class Layer : BitMatrixWriterLayer(), PositionWriterLayer {
+    class Layer : BaseLayer() {
+
         override fun drawPosition(canvas: Canvas) {
             TODO("Not yet implemented")
         }
