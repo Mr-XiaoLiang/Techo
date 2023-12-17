@@ -29,8 +29,6 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
 
     }
 
-    // notifyContentChanged()
-
     abstract class BaseLayer : BitMatrixWriterLayer(), PositionWriterLayer {
 
         @get:FloatRange(from = BORDER_RADIUS_MIN.toDouble(), to = BORDER_RADIUS_MAX.toDouble())
@@ -62,17 +60,18 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
         private val borderPath = Path()
         private val corePath = Path()
 
-        private val contentPaint = Paint().apply {
-            style = Paint.Style.FILL
-        }
+        private val contentPaint = Paint()
 
         override fun drawPosition(canvas: Canvas) {
             if (!borderPath.isEmpty) {
                 contentPaint.setColor(borderColor)
+                contentPaint.style = Paint.Style.STROKE
+                contentPaint.strokeWidth = scaleValue
                 canvas.drawPath(borderPath, contentPaint)
             }
             if (!corePath.isEmpty) {
                 contentPaint.setColor(coreColor)
+                contentPaint.style = Paint.Style.FILL
                 canvas.drawPath(corePath, contentPaint)
             }
         }
@@ -108,37 +107,16 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
             val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
+            val radius = CORE_RADIUS
+            val half = lineWidth * 0.5F
             // 添加外框
-            // 左
-            path.addRect(
-                leftEdgeByScale,
-                topEdgeByScale,
-                leftEdgeByScale + lineWidth,
-                bottomEdgeByScale,
-                Path.Direction.CW
-            )
-            // 右
-            path.addRect(
-                rightEdgeByScale - lineWidth,
-                topEdgeByScale,
-                rightEdgeByScale,
-                bottomEdgeByScale,
-                Path.Direction.CW
-            )
-            // 上
-            path.addRect(
-                leftEdgeByScale,
-                topEdgeByScale,
-                rightEdgeByScale,
-                topEdgeByScale + lineWidth,
-                Path.Direction.CW
-            )
-            // 下
-            path.addRect(
-                leftEdgeByScale,
-                bottomEdgeByScale - lineWidth,
-                rightEdgeByScale,
-                bottomEdgeByScale,
+            path.addRoundRect(
+                leftEdgeByScale + half,
+                topEdgeByScale + half,
+                rightEdgeByScale - half,
+                bottomEdgeByScale - half,
+                (rightEdgeByScale - leftEdgeByScale) * radius,
+                (bottomEdgeByScale - topEdgeByScale) * radius,
                 Path.Direction.CW
             )
         }
@@ -148,12 +126,19 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
             val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
+            val left = leftEdgeByScale + coreOffset
+            val top = topEdgeByScale + coreOffset
+            val right = rightEdgeByScale - coreOffset
+            val bottom = bottomEdgeByScale - coreOffset
+            val radius = CORE_RADIUS
             // 中心
-            path.addRect(
-                leftEdgeByScale + coreOffset,
-                topEdgeByScale + coreOffset,
-                rightEdgeByScale - coreOffset,
-                bottomEdgeByScale - coreOffset,
+            path.addRoundRect(
+                left,
+                top,
+                right,
+                bottom,
+                (right - left) * radius,
+                (bottom - top) * radius,
                 Path.Direction.CW
             )
         }
