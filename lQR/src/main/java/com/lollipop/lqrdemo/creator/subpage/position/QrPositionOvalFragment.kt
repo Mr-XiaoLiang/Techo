@@ -1,6 +1,5 @@
 package com.lollipop.lqrdemo.creator.subpage.position
 
-import android.graphics.Canvas
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
 class QrPositionOvalFragment : QrPositionRectangleBaseFragment() {
@@ -18,10 +17,6 @@ class QrPositionOvalFragment : QrPositionRectangleBaseFragment() {
 
         override val coreRadius: Float
             get() = CORE_RADIUS_MAX
-
-        override fun drawPosition(canvas: Canvas) {
-            TODO("Not yet implemented")
-        }
 
     }
 

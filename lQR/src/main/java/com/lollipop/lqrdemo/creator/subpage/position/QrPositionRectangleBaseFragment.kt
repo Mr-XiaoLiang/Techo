@@ -10,6 +10,8 @@ import androidx.annotation.FloatRange
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
+import kotlin.math.max
+import kotlin.math.min
 
 open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
 
@@ -27,6 +29,26 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
         var BORDER_COLOR = Color.BLACK
         var CORE_COLOR = Color.BLACK
 
+    }
+
+    protected fun setBorderColor(color: Int) {
+        BORDER_COLOR = color
+        notifyContentChanged()
+    }
+
+    protected fun setCoreColor(color: Int) {
+        CORE_COLOR = color
+        notifyContentChanged()
+    }
+
+    protected fun setBorderRadius(radius: Float) {
+        BORDER_RADIUS = min(max(radius, BORDER_RADIUS_MIN), BORDER_RADIUS_MAX)
+        notifyContentChanged()
+    }
+
+    protected fun setCoreRadius(radius: Float) {
+        CORE_RADIUS = min(max(radius, CORE_RADIUS_MIN), CORE_RADIUS_MAX)
+        notifyContentChanged()
     }
 
     abstract class BaseLayer : BitMatrixWriterLayer(), PositionWriterLayer {
@@ -62,7 +84,10 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
 
         private val contentPaint = Paint()
 
+        private var snapshot: Snapshot? = null
+
         override fun drawPosition(canvas: Canvas) {
+            checkContentPath()
             if (!borderPath.isEmpty) {
                 contentPaint.setColor(borderColor)
                 contentPaint.style = Paint.Style.STROKE
@@ -88,6 +113,18 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
 
         private fun buildContentPath() {
             updatePositionPointPath()
+            snapshot = Snapshot(borderRadius, coreRadius)
+        }
+
+        private fun checkContentPath() {
+            val s = snapshot
+            if (s == null) {
+                buildContentPath()
+                return
+            }
+            if (s.diff(borderRadius, coreRadius)) {
+                buildContentPath()
+            }
         }
 
         private fun updatePositionPointPath() {
@@ -107,7 +144,7 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
             val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
-            val radius = CORE_RADIUS
+            val radius = BORDER_RADIUS
             val half = lineWidth * 0.5F
             // 添加外框
             path.addRoundRect(
@@ -141,6 +178,22 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
                 (bottom - top) * radius,
                 Path.Direction.CW
             )
+        }
+
+    }
+
+    private class Snapshot(
+        val borderRadius: Float,
+        val coreRadius: Float
+    ) {
+
+        fun diff(border: Float, core: Float): Boolean {
+            return (accuracy(border) != accuracy(borderRadius)
+                    || accuracy(core) != accuracy(coreRadius))
+        }
+
+        private fun accuracy(value: Float): Int {
+            return (value * 1000).toInt()
         }
 
     }
