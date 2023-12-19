@@ -112,7 +112,7 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
     private fun updatePositionPointPath() {
         val path = positionDataPath
         path.reset()
-        positionBounds.forEach { rect ->
+        positionBounds.array.forEach { rect ->
             val lineWidth = scaleValue
             addBoxToPath(path, rect, lineWidth, lineWidth * 2)
         }

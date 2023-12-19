@@ -10,94 +10,91 @@ import androidx.annotation.FloatRange
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
-import kotlin.math.max
-import kotlin.math.min
 
 open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
 
     companion object {
 
-        var BORDER_RADIUS = 0F
-        var CORE_RADIUS = 0F
+        private val LEFT_TOP_INFO = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
-        const val BORDER_RADIUS_MAX = 1F
-        const val CORE_RADIUS_MAX = 1F
+        private val LEFT_BOTTOM_INFO = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
-        const val BORDER_RADIUS_MIN = 0F
-        const val CORE_RADIUS_MIN = 0F
+        private val RIGHT_TOP_INFO = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
-        var BORDER_COLOR = Color.BLACK
-        var CORE_COLOR = Color.BLACK
+        const val RADIUS_MAX = 1F
+        const val RADIUS_MIN = 0F
 
-    }
-
-    protected fun setBorderColor(color: Int) {
-        BORDER_COLOR = color
-        notifyContentChanged()
-    }
-
-    protected fun setCoreColor(color: Int) {
-        CORE_COLOR = color
-        notifyContentChanged()
-    }
-
-    protected fun setBorderRadius(radius: Float) {
-        BORDER_RADIUS = min(max(radius, BORDER_RADIUS_MIN), BORDER_RADIUS_MAX)
-        notifyContentChanged()
-    }
-
-    protected fun setCoreRadius(radius: Float) {
-        CORE_RADIUS = min(max(radius, CORE_RADIUS_MIN), CORE_RADIUS_MAX)
-        notifyContentChanged()
     }
 
     abstract class BaseLayer : BitMatrixWriterLayer(), PositionWriterLayer {
 
-        @get:FloatRange(from = BORDER_RADIUS_MIN.toDouble(), to = BORDER_RADIUS_MAX.toDouble())
-        open val borderRadius: Float
-            get() {
-                return BORDER_RADIUS
-            }
+        private val leftTopInfo = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
-        @get:FloatRange(from = CORE_RADIUS_MIN.toDouble(), to = CORE_RADIUS_MAX.toDouble())
-        open val coreRadius: Float
-            get() {
-                return CORE_RADIUS
-            }
+        private val leftBottomInfo = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
-        @get:ColorInt
-        open val borderColor: Int
-            get() {
-                return BORDER_COLOR
-            }
-
-        @get:ColorInt
-        open val coreColor: Int
-            get() {
-                return CORE_COLOR
-            }
+        private val rightTopInfo = PositionInfo(
+            borderRadius = Radius(),
+            coreRadius = Radius(),
+            borderColor = Color.BLACK,
+            coreColor = Color.BLACK
+        )
 
         override val positionBoundsEnable = true
 
-        private val borderPath = Path()
-        private val corePath = Path()
+        private val borderLeftTopPath = Path()
+        private val coreLeftTopPath = Path()
+
+        private val borderRightTopPath = Path()
+        private val coreRightTopPath = Path()
+
+        private val borderLeftBottomPath = Path()
+        private val coreLeftBottomPath = Path()
 
         private val contentPaint = Paint()
 
-        private var snapshot: Snapshot? = null
-
         override fun drawPosition(canvas: Canvas) {
             checkContentPath()
-            if (!borderPath.isEmpty) {
-                contentPaint.setColor(borderColor)
+            drawPosition(canvas, borderLeftTopPath, coreLeftTopPath, leftTopInfo)
+            drawPosition(canvas, borderRightTopPath, coreRightTopPath, rightTopInfo)
+            drawPosition(canvas, borderLeftBottomPath, coreLeftBottomPath, leftBottomInfo)
+        }
+
+        private fun drawPosition(canvas: Canvas, border: Path, core: Path, info: PositionInfo) {
+            if (!border.isEmpty) {
+                contentPaint.setColor(info.borderColor)
                 contentPaint.style = Paint.Style.STROKE
                 contentPaint.strokeWidth = scaleValue
-                canvas.drawPath(borderPath, contentPaint)
+                canvas.drawPath(border, contentPaint)
             }
-            if (!corePath.isEmpty) {
-                contentPaint.setColor(coreColor)
+            if (!core.isEmpty) {
+                contentPaint.setColor(info.coreColor)
                 contentPaint.style = Paint.Style.FILL
-                canvas.drawPath(corePath, contentPaint)
+                canvas.drawPath(core, contentPaint)
             }
         }
 
@@ -111,54 +108,98 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
             buildContentPath()
         }
 
-        private fun buildContentPath() {
-            updatePositionPointPath()
-            snapshot = Snapshot(borderRadius, coreRadius)
+        private fun buildContentPath(
+            leftTop: Boolean = true,
+            rightTop: Boolean = true,
+            leftBottom: Boolean = true
+        ) {
+            if (leftTop) {
+                leftTopInfo.copyFrom(LEFT_TOP_INFO)
+                updatePositionPointPath(
+                    rect = positionBounds.leftTopPattern,
+                    border = borderLeftTopPath,
+                    core = coreLeftTopPath,
+                    coreRadius = leftTopInfo.coreRadius,
+                    borderRadius = leftTopInfo.borderRadius
+                )
+            }
+            if (rightTop) {
+                rightTopInfo.copyFrom(RIGHT_TOP_INFO)
+                updatePositionPointPath(
+                    rect = positionBounds.rightTopPattern,
+                    border = borderRightTopPath,
+                    core = coreRightTopPath,
+                    coreRadius = rightTopInfo.coreRadius,
+                    borderRadius = rightTopInfo.borderRadius
+                )
+            }
+            if (leftBottom) {
+                leftBottomInfo.copyFrom(LEFT_BOTTOM_INFO)
+                updatePositionPointPath(
+                    rect = positionBounds.leftBottomPattern,
+                    border = borderLeftBottomPath,
+                    core = coreLeftBottomPath,
+                    coreRadius = leftBottomInfo.coreRadius,
+                    borderRadius = leftBottomInfo.borderRadius
+                )
+            }
         }
 
         private fun checkContentPath() {
-            val s = snapshot
-            if (s == null) {
-                buildContentPath()
-                return
-            }
-            if (s.diff(borderRadius, coreRadius)) {
-                buildContentPath()
-            }
+            buildContentPath(
+                leftTop = (borderLeftTopPath.isEmpty ||
+                        coreLeftTopPath.isEmpty ||
+                        !leftTopInfo.isSame(LEFT_TOP_INFO)),
+                rightTop = (borderRightTopPath.isEmpty ||
+                        coreRightTopPath.isEmpty ||
+                        !rightTopInfo.isSame(RIGHT_TOP_INFO)),
+                leftBottom = (borderLeftBottomPath.isEmpty ||
+                        coreLeftBottomPath.isEmpty ||
+                        !leftBottomInfo.isSame(LEFT_BOTTOM_INFO)),
+            )
         }
 
-        private fun updatePositionPointPath() {
-            val border = borderPath
-            val core = corePath
+        private fun updatePositionPointPath(
+            rect: Rect,
+            border: Path,
+            core: Path,
+            coreRadius: Radius,
+            borderRadius: Radius
+        ) {
             border.reset()
             core.reset()
-            positionBounds.forEach { rect ->
-                val lineWidth = scaleValue
-                addBorderToPath(path = border, rect = rect, lineWidth = lineWidth)
-                addCoreToPath(path = core, rect = rect, coreOffset = lineWidth * 2)
-            }
+            val lineWidth = scaleValue
+            addBorderToPath(
+                path = border,
+                rect = rect,
+                lineWidth = lineWidth,
+                radius = borderRadius
+            )
+            addCoreToPath(path = core, rect = rect, coreOffset = lineWidth * 2, radius = coreRadius)
         }
 
-        private fun addBorderToPath(path: Path, rect: Rect, lineWidth: Float) {
+        private fun addBorderToPath(path: Path, rect: Rect, lineWidth: Float, radius: Radius) {
             val leftEdgeByScale = getLeftEdgeByScale(rect.left.toFloat())
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
             val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
-            val radius = BORDER_RADIUS
             val half = lineWidth * 0.5F
             // 添加外框
+            val left = leftEdgeByScale + half
+            val top = topEdgeByScale + half
+            val right = rightEdgeByScale - half
+            val bottom = bottomEdgeByScale - half
             path.addRoundRect(
-                leftEdgeByScale + half,
-                topEdgeByScale + half,
-                rightEdgeByScale - half,
-                bottomEdgeByScale - half,
-                (rightEdgeByScale - leftEdgeByScale) * radius,
-                (bottomEdgeByScale - topEdgeByScale) * radius,
+                left,
+                top,
+                right,
+                bottom,
+                radius.pixelSize(right - left, bottom - top),
                 Path.Direction.CW
             )
         }
 
-        private fun addCoreToPath(path: Path, rect: Rect, coreOffset: Float) {
+        private fun addCoreToPath(path: Path, rect: Rect, coreOffset: Float, radius: Radius) {
             val leftEdgeByScale = getLeftEdgeByScale(rect.left.toFloat())
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
@@ -167,33 +208,111 @@ open class QrPositionRectangleBaseFragment : StyleAdjustContentFragment() {
             val top = topEdgeByScale + coreOffset
             val right = rightEdgeByScale - coreOffset
             val bottom = bottomEdgeByScale - coreOffset
-            val radius = CORE_RADIUS
             // 中心
             path.addRoundRect(
                 left,
                 top,
                 right,
                 bottom,
-                (right - left) * radius,
-                (bottom - top) * radius,
+                radius.pixelSize(right - left, bottom - top),
                 Path.Direction.CW
             )
         }
 
     }
 
-    private class Snapshot(
-        val borderRadius: Float,
-        val coreRadius: Float
+    protected class PositionInfo(
+        val borderRadius: Radius,
+        val coreRadius: Radius,
+        @ColorInt
+        var borderColor: Int,
+        @ColorInt
+        var coreColor: Int
     ) {
 
-        fun diff(border: Float, core: Float): Boolean {
-            return (accuracy(border) != accuracy(borderRadius)
-                    || accuracy(core) != accuracy(coreRadius))
+        fun copyFrom(info: PositionInfo) {
+            this.borderRadius.copyFrom(info.borderRadius)
+            this.coreRadius.copyFrom(info.coreRadius)
+            this.borderColor = info.borderColor
+            this.coreColor = info.coreColor
         }
 
-        private fun accuracy(value: Float): Int {
-            return (value * 1000).toInt()
+        fun isSame(info: PositionInfo): Boolean {
+            return (this.borderRadius.isSame(info.borderRadius) &&
+                    this.coreRadius.isSame(info.coreRadius) &&
+                    this.borderColor == info.borderColor &&
+                    this.coreColor == info.coreColor
+                    )
+        }
+
+    }
+
+    protected class Radius(
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var leftTopX: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var leftTopY: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var rightTopX: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var rightTopY: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var rightBottomX: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var rightBottomY: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var leftBottomX: Float = 0F,
+        @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
+        var leftBottomY: Float = 0F,
+    ) {
+
+        fun array(): FloatArray {
+            return floatArrayOf(
+                leftTopX,
+                leftTopY,
+                rightTopX,
+                rightTopY,
+                rightBottomX,
+                rightBottomY,
+                leftBottomX,
+                leftBottomY,
+            )
+        }
+
+        fun pixelSize(width: Float, height: Float): FloatArray {
+            return floatArrayOf(
+                leftTopX * width,
+                leftTopY * height,
+                rightTopX * width,
+                rightTopY * height,
+                rightBottomX * width,
+                rightBottomY * height,
+                leftBottomX * width,
+                leftBottomY * height,
+            )
+        }
+
+        fun copyFrom(info: Radius) {
+            this.leftTopX = info.leftTopX
+            this.leftTopY = info.leftTopY
+            this.rightTopX = info.rightTopX
+            this.rightTopY = info.rightTopY
+            this.rightBottomX = info.rightBottomX
+            this.rightBottomY = info.rightBottomY
+            this.leftBottomX = info.leftBottomX
+            this.leftBottomY = info.leftBottomY
+        }
+
+        fun isSame(info: Radius): Boolean {
+            return (this.leftTopX == info.leftTopX &&
+                    this.leftTopY == info.leftTopY &&
+                    this.rightTopX == info.rightTopX &&
+                    this.rightTopY == info.rightTopY &&
+                    this.rightBottomX == info.rightBottomX &&
+                    this.rightBottomY == info.rightBottomY &&
+                    this.leftBottomX == info.leftBottomX &&
+                    this.leftBottomY == info.leftBottomY
+                    )
         }
 
     }

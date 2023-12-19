@@ -19,7 +19,7 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     protected var bitMatrix: LBitMatrix? = null
         private set
 
-    protected val positionBounds = arrayOf(Rect(), Rect(), Rect())
+    protected val positionBounds = PositionBounds()
     protected val timingPatternBounds = arrayOf(Rect(), Rect())
     protected val alignmentPatternBounds = ArrayList<Rect>()
 
@@ -57,9 +57,9 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     private fun updatePositionBounds() {
         findQrBitMatrix {
             if (positionBoundsEnable) {
-                it.getLeftTopPattern(positionBounds[0])
-                it.getRightTopPattern(positionBounds[1])
-                it.getLeftBottomPattern(positionBounds[2])
+                it.getLeftTopPattern(positionBounds.leftTopPattern)
+                it.getRightTopPattern(positionBounds.rightTopPattern)
+                it.getLeftBottomPattern(positionBounds.leftBottomPattern)
             }
             if (timingPatternBoundsEnable) {
                 it.getTimingPattern(timingPatternBounds[0], timingPatternBounds[1])
@@ -106,6 +106,15 @@ abstract class BitMatrixWriterLayer : QrWriterLayer() {
     protected open fun onBitMatrixChanged() {}
 
     protected open fun onPointColorChanged() {}
+
+}
+
+class PositionBounds {
+    val leftTopPattern = Rect()
+    val rightTopPattern = Rect()
+    val leftBottomPattern = Rect()
+
+    val array = arrayOf(leftTopPattern, rightTopPattern, leftBottomPattern)
 
 }
 
