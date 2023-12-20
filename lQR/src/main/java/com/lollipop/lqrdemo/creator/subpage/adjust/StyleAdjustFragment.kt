@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,6 @@ import com.lollipop.base.util.onClick
 import com.lollipop.fragment.FragmentInfo
 import com.lollipop.fragment.FragmentPager
 import com.lollipop.lqrdemo.base.BaseFragment
-import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentStyleAdjustBinding
 import com.lollipop.lqrdemo.databinding.ItemQrPositionDetectionTabBinding
 
@@ -68,6 +68,7 @@ abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.
         val currentInfo = tabList[position]
         if (currentInfo.key == info.key) {
             binding.styleAdjustGroup.currentItem = position
+            tabAdapter.notifyDataSetChanged()
         }
     }
 
@@ -82,7 +83,15 @@ abstract class StyleAdjustFragment : BaseFragment(), StyleAdjustContentFragment.
     @SuppressLint("NotifyDataSetChanged")
     protected fun notifyTabSetChanged() {
         fragmentHelper.reset(tabList)
-        tabAdapter.notifyDataSetChanged()
+        if (tabList.size < 2) {
+            binding.styleTabGroup.isVisible = false
+        } else {
+            tabAdapter.notifyDataSetChanged()
+            binding.styleTabGroup.isVisible = true
+        }
+        if (tabList.isNotEmpty()) {
+            binding.styleAdjustGroup.currentItem = 0
+        }
     }
 
     class TabInfo(

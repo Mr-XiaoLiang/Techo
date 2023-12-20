@@ -14,6 +14,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/styleTabGroup"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginBottom="16dp"

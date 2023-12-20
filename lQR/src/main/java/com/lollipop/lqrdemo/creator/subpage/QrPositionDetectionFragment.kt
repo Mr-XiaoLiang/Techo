@@ -3,7 +3,6 @@ package com.lollipop.lqrdemo.creator.subpage
 import android.content.Context
 import com.lollipop.base.util.checkCallback
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustFragment
-import com.lollipop.lqrdemo.creator.subpage.position.QrPositionOvalFragment
 import com.lollipop.lqrdemo.creator.subpage.position.QrPositionRectangleFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 
@@ -14,7 +13,6 @@ class QrPositionDetectionFragment : StyleAdjustFragment() {
 
     companion object {
         private const val KEY_RECTANGLE = "Rectangle"
-        private const val KEY_OVAL = "Oval"
     }
 
     private var callback: Callback? = null
@@ -35,11 +33,6 @@ class QrPositionDetectionFragment : StyleAdjustFragment() {
                 tabIcon = 0,
                 panel = QrPositionRectangleFragment::class.java,
                 key = KEY_RECTANGLE,
-            ),
-            TabInfo(
-                tabIcon = 0,
-                panel = QrPositionOvalFragment::class.java,
-                key = KEY_OVAL,
             ),
         )
     }
