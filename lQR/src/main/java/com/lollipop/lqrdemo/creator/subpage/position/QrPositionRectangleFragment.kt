@@ -5,11 +5,18 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
+import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
+import com.lollipop.lqrdemo.databinding.FragmentQrPositionRectangleBinding
 
 class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
@@ -39,6 +46,25 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         const val RADIUS_MAX = 1F
         const val RADIUS_MIN = 0F
 
+    }
+
+    private val binding: FragmentQrPositionRectangleBinding by lazyBind()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // TODO
+    }
+
+    override fun getWriterLayer(): Class<out QrWriterLayer> {
+        return Layer::class.java
     }
 
     class Layer : BitMatrixWriterLayer(), PositionWriterLayer {
