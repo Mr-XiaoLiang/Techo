@@ -114,5 +114,8 @@
     <string name="corner_left_bottom">左下角</string>
     <string name="corner_right_top">右上角</string>
     <string name="corner_right_bottom">右下角</string>
+    <string name="position_left_top">左上角</string>
+    <string name="position_right_top">右上角</string>
+    <string name="position_left_bottom">左下角</string>
 
 </resources>
