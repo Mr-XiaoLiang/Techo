@@ -84,6 +84,42 @@
                 android:textSize="14sp"
                 tools:background="#3f00" />
 
+            <androidx.appcompat.widget.AppCompatCheckedTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="6dp"
+                android:checked="false"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="@string/position_left_top"
+                android:textSize="14sp"
+                tools:background="#3f00" />
+
+            <androidx.appcompat.widget.AppCompatCheckedTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="6dp"
+                android:checked="false"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="@string/position_left_top"
+                android:textSize="14sp"
+                tools:background="#3f00" />
+
+            <androidx.appcompat.widget.AppCompatCheckedTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="6dp"
+                android:checked="false"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="@string/position_left_top"
+                android:textSize="14sp"
+                tools:background="#3f00" />
+
         </LinearLayout>
     </HorizontalScrollView>
 
