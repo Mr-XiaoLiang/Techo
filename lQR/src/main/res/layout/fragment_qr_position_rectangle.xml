@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_height="300dp">
 
     <HorizontalScrollView
         android:id="@+id/positionBar"
@@ -15,50 +16,62 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="6dp">
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            <FrameLayout
                 android:id="@+id/leftTopPositionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
                 android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                tools:background="#3f00">
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:id="@+id/rightTopPositionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_right_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                <ImageView
+                    android:id="@+id/leftTopPositionIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:rotation="270"
+                    android:src="@drawable/ic_qr_position_24" />
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/leftBottomPositionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
                 android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_bottom"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                tools:background="#3f00">
+
+                <ImageView
+                    android:id="@+id/leftBottomPositionIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:rotation="180"
+                    android:src="@drawable/ic_qr_position_24" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/rightTopPositionButton"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="6dp"
+                tools:background="#3f00">
+
+                <ImageView
+                    android:id="@+id/rightTopPositionIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_qr_position_24" />
+
+            </FrameLayout>
+
 
         </LinearLayout>
     </HorizontalScrollView>
-
 
     <HorizontalScrollView
         android:id="@+id/cornerBar"
@@ -70,57 +83,99 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="6dp">
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+            <FrameLayout
+                android:id="@+id/leftTopCornerButton"
+                android:layout_width="64dp"
+                android:layout_height="36dp"
                 android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                tools:background="#3f00">
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                <ImageView
+                    android:id="@+id/leftTopCornerIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:rotation="270"
+                    android:src="@drawable/ic_corner_24" />
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+            </FrameLayout>
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+            <FrameLayout
+                android:id="@+id/rightTopCornerButton"
+                android:layout_width="64dp"
+                android:layout_height="36dp"
                 android:layout_marginHorizontal="6dp"
-                android:checked="false"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/position_left_top"
-                android:textSize="14sp"
-                tools:background="#3f00" />
+                tools:background="#3f00">
+
+                <ImageView
+                    android:id="@+id/rightTopCornerIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_corner_24" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/leftBottomCornerButton"
+                android:layout_width="64dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="6dp"
+                tools:background="#3f00">
+
+                <ImageView
+                    android:id="@+id/leftBottomCornerIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:rotation="180"
+                    android:src="@drawable/ic_corner_24" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/rightBottomCornerButton"
+                android:layout_width="64dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="6dp"
+                tools:background="#3f00">
+
+                <ImageView
+                    android:id="@+id/rightBottomCornerIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:rotation="90"
+                    android:src="@drawable/ic_corner_24" />
+
+            </FrameLayout>
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/radiusSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:stepSize="1.0"
+        android:valueFrom="0"
+        android:valueTo="100"
+        app:layout_constraintTop_toBottomOf="@id/cornerBar"
+        app:thumbRadius="10dp"
+        app:tickVisible="false"
+        app:trackHeight="20dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/colorGroup"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radiusSlider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
