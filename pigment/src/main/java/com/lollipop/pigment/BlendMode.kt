@@ -59,6 +59,10 @@ sealed class BlendMode {
         }
     }
 
+    fun startFlow(baseColor: Int): Builder {
+        return flow(baseColor)
+    }
+
     class Builder(private var themeColor: Int) {
 
         fun blend(

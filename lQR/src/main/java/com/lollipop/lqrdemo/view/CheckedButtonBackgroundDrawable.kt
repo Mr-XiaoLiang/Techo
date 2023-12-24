@@ -8,11 +8,12 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.dp2px
 import kotlin.math.max
 import kotlin.math.min
 
-class CheckedTextBackgroundDrawable : Drawable() {
+class CheckedButtonBackgroundDrawable : Drawable() {
 
     companion object {
         var RADIUS = 3F
@@ -30,11 +31,24 @@ class CheckedTextBackgroundDrawable : Drawable() {
         isDither = true
     }
 
+    private var drawableAlpha = 255
+
     var color: Int = Color.BLACK
         set(value) {
             field = value
-            invalidateSelf()
+            updateColor()
         }
+
+    private var bgColor = color
+    private var borderColor = color
+
+    private fun updateColor() {
+        val value = color
+        val baseColor = value.changeAlpha(drawableAlpha)
+        bgColor = baseColor.changeAlpha(FILL_ALPHA)
+        borderColor = baseColor
+        invalidateSelf()
+    }
 
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
@@ -48,8 +62,7 @@ class CheckedTextBackgroundDrawable : Drawable() {
     }
 
     override fun draw(canvas: Canvas) {
-        paint.setColor(color)
-        paint.alpha = fillAlpha
+        paint.setColor(bgColor)
         paint.style = Paint.Style.FILL
         canvas.drawRoundRect(
             drawBounds,
@@ -57,8 +70,7 @@ class CheckedTextBackgroundDrawable : Drawable() {
             radius,
             paint
         )
-        paint.setColor(color)
-        paint.alpha = 255
+        paint.setColor(borderColor)
         paint.style = Paint.Style.STROKE
         canvas.drawRoundRect(
             drawBounds,
@@ -69,7 +81,8 @@ class CheckedTextBackgroundDrawable : Drawable() {
     }
 
     override fun setAlpha(alpha: Int) {
-        // 不响应
+        drawableAlpha = alpha
+        updateColor()
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {

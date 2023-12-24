@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.creator.subpage.position
 
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -9,14 +10,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import com.google.android.material.slider.Slider
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
+import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentQrPositionRectangleBinding
+import com.lollipop.lqrdemo.view.CheckedButtonBackgroundDrawable
+import com.lollipop.pigment.Pigment
 
 class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
@@ -50,6 +57,8 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     private val binding: FragmentQrPositionRectangleBinding by lazyBind()
 
+    private val checkedMap = HashMap<Int, Boolean>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,11 +69,228 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initCheckableButton(binding.leftTopPositionButton)
+        initCheckableButton(binding.rightTopPositionButton)
+        initCheckableButton(binding.leftBottomPositionButton)
+
+        initCheckableButton(binding.leftTopBorderCornerButton)
+        initCheckableButton(binding.rightTopBorderCornerButton)
+        initCheckableButton(binding.rightBottomBorderCornerButton)
+        initCheckableButton(binding.leftBottomBorderCornerButton)
+
+        initCheckableButton(binding.leftTopCoreCornerButton)
+        initCheckableButton(binding.rightTopCoreCornerButton)
+        initCheckableButton(binding.rightBottomCoreCornerButton)
+        initCheckableButton(binding.leftBottomCoreCornerButton)
+
+        binding.radiusSlider.value = 0F
+        binding.radiusSlider.addOnChangeListener(
+            Slider.OnChangeListener { _, value, fromUser ->
+                if (fromUser) {
+                    // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
+                    onSliderChanged(value * 0.01F)
+                }
+            }
+        )
+
         // TODO
+
     }
 
     override fun getWriterLayer(): Class<out QrWriterLayer> {
         return Layer::class.java
+    }
+
+    private fun initCheckableButton(view: View) {
+        view.updateCheckedState()
+        view.onClick {
+            view.checkedToggle()
+        }
+    }
+
+    private fun onSliderChanged(value: Float) {
+//        leftTopCoreCornerButton
+//        binding.rightTopPositionButton
+//        binding.leftBottomPositionButton
+//
+//        binding.leftTopBorderCornerButton
+//        binding.rightTopBorderCornerButton
+//        binding.rightBottomBorderCornerButton
+//        binding.leftBottomBorderCornerButton
+
+//        binding.leftTopCoreCornerButton
+//        binding.rightTopCoreCornerButton
+//        binding.rightBottomCoreCornerButton
+//        binding.leftBottomCoreCornerButton
+        if (binding.leftTopPositionButton.isChecked) {
+            changeRadius(LEFT_TOP_INFO, value)
+        }
+        if (binding.rightTopPositionButton.isChecked) {
+            changeRadius(RIGHT_TOP_INFO, value)
+        }
+        if (binding.leftBottomPositionButton.isChecked) {
+            changeRadius(LEFT_BOTTOM_INFO, value)
+        }
+        notifyContentChanged()
+    }
+
+    private fun changeRadius(
+        info: PositionInfo,
+        value: Float
+    ) {
+        changeRadius(
+            info = info.coreRadius,
+            value = value,
+            leftTop = binding.leftTopCoreCornerButton.isChecked,
+            rightTop = binding.rightTopCoreCornerButton.isChecked,
+            rightBottom = binding.rightBottomCoreCornerButton.isChecked,
+            leftBottom = binding.leftBottomCoreCornerButton.isChecked,
+        )
+
+        changeRadius(
+            info = info.borderRadius,
+            value = value,
+            leftTop = binding.leftTopBorderCornerButton.isChecked,
+            rightTop = binding.rightTopBorderCornerButton.isChecked,
+            rightBottom = binding.rightBottomBorderCornerButton.isChecked,
+            leftBottom = binding.leftBottomBorderCornerButton.isChecked,
+        )
+    }
+
+    private fun changeRadius(
+        info: Radius,
+        value: Float,
+        leftTop: Boolean,
+        rightTop: Boolean,
+        rightBottom: Boolean,
+        leftBottom: Boolean,
+    ) {
+        if (leftTop) {
+            info.leftTopX = value
+            info.leftTopY = value
+        }
+        if (rightTop) {
+            info.rightTopX = value
+            info.rightTopY = value
+        }
+        if (rightBottom) {
+            info.rightBottomX = value
+            info.rightBottomY = value
+        }
+        if (leftBottom) {
+            info.leftBottomX = value
+            info.leftBottomY = value
+        }
+    }
+
+    private fun View.checkedToggle() {
+        val view = this
+        view.isChecked = !view.isChecked
+    }
+
+    private fun View.updateCheckedState() {
+        // 走一遍方法，让状态更新
+        val view = this
+        view.isChecked = view.isChecked
+    }
+
+    private var View.isChecked: Boolean
+        get() {
+            val view = this
+            if (view.id == View.NO_ID) {
+                return false
+            }
+            return checkedMap[view.id] ?: false
+        }
+        set(value) {
+            val view = this
+            if (view.id == View.NO_ID) {
+                view.alpha = 0.5F
+                return
+            }
+            checkedMap[view.id] = value
+            view.alpha = if (value) {
+                1F
+            } else {
+                0.5F
+            }
+        }
+
+    override fun onDecorationChanged(pigment: Pigment) {
+        super.onDecorationChanged(pigment)
+        pigment.blendMode.startFlow(pigment.primaryColor)
+            .blend(pigment.onBackgroundTitle) { color ->
+                checkOrUpdateButton(
+                    binding.leftTopPositionButton,
+                    binding.leftTopPositionIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.leftBottomPositionButton,
+                    binding.leftBottomPositionIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.rightTopPositionButton,
+                    binding.rightTopPositionIcon,
+                    color
+                )
+
+                checkOrUpdateButton(
+                    binding.leftTopBorderCornerButton,
+                    binding.leftTopBorderCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.rightTopBorderCornerButton,
+                    binding.rightTopBorderCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.rightBottomBorderCornerButton,
+                    binding.rightBottomBorderCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.leftBottomBorderCornerButton,
+                    binding.leftBottomBorderCornerIcon,
+                    color
+                )
+
+                checkOrUpdateButton(
+                    binding.leftTopCoreCornerButton,
+                    binding.leftTopCoreCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.rightTopCoreCornerButton,
+                    binding.rightTopCoreCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.rightBottomCoreCornerButton,
+                    binding.rightBottomCoreCornerIcon,
+                    color
+                )
+                checkOrUpdateButton(
+                    binding.leftBottomCoreCornerButton,
+                    binding.leftBottomCoreCornerIcon,
+                    color
+                )
+                PigmentTheme.updateSlider(binding.radiusSlider, color)
+            }
+    }
+
+    private fun checkOrUpdateButton(btnView: View, iconView: ImageView, color: Int) {
+        iconView.imageTintList = ColorStateList.valueOf(color)
+        val background = btnView.background
+        if (background is CheckedButtonBackgroundDrawable) {
+            background.color = color
+        } else {
+            val drawable = CheckedButtonBackgroundDrawable()
+            drawable.color = color
+            btnView.background = drawable
+        }
     }
 
     class Layer : BitMatrixWriterLayer(), PositionWriterLayer {

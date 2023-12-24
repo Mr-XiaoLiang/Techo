@@ -7,9 +7,9 @@ import android.view.View
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseCenterDialog
+import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.databinding.DialogQrCornerSettingBinding
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentTint
 
 class QrCornerSettingDialog(private val option: Option) : BaseCenterDialog(option.context) {
 
@@ -35,14 +35,7 @@ class QrCornerSettingDialog(private val option: Option) : BaseCenterDialog(optio
         binding.contentGroup.setBackgroundColor(bg)
         binding.titleView.setTextColor(fg)
 
-//        binding.slider.tickInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
-//        binding.slider.tickActiveTintList = ColorStateList.valueOf(fg)
-
-        binding.slider.trackActiveTintList = ColorStateList.valueOf(fg)
-        binding.slider.trackInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
-
-        binding.slider.haloTintList = ColorStateList.valueOf(fg.changeAlpha(0.24F))
-        binding.slider.thumbTintList = ColorStateList.valueOf(fg)
+        PigmentTheme.updateSlider(binding.slider, fg)
 
         binding.weightModeSwitch.thumbTintList = ColorStateList.valueOf(fg)
         binding.weightModeSwitch.trackTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))

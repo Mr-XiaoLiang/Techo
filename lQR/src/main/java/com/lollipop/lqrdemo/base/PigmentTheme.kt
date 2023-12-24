@@ -1,5 +1,8 @@
 package com.lollipop.lqrdemo.base
 
+import android.content.res.ColorStateList
+import com.google.android.material.slider.Slider
+import com.lollipop.base.util.changeAlpha
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
@@ -19,6 +22,17 @@ object PigmentTheme {
             val text = BlendMode.titleOnColor(bg)
             colorCallback(bg, text)
         }
+    }
+
+    fun updateSlider(slider: Slider, color: Int) {
+        //        binding.slider.tickInactiveTintList = ColorStateList.valueOf(fg.changeAlpha(0.5F))
+//        binding.slider.tickActiveTintList = ColorStateList.valueOf(fg)
+
+        slider.trackActiveTintList = ColorStateList.valueOf(color)
+        slider.trackInactiveTintList = ColorStateList.valueOf(color.changeAlpha(0.5F))
+
+        slider.haloTintList = ColorStateList.valueOf(color.changeAlpha(0.24F))
+        slider.thumbTintList = ColorStateList.valueOf(color)
     }
 
 }
