@@ -109,19 +109,6 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private fun onSliderChanged(value: Float) {
-//        leftTopCoreCornerButton
-//        binding.rightTopPositionButton
-//        binding.leftBottomPositionButton
-//
-//        binding.leftTopBorderCornerButton
-//        binding.rightTopBorderCornerButton
-//        binding.rightBottomBorderCornerButton
-//        binding.leftBottomBorderCornerButton
-
-//        binding.leftTopCoreCornerButton
-//        binding.rightTopCoreCornerButton
-//        binding.rightBottomCoreCornerButton
-//        binding.leftBottomCoreCornerButton
         if (binding.leftTopPositionButton.isChecked) {
             changeRadius(LEFT_TOP_INFO, value)
         }
