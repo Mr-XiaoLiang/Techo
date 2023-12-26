@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +11,8 @@
         android:id="@+id/positionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -77,7 +78,8 @@
         android:id="@+id/borderCornerBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/positionBar">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -159,7 +161,8 @@
         android:id="@+id/coreCornerBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/borderCornerBar">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -245,6 +248,7 @@
         android:stepSize="0.1"
         android:valueFrom="0"
         android:valueTo="100"
+        app:layout_constraintTop_toBottomOf="@id/coreCornerBar"
         app:thumbRadius="10dp"
         app:tickVisible="false"
         app:trackHeight="20dp" />
@@ -254,7 +258,8 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_weight="1" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_max="56dp"
+        app:layout_constraintTop_toBottomOf="@id/radiusSlider" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.creator.subpage.position
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,13 +11,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
+import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.PigmentTheme
+import com.lollipop.lqrdemo.creator.PaletteDialog
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
@@ -24,6 +30,7 @@ import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentQrPositionRectangleBinding
 import com.lollipop.lqrdemo.view.CheckedButtonBackgroundDrawable
 import com.lollipop.pigment.Pigment
+import com.lollipop.widget.RoundBackgroundView
 
 class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
@@ -58,6 +65,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     private val binding: FragmentQrPositionRectangleBinding by lazyBind()
 
     private val checkedMap = HashMap<Int, Boolean>()
+    private val historyColorAdapter = HistoryColorAdapter(::onColorChanged)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,8 +101,12 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             }
         )
 
-        // TODO
-
+        binding.colorGroup.layoutManager = LinearLayoutManager(
+            view.context, RecyclerView.HORIZONTAL, false
+        )
+        binding.colorGroup.adapter = historyColorAdapter
+        historyColorAdapter.onColorListChanged(PaletteDialog.getHistoryColor())
+        // TODO 少了个打开调色板的按钮
     }
 
     override fun getWriterLayer(): Class<out QrWriterLayer> {
@@ -105,7 +117,19 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         view.updateCheckedState()
         view.onClick {
             view.checkedToggle()
+            if (view.isChecked) {
+                onSelectedCornerChanged()
+            }
         }
+    }
+
+    private fun onSelectedCornerChanged() {
+        onSliderChanged(binding.radiusSlider.value)
+    }
+
+    private fun onColorChanged(color: Int) {
+        PaletteDialog.putHistoryColor(color)
+        historyColorAdapter.onColorListChanged(PaletteDialog.getHistoryColor())
     }
 
     private fun onSliderChanged(value: Float) {
@@ -460,7 +484,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     }
 
-    protected class PositionInfo(
+    private class PositionInfo(
         val borderRadius: Radius,
         val coreRadius: Radius,
         @ColorInt
@@ -482,6 +506,87 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
                     this.borderColor == info.borderColor &&
                     this.coreColor == info.coreColor
                     )
+        }
+
+    }
+
+    private class HistoryColorAdapter(
+        private val onColorClick: (Int) -> Unit
+    ) : RecyclerView.Adapter<ColorHolder>() {
+
+        private val colorList = ArrayList<Int>()
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorHolder {
+            return ColorHolder.crate(parent, ::onItemClick)
+        }
+
+        private fun onItemClick(position: Int) {
+            if (position < 0 || position >= colorList.size) {
+                return
+            }
+            val color = colorList[position]
+            onColorClick(color)
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun onColorListChanged(list: List<Int>) {
+            colorList.clear()
+            colorList.addAll(list)
+            notifyDataSetChanged()
+        }
+
+        override fun getItemCount(): Int {
+            return colorList.size
+        }
+
+        override fun onBindViewHolder(holder: ColorHolder, position: Int) {
+            holder.bind(colorList[position])
+        }
+
+
+    }
+
+    private class ColorHolder(
+        view: View,
+        private val colorView: RoundBackgroundView,
+        private val onClickCallback: (Int) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
+
+        companion object {
+            fun crate(parent: ViewGroup, onClickCallback: (Int) -> Unit): ColorHolder {
+                val frameLayout = FrameLayout(parent.context)
+                frameLayout.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                val colorView = RoundBackgroundView(parent.context)
+                colorView.type = RoundBackgroundView.RoundType.SMALLER
+                colorView.value = 0.5F
+                val margin = 6.dp2px
+                colorView.layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                ).apply {
+                    marginStart = margin
+                    marginEnd = margin
+                }
+                frameLayout.addView(colorView)
+                return ColorHolder(frameLayout, colorView, onClickCallback)
+            }
+        }
+
+        init {
+            colorView.onClick {
+                onItemViewClick()
+            }
+        }
+
+        private fun onItemViewClick() {
+            onClickCallback(adapterPosition)
+        }
+
+        fun bind(color: Int) {
+            colorView.color = color
         }
 
     }
