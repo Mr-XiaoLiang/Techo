@@ -22,7 +22,7 @@ import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.PigmentTheme
-import com.lollipop.lqrdemo.creator.PaletteDialog
+import com.lollipop.lqrdemo.creator.HistoryColor
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
@@ -105,7 +105,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             view.context, RecyclerView.HORIZONTAL, false
         )
         binding.colorGroup.adapter = historyColorAdapter
-        historyColorAdapter.onColorListChanged(PaletteDialog.getHistoryColor())
+        historyColorAdapter.onColorListChanged(HistoryColor.get())
         // TODO 少了个打开调色板的按钮
     }
 
@@ -128,8 +128,8 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private fun onColorChanged(color: Int) {
-        PaletteDialog.putHistoryColor(color)
-        historyColorAdapter.onColorListChanged(PaletteDialog.getHistoryColor())
+        HistoryColor.put(color)
+        historyColorAdapter.onColorListChanged(HistoryColor.get())
     }
 
     private fun onSliderChanged(value: Float) {

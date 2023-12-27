@@ -24,34 +24,6 @@ class PaletteDialog(
 
     companion object {
 
-        private const val HISTORY_MAX_COUNT = 9
-        private val historyColor = LinkedList<Int>()
-
-        fun getHistoryColor(): List<Int> {
-            return ArrayList(historyColor)
-        }
-
-        fun putHistoryColor(color: Int) {
-            // 修改的时候加锁
-            synchronized(historyColor) {
-                // 检查颜色是否重复
-                val index = historyColor.indexOf(color)
-                if (index < 0) {
-                    // 不重复意味着需要插入，所以移除超过限制的颜色
-                    while (historyColor.isNotEmpty() && historyColor.size >= HISTORY_MAX_COUNT) {
-                        // 移除最后的
-                        historyColor.removeLast()
-                    }
-                    // 添加到最前面
-                    historyColor.addFirst(color)
-                } else {
-                    // 如果已经存在了，那么直接移除已经存在的，并且添加到最前面
-                    historyColor.removeAt(index)
-                    historyColor.addFirst(color)
-                }
-            }
-        }
-
         fun show(context: Context, color: Int, callback: (Int) -> Unit) {
             PaletteDialog(context, color, callback).show()
         }
