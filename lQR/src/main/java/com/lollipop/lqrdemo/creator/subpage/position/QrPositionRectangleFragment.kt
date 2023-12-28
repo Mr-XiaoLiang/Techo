@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.HistoryColor
+import com.lollipop.lqrdemo.creator.PaletteDialog
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
@@ -65,7 +67,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     private val binding: FragmentQrPositionRectangleBinding by lazyBind()
 
     private val checkedMap = HashMap<Int, Boolean>()
-    private val historyColorAdapter = HistoryColorAdapter(::onColorChanged)
+    private val historyColorAdapter = HistoryColorAdapter(::onColorChanged, ::onPaletteClick)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -106,7 +108,6 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         )
         binding.colorGroup.adapter = historyColorAdapter
         historyColorAdapter.onColorListChanged(HistoryColor.get())
-        // TODO 少了个打开调色板的按钮
     }
 
     override fun getWriterLayer(): Class<out QrWriterLayer> {
@@ -130,6 +131,25 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     private fun onColorChanged(color: Int) {
         HistoryColor.put(color)
         historyColorAdapter.onColorListChanged(HistoryColor.get())
+
+        if (binding.leftTopPositionButton.isChecked) {
+            changeColor(LEFT_TOP_INFO, color)
+        }
+        if (binding.rightTopPositionButton.isChecked) {
+            changeColor(RIGHT_TOP_INFO, color)
+        }
+        if (binding.leftBottomPositionButton.isChecked) {
+            changeColor(LEFT_BOTTOM_INFO, color)
+        }
+        notifyContentChanged()
+    }
+
+    private fun onPaletteClick() {
+        context?.let { ctx ->
+            PaletteDialog.show(ctx, historyColorAdapter.findFirstColor()) { color ->
+                onColorChanged(color)
+            }
+        }
     }
 
     private fun onSliderChanged(value: Float) {
@@ -143,6 +163,28 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             changeRadius(LEFT_BOTTOM_INFO, value)
         }
         notifyContentChanged()
+    }
+
+    private fun changeColor(
+        info: PositionInfo,
+        value: Int
+    ) {
+        if (binding.leftTopCoreCornerButton.isChecked ||
+            binding.rightTopCoreCornerButton.isChecked ||
+            binding.rightBottomCoreCornerButton.isChecked ||
+            binding.leftBottomCoreCornerButton.isChecked
+        ) {
+            info.coreColor = value
+        }
+
+        if (
+            binding.leftTopBorderCornerButton.isChecked ||
+            binding.rightTopBorderCornerButton.isChecked ||
+            binding.rightBottomBorderCornerButton.isChecked ||
+            binding.leftBottomBorderCornerButton.isChecked
+        ) {
+            info.borderColor = value
+        }
     }
 
     private fun changeRadius(
@@ -511,12 +553,21 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private class HistoryColorAdapter(
-        private val onColorClick: (Int) -> Unit
-    ) : RecyclerView.Adapter<ColorHolder>() {
+        private val onColorClick: (Int) -> Unit,
+        private val onPaletteClick: () -> Unit
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        companion object {
+            private const val TYPE_COLOR = 0
+            private const val TYPE_PALETTE = 1
+        }
 
         private val colorList = ArrayList<Int>()
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            if (viewType == TYPE_PALETTE) {
+                return PaletteHolder.crate(parent, onPaletteClick)
+            }
             return ColorHolder.crate(parent, ::onItemClick)
         }
 
@@ -535,14 +586,29 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             notifyDataSetChanged()
         }
 
+        fun findFirstColor(): Int {
+            if (colorList.isNotEmpty()) {
+                return colorList[0]
+            }
+            return Color.RED
+        }
+
         override fun getItemCount(): Int {
-            return colorList.size
+            return colorList.size + 1
         }
 
-        override fun onBindViewHolder(holder: ColorHolder, position: Int) {
-            holder.bind(colorList[position])
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is ColorHolder) {
+                holder.bind(colorList[position])
+            }
         }
 
+        override fun getItemViewType(position: Int): Int {
+            if (position >= 0 && position < colorList.size) {
+                return TYPE_COLOR
+            }
+            return TYPE_PALETTE
+        }
 
     }
 
@@ -591,7 +657,37 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     }
 
-    protected class Radius(
+    private class PaletteHolder(
+        view: View,
+        private val onClickCallback: () -> Unit
+    ) : RecyclerView.ViewHolder(view) {
+
+        companion object {
+            fun crate(parent: ViewGroup, onClickCallback: () -> Unit): PaletteHolder {
+                val frameLayout = FrameLayout(parent.context)
+                frameLayout.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                val colorView = ImageView(parent.context)
+                val size = 24.dp2px
+                colorView.layoutParams = FrameLayout.LayoutParams(size, size).apply {
+                    gravity = Gravity.CENTER
+                }
+                frameLayout.addView(colorView)
+                return PaletteHolder(frameLayout, onClickCallback)
+            }
+        }
+
+        init {
+            itemView.onClick {
+                onClickCallback()
+            }
+        }
+
+    }
+
+    private class Radius(
         @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
         var leftTopX: Float = 0F,
         @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
