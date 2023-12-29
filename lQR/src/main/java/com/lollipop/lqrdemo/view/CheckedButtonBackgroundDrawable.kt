@@ -16,14 +16,12 @@ import kotlin.math.min
 class CheckedButtonBackgroundDrawable : Drawable() {
 
     companion object {
-        var RADIUS = 3F
         var BORDER_WIDTH = 1F
         var FILL_ALPHA = 0.3F
     }
 
-    private val radius = RADIUS.dp2px
+    private var radius = 0F
     private val borderWidth = BORDER_WIDTH.dp2px
-    private val fillAlpha = max(0, min(255, (255 * FILL_ALPHA).toInt()))
     private val drawBounds = RectF()
 
     private val paint = Paint().apply {
@@ -52,6 +50,7 @@ class CheckedButtonBackgroundDrawable : Drawable() {
 
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
+        radius = min(bounds.width(), bounds.height()) * 0.5F
         val halfBorder = borderWidth / 2
         drawBounds.set(
             bounds.left + halfBorder,

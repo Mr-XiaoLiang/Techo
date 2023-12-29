@@ -65,6 +65,12 @@ class QrWriterGroup {
         }
     }
 
+    fun notifyStyleChanged() {
+        writerArray.forEach {
+            it.notifyStyleChanged()
+        }
+    }
+
     fun removeWriter(writer: QrWriter) {
         writerArray.remove(writer)
     }

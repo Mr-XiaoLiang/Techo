@@ -32,9 +32,9 @@ class FragmentPager private constructor(
 
     val infoList = ArrayList<FragmentInfo>()
 
-    init {
-        setHasStableIds(true)
-    }
+//    init {
+//        setHasStableIds(true)
+//    }
 
     fun bind(viewPager2: ViewPager2) {
         viewPager2.adapter = this

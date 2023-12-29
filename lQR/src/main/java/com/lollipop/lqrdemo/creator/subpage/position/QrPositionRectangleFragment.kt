@@ -110,7 +110,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         historyColorAdapter.onColorListChanged(HistoryColor.get())
     }
 
-    override fun getWriterLayer(): Class<out QrWriterLayer> {
+    override fun getWriterLayer(): Class<out BitMatrixWriterLayer> {
         return Layer::class.java
     }
 

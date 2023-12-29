@@ -2,6 +2,7 @@ package com.lollipop.lqrdemo.creator.subpage
 
 import android.content.Context
 import com.lollipop.base.util.checkCallback
+import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustFragment
 import com.lollipop.lqrdemo.creator.subpage.position.QrPositionRectangleFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
@@ -41,7 +42,7 @@ class QrPositionDetectionFragment : StyleAdjustFragment() {
         callback?.onPositionDetectionContentChanged()
     }
 
-    override fun notifyLayerChanged(layer: Class<out QrWriterLayer>) {
+    override fun notifyLayerChanged(layer: Class<out BitMatrixWriterLayer>) {
         callback?.onPositionDetectionLayerChanged(layer)
     }
 
@@ -50,7 +51,7 @@ class QrPositionDetectionFragment : StyleAdjustFragment() {
 //    Crossover
 
     interface Callback {
-        fun onPositionDetectionLayerChanged(layer: Class<out QrWriterLayer>)
+        fun onPositionDetectionLayerChanged(layer: Class<out BitMatrixWriterLayer>)
 
         fun onPositionDetectionContentChanged()
     }

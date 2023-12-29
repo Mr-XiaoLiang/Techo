@@ -37,6 +37,8 @@ import com.lollipop.lqrdemo.creator.background.BackgroundInfo
 import com.lollipop.lqrdemo.creator.background.BackgroundStore
 import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
+import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
+import com.lollipop.lqrdemo.creator.layer.QrWriterLayerStore
 import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.subpage.QrCornerFragment
@@ -54,7 +56,8 @@ class CreatorActivity : ColorModeActivity(),
     QrCreatorHelper.OnLoadStatusChangedListener,
     QrBackgroundFragment.Callback,
     QrWriter.ContextProvider,
-    QrCornerFragment.Callback {
+    QrCornerFragment.Callback,
+    QrPositionDetectionFragment.Callback {
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -414,6 +417,14 @@ class CreatorActivity : ColorModeActivity(),
     override fun onCornerChanged(corner: BackgroundCorner) {
         BackgroundStore.setCorner(corner)
         onBackgroundChanged()
+    }
+
+    override fun onPositionDetectionLayerChanged(layer: Class<out BitMatrixWriterLayer>) {
+        QrWriterLayerStore.setPositionWriterLayer(layer)
+    }
+
+    override fun onPositionDetectionContentChanged() {
+        creatorHelper.onStyleChanged()
     }
 
 }

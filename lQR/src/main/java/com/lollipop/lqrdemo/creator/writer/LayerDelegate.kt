@@ -65,6 +65,10 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
         get().updateResource()
     }
 
+    fun invalidateSelf() {
+        get().invalidateSelf()
+    }
+
     fun isResourceReady(): Boolean {
         val impl = get()
         return impl.isResourceReady

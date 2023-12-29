@@ -290,6 +290,11 @@ class QrCreatorHelper(
         onChanged()
     }
 
+    fun onStyleChanged() {
+        writerGroup.notifyStyleChanged()
+        onChanged()
+    }
+
     private fun notifyLoadingStart() {
         loadStatusChangedListener.invoke { it.onLoadStatusChanged(true) }
     }

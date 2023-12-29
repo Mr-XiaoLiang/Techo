@@ -223,6 +223,13 @@ abstract class QrWriter(
         writerLayer.invalidateSelf()
     }
 
+    fun notifyStyleChanged() {
+        log("notifyStyleChanged")
+        writerLayer.onBoundsChanged(bounds)
+        writerLayer.updateResource()
+        writerLayer.invalidateSelf()
+    }
+
     fun interface ResourceReadyCallback {
         fun onResourceReady()
     }
