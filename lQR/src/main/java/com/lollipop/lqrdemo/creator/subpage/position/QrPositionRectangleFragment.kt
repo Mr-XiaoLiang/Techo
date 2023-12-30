@@ -28,7 +28,6 @@ import com.lollipop.lqrdemo.creator.PaletteDialog
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.PositionWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
-import com.lollipop.lqrdemo.creator.writer.QrWriterLayer
 import com.lollipop.lqrdemo.databinding.FragmentQrPositionRectangleBinding
 import com.lollipop.lqrdemo.view.CheckedButtonBackgroundDrawable
 import com.lollipop.pigment.Pigment
@@ -69,6 +68,10 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     private val checkedMap = HashMap<Int, Boolean>()
     private val historyColorAdapter = HistoryColorAdapter(::onColorChanged, ::onPaletteClick)
 
+    private val sliderBackPressure = Runnable {
+        invokeSliderChanged()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -97,8 +100,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         binding.radiusSlider.addOnChangeListener(
             Slider.OnChangeListener { _, value, fromUser ->
                 if (fromUser) {
-                    // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
-                    onSliderChanged(value * 0.01F)
+                    postSliderBackPressure()
                 }
             }
         )
@@ -125,7 +127,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private fun onSelectedCornerChanged() {
-        onSliderChanged(binding.radiusSlider.value)
+        invokeSliderChanged()
     }
 
     private fun onColorChanged(color: Int) {
@@ -152,7 +154,14 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
         }
     }
 
-    private fun onSliderChanged(value: Float) {
+    private fun postSliderBackPressure() {
+        binding.radiusSlider.removeCallbacks(sliderBackPressure)
+        binding.radiusSlider.postDelayed(sliderBackPressure, 100)
+    }
+
+    private fun invokeSliderChanged() {
+        // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
+        val value = binding.radiusSlider.value * 0.01F
         if (binding.leftTopPositionButton.isChecked) {
             changeRadius(LEFT_TOP_INFO, value)
         }
