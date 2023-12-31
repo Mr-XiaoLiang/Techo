@@ -246,6 +246,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private fun View.checkedToggle() {
+        // 读取状态并反转
         val view = this
         view.isChecked = !view.isChecked
     }
