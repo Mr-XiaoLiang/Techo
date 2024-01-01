@@ -26,4 +26,10 @@ open class BaseFragment : Fragment(), PigmentPage {
 
     override fun onDecorationChanged(pigment: Pigment) {
     }
+
+    override val currentPigment: Pigment?
+        get() {
+            return superPigmentProvider?.pigmentProviderHelper?.currentPigment
+        }
+
 }

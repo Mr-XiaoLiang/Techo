@@ -59,6 +59,11 @@ class PigmentActivityHelper(
         }
     }
 
+    override val currentPigment: Pigment?
+        get() {
+            return pigment
+        }
+
     private fun setAppMode(onBackground: Boolean) {
         if (appOnBackground != onBackground) {
             appOnBackground = onBackground

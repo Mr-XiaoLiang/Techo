@@ -28,8 +28,12 @@ abstract class BaseBottomDialog(context: Context) : BottomSheetDialog(context), 
 
     private val binding: DialogBaseBottomBinding by lazyBind()
 
-    protected var currentPigment: Pigment? = null
-        private set
+    protected var lastPigment: Pigment? = null
+
+    override val currentPigment: Pigment?
+        get() {
+            return lastPigment
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +87,7 @@ abstract class BaseBottomDialog(context: Context) : BottomSheetDialog(context), 
 
     @CallSuper
     override fun onDecorationChanged(pigment: Pigment) {
-        currentPigment = pigment
+        lastPigment = pigment
         binding.contentLayout.setBackgroundColor(pigment.backgroundColor)
         binding.dialogTouchHolder.color = pigment.onBackgroundBody
     }

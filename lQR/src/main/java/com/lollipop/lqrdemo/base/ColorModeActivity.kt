@@ -40,6 +40,11 @@ open class ColorModeActivity : AppCompatActivity(), PigmentPage, PigmentProvider
         pigmentProviderHelperInner.onDecorationChanged(pigment)
     }
 
+    override val currentPigment: Pigment?
+        get() {
+            return pigmentProviderHelper.currentPigment
+        }
+
     private fun updateStatusBar() {
         WindowInsetsHelper.getController(this).isAppearanceLightStatusBars = !isDarkMode
     }

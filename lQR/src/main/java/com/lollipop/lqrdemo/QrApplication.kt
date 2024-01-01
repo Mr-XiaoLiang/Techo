@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo
 
 import android.app.Application
+import com.lollipop.lqrdemo.creator.HistoryColor
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentActivityHelper
 import com.lollipop.pigment.PigmentWallpaperCenter
@@ -28,6 +29,7 @@ class QrApplication : Application() {
         }
         PigmentWallpaperCenter.registerPigment(activityHelper)
         registerActivityLifecycleCallbacks(activityHelper)
+        HistoryColor.init(this)
     }
 
     fun fetchPigment() {

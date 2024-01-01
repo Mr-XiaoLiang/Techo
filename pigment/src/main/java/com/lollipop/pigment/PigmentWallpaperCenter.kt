@@ -112,6 +112,8 @@ object PigmentWallpaperCenter {
         private val page: PigmentPage
     ) : LifecycleEventObserver, PigmentPage {
 
+        private var lastPigment: Pigment? = null
+
         init {
             val currentState = lifecycle.currentState
             if (currentState.isAtLeast(Lifecycle.State.RESUMED)) {
@@ -121,8 +123,14 @@ object PigmentWallpaperCenter {
         }
 
         override fun onDecorationChanged(pigment: Pigment) {
+            lastPigment = pigment
             page.onDecorationChanged(pigment)
         }
+
+        override val currentPigment: Pigment?
+            get() {
+                return lastPigment
+            }
 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             when (event) {

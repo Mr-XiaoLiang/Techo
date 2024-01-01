@@ -13,6 +13,9 @@ class PigmentProviderHelper : PigmentPage {
         pageList.forEach { it.get()?.onDecorationChanged(pigment) }
     }
 
+    override val currentPigment: Pigment?
+        get() = lastPigment
+
     fun registerPigment(page: PigmentPage) {
         val last = pageList.find { it.get() === page }
         if (last != null) {

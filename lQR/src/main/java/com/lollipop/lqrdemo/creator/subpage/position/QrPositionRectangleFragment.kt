@@ -22,6 +22,7 @@ import com.google.android.material.slider.Slider
 import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.HistoryColor
 import com.lollipop.lqrdemo.creator.PaletteDialog
@@ -66,7 +67,9 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
     private val binding: FragmentQrPositionRectangleBinding by lazyBind()
 
     private val checkedMap = HashMap<Int, Boolean>()
-    private val historyColorAdapter = HistoryColorAdapter(::onColorChanged, ::onPaletteClick)
+    private val historyColorAdapter = HistoryColorAdapter(::onColorChanged, ::onPaletteClick) {
+        currentPigment
+    }
 
     private val sliderBackPressure = Runnable {
         invokeSliderChanged()
@@ -109,6 +112,11 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             view.context, RecyclerView.HORIZONTAL, false
         )
         binding.colorGroup.adapter = historyColorAdapter
+        historyColorAdapter.onColorListChanged(HistoryColor.get())
+    }
+
+    override fun onResume() {
+        super.onResume()
         historyColorAdapter.onColorListChanged(HistoryColor.get())
     }
 
@@ -564,7 +572,8 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     private class HistoryColorAdapter(
         private val onColorClick: (Int) -> Unit,
-        private val onPaletteClick: () -> Unit
+        private val onPaletteClick: () -> Unit,
+        private val getPigment: () -> Pigment?,
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         companion object {
@@ -576,7 +585,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             if (viewType == TYPE_PALETTE) {
-                return PaletteHolder.crate(parent, onPaletteClick)
+                return PaletteHolder.create(parent, onPaletteClick)
             }
             return ColorHolder.crate(parent, ::onItemClick)
         }
@@ -611,6 +620,9 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
             if (holder is ColorHolder) {
                 holder.bind(colorList[position])
             }
+            if (holder is PaletteHolder) {
+                holder.bind(getPigment())
+            }
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -640,7 +652,7 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
                 colorView.value = 0.5F
                 val margin = 6.dp2px
                 colorView.layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    36.dp2px,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 ).apply {
                     marginStart = margin
@@ -669,29 +681,40 @@ class QrPositionRectangleFragment : StyleAdjustContentFragment() {
 
     private class PaletteHolder(
         view: View,
+        private val iconView: ImageView,
         private val onClickCallback: () -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
         companion object {
-            fun crate(parent: ViewGroup, onClickCallback: () -> Unit): PaletteHolder {
+            fun create(parent: ViewGroup, onClickCallback: () -> Unit): PaletteHolder {
                 val frameLayout = FrameLayout(parent.context)
                 frameLayout.layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    48.dp2px,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                val colorView = ImageView(parent.context)
+                val iconView = ImageView(parent.context)
                 val size = 24.dp2px
-                colorView.layoutParams = FrameLayout.LayoutParams(size, size).apply {
+                iconView.layoutParams = FrameLayout.LayoutParams(size, size).apply {
                     gravity = Gravity.CENTER
                 }
-                frameLayout.addView(colorView)
-                return PaletteHolder(frameLayout, onClickCallback)
+                iconView.setImageResource(R.drawable.ic_baseline_palette_24)
+                frameLayout.addView(iconView)
+                return PaletteHolder(frameLayout, iconView, onClickCallback)
             }
         }
 
         init {
             itemView.onClick {
                 onClickCallback()
+            }
+        }
+
+        fun bind(pigment: Pigment?) {
+            if (pigment == null) {
+                iconView.imageTintList = null
+            } else {
+                iconView.imageTintList
+                ColorStateList.valueOf(pigment.onBackgroundTitle)
             }
         }
 
