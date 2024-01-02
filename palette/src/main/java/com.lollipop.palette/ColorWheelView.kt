@@ -2,7 +2,12 @@ package com.lollipop.palette
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RadialGradient
+import android.graphics.Shader
+import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.annotation.ColorInt
@@ -60,7 +65,7 @@ class ColorWheelView(
     private val hsv = HSV()
 
     private var hueShader: Shader? = null
-    private var wheelShader: Shader? = null
+    private var wheelLightMaskShader: Shader? = null
 
     private var touchTarget = TouchTarget.NONE
 
@@ -156,12 +161,15 @@ class ColorWheelView(
             TouchTarget.NONE -> {
                 return
             }
+
             TouchTarget.ALPHA -> {
                 onAlphaBarMove(x, y, offsetY)
             }
+
             TouchTarget.VALUE -> {
                 onValueBarMove(x, y, offsetY)
             }
+
             TouchTarget.WHEEL -> {
                 onWheelMove(x, y, offsetX, offsetY)
             }
@@ -244,19 +252,17 @@ class ColorWheelView(
     private fun buildSaturation() {
         val hue = hueShader
         if (hue == null) {
-            wheelShader = null
+            wheelLightMaskShader = null
             return
         }
-        val color = Color.WHITE
-        val saturationShader = RadialGradient(
+        wheelLightMaskShader = RadialGradient(
             wheelCenter.x,
             wheelCenter.y,
             wheelRadius,
-            color.alpha(0F),
-            color,
+            Color.WHITE,
+            Color.WHITE.alpha(0F),
             Shader.TileMode.CLAMP
         )
-        wheelShader = ComposeShader(hue, saturationShader, PorterDuff.Mode.MULTIPLY)
     }
 
     private fun getRadius(x: Float, y: Float): Float {
@@ -292,7 +298,29 @@ class ColorWheelView(
 
     private fun drawHuePanel(canvas: Canvas) {
         wheelPaint.style = Paint.Style.FILL
-        wheelPaint.shader = wheelShader
+        wheelPaint.alpha = 255
+        wheelPaint.shader = hueShader
+        canvas.drawOval(
+            wheelCenter.x - wheelRadius,
+            wheelCenter.y - wheelRadius,
+            wheelCenter.x + wheelRadius,
+            wheelCenter.y + wheelRadius,
+            wheelPaint
+        )
+
+        wheelPaint.shader = wheelLightMaskShader
+        canvas.drawOval(
+            wheelCenter.x - wheelRadius,
+            wheelCenter.y - wheelRadius,
+            wheelCenter.x + wheelRadius,
+            wheelCenter.y + wheelRadius,
+            wheelPaint
+        )
+
+        wheelPaint.shader = null
+        wheelPaint.color = Color.BLACK
+        val v = max(0, min(255, (255 * hsv.v).toInt()))
+        wheelPaint.alpha = 255 - v
         canvas.drawOval(
             wheelCenter.x - wheelRadius,
             wheelCenter.y - wheelRadius,
