@@ -190,7 +190,6 @@ class ColorWheelView(
         val weight = max((radius - slideBarRadius) / slideBarWidth, 1F)
         val offsetValue = offsetY * -1 / slideBarLength / weight
         hsv.offsetV(offsetValue)
-//        buildSaturation()
         invalidate()
     }
 
@@ -245,16 +244,6 @@ class ColorWheelView(
         }
 
         hueShader = SweepGradient(wheelCenter.x, wheelCenter.y, hueColor, null)
-        buildSaturation()
-        invalidate()
-    }
-
-    private fun buildSaturation() {
-        val hue = hueShader
-        if (hue == null) {
-            wheelLightMaskShader = null
-            return
-        }
         wheelLightMaskShader = RadialGradient(
             wheelCenter.x,
             wheelCenter.y,
@@ -263,6 +252,7 @@ class ColorWheelView(
             Color.WHITE.alpha(0F),
             Shader.TileMode.CLAMP
         )
+        invalidate()
     }
 
     private fun getRadius(x: Float, y: Float): Float {
