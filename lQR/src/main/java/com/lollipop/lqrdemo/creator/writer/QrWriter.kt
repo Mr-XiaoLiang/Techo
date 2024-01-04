@@ -202,7 +202,7 @@ abstract class QrWriter(
     }
 
     override fun getLifecycle(): Lifecycle? {
-        return contextProvider?.getLifecycle()
+        return contextProvider?.getContextLifecycle()
     }
 
     override fun createGlideBuilder(): RequestManager? {
@@ -235,7 +235,7 @@ abstract class QrWriter(
     }
 
     interface ContextProvider {
-        fun getLifecycle(): Lifecycle?
+        fun getContextLifecycle(): Lifecycle?
 
         fun createGlideBuilder(): RequestManager?
 

@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -399,6 +400,10 @@ class CreatorActivity : ColorModeActivity(),
         // ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
         // DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
 
+    }
+
+    override fun getContextLifecycle(): Lifecycle {
+        return lifecycle
     }
 
     override fun createGlideBuilder(): RequestManager {
