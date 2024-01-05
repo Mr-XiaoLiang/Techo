@@ -40,6 +40,7 @@ import com.lollipop.lqrdemo.creator.bridge.OnCodeContentChangedListener
 import com.lollipop.lqrdemo.creator.content.ContentBuilderActivity
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.layer.QrWriterLayerStore
+import com.lollipop.lqrdemo.creator.subpage.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.subpage.QrCornerFragment
@@ -58,7 +59,8 @@ class CreatorActivity : ColorModeActivity(),
     QrBackgroundFragment.Callback,
     QrWriter.ContextProvider,
     QrCornerFragment.Callback,
-    QrPositionDetectionFragment.Callback {
+    QrPositionDetectionFragment.Callback,
+    QrAlignmentFragment.Callback{
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -397,7 +399,7 @@ class CreatorActivity : ColorModeActivity(),
             R.string.tab_position_detection,
             QrPositionDetectionFragment::class.java
         ),
-        // ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
+         ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
         // DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
 
     }
@@ -429,6 +431,14 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun onPositionDetectionContentChanged() {
+        creatorHelper.onStyleChanged()
+    }
+
+    override fun onAlignmentLayerChanged(layer: Class<out BitMatrixWriterLayer>) {
+        QrWriterLayerStore.setAlignmentWriterLayer(layer)
+    }
+
+    override fun onAlignmentContentChanged() {
         creatorHelper.onStyleChanged()
     }
 
