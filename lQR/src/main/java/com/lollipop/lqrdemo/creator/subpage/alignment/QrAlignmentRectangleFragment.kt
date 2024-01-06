@@ -321,7 +321,7 @@ class QrAlignmentRectangleFragment : StyleAdjustContentFragment() {
         private var borderColor = Color.BLACK
         private var coreColor = Color.BLACK
 
-        override val positionBoundsEnable = true
+        override val alignmentPatternBoundsEnable = true
 
         private val positionPathList = ArrayList<PositionInfo>()
         private val recyclePathList = LinkedList<PositionInfo>()
@@ -331,11 +331,11 @@ class QrAlignmentRectangleFragment : StyleAdjustContentFragment() {
         override fun drawAlignment(canvas: Canvas) {
             checkContentPath()
             positionPathList.forEach {
-                drawPosition(canvas, it.borderPath, it.corePath)
+                drawAlignment(canvas, it.borderPath, it.corePath)
             }
         }
 
-        private fun drawPosition(canvas: Canvas, border: Path, core: Path) {
+        private fun drawAlignment(canvas: Canvas, border: Path, core: Path) {
             if (!border.isEmpty) {
                 contentPaint.setColor(borderColor)
                 contentPaint.style = Paint.Style.STROKE

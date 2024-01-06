@@ -137,8 +137,8 @@ object QrWriterLayerStore {
         }
 
         fun draw(canvas: Canvas) {
-            findAlignmentLayer()?.drawAlignment(canvas)
             findContentLayer()?.drawContent(canvas)
+            findAlignmentLayer()?.drawAlignment(canvas)
             findPositionLayer()?.drawPosition(canvas)
         }
 
