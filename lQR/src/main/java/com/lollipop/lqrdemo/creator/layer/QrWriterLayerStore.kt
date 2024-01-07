@@ -22,12 +22,12 @@ object QrWriterLayerStore {
     private var content: Class<out BitMatrixWriterLayer>? = null
     private var position: Class<out BitMatrixWriterLayer>? = null
 
-    fun setLayer(clazz: Class<out BitMatrixWriterLayer>?) {
-        clazz ?: return
-        setAlignmentWriterLayer(clazz)
-        setContentWriterLayer(clazz)
-        setPositionWriterLayer(clazz)
-    }
+//    fun setLayer(clazz: Class<out BitMatrixWriterLayer>?) {
+//        clazz ?: return
+//        setAlignmentWriterLayer(clazz)
+//        setContentWriterLayer(clazz)
+//        setPositionWriterLayer(clazz)
+//    }
 
     fun setAlignmentWriterLayer(clazz: Class<out BitMatrixWriterLayer>) {
         if (clazz.checkExtends<AlignmentWriterLayer>()) {
