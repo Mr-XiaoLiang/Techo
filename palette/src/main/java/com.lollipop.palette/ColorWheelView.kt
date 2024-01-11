@@ -273,9 +273,8 @@ class ColorWheelView(
         return AngleCalculator.getCoordinate(wheelCenter.x, wheelCenter.y, radius, angle)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas ?: return
         // 绘制圆盘
         drawHuePanel(canvas)
         // 绘制明度条

@@ -74,12 +74,12 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
         path.reset()
         findQrBitMatrix { matrix ->
             val quietZone = matrix.quietZone
-            val width = matrix.width - quietZone
-            val height = matrix.height - quietZone
+            val right = matrix.width - quietZone
+            val bottom = matrix.height - quietZone
             val tempRect = Rect()
-            for (x in quietZone until width) {
+            for (x in quietZone until right) {
                 var y = quietZone
-                while (y < height) {
+                while (y < bottom) {
                     if (isInAlignmentPattern(matrix, x, y)) {
                         y++
                         continue

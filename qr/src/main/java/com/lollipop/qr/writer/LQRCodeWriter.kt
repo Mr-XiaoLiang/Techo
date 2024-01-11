@@ -31,21 +31,21 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
          * 左上角定位点
          */
         fun inLeftTop(x: Int, y: Int): Boolean {
-            return (x < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && y < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
+            return (x <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && y <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
         }
 
         /**
          * 右上角定位点
          */
         fun inRightTop(width: Int, x: Int, y: Int): Boolean {
-            return ((width - x) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1 && y < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
+            return ((width - x) <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1 && y <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE)
         }
 
         /**
          * 左下角定位点
          */
         fun inLeftBottom(height: Int, x: Int, y: Int): Boolean {
-            return (x < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && (height - y) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1)
+            return (x <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE && (height - y) <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1)
         }
 
         /**
@@ -62,8 +62,8 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
             if (getVersion(width) < 7) {
                 return false
             }
-            return ((width - x) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + BarcodeWriter.VERSION_INFORMATION_HEIGHT + 1 && y < BarcodeWriter.VERSION_INFORMATION_WIDTH)
-                    || (x < BarcodeWriter.VERSION_INFORMATION_WIDTH && (width - y) < BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1 + BarcodeWriter.VERSION_INFORMATION_HEIGHT)
+            return ((width - x) <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + BarcodeWriter.VERSION_INFORMATION_HEIGHT + 1 && y <= BarcodeWriter.VERSION_INFORMATION_WIDTH)
+                    || (x <= BarcodeWriter.VERSION_INFORMATION_WIDTH && (width - y) <= BarcodeWriter.POSITION_DETECTION_PATTERN_SIZE + 1 + BarcodeWriter.VERSION_INFORMATION_HEIGHT)
 
         }
 
@@ -91,6 +91,10 @@ class LQRCodeWriter(private val writerType: WriterType = WriterType.DEFAULT) : W
                     }
                     //判断是否是在范围内
                     if ((x <= i + 2 && x >= i - 2) && (y <= j + 2 && y >= j - 2)) {
+                        return true
+                    }
+                    //判断是否是在范围内
+                    if ((x <= j + 2 && x >= j - 2) && (y <= i + 2 && y >= i - 2)) {
                         return true
                     }
                 }
