@@ -7,7 +7,6 @@ import android.graphics.Path
 import android.graphics.Rect
 import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
-import kotlin.math.max
 
 class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, ContentWriterLayer,
     PositionWriterLayer {
@@ -86,7 +85,9 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
                     }
                     val currentType = matrix.getType(x, y)
                     if (currentType == LBitMatrix.Type.BLACK) {
-                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.BLACK)
+                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.BLACK) { px, py ->
+                            !isInAlignmentPattern(matrix, px, py)
+                        }
                         if (edge < 0) {
                             y++
                             continue
@@ -97,7 +98,9 @@ class DefaultWriterLayer : BitMatrixWriterLayer(), AlignmentWriterLayer, Content
                         }
                         y = edge + 1
                     } else {
-                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.WHITE)
+                        val edge = matrix.getVerticalEdge(x, y, LBitMatrix.Type.WHITE) { px, py ->
+                            !isInAlignmentPattern(matrix, px, py)
+                        }
                         y = if (edge < 0) {
                             y + 1
                         } else {

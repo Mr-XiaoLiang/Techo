@@ -135,7 +135,12 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         grid.set(8, getType(x + 1, y + 1))
     }
 
-    fun getVerticalEdge(x: Int, y: Int, type: Type): Int {
+    fun getVerticalEdge(
+        x: Int,
+        y: Int,
+        type: Type,
+        filter: ((x: Int, y: Int) -> Boolean) = { _, _ -> true }
+    ): Int {
         if (x < 0 || y < 0) {
             return -1
         }
@@ -147,7 +152,7 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         }
         var next = -1
         for (i in y until height) {
-            if (getType(x, i) != type) {
+            if (getType(x, i) != type || !filter(x, i)) {
                 return next
             }
             next = i
@@ -155,7 +160,12 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         return next
     }
 
-    fun getHorizontalEdge(x: Int, y: Int, type: Type): Int {
+    fun getHorizontalEdge(
+        x: Int,
+        y: Int,
+        type: Type,
+        filter: ((x: Int, y: Int) -> Boolean) = { _, _ -> true }
+    ): Int {
         if (x < 0 || y < 0) {
             return -1
         }
@@ -167,7 +177,7 @@ open class LBitMatrix(val width: Int, val height: Int = width) {
         }
         var next = -1
         for (i in x until width) {
-            if (getType(i, y) != type) {
+            if (getType(i, y) != type || !filter(i, y)) {
                 return next
             }
             next = i
