@@ -32,7 +32,7 @@ import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
-import com.lollipop.lqrdemo.creator.QrDataPointFragment
+import com.lollipop.lqrdemo.creator.subpage.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
