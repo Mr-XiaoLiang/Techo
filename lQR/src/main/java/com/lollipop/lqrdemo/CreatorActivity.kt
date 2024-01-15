@@ -61,7 +61,8 @@ class CreatorActivity : ColorModeActivity(),
     QrWriter.ContextProvider,
     QrCornerFragment.Callback,
     QrPositionDetectionFragment.Callback,
-    QrAlignmentFragment.Callback{
+    QrAlignmentFragment.Callback,
+    QrDataPointFragment.Callback{
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -440,6 +441,14 @@ class CreatorActivity : ColorModeActivity(),
     }
 
     override fun onAlignmentContentChanged() {
+        creatorHelper.onStyleChanged()
+    }
+
+    override fun onDataPointLayerChanged(layer: Class<out BitMatrixWriterLayer>) {
+        QrWriterLayerStore.setContentWriterLayer(layer)
+    }
+
+    override fun onDataPointStyleChanged() {
         creatorHelper.onStyleChanged()
     }
 

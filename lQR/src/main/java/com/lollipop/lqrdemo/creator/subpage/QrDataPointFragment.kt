@@ -4,12 +4,17 @@ import android.content.Context
 import com.lollipop.base.util.checkCallback
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustFragment
+import com.lollipop.lqrdemo.creator.subpage.datapoint.QrDataPointRectangleFragment
 
 /**
  * 数据点的设置
  *
  */
 class QrDataPointFragment : StyleAdjustFragment() {
+
+    companion object {
+        private const val KEY_RECTANGLE = "Rectangle"
+    }
 
     private var callback: Callback? = null
 
@@ -24,15 +29,21 @@ class QrDataPointFragment : StyleAdjustFragment() {
     }
 
     override fun getContentTabs(): List<TabInfo> {
-        TODO("Not yet implemented")
+        return listOf(
+            TabInfo(
+                tabIcon = 0,
+                panel = QrDataPointRectangleFragment::class.java,
+                key = KEY_RECTANGLE
+            )
+        )
     }
 
     override fun notifyContentChanged() {
-        TODO("Not yet implemented")
+        callback?.onDataPointStyleChanged()
     }
 
     override fun notifyLayerChanged(layer: Class<out BitMatrixWriterLayer>) {
-        TODO("Not yet implemented")
+        callback?.onDataPointLayerChanged(layer)
     }
 
     interface Callback {
