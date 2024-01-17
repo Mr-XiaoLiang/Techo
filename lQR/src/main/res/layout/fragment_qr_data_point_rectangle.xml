@@ -103,6 +103,41 @@
         app:tickVisible="false"
         app:trackHeight="20dp" />
 
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sizeSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:stepSize="0.1"
+        android:valueFrom="30"
+        android:valueTo="100"
+        app:layout_constraintTop_toBottomOf="@id/radiusSlider"
+        app:thumbRadius="10dp"
+        app:tickVisible="false"
+        app:trackHeight="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/corner"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@id/radiusSlider"
+        app:layout_constraintTop_toBottomOf="@id/coreCornerBar"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/size"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@id/sizeSlider"
+        app:layout_constraintTop_toBottomOf="@id/radiusSlider"
+        tools:ignore="SmallSp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/colorGroup"
         android:layout_width="match_parent"

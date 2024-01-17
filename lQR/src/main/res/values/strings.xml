@@ -117,5 +117,7 @@
     <string name="position_left_top">左上角</string>
     <string name="position_right_top">右上角</string>
     <string name="position_left_bottom">左下角</string>
+    <string name="size">尺寸</string>
+    <string name="corner">圆角</string>
 
 </resources>

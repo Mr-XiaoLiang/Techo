@@ -36,6 +36,11 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
         @ColorInt
         private var COLOR: Int = Color.BLACK
 
+        private const val POINT_SIZE_MAX = 1F
+        private const val POINT_SIZE_MIN = 0.3F
+
+        private var POINT_SIZE = POINT_SIZE_MAX
+
     }
 
     private val binding: FragmentQrDataPointRectangleBinding by lazyBind()
@@ -45,8 +50,12 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
             currentPigment
         }
 
-    private val sliderBackPressure = Runnable {
-        invokeSliderChanged()
+    private val radiusSliderBackPressure = Runnable {
+        invokeRadiusSliderChanged()
+    }
+
+    private val sizeSliderBackPressure = Runnable {
+        invokeSizeSliderChanged()
     }
 
     override fun onCreateView(
@@ -64,11 +73,20 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
         initCheckableButton(binding.rightBottomCoreCornerButton)
         initCheckableButton(binding.leftBottomCoreCornerButton)
 
-        binding.radiusSlider.value = 0F
+        binding.radiusSlider.value = RADIUS_MIN * 100
         binding.radiusSlider.addOnChangeListener(
             Slider.OnChangeListener { _, _, fromUser ->
                 if (fromUser) {
-                    postSliderBackPressure()
+                    postRadiusSliderBackPressure()
+                }
+            }
+        )
+
+        binding.sizeSlider.value = POINT_SIZE * 100
+        binding.sizeSlider.addOnChangeListener(
+            Slider.OnChangeListener { _, _, fromUser ->
+                if (fromUser) {
+                    postSizeSliderBackPressure()
                 }
             }
         )
@@ -100,13 +118,13 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
     }
 
     private fun onSelectedCornerChanged() {
-        invokeSliderChanged()
+        invokeRadiusSliderChanged()
     }
 
     private fun onColorChanged(color: Int) {
         HistoryColor.put(color)
         historyColorAdapter.onColorListChanged(HistoryColor.get())
-        changeColor(color)
+        COLOR = color
         notifyContentChanged()
     }
 
@@ -118,12 +136,17 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
         }
     }
 
-    private fun postSliderBackPressure() {
-        binding.radiusSlider.removeCallbacks(sliderBackPressure)
-        binding.radiusSlider.postDelayed(sliderBackPressure, 100)
+    private fun postRadiusSliderBackPressure() {
+        binding.radiusSlider.removeCallbacks(radiusSliderBackPressure)
+        binding.radiusSlider.postDelayed(radiusSliderBackPressure, 100)
     }
 
-    private fun invokeSliderChanged() {
+    private fun postSizeSliderBackPressure() {
+        binding.sizeSlider.removeCallbacks(sizeSliderBackPressure)
+        binding.sizeSlider.postDelayed(sizeSliderBackPressure, 100)
+    }
+
+    private fun invokeRadiusSliderChanged() {
         // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
         val value = binding.radiusSlider.value * 0.01F
         changeRadius(
@@ -137,8 +160,11 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
         notifyContentChanged()
     }
 
-    private fun changeColor(value: Int) {
-        COLOR = value
+    private fun invokeSizeSliderChanged() {
+        // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
+        val value = binding.sizeSlider.value * 0.01F
+        POINT_SIZE = value
+        notifyContentChanged()
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
@@ -166,12 +192,14 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
                     color
                 )
                 PigmentTheme.updateSlider(binding.radiusSlider, color)
+                PigmentTheme.updateSlider(binding.sizeSlider, color)
             }
     }
 
     class Layer : BitMatrixWriterLayer(), ContentWriterLayer {
 
         private val radius = Radius()
+        private var pointSize = POINT_SIZE
         private var color = Color.BLACK
 
         private val contentPath = Path()
@@ -197,6 +225,7 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
 
         private fun updateDataPointPath() {
             radius.copyFrom(RADIUS)
+            pointSize = POINT_SIZE
             val path = contentPath
             path.reset()
             findQrBitMatrix { matrix ->
@@ -237,15 +266,17 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
             val topEdgeByScale = getTopEdgeByScale(rect.top.toFloat())
             val rightEdgeByScale = getRightEdgeByScale(rect.right.toFloat())
             val bottomEdgeByScale = getBottomEdgeByScale(rect.bottom.toFloat())
-            val d = min(
+            var d = min(
                 rightEdgeByScale - leftEdgeByScale,
                 bottomEdgeByScale - topEdgeByScale
             )
+            val offset = d * 0.5F * (1 - pointSize)
+            d *= pointSize
             path.addRoundRect(
-                leftEdgeByScale,
-                topEdgeByScale,
-                rightEdgeByScale,
-                bottomEdgeByScale,
+                leftEdgeByScale + offset,
+                topEdgeByScale + offset,
+                rightEdgeByScale - offset,
+                bottomEdgeByScale - offset,
                 radius.pixelSize(d, d),
                 Path.Direction.CW
             )
@@ -265,7 +296,7 @@ class QrDataPointRectangleFragment : StyleAdjustContentFragment() {
 
         private fun checkContentPath() {
             color = COLOR
-            if (!radius.isSame(RADIUS)) {
+            if (!radius.isSame(RADIUS) || pointSize != POINT_SIZE) {
                 updateDataPointPath()
             }
         }
