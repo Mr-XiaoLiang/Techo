@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import com.lollipop.base.ui.BaseFragment
+import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.lazyBind
 import com.lollipop.browser.databinding.FragmentWebPageBinding
 import com.lollipop.browser.main.MainPageDelegate
@@ -19,7 +20,7 @@ import com.lollipop.web.listener.TitleListener
 import com.lollipop.web.search.SearchEngineCallback
 import com.lollipop.web.search.SearchSuggestion
 
-class WebPageFragment : BaseFragment(),
+class WebPageFragment : Fragment(),
     WebHost,
     TitleListener,
     ProgressListener,
@@ -70,7 +71,7 @@ class WebPageFragment : BaseFragment(),
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = check(context)
+        callback = checkCallback(context)
     }
 
     override fun onDetach() {

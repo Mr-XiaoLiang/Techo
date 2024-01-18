@@ -4,16 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.Paint
-import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
+import com.lollipop.base.graphics.LDrawable
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.dp2px
-import kotlin.math.max
 import kotlin.math.min
 
-class CheckedButtonBackgroundDrawable : Drawable() {
+class CheckedButtonBackgroundDrawable : LDrawable() {
 
     companion object {
         var BORDER_WIDTH = 1F
@@ -88,7 +86,4 @@ class CheckedButtonBackgroundDrawable : Drawable() {
         paint.colorFilter = colorFilter
     }
 
-    override fun getOpacity(): Int {
-        return PixelFormat.TRANSPARENT
-    }
 }

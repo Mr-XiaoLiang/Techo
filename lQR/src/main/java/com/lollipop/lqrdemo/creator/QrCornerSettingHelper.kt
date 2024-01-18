@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import com.lollipop.base.graphics.LDrawable
 
 object QrCornerSettingHelper {
 
@@ -78,7 +79,7 @@ object QrCornerSettingHelper {
     }
 
 
-    abstract class ModeDrawable : Drawable() {
+    abstract class ModeDrawable : LDrawable() {
 
         protected val paint = Paint().apply {
             isAntiAlias = true
@@ -140,10 +141,6 @@ object QrCornerSettingHelper {
 
         override fun setColorFilter(filter: ColorFilter?) {
             paint.colorFilter = filter
-        }
-
-        override fun getOpacity(): Int {
-            return PixelFormat.TRANSPARENT
         }
 
     }

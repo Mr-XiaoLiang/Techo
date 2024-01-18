@@ -5,6 +5,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.lollipop.base.graphics.LDrawable
 
 class WebProgressBar @JvmOverloads constructor(
     context: Context, attributeSet: AttributeSet? = null, style: Int = 0
@@ -36,7 +37,7 @@ class WebProgressBar @JvmOverloads constructor(
         }
     }
 
-    private class ProgressDrawable : Drawable() {
+    private class ProgressDrawable : LDrawable() {
 
         private val paint = Paint().apply {
             isAntiAlias = true
@@ -79,10 +80,6 @@ class WebProgressBar @JvmOverloads constructor(
 
         override fun setColorFilter(colorFilter: ColorFilter?) {
             paint.colorFilter = colorFilter
-        }
-
-        override fun getOpacity(): Int {
-            return PixelFormat.TRANSPARENT
         }
 
     }

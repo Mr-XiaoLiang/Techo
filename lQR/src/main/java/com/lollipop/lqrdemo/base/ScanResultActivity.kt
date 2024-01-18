@@ -71,6 +71,7 @@ abstract class ScanResultActivity : ColorModeActivity(),
         setResult(Activity.RESULT_OK, resultIntent)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data != null && resultCode == Activity.RESULT_OK && fromExternal) {

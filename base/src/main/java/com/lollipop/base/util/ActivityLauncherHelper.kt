@@ -45,7 +45,9 @@ class ActivityLauncherHelper<I, O>(
     private fun initByState(targetState: Lifecycle.State) {
         if (launcherImpl == null && targetState.isAtLeast(Lifecycle.State.CREATED)) {
             launcherImpl =
-                contextReference.get()?.registerForActivityResult(contract.newInstance()) {
+                contextReference.get()?.registerForActivityResult(
+                    contract.getDeclaredConstructor().newInstance()
+                ) {
                     onCallbackResult(it)
                 }
         }

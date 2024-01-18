@@ -7,9 +7,10 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.RequestManager
+import com.lollipop.base.graphics.LDrawable
 import com.lollipop.lqrdemo.creator.writer.QrWriter
 
-class QrCreatorPreviewDrawable(private val writer: QrWriter): Drawable() {
+class QrCreatorPreviewDrawable(private val writer: QrWriter): LDrawable() {
 
     override fun draw(canvas: Canvas) {
         writer.draw(canvas)
@@ -26,7 +27,4 @@ class QrCreatorPreviewDrawable(private val writer: QrWriter): Drawable() {
         writer.setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
-    override fun getOpacity(): Int {
-        return PixelFormat.TRANSPARENT
-    }
 }

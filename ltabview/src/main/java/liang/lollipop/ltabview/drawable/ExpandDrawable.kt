@@ -59,6 +59,9 @@ class ExpandDrawable: Drawable() {
         invalidateSelf()
     }
 
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+    )
     override fun getOpacity() = PixelFormat.TRANSPARENT
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
