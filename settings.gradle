@@ -1,9 +1,9 @@
+rootProject.name = "Techo"
 include ':base'
 include ':gallery'
 include ':palette'
 include ':maskGuide'
 include ':app'
-rootProject.name = "Techo"
 include ':bigBoom'
 include ':web'
 include ':browser'
