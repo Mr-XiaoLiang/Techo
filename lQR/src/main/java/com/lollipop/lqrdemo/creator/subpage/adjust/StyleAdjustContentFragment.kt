@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.checkCallback
@@ -303,7 +302,7 @@ open class StyleAdjustContentFragment : BaseFragment() {
 
     }
 
-    protected class Radius(
+    class Radius(
         @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
         var leftTopX: Float = 0F,
         @FloatRange(from = RADIUS_MIN.toDouble(), to = RADIUS_MAX.toDouble())
