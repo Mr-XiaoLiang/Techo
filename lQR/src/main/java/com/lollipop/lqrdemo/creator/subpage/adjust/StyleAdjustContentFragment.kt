@@ -45,6 +45,22 @@ open class StyleAdjustContentFragment : BaseFragment() {
         callback = null
     }
 
+    protected fun copyCheckedMap(outMap: MutableMap<Int, Boolean>) {
+        outMap.clear()
+        outMap.putAll(checkedMap)
+    }
+
+    protected fun resetCheckedMap(inMap: MutableMap<Int, Boolean>) {
+        checkedMap.clear()
+        checkedMap.putAll(inMap)
+    }
+
+    protected fun updateCheckedStates(vararg views: View) {
+        views.forEach {
+            it.updateCheckedState()
+        }
+    }
+
     protected fun changeRadius(
         info: Radius,
         value: Float,

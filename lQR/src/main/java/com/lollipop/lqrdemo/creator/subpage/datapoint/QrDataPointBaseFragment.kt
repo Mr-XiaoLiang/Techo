@@ -23,15 +23,15 @@ import com.lollipop.lqrdemo.creator.layer.ContentWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustContentFragment
 import com.lollipop.lqrdemo.databinding.FragmentQrDataPointBaseBinding
 import com.lollipop.pigment.Pigment
-import com.lollipop.qr.writer.LBitMatrix
 import com.lollipop.qr.writer.LQrBitMatrix
-import kotlin.math.min
 
 abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
 
     companion object {
 
         private val RADIUS: Radius = Radius()
+
+        private var LAST_RADIUS_VALUE = RADIUS_MIN
 
         @ColorInt
         private var COLOR: Int = Color.BLACK
@@ -40,6 +40,8 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
         private const val POINT_SIZE_MIN = 0.3F
 
         private var POINT_SIZE = POINT_SIZE_MAX
+
+        private val CHECKED_MAP = HashMap<Int, Boolean>()
 
     }
 
@@ -66,6 +68,16 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
         return binding.root
     }
 
+    private fun Float.progressToValue(): Float {
+        val value = this
+        return value * 0.01F
+    }
+
+    private fun Float.valueToProgress(): Float {
+        val value = this
+        return value * 100
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initCheckableButton(binding.leftTopCoreCornerButton)
@@ -73,7 +85,7 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
         initCheckableButton(binding.rightBottomCoreCornerButton)
         initCheckableButton(binding.leftBottomCoreCornerButton)
 
-        binding.radiusSlider.value = RADIUS_MIN * 100
+        binding.radiusSlider.value = LAST_RADIUS_VALUE.valueToProgress()
         binding.radiusSlider.addOnChangeListener(
             Slider.OnChangeListener { _, _, fromUser ->
                 if (fromUser) {
@@ -82,7 +94,7 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
             }
         )
 
-        binding.sizeSlider.value = POINT_SIZE * 100
+        binding.sizeSlider.value = POINT_SIZE.valueToProgress()
         binding.sizeSlider.addOnChangeListener(
             Slider.OnChangeListener { _, _, fromUser ->
                 if (fromUser) {
@@ -100,7 +112,21 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
 
     override fun onResume() {
         super.onResume()
+        resetCheckedMap(CHECKED_MAP)
+        updateCheckedStates(
+            binding.leftTopCoreCornerButton,
+            binding.rightTopCoreCornerButton,
+            binding.rightBottomCoreCornerButton,
+            binding.leftBottomCoreCornerButton,
+        )
+        binding.radiusSlider.value = LAST_RADIUS_VALUE.valueToProgress()
+        binding.sizeSlider.value = POINT_SIZE.valueToProgress()
         historyColorAdapter.onColorListChanged(HistoryColor.get())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        copyCheckedMap(CHECKED_MAP)
     }
 
     private fun initCheckableButton(view: View) {
@@ -144,7 +170,8 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
 
     private fun invokeRadiusSliderChanged() {
         // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
-        val value = binding.radiusSlider.value * 0.01F
+        val value = binding.radiusSlider.value.progressToValue()
+        LAST_RADIUS_VALUE = value
         changeRadius(
             info = RADIUS,
             value = value,
@@ -158,7 +185,7 @@ abstract class QrDataPointBaseFragment : StyleAdjustContentFragment() {
 
     private fun invokeSizeSliderChanged() {
         // slider里面是0~100的，我们需要的是0~1，所以需要缩小100倍
-        val value = binding.sizeSlider.value * 0.01F
+        val value = binding.sizeSlider.value.progressToValue()
         POINT_SIZE = value
         notifyContentChanged()
     }

@@ -2,9 +2,12 @@ package com.lollipop.lqrdemo.creator.subpage
 
 import android.content.Context
 import com.lollipop.base.util.checkCallback
+import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.creator.layer.BitMatrixWriterLayer
 import com.lollipop.lqrdemo.creator.subpage.adjust.StyleAdjustFragment
+import com.lollipop.lqrdemo.creator.subpage.datapoint.QrDataPointHorizontalFragment
 import com.lollipop.lqrdemo.creator.subpage.datapoint.QrDataPointRectangleFragment
+import com.lollipop.lqrdemo.creator.subpage.datapoint.QrDataPointVerticalFragment
 
 /**
  * 数据点的设置
@@ -14,6 +17,8 @@ class QrDataPointFragment : StyleAdjustFragment() {
 
     companion object {
         private const val KEY_RECTANGLE = "Rectangle"
+        private const val KEY_VERTICAL = "Vertical"
+        private const val KEY_HORIZONTAL = "Horizontal"
     }
 
     private var callback: Callback? = null
@@ -31,9 +36,19 @@ class QrDataPointFragment : StyleAdjustFragment() {
     override fun getContentTabs(): List<TabInfo> {
         return listOf(
             TabInfo(
-                tabIcon = 0,
+                tabIcon = R.drawable.ic_logo,
                 panel = QrDataPointRectangleFragment::class.java,
                 key = KEY_RECTANGLE
+            ),
+            TabInfo(
+                tabIcon = R.drawable.ic_logo,
+                panel = QrDataPointVerticalFragment::class.java,
+                key = KEY_VERTICAL
+            ),
+            TabInfo(
+                tabIcon = R.drawable.ic_logo,
+                panel = QrDataPointHorizontalFragment::class.java,
+                key = KEY_HORIZONTAL
             )
         )
     }
