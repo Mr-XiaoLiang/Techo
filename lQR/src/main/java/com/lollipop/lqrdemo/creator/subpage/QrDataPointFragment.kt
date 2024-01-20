@@ -36,17 +36,17 @@ class QrDataPointFragment : StyleAdjustFragment() {
     override fun getContentTabs(): List<TabInfo> {
         return listOf(
             TabInfo(
-                tabIcon = R.drawable.ic_logo,
+                tabIcon = R.drawable.ic_qr_data_point_default,
                 panel = QrDataPointRectangleFragment::class.java,
                 key = KEY_RECTANGLE
             ),
             TabInfo(
-                tabIcon = R.drawable.ic_logo,
+                tabIcon = R.drawable.ic_qr_data_point_vertical,
                 panel = QrDataPointVerticalFragment::class.java,
                 key = KEY_VERTICAL
             ),
             TabInfo(
-                tabIcon = R.drawable.ic_logo,
+                tabIcon = R.drawable.ic_qr_data_point_horizontal,
                 panel = QrDataPointHorizontalFragment::class.java,
                 key = KEY_HORIZONTAL
             )
