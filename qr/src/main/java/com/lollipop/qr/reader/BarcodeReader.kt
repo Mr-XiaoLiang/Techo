@@ -45,7 +45,7 @@ abstract class BarcodeReader(
         }
     }
 
-    var scanFormat = BarcodeFormat.values()
+    var scanFormat = BarcodeFormat.entries
 
     protected open val resultByEmpty = true
 
@@ -129,7 +129,7 @@ abstract class BarcodeReader(
     }
 
     private fun findBarcodeType(code: Int): BarcodeType {
-        BarcodeType.values().forEach {
+        BarcodeType.entries.forEach {
             if (it.code == code) {
                 return it
             }

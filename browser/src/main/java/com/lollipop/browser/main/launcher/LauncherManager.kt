@@ -99,7 +99,7 @@ object LauncherManager : FileInfoManager() {
 
     private fun loadDefaultInfo(context: Context): List<LauncherInfo> {
         val launcherList = ArrayList<LauncherInfo>()
-        DefaultLauncher.values().forEach { def ->
+        DefaultLauncher.entries.forEach { def ->
             val colorValue = def.background.map { ContextCompat.getColor(context, it) }
             launcherList.add(
                 LauncherInfo(

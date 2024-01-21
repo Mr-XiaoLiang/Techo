@@ -76,7 +76,7 @@ class OptionDialog(
     }
 
     private fun createShareList(): List<Option> {
-        return ShareType.values().map { it.option() }
+        return ShareType.entries.map { it.option() }
     }
 
     private class OptionAdapter(

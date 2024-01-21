@@ -97,7 +97,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         }
         var index = 0
         val current = lastInfo.gravity
-        val gravities = ImageGravity.values()
+        val gravities = ImageGravity.entries
         for (i in gravities.indices) {
             val item = gravities[i]
             if (item.gravity == current) {
@@ -158,7 +158,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
         val imageGravity = if (gravity == null) {
             val imageBgInfo = BackgroundStore.getByType<BackgroundInfo.Local>()
             val backgroundGravity = imageBgInfo?.getGravityOrNull() ?: BackgroundGravity.DEFAULT
-            ImageGravity.values().find {
+            ImageGravity.entries.find {
                 it.gravity == backgroundGravity
             } ?: ImageGravity.CENTER
         } else {
@@ -282,7 +282,7 @@ class QrBackgroundFragment : QrBaseSubpageFragment() {
 
         companion object {
             fun find(gravity: BackgroundGravity): ImageGravity {
-                return values().find { it.gravity == gravity } ?: CENTER
+                return entries.find { it.gravity == gravity } ?: CENTER
             }
         }
 

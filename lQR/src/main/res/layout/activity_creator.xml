@@ -140,15 +140,17 @@
             android:orientation="vertical">
 
             <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/subpageGroup"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_weight="1"
-                android:id="@+id/subpageGroup"/>
+                android:layout_weight="1" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:tabGravity="start"
+                app:tabMode="scrollable" />
         </LinearLayout>
 
     </com.lollipop.clip.RoundClipLayout>

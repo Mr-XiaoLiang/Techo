@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import com.lollipop.base.ui.BaseActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.*
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.fixInsetsByMargin
@@ -13,7 +13,7 @@ import com.lollipop.qr.BarcodeHelper
 import com.lollipop.techo.R
 import com.lollipop.techo.databinding.ActivityQrCreateBinding
 
-class QrCreateActivity : BaseActivity() {
+class QrCreateActivity : AppCompatActivity() {
 
     companion object {
 
@@ -21,10 +21,10 @@ class QrCreateActivity : BaseActivity() {
         private const val BARCODE_FORMAT = "BARCODE_FORMAT"
 
         fun start(context: Context, info: String, format: BarcodeFormat = BarcodeFormat.QR_CODE) {
-            start<QrCreateActivity>(context) {
-                it.putExtra(BARCODE_INFO, info)
-                it.putExtra(BARCODE_FORMAT, format.code)
-            }
+            context.startActivity(Intent(context, QrCreateActivity::class.java).apply {
+                putExtra(BARCODE_INFO, info)
+                putExtra(BARCODE_FORMAT, format.code)
+            })
         }
     }
 
@@ -38,14 +38,14 @@ class QrCreateActivity : BaseActivity() {
     private val codeFormat: BarcodeFormat
         get() {
             val code = intent.getIntExtra(BARCODE_FORMAT, BarcodeFormat.QR_CODE.code)
-            return BarcodeFormat.values().find { it.code == code } ?: BarcodeFormat.QR_CODE
+            return BarcodeFormat.entries.find { it.code == code } ?: BarcodeFormat.QR_CODE
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.backButton.onClick {
-            notifyBackPress()
+            onBackPressedDispatcher.onBackPressed()
         }
         binding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
     }

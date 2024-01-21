@@ -217,7 +217,7 @@ class TechoEditActivity : HeaderActivity(),
                 mode.update {
                     if (isCreated()) {
                         resultOk { putResultTechoId(it, mode.infoId) }
-                        notifyBackPress()
+                        onBackPressedDispatcher.onBackPressed()
                     }
                 }
                 return true

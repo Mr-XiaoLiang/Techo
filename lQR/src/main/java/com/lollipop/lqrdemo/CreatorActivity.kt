@@ -32,7 +32,6 @@ import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
 import com.lollipop.lqrdemo.creator.QrCreatorHelper
 import com.lollipop.lqrdemo.creator.QrCreatorPreviewDrawable
-import com.lollipop.lqrdemo.creator.subpage.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.background.BackgroundCorner
 import com.lollipop.lqrdemo.creator.background.BackgroundGravity
 import com.lollipop.lqrdemo.creator.background.BackgroundInfo
@@ -45,6 +44,7 @@ import com.lollipop.lqrdemo.creator.subpage.QrAlignmentFragment
 import com.lollipop.lqrdemo.creator.subpage.QrBackgroundFragment
 import com.lollipop.lqrdemo.creator.subpage.QrContentValueFragment
 import com.lollipop.lqrdemo.creator.subpage.QrCornerFragment
+import com.lollipop.lqrdemo.creator.subpage.QrDataPointFragment
 import com.lollipop.lqrdemo.creator.subpage.QrPositionDetectionFragment
 import com.lollipop.lqrdemo.creator.writer.QrWriter
 import com.lollipop.lqrdemo.creator.writer.background.BackgroundWriterLayer
@@ -62,7 +62,7 @@ class CreatorActivity : ColorModeActivity(),
     QrCornerFragment.Callback,
     QrPositionDetectionFragment.Callback,
     QrAlignmentFragment.Callback,
-    QrDataPointFragment.Callback{
+    QrDataPointFragment.Callback {
 
     companion object {
         private const val STATE_QR_VALUE = "STATE_QR_VALUE"
@@ -101,7 +101,7 @@ class CreatorActivity : ColorModeActivity(),
             binding.subpageGroup,
             true
         ) { tab, position ->
-            tab.setText(SubPage.values()[position].tab)
+            tab.setText(SubPage.entries[position].tab)
         }.attach()
         creatorHelper.addContentChangedListener(this)
         creatorHelper.addLoadStatusChangedListener(this)
@@ -377,14 +377,14 @@ class CreatorActivity : ColorModeActivity(),
         fragmentActivity: FragmentActivity,
     ) : FragmentStateAdapter(fragmentActivity) {
 
-        private val pageInfo = SubPage.values()
+        private val pageInfo = SubPage.entries
 
         override fun getItemCount(): Int {
             return pageInfo.size
         }
 
         override fun createFragment(position: Int): Fragment {
-            return pageInfo[position].fragment.newInstance()
+            return pageInfo[position].fragment.getDeclaredConstructor().newInstance()
         }
 
     }
@@ -401,8 +401,8 @@ class CreatorActivity : ColorModeActivity(),
             R.string.tab_position_detection,
             QrPositionDetectionFragment::class.java
         ),
-         ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
-         DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
+        ALIGNMENT(R.string.tab_alignment, QrAlignmentFragment::class.java),
+        DATA_POINT(R.string.tab_data_point, QrDataPointFragment::class.java),
 
     }
 

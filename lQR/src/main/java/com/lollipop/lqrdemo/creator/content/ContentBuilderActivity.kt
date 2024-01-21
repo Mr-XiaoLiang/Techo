@@ -68,7 +68,7 @@ class ContentBuilderActivity : ColorModeActivity() {
             binding.viewPager2,
             true
         ) { tab, position ->
-            tab.setText(SubPage.values()[position].tab)
+            tab.setText(SubPage.entries[position].tab)
         }.attach()
         // 默认是取消的
         setResult(RESULT_CANCELED)
@@ -119,7 +119,7 @@ class ContentBuilderActivity : ColorModeActivity() {
 
     private class PageAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
-        private val data = SubPage.values()
+        private val data = SubPage.entries
 
         override fun getItemCount(): Int {
             return data.size

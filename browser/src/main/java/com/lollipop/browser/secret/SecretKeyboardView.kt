@@ -59,7 +59,7 @@ class SecretKeyboardView @JvmOverloads constructor(
         if (provider == null) {
             return
         }
-        Key.values().forEach { key ->
+        Key.entries.forEach { key ->
             val button = provider.createButton(this, key)
             button.setOnClickListener { onButtonClick(it) }
             addView(button)
@@ -68,10 +68,10 @@ class SecretKeyboardView @JvmOverloads constructor(
 
     private fun onButtonClick(view: View) {
         val indexOfChild = indexOfChild(view)
-        if (indexOfChild < 0 || indexOfChild >= Key.values().size) {
+        if (indexOfChild < 0 || indexOfChild >= Key.entries.size) {
             return
         }
-        val key = Key.values()[indexOfChild]
+        val key = Key.entries[indexOfChild]
         keyButtonClickListener.invoke { it.onKeyButtonClick(key) }
     }
 
@@ -84,7 +84,7 @@ class SecretKeyboardView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (keyButtonProvider == null || childCount < Key.values().size) {
+        if (keyButtonProvider == null || childCount < Key.entries.size) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
             return
         }
@@ -121,7 +121,7 @@ class SecretKeyboardView @JvmOverloads constructor(
         val buttonWidth = stepX - spaceH
         val buttonHeight = stepY - spaceV
 
-        Key.values().forEach {
+        Key.entries.forEach {
             val itemWidth = (it.spanX * stepX - spaceH).toInt()
             val itemHeight = (it.spanY * stepY - spaceV).toInt()
             val x = (it.x * stepX).toInt() + left

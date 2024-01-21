@@ -38,7 +38,7 @@ class HistoryDao(context: Context) : DatabaseHelper(context, DB_NAME, null, VERS
         override val tableName: String = "History"
         override val columns: Array<out ColumnEnum>
             get() {
-                return Column.values()
+                return Column.entries.toTypedArray()
             }
 
         private val SELECT_ALL: String by lazy {

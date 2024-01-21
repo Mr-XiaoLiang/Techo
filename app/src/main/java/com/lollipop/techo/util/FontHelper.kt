@@ -12,7 +12,7 @@ object FontHelper {
     private const val PREFERENCES = "FONT_PREFERENCES"
     private const val KEY_FONT_TYPE = "FONT_TYPE"
 
-    private val fontType = Array(Type.values().size) { FontInfo(Font.None) }
+    private val fontType = Array(Type.entries.size) { FontInfo(Font.None) }
 
     fun setFont(view: TextView, font: Font) {
         if (font == Font.None) {
@@ -43,7 +43,7 @@ object FontHelper {
         }
         try {
             val json = JSONObject(value)
-            val typeArray = Type.values()
+            val typeArray = Type.entries
             for (i in typeArray.indices) {
                 val type = typeArray[i]
                 setFontType(
@@ -63,7 +63,7 @@ object FontHelper {
     }
 
     private fun findFontByTtf(name: String): Font {
-        return Font.values().find { it.ttf == name } ?: Font.None
+        return Font.entries.find { it.ttf == name } ?: Font.None
     }
 
     fun changeFontType(type: Type, font: Font) {
@@ -73,7 +73,7 @@ object FontHelper {
     fun applyChanged(context: Context) {
         val preferences = getPreferences(context)
         val json = JSONObject()
-        val typeArray = Type.values()
+        val typeArray = Type.entries
         for (index in fontType.indices) {
             val type = typeArray[index]
             val pending = fontType[index].pending

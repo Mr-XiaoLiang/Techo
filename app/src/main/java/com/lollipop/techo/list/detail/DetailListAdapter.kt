@@ -18,7 +18,7 @@ class DetailListAdapter(
     private var isInEdit = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val holder = when (TechoItemType.values()[viewType]) {
+        val holder = when (TechoItemType.entries[viewType]) {
             TechoItemType.Title -> TitleInfoHolder.create(parent)
             TechoItemType.Text,
             TechoItemType.Number,

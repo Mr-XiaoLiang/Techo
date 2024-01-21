@@ -3,28 +3,24 @@ package com.lollipop.techo.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.ViewPropertyTransition
-import com.lollipop.base.ui.BaseActivity
-import com.lollipop.base.util.*
+import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.lazyLogD
+import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentPage
-import com.lollipop.pigment.PigmentParse
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.AppUtil
@@ -42,12 +38,6 @@ abstract class HeaderActivity : BaseActivity() {
          * 每次启动都保持不变吧
          */
         private var headerImageUrl = ""
-
-        /**
-         * 当前的涂料颜色
-         * 主题元素的颜色需要用它来进行渲染
-         */
-        private var currentPigment: Pigment? = null
 
     }
 
@@ -82,7 +72,7 @@ abstract class HeaderActivity : BaseActivity() {
             )
         }
         viewBinding.backButton.setOnClickListener {
-            notifyBackPress()
+            onBackPressedDispatcher.onBackPressed()
         }
         viewBinding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
         viewBinding.contentScrollView.fixInsetsByMargin(
@@ -103,10 +93,10 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         viewBinding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
-        viewBinding.backButtonBackground.setBackgroundColor(pigment.primary)
+        viewBinding.backButtonBackground.setBackgroundColor(pigment.primaryColor)
         viewBinding.contentLoadingView.setIndicatorColor(
-            pigment.primary,
-            pigment.secondary,
+            pigment.primaryColor,
+            pigment.secondaryColor,
             pigment.primaryVariant,
             pigment.secondaryVariant
         )
@@ -125,15 +115,6 @@ abstract class HeaderActivity : BaseActivity() {
         if (isBlurHeader != AppUtil.isBlurHeader) {
             isBlurHeader = AppUtil.isBlurHeader
             loadHeader(true)
-        }
-        currentPigment?.let {
-            onDecorationChanged(it)
-        }
-    }
-
-    override fun requestPigment(page: PigmentPage) {
-        currentPigment?.let {
-            page.onDecorationChanged(it)
         }
     }
 
@@ -180,32 +161,6 @@ abstract class HeaderActivity : BaseActivity() {
         if (isBlurHeader) {
             builder = builder.apply(RequestOptions().transform(BlurTransformation.create()))
         }
-        if (currentPigment == null || refreshPigment) {
-            builder = builder.addListener(object : RequestListener<Bitmap> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    e?.printStackTrace()
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Bitmap?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    if (resource != null) {
-                        onHeaderLoaded(resource)
-                    }
-                    return false
-                }
-            })
-        }
         builder.into(viewBinding.headerBackground)
     }
 
@@ -215,16 +170,6 @@ abstract class HeaderActivity : BaseActivity() {
 
     fun resultCanceled(callback: ((Intent) -> Unit)? = null) {
         setResult(Activity.RESULT_CANCELED, Intent().apply { callback?.invoke(this) })
-    }
-
-    private fun onHeaderLoaded(bitmap: Bitmap) {
-        log("onHeaderLoaded")
-        if (currentPigment == null) {
-            PigmentParse.parse(bitmap) {
-                currentPigment = it
-                onDecorationChanged(it)
-            }
-        }
     }
 
     private class AlphaAnimator : ViewPropertyTransition.Animator {

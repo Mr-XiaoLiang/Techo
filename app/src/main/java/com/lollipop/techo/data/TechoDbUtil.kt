@@ -103,7 +103,7 @@ class TechoDbUtil(context: Context) : DatabaseHelper(context, DB_NAME, null, VER
         override val tableName: String = "Flag"
         override val columns: Array<out ColumnEnum>
             get() {
-                return Column.values()
+                return Column.entries.toTypedArray()
             }
 
         enum class Column(override val format: ColumnFormat) : ColumnEnum {
@@ -194,7 +194,7 @@ class TechoDbUtil(context: Context) : DatabaseHelper(context, DB_NAME, null, VER
 
         override val columns: Array<out ColumnEnum>
             get() {
-                return Column.values()
+                return Column.entries.toTypedArray()
             }
 
         enum class Column(override val format: ColumnFormat) : ColumnEnum {

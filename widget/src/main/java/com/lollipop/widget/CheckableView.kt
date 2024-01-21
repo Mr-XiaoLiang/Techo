@@ -67,8 +67,8 @@ class CheckableView(
                     R.styleable.CheckableView_checkStyle,
                     CheckStyle.CIRCULAR.ordinal
                 )
-                if (index in CheckStyle.values().indices) {
-                    defStyle = CheckStyle.values()[index]
+                if (index in CheckStyle.entries.indices) {
+                    defStyle = CheckStyle.entries[index]
                 }
                 setStyle(defStyle)
             }

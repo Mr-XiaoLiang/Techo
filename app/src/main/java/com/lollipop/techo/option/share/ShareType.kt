@@ -65,7 +65,7 @@ enum class ShareType(
 
         fun findByOptionId(id: Int): ShareType? {
             val index = id - BASE_ID
-            val values = values()
+            val values = entries
             if (index in values.indices) {
                 return values[index]
             }

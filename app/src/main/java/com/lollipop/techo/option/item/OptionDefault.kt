@@ -76,7 +76,7 @@ enum class OptionDefault(
 
         fun findByOptionId(id: Int): OptionDefault? {
             val index = id - BASE_ID
-            val values = values()
+            val values = entries
             if (index in values.indices) {
                 return values[index]
             }

@@ -79,7 +79,7 @@ sealed class BarcodeInfo {
     internal open fun resume(json: JSONObject) {
         rawValue = json.optString(INFO_RAW)
         val formatName = json.optString(INFO_BARCODE_FORMAT)
-        format = BarcodeFormat.values().find { it.name == formatName } ?: BarcodeFormat.UNKNOWN
+        format = BarcodeFormat.entries.find { it.name == formatName } ?: BarcodeFormat.UNKNOWN
     }
 
     fun getBarcodeValue(): String {
@@ -506,7 +506,7 @@ sealed class BarcodeInfo {
         override fun resume(json: JSONObject) {
             super.resume(json)
             val typeProto = json.optString(TYPE) ?: ""
-            type = Type.values().find { it.proto == typeProto } ?: Type.UNKNOWN
+            type = Type.entries.find { it.proto == typeProto } ?: Type.UNKNOWN
             address = json.optString(ADDRESS)
             body = json.optString(BODY)
             subject = json.optString(SUBJECT)
@@ -611,7 +611,7 @@ sealed class BarcodeInfo {
         override fun resume(json: JSONObject) {
             super.resume(json)
             val typeProto = json.optString(TYPE) ?: ""
-            type = Type.values().find { it.proto == typeProto } ?: Type.UNKNOWN
+            type = Type.entries.find { it.proto == typeProto } ?: Type.UNKNOWN
             number = json.optString(NUMBER)
         }
 
@@ -713,7 +713,7 @@ sealed class BarcodeInfo {
             super.resume(json)
             val typeProto = json.optString(ENCRYPTION_TYPE) ?: ""
             encryptionType =
-                EncryptionType.values().find { it.proto == typeProto } ?: EncryptionType.OPEN
+                EncryptionType.entries.find { it.proto == typeProto } ?: EncryptionType.OPEN
             password = json.optString(PASSWORD) ?: ""
             ssid = json.optString(SSID) ?: ""
             username = json.optString(USERNAME) ?: ""
@@ -816,7 +816,7 @@ sealed class BarcodeInfo {
                 val typeProto = jsonObject.optString(TYPE) ?: ""
                 val linesArray = jsonObject.optJSONArray(LINES) ?: JSONArray()
                 return Address(
-                    type = Type.values().find { it.proto == typeProto } ?: Type.UNKNOWN,
+                    type = Type.entries.find { it.proto == typeProto } ?: Type.UNKNOWN,
                     lines = Array(linesArray.length()) { linesArray.optString(it) ?: "" }
                 )
             }
@@ -1012,8 +1012,8 @@ internal object BarcodeResultBuilder {
     ): BarcodeInfo.Wifi {
         val wifi = code.wifi
         return BarcodeInfo.Wifi().apply {
-            encryptionType = BarcodeInfo.Wifi.EncryptionType.values()
-                .findByCode(wifi?.encryptionType) {
+            encryptionType =
+                BarcodeInfo.Wifi.EncryptionType.entries.findByCode(wifi?.encryptionType) {
                     BarcodeInfo.Wifi.EncryptionType.OPEN
                 }
             password = wifi?.password ?: ""
@@ -1147,7 +1147,7 @@ internal object BarcodeResultBuilder {
 
     private fun createPhoneBy(phone: Barcode.Phone?): BarcodeInfo.Phone {
         return BarcodeInfo.Phone().apply {
-            type = BarcodeInfo.Phone.Type.values().findByCode(phone?.type) {
+            type = BarcodeInfo.Phone.Type.entries.findByCode(phone?.type) {
                 BarcodeInfo.Phone.Type.UNKNOWN
             }
             number = phone?.number ?: ""
@@ -1170,7 +1170,7 @@ internal object BarcodeResultBuilder {
         email: Barcode.Email?,
     ): BarcodeInfo.Email {
         return BarcodeInfo.Email().apply {
-            type = BarcodeInfo.Email.Type.values().findByCode(email?.type) {
+            type = BarcodeInfo.Email.Type.entries.findByCode(email?.type) {
                 BarcodeInfo.Email.Type.UNKNOWN
             }
             address = email?.address ?: ""
@@ -1185,8 +1185,9 @@ internal object BarcodeResultBuilder {
             if (it != null) {
                 result.add(
                     BarcodeInfo.Address(
-                        BarcodeInfo.Address.Type.values()
-                            .findByCode(it.type) { BarcodeInfo.Address.Type.UNKNOWN },
+                        BarcodeInfo.Address.Type.entries.findByCode(it.type) {
+                            BarcodeInfo.Address.Type.UNKNOWN
+                        },
                         it.addressLines
                     )
                 )
@@ -1195,7 +1196,7 @@ internal object BarcodeResultBuilder {
         return result
     }
 
-    private inline fun <reified T : BarcodeInfo.KeyEnum> Array<T>.findByCode(
+    private inline fun <reified T : BarcodeInfo.KeyEnum> Iterable<T>.findByCode(
         code: Int?,
         def: () -> T,
     ): T {
@@ -1211,7 +1212,7 @@ internal object BarcodeResultBuilder {
 
     private fun Barcode.findFormat(): BarcodeFormat {
         val code = this.format
-        BarcodeFormat.values().forEach {
+        BarcodeFormat.entries.forEach {
             if (it.code == code) {
                 return it
             }

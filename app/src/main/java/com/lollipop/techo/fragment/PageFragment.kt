@@ -3,14 +3,13 @@ package com.lollipop.techo.fragment
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import com.lollipop.base.ui.BaseFragment
 import com.lollipop.base.util.onClick
 
 open class PageFragment : BaseFragment() {
 
     protected fun bindBackButton(view: View) {
         view.onClick {
-            notifyBackPress()
+            notifyBackPressed()
         }
     }
 

@@ -15,11 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
-import com.lollipop.base.util.*
+import com.lollipop.base.util.bind
+import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.tryUse
+import com.lollipop.base.util.tryWith
 import com.lollipop.palette.ColorHistoryHelper
 import com.lollipop.palette.ColorWheelView
 import com.lollipop.pigment.Pigment
@@ -43,7 +47,8 @@ class RichTextOptionFragment : PageFragment(),
 
     companion object {
 
-        val LAUNCHER: Class<out SingleFragmentActivity.LaunchContract<Request, Result>> = ActivityLauncherImpl::class.java
+        val LAUNCHER: Class<out SingleFragmentActivity.LaunchContract<Request, Result>> =
+            ActivityLauncherImpl::class.java
 
         private const val ARG_INFO_JSON = "ARG_INFO_JSON"
 
@@ -173,7 +178,7 @@ class RichTextOptionFragment : PageFragment(),
         binding.textSelectorScrollBar.addListener(::scrollTextSelector)
         binding.doneBtn.setOnClickListener {
             setResult()
-            notifyBackPress()
+            notifyBackPressed()
         }
         with(binding.palettePresetListView) {
             layoutManager = LinearLayoutManager(context)
@@ -270,11 +275,11 @@ class RichTextOptionFragment : PageFragment(),
         super.onDecorationChanged(pigment)
         tryUse(binding) {
             it.doneBtn.tintByNotObvious(pigment)
-            it.textSelectorScrollBar.color = pigment.secondary
-            it.fontSizeSlider.thumbTintList = ColorStateList.valueOf(pigment.secondary)
+            it.textSelectorScrollBar.color = pigment.secondaryColor
+            it.fontSizeSlider.thumbTintList = ColorStateList.valueOf(pigment.secondaryColor)
             it.fontSizeSlider.trackTintList = ColorStateList.valueOf(pigment.secondaryVariant)
         }
-        selectedHelperPrinter?.setColor(pigment.secondary.changeAlpha(0.4F))
+        selectedHelperPrinter?.setColor(pigment.secondaryColor.changeAlpha(0.4F))
     }
 
     private fun onStyleCheckedIdsChanged(checkedIds: List<Int>) {
@@ -297,24 +302,31 @@ class RichTextOptionFragment : PageFragment(),
             binding.fontSize12Button.id -> {
                 12
             }
+
             binding.fontSize14Button.id -> {
                 14
             }
+
             binding.fontSize16Button.id -> {
                 16
             }
+
             binding.fontSize18Button.id -> {
                 18
             }
+
             binding.fontSize22Button.id -> {
                 22
             }
+
             binding.fontSize24Button.id -> {
                 24
             }
+
             binding.fontSize26Button.id -> {
                 26
             }
+
             else -> {
                 return
             }
@@ -351,22 +363,28 @@ class RichTextOptionFragment : PageFragment(),
             R.id.menuSelector -> {
                 binding.selectorPanel.isVisible = true
             }
+
             R.id.menuLayer -> {
                 binding.layerPanel.isVisible = true
             }
+
             R.id.menuFontSize -> {
                 binding.textSizePanel.isVisible = true
             }
+
             R.id.menuRichStyle -> {
                 binding.richOptionPanel.isVisible = true
             }
+
             R.id.menuPalette -> {
                 binding.palettePanel.isVisible = true
                 colorHistoryAdapter.notifyDataSetChanged()
             }
+
             R.id.menuDone -> {
                 binding.donePanel.isVisible = true
             }
+
             else -> {
                 return false
             }

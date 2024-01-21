@@ -37,7 +37,7 @@ class PhotoGridLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             val typedValue = context.obtainStyledAttributes(attributeSet, R.styleable.PhotoGridLayout)
             spaceWidth = typedValue.getDimensionPixelSize(R.styleable.PhotoGridLayout_spaceWidth, 0)
             val styleValue = typedValue.getInt(R.styleable.PhotoGridLayout_layoutStyle, Style.Playbill.ordinal)
-            layoutStyle = Style.values()[styleValue % Style.values().size]
+            layoutStyle = Style.entries[styleValue % Style.entries.size]
             typedValue.recycle()
         }
         if (isInEditMode) {

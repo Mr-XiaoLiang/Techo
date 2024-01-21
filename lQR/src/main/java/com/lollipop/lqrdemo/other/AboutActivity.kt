@@ -32,7 +32,7 @@ class AboutActivity : ColorModeActivity() {
 
         val richFlow = RichText.startRichFlow()
         val linkColor = Color.BLUE // PigmentWallpaperCenter.pigment?.secondaryColor ?: Color.BLUE
-        Icons.values().forEachIndexed { index, icons ->
+        Icons.entries.forEachIndexed { index, icons ->
             if (index > 0) {
                 richFlow.addInfo(", ")
             }

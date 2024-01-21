@@ -46,8 +46,8 @@ class RoundBackgroundView @JvmOverloads constructor(
             )
             val colorValue = typeArray.getColor(R.styleable.RoundBackgroundView_color, Color.WHITE)
 
-            val roundType = if (roundTypeValue >= 0 && roundTypeValue < RoundType.values().size) {
-                RoundType.values()[roundTypeValue]
+            val roundType = if (roundTypeValue >= 0 && roundTypeValue < RoundType.entries.size) {
+                RoundType.entries[roundTypeValue]
             } else {
                 SMALLER
             }

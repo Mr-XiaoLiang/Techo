@@ -5,9 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.lollipop.base.request.PermissionFlow
-import com.lollipop.base.request.RequestLauncher
-import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.onClick
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage

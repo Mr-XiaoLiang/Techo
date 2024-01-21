@@ -5,7 +5,6 @@ import android.util.Size
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
@@ -19,7 +18,7 @@ import com.lollipop.qr.comm.BarcodeResult
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.view.CodeSelectionView
 import com.lollipop.qr.view.FocusAnimationHelper
-import com.lollipop.techo.BuildConfig
+import com.lollipop.techo.activity.BaseActivity
 import com.lollipop.techo.databinding.ActivityQrScanningBinding
 
 class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListener {
@@ -60,7 +59,7 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
         }
 
         binding.backButton.onClick {
-            notifyBackPress()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         binding.resultImageView.addOnCodeSelectedListener(this)

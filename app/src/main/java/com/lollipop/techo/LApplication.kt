@@ -2,9 +2,9 @@ package com.lollipop.techo
 
 import android.app.Activity
 import android.app.Application
-import com.lollipop.base.request.PermissionFlow
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentParse
+import com.lollipop.pigment.PigmentActivityHelper
+import com.lollipop.pigment.PigmentWallpaperCenter
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.FontHelper
 import com.lollipop.techo.view.PermissionFeedbackDialog
@@ -17,31 +17,31 @@ class LApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        PermissionFlow.globalRationaleCallback = PermissionRationaleCallback()
         FontHelper.init(this)
-        PigmentParse.init(
-            Pigment(
-                primary = getColor(R.color.brand_4),
-                primaryVariant = getColor(R.color.brand_7),
-                onPrimaryTitle = getColor(R.color.gray_1),
-                onPrimaryBody = getColor(R.color.gray_2),
-                secondary = getColor(R.color.brand_4),
-                secondaryVariant = getColor(R.color.brand_7),
-                onSecondaryTitle = getColor(R.color.gray_1),
-                onSecondaryBody = getColor(R.color.gray_2)
-            )
-        )
         AppUtil.init(this)
+        PigmentWallpaperCenter.init(this)
+        val activityHelper = PigmentActivityHelper { onBackground ->
+            if (!onBackground) {
+                fetchPigment()
+            }
+        }
+        PigmentWallpaperCenter.registerPigment(activityHelper)
+        registerActivityLifecycleCallbacks(activityHelper)
     }
 
-    class PermissionRationaleCallback : PermissionFlow.RationaleCallback {
-        override fun showRationale(
-            activity: Activity,
-            permissions: String,
-            feedback: PermissionFlow.PermissionFeedback
-        ) {
-            PermissionFeedbackDialog.showByPermission(activity, permissions, feedback)
-        }
+    fun fetchPigment() {
+        updateDefaultFigment()
+        PigmentWallpaperCenter.fetch(this)
+    }
+
+    private fun updateDefaultFigment() {
+        PigmentWallpaperCenter.default(
+            Pigment.valueOf(
+                0xFF00B78D.toInt(),
+                0xFFB75F00.toInt(),
+                Pigment.getBlendByNightMode(this)
+            )
+        )
     }
 
 }
