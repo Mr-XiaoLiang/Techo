@@ -1,21 +1,24 @@
 package com.lollipop.techo.edit
 
-import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
-import com.lollipop.base.request.RequestLauncher
+import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.edit.base.EditDelegate
-import com.lollipop.techo.edit.impl.*
+import com.lollipop.techo.edit.impl.CheckBoxEditDelegate
+import com.lollipop.techo.edit.impl.NumberEditDelegate
+import com.lollipop.techo.edit.impl.PhotoEditDelegate
+import com.lollipop.techo.edit.impl.SplitEditDelegate
+import com.lollipop.techo.edit.impl.TextEditDelegate
+import com.lollipop.techo.edit.impl.TitleEditDelegate
 
 /**
  * @author lollipop
  * @date 2021/12/18 20:13
  */
 class EditManager(
-    private val activity: Activity,
-    private val launcher: RequestLauncher,
+    private val activity: AppCompatActivity,
     private val container: ViewGroup
 ) : PanelController {
 
@@ -45,24 +48,31 @@ class EditManager(
             is TechoItem.Photo -> {
                 findDelegate<PhotoEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.Text -> {
                 findDelegate<TextEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.CheckBox -> {
                 findDelegate<CheckBoxEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.Number -> {
                 findDelegate<NumberEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.Split -> {
                 findDelegate<SplitEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.Title -> {
                 findDelegate<TitleEditDelegate>().applyDelegate(index, info, listener).open(info)
             }
+
             is TechoItem.Recording -> {
                 // TODO()
             }
+
             is TechoItem.Vcr -> {
                 // TODO()
             }
@@ -103,9 +113,11 @@ class EditManager(
                     it.view != view -> {
                         removedList.add(it)
                     }
+
                     it.view.parent != container -> {
                         it.view.tryRemoveFromParent()
                     }
+
                     it.view.parent == container -> {
                         if (targetPanel == null) {
                             targetPanel = it
@@ -177,10 +189,8 @@ class EditManager(
         tryClosePanel(editDelegate)
     }
 
-    override val context: Activity
+    override val context: AppCompatActivity
         get() = activity
-    override val requestLauncher: RequestLauncher
-        get() = launcher
 
     private fun tryClosePanel(editDelegate: EditDelegate<*>?) {
         editDelegate?.close()

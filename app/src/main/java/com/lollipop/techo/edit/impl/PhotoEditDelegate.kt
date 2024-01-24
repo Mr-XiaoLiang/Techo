@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lollipop.base.request.startPermissionFlow
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onClick
@@ -19,7 +18,6 @@ import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.ItemPhotoEditBinding
 import com.lollipop.techo.databinding.PanelPhotoSelectBinding
-import com.lollipop.techo.edit.base.EditDelegate
 import com.lollipop.techo.edit.base.TopEditDelegate
 import com.lollipop.techo.util.load
 

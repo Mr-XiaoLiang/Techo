@@ -10,13 +10,13 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.ui.BaseActivity
 import com.lollipop.base.util.*
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.recorder.RecorderHelper
 import com.lollipop.techo.R
+import com.lollipop.techo.activity.BaseActivity
 import com.lollipop.techo.databinding.ActivityRecorderBinding
 import com.lollipop.techo.drawable.CircularProgressDrawable
 import com.lollipop.techo.util.AnimationHelper

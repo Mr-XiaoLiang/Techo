@@ -3,6 +3,8 @@ package com.lollipop.techo.edit.base
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.util.onClick
@@ -12,6 +14,7 @@ import com.lollipop.pigment.PigmentProvider
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.edit.PanelController
 import com.lollipop.techo.util.AnimationHelper
+import com.lollipop.techo.util.permission.PermissionLauncher
 
 /**
  * @author lollipop
@@ -41,11 +44,6 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
     protected val context: Activity?
         get() {
             return controller?.context
-        }
-
-    protected val requestLauncher: RequestLauncher?
-        get() {
-            return controller?.requestLauncher
         }
 
     protected val isAnimationOpened: Boolean
@@ -83,7 +81,6 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
         isChangedValue = false
         panelView?.post {
             panelView?.isVisible = true
-            pigmentProvider?.requestPigment(this)
             onOpen(info)
             doAnimation(true)
         }
@@ -236,17 +233,13 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
         controller?.callClose(this)
     }
 
-    protected fun startPermissionFlow(callback: (PermissionFlow?) -> Unit) {
-        val activity = context
-        if (activity == null) {
-            callback(null)
-            return
-        }
-        if (requestLauncher == null && activity !is RequestLauncher) {
-            callback(null)
-            return
-        }
-        callback(activity.startPermissionFlow(requestLauncher))
+    protected fun createPermissionLauncher(
+        activity: AppCompatActivity,
+        @StringRes
+        rationaleMessage: Int,
+        callback: (Boolean) -> Unit
+    ): PermissionLauncher {
+        return PermissionLauncher.create(activity, rationaleMessage, callback)
     }
 
 }
