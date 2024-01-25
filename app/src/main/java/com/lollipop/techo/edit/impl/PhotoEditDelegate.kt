@@ -20,6 +20,7 @@ import com.lollipop.techo.databinding.ItemPhotoEditBinding
 import com.lollipop.techo.databinding.PanelPhotoSelectBinding
 import com.lollipop.techo.edit.base.TopEditDelegate
 import com.lollipop.techo.util.load
+import com.lollipop.techo.util.permission.PermissionInfo
 
 /**
  * @author lollipop
@@ -36,6 +37,13 @@ class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
     private val adapter by lazy {
         PhotoAdapter(photoManager, ::onPhotoClick, ::getSelectedIndex)
     }
+
+    override val permissions: Array<PermissionInfo> = arrayOf(
+        PermissionInfo(
+            PhotoManager.READ_PERMISSION,
+            R.string.permission_rationale_read_external_storage
+        )
+    )
 
     override val contentGroup: View?
         get() {
@@ -70,24 +78,7 @@ class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
             onPhotoLoadError()
             return
         }
-        if (PhotoManager.checkPermission(activity)) {
-            loadPhotos(activity)
-        } else {
-            startPermissionFlow { flow ->
-                if (flow == null) {
-                    onPermissionDenied()
-                } else {
-                    flow.permissionIs(PhotoManager.READ_PERMISSION)
-                        .request { result ->
-                            if (result.isGranted(PhotoManager.READ_PERMISSION)) {
-                                loadPhotos(activity)
-                            } else {
-                                onPermissionDenied()
-                            }
-                        }
-                }
-            }
-        }
+        loadPhotos(activity)
     }
 
     override fun onAnimationUpdate(progress: Float) {
@@ -129,22 +120,31 @@ class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
             onPhotoLoaded()
             return
         }
-        activity.startPermissionFlow()
-            .permissionIs(PhotoManager.READ_PERMISSION)
-            .request {
-                doAsync({
-                    onUI {
-                        onPhotoLoadError()
-                    }
-                }) {
-                    context?.let { c ->
-                        photoManager.refresh(c)
-                        onUI {
-                            onPhotoLoaded()
-                        }
-                    }
-                }
+        val launcher = findLauncher(PhotoManager.READ_PERMISSION)
+        if (launcher == null) {
+            onPermissionDenied()
+            return
+        }
+        launcher.request {
+            if (it) {
+                load(activity)
+            } else {
+                onPermissionDenied()
             }
+        }
+    }
+
+    private fun load(activity: Activity) {
+        doAsync({
+            onUI {
+                onPhotoLoadError()
+            }
+        }) {
+            photoManager.refresh(activity)
+            onUI {
+                onPhotoLoaded()
+            }
+        }
     }
 
     private fun onPermissionDenied() {

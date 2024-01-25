@@ -14,7 +14,7 @@ class PermissionLauncher(
     activitySrc: AppCompatActivity,
     @StringRes
     private val rationaleMessage: Int,
-    private val onResult: (Boolean) -> Unit
+    private val permission: String,
 ) {
 
     companion object {
@@ -22,42 +22,50 @@ class PermissionLauncher(
             activity: AppCompatActivity,
             @StringRes
             rationaleMessage: Int,
-            callback: (Boolean) -> Unit
+            permission: String
         ): PermissionLauncher {
-            return PermissionLauncher(activity, rationaleMessage, callback)
+            return PermissionLauncher(activity, rationaleMessage, permission)
         }
     }
 
+    private var onResultCallback: ((Boolean) -> Unit)? = null
+
     private val requestPermissionLauncher = activitySrc.registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
-        onResult
+        ::onRequestResult
     )
 
     private val activityReference = WeakReference(activitySrc)
 
-    fun request(permissions: String) {
+    private fun onRequestResult(boolean: Boolean) {
+        onResultCallback?.invoke(boolean)
+        onResultCallback = null
+    }
+
+    fun request(callback: (Boolean) -> Unit) {
         val activity = activityReference.get() ?: return
+        this.onResultCallback = callback
         when {
-            isGranted(activity, permissions) -> {
-                onResult(true)
+            isGranted(activity) -> {
+                onRequestResult(true)
             }
 
-            ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions) -> {
-                showRationale(activity, permissions)
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, permission) -> {
+                showRationale(activity)
             }
 
             else -> {
-                launch(permissions)
+                launch()
             }
         }
     }
 
-    private fun showRationale(activity: AppCompatActivity, permissions: String) {
+    private fun showRationale(activity: AppCompatActivity) {
         AlertDialog.Builder(activity)
             .setMessage(rationaleMessage)
             .setPositiveButton(R.string.granted) { dialog, _ ->
                 dialog.dismiss()
-                launch(permissions)
+                launch()
             }
             .setNegativeButton(R.string.denied) { dialog, _ ->
                 dialog.dismiss()
@@ -65,15 +73,15 @@ class PermissionLauncher(
             .show()
     }
 
-    private fun isGranted(activity: AppCompatActivity, permissions: String): Boolean {
+    private fun isGranted(activity: AppCompatActivity): Boolean {
         return ContextCompat.checkSelfPermission(
             activity,
-            permissions
+            permission
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun launch(permissions: String) {
-        requestPermissionLauncher.launch(permissions)
+    private fun launch() {
+        requestPermissionLauncher.launch(permission)
     }
 
 }

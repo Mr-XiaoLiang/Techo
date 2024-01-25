@@ -12,15 +12,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.util.*
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.base.util.isCreated
+import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
+import com.lollipop.base.util.registerResult
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TechoItemType
-import com.lollipop.techo.data.TechoItemType.*
+import com.lollipop.techo.data.TechoItemType.CheckBox
+import com.lollipop.techo.data.TechoItemType.Number
+import com.lollipop.techo.data.TechoItemType.Photo
+import com.lollipop.techo.data.TechoItemType.Recording
+import com.lollipop.techo.data.TechoItemType.Split
+import com.lollipop.techo.data.TechoItemType.Text
+import com.lollipop.techo.data.TechoItemType.Vcr
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
@@ -106,6 +116,7 @@ class TechoEditActivity : HeaderActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         floatingBinding.floatingButtonPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        editManager.initPanel()
         initContentView()
         initMenuBtn()
         initData()
@@ -203,6 +214,7 @@ class TechoEditActivity : HeaderActivity(),
                     is ExtendedFloatingActionButton -> {
                         it.tint(pigment)
                     }
+
                     is FloatingActionButton -> {
                         it.tint(pigment)
                     }
@@ -273,18 +285,23 @@ class TechoEditActivity : HeaderActivity(),
             is TechoItem.Number -> {
                 richTextOptionLauncher.launch(RichTextOptionFragment.Request(adapterPosition, item))
             }
+
             is TechoItem.Photo -> {
                 // TODO()
             }
+
             is TechoItem.Split -> {
                 // TODO()
             }
+
             is TechoItem.Title -> {
                 // TODO()
             }
+
             is TechoItem.Recording -> {
                 // TODO()
             }
+
             is TechoItem.Vcr -> {
                 // TODO()
             }

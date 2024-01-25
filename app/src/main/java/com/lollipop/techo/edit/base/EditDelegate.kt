@@ -3,8 +3,7 @@ package com.lollipop.techo.edit.base
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.CallSuper
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.util.onClick
@@ -14,6 +13,7 @@ import com.lollipop.pigment.PigmentProvider
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.edit.PanelController
 import com.lollipop.techo.util.AnimationHelper
+import com.lollipop.techo.util.permission.PermissionInfo
 import com.lollipop.techo.util.permission.PermissionLauncher
 
 /**
@@ -27,6 +27,10 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
     private var panelView: View? = null
 
     private var currentInfo: T? = null
+
+    override var currentPigment: Pigment? = null
+
+    open val permissions: Array<PermissionInfo> = emptyArray()
 
     private val animationHelper = AnimationHelper(onUpdate = ::onAnimationUpdate).apply {
         onStart {
@@ -86,6 +90,10 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
         }
     }
 
+    protected fun findLauncher(permission: String): PermissionLauncher? {
+        return controller?.findLauncher(this, permission)
+    }
+
     fun close() {
         onClose()
         this.controller = null
@@ -114,7 +122,9 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
 
     protected open fun onViewCreated(view: View) {}
 
+    @CallSuper
     override fun onDecorationChanged(pigment: Pigment) {
+        currentPigment = pigment
     }
 
     protected open fun onOpen(info: T) {}
@@ -231,15 +241,6 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
 
     fun callClose() {
         controller?.callClose(this)
-    }
-
-    protected fun createPermissionLauncher(
-        activity: AppCompatActivity,
-        @StringRes
-        rationaleMessage: Int,
-        callback: (Boolean) -> Unit
-    ): PermissionLauncher {
-        return PermissionLauncher.create(activity, rationaleMessage, callback)
     }
 
 }

@@ -12,6 +12,8 @@ import com.lollipop.techo.edit.impl.PhotoEditDelegate
 import com.lollipop.techo.edit.impl.SplitEditDelegate
 import com.lollipop.techo.edit.impl.TextEditDelegate
 import com.lollipop.techo.edit.impl.TitleEditDelegate
+import com.lollipop.techo.util.permission.PermissionLauncher
+import com.lollipop.techo.util.permission.PermissionLauncherManager
 
 /**
  * @author lollipop
@@ -22,6 +24,17 @@ class EditManager(
     private val container: ViewGroup
 ) : PanelController {
 
+    companion object {
+        private val PANEL_LIST: Array<Class<out EditDelegate<*>>> = arrayOf(
+            PhotoEditDelegate::class.java,
+            TextEditDelegate::class.java,
+            CheckBoxEditDelegate::class.java,
+            NumberEditDelegate::class.java,
+            SplitEditDelegate::class.java,
+            TitleEditDelegate::class.java
+        )
+    }
+
     private val editDelegateList = ArrayList<EditDelegate<*>>()
     private val panelViewMap = ArrayList<PanelView>()
 
@@ -29,6 +42,19 @@ class EditManager(
     private var editItemIndex = 0
     private var editInfo: TechoItem? = null
     private var onEditPanelCloseListener: OnEditPanelCloseListener? = null
+
+    private val permissionLauncherManager = PermissionLauncherManager(activity)
+
+    fun initPanel() {
+        editDelegateList.clear()
+        PANEL_LIST.forEach { panelClass ->
+            val panel = panelClass.getDeclaredConstructor().newInstance()
+            panel.permissions.forEach { info ->
+                permissionLauncherManager.register(panelClass, info.permission, info.rationale)
+            }
+        }
+        permissionLauncherManager.registerLauncher()
+    }
 
     fun openEditPanel(index: Int = 0, info: TechoItem, listener: OnEditPanelCloseListener?) {
         closePanel()
@@ -171,7 +197,7 @@ class EditManager(
                 return it
             }
         }
-        val newDelegate = T::class.java.newInstance()
+        val newDelegate = T::class.java.getDeclaredConstructor().newInstance()
         editDelegateList.add(newDelegate)
         return newDelegate
     }
@@ -191,6 +217,10 @@ class EditManager(
 
     override val context: AppCompatActivity
         get() = activity
+
+    override fun findLauncher(who: Any, permission: String): PermissionLauncher? {
+        return permissionLauncherManager.findLauncher(who::class.java, permission)
+    }
 
     private fun tryClosePanel(editDelegate: EditDelegate<*>?) {
         editDelegate?.close()

@@ -1,8 +1,8 @@
 package com.lollipop.techo.edit
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.techo.edit.base.EditDelegate
+import com.lollipop.techo.util.permission.PermissionLauncher
 
 /**
  * @author lollipop
@@ -13,5 +13,7 @@ interface PanelController {
     fun callClose(editDelegate: EditDelegate<*>)
 
     val context: AppCompatActivity
+
+    fun findLauncher(who: Any, permission: String): PermissionLauncher?
 
 }
