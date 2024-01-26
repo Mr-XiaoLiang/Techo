@@ -29,15 +29,39 @@ class PermissionLauncherManager(
         while (pendingRequester.isNotEmpty()) {
             val requester = pendingRequester.removeFirst()
             val store = launcherMap.get(requester.who)
-            store.put(
-                requester.permission,
-                PermissionLauncher.create(
-                    activity,
-                    requester.rationaleMessage,
-                    requester.permission
-                )
-            )
+            when (requester) {
+                is PermissionRequester.Single -> {
+                    registerSingleLauncher(store, requester.permission, requester)
+                }
+
+                is PermissionRequester.Multiple -> {
+                    if (requester.permissions.size == 1) {
+                        registerSingleLauncher(store, requester.permissions[0], requester)
+                    } else if (requester.permissions.size > 1) {
+                        val key = StringBuilder()
+                        for (permission in requester.permissions) {
+                            key.append(permission)
+                        }
+                        // TODO 这个Key怎么保证拼接的顺序和读取的时候顺序一致？Map怎么定位呢？
+                    }
+                }
+            }
         }
+    }
+
+    private fun registerSingleLauncher(
+        store: LauncherStore,
+        permission: String,
+        requester: PermissionRequester
+    ) {
+        store.put(
+            permission,
+            PermissionLauncher.Single(
+                activity,
+                requester.rationaleMessage,
+                permission
+            )
+        )
     }
 
     private class LauncherStore {
@@ -70,11 +94,27 @@ class PermissionLauncherManager(
 
     }
 
-    data class PermissionRequester(
-        val permission: String,
+    sealed class PermissionRequester(
         @StringRes
         val rationaleMessage: Int,
         val who: Any
-    )
+    ) {
+
+        class Single(
+            @StringRes
+            rationaleMessage: Int,
+            who: Any,
+            val permission: String,
+        ) : PermissionRequester(rationaleMessage, who)
+
+        class Multiple(
+            @StringRes
+            rationaleMessage: Int,
+            who: Any,
+            val permissions: Array<String>,
+            val anyOne: Boolean
+        ) : PermissionRequester(rationaleMessage, who)
+
+    }
 
 }
