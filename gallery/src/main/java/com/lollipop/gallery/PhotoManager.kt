@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -25,7 +26,26 @@ class PhotoManager private constructor(
 ) : List<Photo> by dataList {
 
     companion object {
-        const val READ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
+        fun getPermissions(): Array<String> {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                    return arrayOf(
+                        Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    )
+                }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                    return arrayOf(
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    )
+                }
+
+                else -> {
+                    return arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
+            }
+        }
 
         private const val PHOTO_DIR = "my_photo"
 
@@ -91,16 +111,39 @@ class PhotoManager private constructor(
         }
 
         fun checkPermission(context: Context): Boolean {
-            return ContextCompat.checkSelfPermission(
-                context, READ_PERMISSION
-            ) == PackageManager.PERMISSION_GRANTED
+            val permissions = getPermissions()
+            for (permission in permissions) {
+                if (ContextCompat.checkSelfPermission(
+                        context, permission
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun checkPermission(map: Map<String, Boolean>): Boolean {
+            val permissions = getPermissions()
+            for (permission in permissions) {
+                if (map[permission] == true) {
+                    return true
+                }
+            }
+            return false
         }
     }
 
     var isMediaStoreChanged = true
 
     fun shouldShowPermissionRationale(activity: AppCompatActivity): Boolean {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity, READ_PERMISSION)
+        val permissions = getPermissions()
+        for (permission in permissions) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                return true
+            }
+        }
+        return false
     }
 
     /**
