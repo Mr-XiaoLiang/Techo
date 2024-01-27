@@ -14,37 +14,52 @@ class PermissionLauncherManager(
 
     fun register(
         who: Any,
-        permission: String,
-        @StringRes rationale: Int
+        permissions: Array<String>,
+        @StringRes rationale: Int,
+        anyOne: Boolean = true
     ): PermissionLauncherManager {
-        pendingRequester.addLast(PermissionRequester(permission, rationale, who))
+        if (permissions.isEmpty()) {
+            return this
+        }
+        pendingRequester.addLast(
+            PermissionRequester(
+                permissions = permissions,
+                rationaleMessage = rationale,
+                who = who,
+                anyOne = anyOne
+            )
+        )
         return this
     }
 
-    fun findLauncher(who: Any, permission: String): PermissionLauncher? {
-        return launcherMap.get(who).find(permission)
+    fun findLauncher(who: Any, permissions: Array<String>): PermissionLauncher? {
+        return launcherMap.get(who).find(permissions)
     }
 
     fun registerLauncher() {
         while (pendingRequester.isNotEmpty()) {
             val requester = pendingRequester.removeFirst()
             val store = launcherMap.get(requester.who)
-            when (requester) {
-                is PermissionRequester.Single -> {
-                    registerSingleLauncher(store, requester.permission, requester)
-                }
 
-                is PermissionRequester.Multiple -> {
-                    if (requester.permissions.size == 1) {
-                        registerSingleLauncher(store, requester.permissions[0], requester)
-                    } else if (requester.permissions.size > 1) {
-                        val key = StringBuilder()
-                        for (permission in requester.permissions) {
-                            key.append(permission)
-                        }
-                        // TODO 这个Key怎么保证拼接的顺序和读取的时候顺序一致？Map怎么定位呢？
+            if (requester.permissions.size == 1) {
+                registerSingleLauncher(store, requester.permissions[0], requester)
+            } else if (requester.permissions.size > 1) {
+                store.put(
+                    requester.permissions,
+                    if (requester.anyOne) {
+                        PermissionLauncher.MultipleByOr(
+                            activity,
+                            requester.rationaleMessage,
+                            requester.permissions
+                        )
+                    } else {
+                        PermissionLauncher.MultipleByAnd(
+                            activity,
+                            requester.rationaleMessage,
+                            requester.permissions
+                        )
                     }
-                }
+                )
             }
         }
     }
@@ -66,13 +81,69 @@ class PermissionLauncherManager(
 
     private class LauncherStore {
         private val launcherMap = HashMap<String, PermissionLauncher>()
+        private val launcherList = ArrayList<LauncherMultipleInfo>()
 
         fun find(permission: String): PermissionLauncher? {
+            if (permission.isBlank()) {
+                return null
+            }
             return launcherMap[permission]
         }
 
+        fun find(permissions: Array<String>): PermissionLauncher? {
+            val count = permissions.size
+            if (count < 1) {
+                return null
+            }
+            if (count == 1) {
+                return find(permissions[0])
+            }
+            val permissionsSet = HashSet<String>()
+            permissionsSet.addAll(permissions)
+            for (info in launcherList) {
+                if (arrayEquals(permissionsSet, info.permissions)) {
+                    return info.launcher
+                }
+            }
+            return null
+        }
+
+        private fun arrayEquals(array1: Set<String>, array2: Set<String>): Boolean {
+            if (array1.size != array2.size) {
+                // 长度不一样，就直接忽略
+                return false
+            }
+            for (str in array1) {
+                if (!array2.contains(str)) {
+                    return false
+                }
+            }
+            return true
+        }
+
         fun put(permission: String, launcher: PermissionLauncher) {
+            if (permission.isBlank()) {
+                return
+            }
             launcherMap[permission] = launcher
+        }
+
+        fun put(permissions: Array<String>, launcher: PermissionLauncher) {
+            if (permissions.isEmpty()) {
+                return
+            }
+            if (permissions.size == 1) {
+                put(permissions[0], launcher)
+                return
+            }
+            val permissionsSet = HashSet<String>()
+            permissionsSet.addAll(permissions)
+            if (permissionsSet.size == 1) {
+                val array = permissionsSet.toTypedArray()
+                put(array[0], launcher)
+                return
+            }
+            launcherList.add(LauncherMultipleInfo(permissionsSet, launcher))
         }
 
     }
@@ -94,27 +165,17 @@ class PermissionLauncherManager(
 
     }
 
-    sealed class PermissionRequester(
+    private class LauncherMultipleInfo(
+        val permissions: Set<String>,
+        val launcher: PermissionLauncher
+    )
+
+    class PermissionRequester(
         @StringRes
         val rationaleMessage: Int,
-        val who: Any
-    ) {
-
-        class Single(
-            @StringRes
-            rationaleMessage: Int,
-            who: Any,
-            val permission: String,
-        ) : PermissionRequester(rationaleMessage, who)
-
-        class Multiple(
-            @StringRes
-            rationaleMessage: Int,
-            who: Any,
-            val permissions: Array<String>,
-            val anyOne: Boolean
-        ) : PermissionRequester(rationaleMessage, who)
-
-    }
+        val who: Any,
+        val permissions: Array<String>,
+        val anyOne: Boolean
+    )
 
 }
