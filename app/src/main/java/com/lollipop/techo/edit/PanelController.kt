@@ -14,6 +14,6 @@ interface PanelController {
 
     val context: AppCompatActivity
 
-    fun findLauncher(who: Any, permission: String): PermissionLauncher?
+    fun findLauncher(who: Any, permission: Array<String>): PermissionLauncher?
 
 }

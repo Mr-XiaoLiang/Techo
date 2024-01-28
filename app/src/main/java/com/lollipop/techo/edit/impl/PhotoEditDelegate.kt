@@ -40,8 +40,9 @@ class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
 
     override val permissions: Array<PermissionInfo> = arrayOf(
         PermissionInfo(
-            PhotoManager.READ_PERMISSION,
-            R.string.permission_rationale_read_external_storage
+            permission = PhotoManager.getPermissions(),
+            rationale = R.string.permission_rationale_read_external_storage,
+            anyOne = true
         )
     )
 
@@ -120,13 +121,13 @@ class PhotoEditDelegate : TopEditDelegate<TechoItem.Photo>() {
             onPhotoLoaded()
             return
         }
-        val launcher = findLauncher(PhotoManager.READ_PERMISSION)
+        val launcher = findLauncher(PhotoManager.getPermissions())
         if (launcher == null) {
             onPermissionDenied()
             return
         }
-        launcher.request {
-            if (it) {
+        launcher.request { result ->
+            if (result.isGranted()) {
                 load(activity)
             } else {
                 onPermissionDenied()

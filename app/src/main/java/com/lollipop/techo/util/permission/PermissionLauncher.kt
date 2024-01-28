@@ -47,6 +47,17 @@ sealed class PermissionLauncher(
 
     protected val activityReference = WeakReference(activitySrc)
 
+    private var onResultCallback: ((PermissionResult) -> Unit)? = null
+
+    protected fun bindCallback(callback: (PermissionResult) -> Unit) {
+        this.onResultCallback = callback
+    }
+
+    protected fun invokeCallback(result: PermissionResult) {
+        this.onResultCallback?.invoke(result)
+        this.onResultCallback = null
+    }
+
     protected fun showRationale(activity: AppCompatActivity) {
         AlertDialog.Builder(activity)
             .setMessage(rationaleMessage)
@@ -62,6 +73,8 @@ sealed class PermissionLauncher(
 
     protected abstract fun launch()
 
+    abstract fun request(callback: (PermissionResult) -> Unit)
+
     class Single(
         activitySrc: AppCompatActivity,
         @StringRes
@@ -69,21 +82,18 @@ sealed class PermissionLauncher(
         private val permission: String,
     ) : PermissionLauncher(activitySrc, rationaleMessage) {
 
-        private var onResultCallback: ((Boolean) -> Unit)? = null
-
         private val requestPermissionLauncher = activitySrc.registerForActivityResult(
             ActivityResultContracts.RequestPermission(),
             ::onRequestResult
         )
 
         private fun onRequestResult(boolean: Boolean) {
-            onResultCallback?.invoke(boolean)
-            onResultCallback = null
+            invokeCallback(PermissionResult.Single(boolean))
         }
 
-        fun request(callback: (Boolean) -> Unit) {
+        override fun request(callback: (PermissionResult) -> Unit) {
             val activity = activityReference.get() ?: return
-            this.onResultCallback = callback
+            bindCallback(callback)
             when {
                 isGranted(activity) -> {
                     onRequestResult(true)
@@ -119,21 +129,18 @@ sealed class PermissionLauncher(
         private val permissions: Array<String>,
     ) : PermissionLauncher(activitySrc, rationaleMessage) {
 
-        private var onResultCallback: ((Map<String, Boolean>) -> Unit)? = null
-
         private val requestPermissionsLauncher = activitySrc.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions(),
             ::onRequestResult
         )
 
         private fun onRequestResult(result: Map<String, Boolean>) {
-            onResultCallback?.invoke(result)
-            onResultCallback = null
+            invokeCallback(PermissionResult.MultipleByAnd(result))
         }
 
-        fun request(callback: (Map<String, Boolean>) -> Unit) {
+        override fun request(callback: (PermissionResult) -> Unit) {
             val activity = activityReference.get() ?: return
-            this.onResultCallback = callback
+            bindCallback(callback)
             var isAllGranted = true
             for (permission in permissions) {
                 if (ContextCompat.checkSelfPermission(
@@ -186,21 +193,18 @@ sealed class PermissionLauncher(
 
         ) : PermissionLauncher(activitySrc, rationaleMessage) {
 
-        private var onResultCallback: ((Map<String, Boolean>) -> Unit)? = null
-
         private val requestPermissionsLauncher = activitySrc.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions(),
             ::onRequestResult
         )
 
         private fun onRequestResult(result: Map<String, Boolean>) {
-            onResultCallback?.invoke(result)
-            onResultCallback = null
+            invokeCallback(PermissionResult.MultipleByOr(result))
         }
 
-        fun request(callback: (Map<String, Boolean>) -> Unit) {
+        override fun request(callback: (PermissionResult) -> Unit) {
             val activity = activityReference.get() ?: return
-            this.onResultCallback = callback
+            bindCallback(callback)
             val grantedMap = HashMap<String, Boolean>()
             var hasGranted = false
             for (permission in permissions) {

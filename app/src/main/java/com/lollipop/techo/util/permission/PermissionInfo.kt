@@ -2,9 +2,9 @@ package com.lollipop.techo.util.permission
 
 import androidx.annotation.StringRes
 
-data class PermissionInfo(
-    val permission: String,
+class PermissionInfo(
+    val permission: Array<String>,
     @StringRes
-    val rationale: Int
-) {
-}
+    val rationale: Int,
+    val anyOne: Boolean = true
+)

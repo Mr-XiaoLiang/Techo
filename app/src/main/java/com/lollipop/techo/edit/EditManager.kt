@@ -50,7 +50,12 @@ class EditManager(
         PANEL_LIST.forEach { panelClass ->
             val panel = panelClass.getDeclaredConstructor().newInstance()
             panel.permissions.forEach { info ->
-                permissionLauncherManager.register(panelClass, info.permission, info.rationale)
+                permissionLauncherManager.register(
+                    who = panelClass,
+                    permissions = info.permission,
+                    rationale = info.rationale,
+                    anyOne = info.anyOne
+                )
             }
         }
         permissionLauncherManager.registerLauncher()
@@ -218,7 +223,7 @@ class EditManager(
     override val context: AppCompatActivity
         get() = activity
 
-    override fun findLauncher(who: Any, permission: String): PermissionLauncher? {
+    override fun findLauncher(who: Any, permission: Array<String>): PermissionLauncher? {
         return permissionLauncherManager.findLauncher(who::class.java, permission)
     }
 

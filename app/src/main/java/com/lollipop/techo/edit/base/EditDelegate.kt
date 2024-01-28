@@ -90,8 +90,8 @@ abstract class EditDelegate<T : TechoItem> : PigmentPage {
         }
     }
 
-    protected fun findLauncher(permission: String): PermissionLauncher? {
-        return controller?.findLauncher(this, permission)
+    protected fun findLauncher(permissions: Array<String>): PermissionLauncher? {
+        return controller?.findLauncher(this, permissions)
     }
 
     fun close() {
