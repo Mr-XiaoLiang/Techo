@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import com.lollipop.base.util.isCreated
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.registerResult
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.databinding.ActivityTechoDetailBinding
@@ -36,6 +37,13 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
             intent.putExtra(RESULT_TECHO_ID, id)
         }
 
+    }
+
+    private val editPageLauncher = registerResult(TechoEditActivity.LAUNCHER) { id ->
+        if (isCreated()) {
+            mode.load(id)
+            resultOk { setResultTechoId(it, id) }
+        }
     }
 
     override val optionsMenu: Int
@@ -75,17 +83,7 @@ class TechoDetailActivity : HeaderActivity(), TechoMode.StateListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menuEdit -> {
-                val id = techoId
-                requestActivity<TechoEditActivity>({ i ->
-                    TechoEditActivity.putParams(i, id)
-                }) { result ->
-                    if (result.isOk) {
-                        if (isCreated()) {
-                            mode.load(id)
-                            resultOk { setResultTechoId(it, id) }
-                        }
-                    }
-                }
+                editPageLauncher.launch(techoId)
                 return true
             }
         }

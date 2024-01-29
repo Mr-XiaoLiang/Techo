@@ -1,10 +1,12 @@
 package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -12,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.listener.BackPressHandler
+import com.lollipop.base.util.ActivityLauncherHelper
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.isCreated
@@ -69,6 +72,8 @@ class TechoEditActivity : HeaderActivity(),
             intent.putExtra(RESULT_TECHO_ID, id)
         }
 
+        val LAUNCHER: Class<out ActivityResultContract<Int?, Int>> = ResultContract::class.java
+
     }
 
     private val mode by lazy {
@@ -95,13 +100,13 @@ class TechoEditActivity : HeaderActivity(),
     private val floatingButtonManger = FloatingButtonManger()
 
     private val techoId by lazy {
-        intent.getIntExtra(PARAMETER_TECHO_ID, 0)
+        intent.getIntExtra(PARAMETER_TECHO_ID, NO_ID)
     }
 
     private var quickAddType = Text
 
     private val editManager by lazy {
-        EditManager(this, this, floatingBinding.editContainer)
+        EditManager(this, floatingBinding.editContainer)
     }
 
     private val richTextOptionLauncher = registerResult(
@@ -388,6 +393,25 @@ class TechoEditActivity : HeaderActivity(),
             type?.let {
                 onClickCallback(this)
             }
+        }
+
+    }
+
+    class ResultContract : ActivityLauncherHelper.Simple<Int?, Int>() {
+
+        override val activityClass: Class<out Activity> = TechoEditActivity::class.java
+
+        override fun putParams(intent: Intent, input: Int?) {
+            super.putParams(intent, input)
+            Companion.putParams(intent, input ?: NO_ID)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Int {
+            intent ?: return NO_ID
+            if (resultCode != Activity.RESULT_OK) {
+                return NO_ID
+            }
+            return getResultTechoId(intent)
         }
 
     }

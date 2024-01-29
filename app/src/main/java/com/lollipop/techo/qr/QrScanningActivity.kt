@@ -95,16 +95,16 @@ class QrScanningActivity : BaseActivity(), CodeSelectionView.OnCodeSelectedListe
                 }
             }
             resultBackPressHandler.isEnabled = true
-            if (BuildConfig.DEBUG) {
-                result.list.forEach {
-                    log(
-                        "OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(
-                            it.describe.bytes
-                        )
-                    )
-                    log("OnBarcodeScanResult cornerPoints = " + it.describe.cornerPoints.size)
-                }
-            }
+//            if (BuildConfig.DEBUG) {
+//                result.list.forEach {
+//                    log(
+//                        "OnBarcodeScanResult" + it.describe.displayValue + ", " + it.info + ", " + String(
+//                            it.describe.bytes
+//                        )
+//                    )
+//                    log("OnBarcodeScanResult cornerPoints = " + it.describe.cornerPoints.size)
+//                }
+//            }
         }
     }
 

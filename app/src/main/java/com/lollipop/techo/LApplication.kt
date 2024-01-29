@@ -1,13 +1,11 @@
 package com.lollipop.techo
 
-import android.app.Activity
 import android.app.Application
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentActivityHelper
 import com.lollipop.pigment.PigmentWallpaperCenter
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.FontHelper
-import com.lollipop.techo.view.PermissionFeedbackDialog
 
 /**
  * @author lollipop

@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
-import com.lollipop.base.util.getColor
 import com.lollipop.techo.R
 
 /**
@@ -94,7 +93,7 @@ class RecorderWaveView(
     }
 
     fun setColorByResource(@ColorRes id: Int) {
-        color = getColor(id)
+        color = context.getColor(id)
     }
 
     fun setWaveProvider(provider: WaveProvider?) {

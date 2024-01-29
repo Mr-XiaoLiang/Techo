@@ -11,11 +11,16 @@ import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.base.util.registerResult
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoMode
-import com.lollipop.techo.data.TechoMode.ChangedType.*
+import com.lollipop.techo.data.TechoMode.ChangedType.Delete
+import com.lollipop.techo.data.TechoMode.ChangedType.Full
+import com.lollipop.techo.data.TechoMode.ChangedType.Insert
+import com.lollipop.techo.data.TechoMode.ChangedType.Modify
+import com.lollipop.techo.data.TechoMode.ChangedType.Move
 import com.lollipop.techo.databinding.ActivityMainBinding
 import com.lollipop.techo.databinding.ActivityMainFloatingBinding
 import com.lollipop.techo.list.home.HomeListAdapter
@@ -46,6 +51,12 @@ class MainActivity : HeaderActivity(),
         LoadMoreHelper.bind(viewBinding.techoListView, ::onLoadMore)
     }
 
+    private val editPageLauncher = registerResult(TechoEditActivity.LAUNCHER) { newId ->
+        if (newId != TechoEditActivity.NO_ID) {
+            mode.onNewInsert(newId)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
@@ -62,14 +73,7 @@ class MainActivity : HeaderActivity(),
         loadMoreHelper
 
         floatingBinding.newTechoBtn.onClick {
-            requestActivity<TechoEditActivity> {
-                if (it.isOk) {
-                    val newId = TechoEditActivity.getResultTechoId(it.data)
-                    if (newId != TechoEditActivity.NO_ID) {
-                        mode.onNewInsert(newId)
-                    }
-                }
-            }
+            editPageLauncher.launch(null)
 //            requestActivity<RecorderActivity> {
 //                if (it.isOk) {
 //                    Toast.makeText(
@@ -104,15 +108,19 @@ class MainActivity : HeaderActivity(),
             Full -> {
                 adapter.notifyDataSetChanged()
             }
+
             Modify -> {
                 adapter.notifyItemRangeChanged(start, count)
             }
+
             Insert -> {
                 adapter.notifyItemRangeInserted(start, count)
             }
+
             Delete -> {
                 adapter.notifyItemRangeRemoved(start, count)
             }
+
             Move -> {
                 adapter.notifyItemMoved(start, count)
             }
