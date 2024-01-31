@@ -25,7 +25,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center_vertical|start"
             android:layout_marginStart="10dp"
-            android:background="?attr/selectableItemBackground">
+            android:background="?attr/selectableItemBackgroundBorderless">
 
             <com.lollipop.clip.RoundClipLayout
                 android:id="@+id/backButtonBackground"

@@ -205,13 +205,8 @@ class RichTextOptionFragment : PageFragment(),
         binding.palettePanel.fixInsetsByPadding(rightAndBottom)
         binding.fontSizePresetGroup.fixInsetsByPadding(rightAndBottom)
 
-        val header = WindowInsetsEdge.build {
-            top = WindowInsetsEdgeStrategy.ACCUMULATE
-            left = WindowInsetsEdgeStrategy.ACCUMULATE
-            right = WindowInsetsEdgeStrategy.ACCUMULATE
-        }
-        binding.backButton.fixInsetsByMargin(header)
-        binding.previewView.fixInsetsByPadding(header)
+        binding.backButton.fixInsetsByMargin(WindowInsetsEdge.HEADER)
+        binding.previewView.fixInsetsByPadding(WindowInsetsEdge.HEADER)
 
     }
 

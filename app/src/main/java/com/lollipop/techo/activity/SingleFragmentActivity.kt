@@ -11,7 +11,7 @@ import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivitySingleFragmentBinding
 
-class SingleFragmentActivity : AppCompatActivity() {
+class SingleFragmentActivity : BaseActivity() {
 
     companion object {
 
