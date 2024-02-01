@@ -136,24 +136,24 @@ abstract class HeaderActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun loadHeader(refreshPigment: Boolean) {
+    private fun loadHeader() {
         val imageUrl = headerImageUrl
         if (imageUrl.isNotEmpty()) {
-            onUrlLoaded(imageUrl, refreshPigment)
+            onUrlLoaded(imageUrl)
         } else {
             doAsync {
                 val imageInfo = RequestService.getHeaderImageInfo()
                 if (imageInfo.url.isNotEmpty()) {
                     headerImageUrl = imageInfo.fullUrl
                     onUI {
-                        onUrlLoaded(headerImageUrl, refreshPigment)
+                        onUrlLoaded(headerImageUrl)
                     }
                 }
             }
         }
     }
 
-    private fun onUrlLoaded(url: String, refreshPigment: Boolean) {
+    private fun onUrlLoaded(url: String) {
         var builder = Glide.with(viewBinding.headerBackground)
             .asBitmap()
             .load(url)
