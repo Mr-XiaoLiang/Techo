@@ -20,7 +20,7 @@ class QrApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appInner = this
-        updateDefaultFigment()
+        updateDefaultPigment()
         PigmentWallpaperCenter.init(this)
         val activityHelper = PigmentActivityHelper { onBackground ->
             if (!onBackground) {
@@ -33,11 +33,11 @@ class QrApplication : Application() {
     }
 
     fun fetchPigment() {
-        updateDefaultFigment()
+        updateDefaultPigment()
         PigmentWallpaperCenter.fetch(this)
     }
 
-    private fun updateDefaultFigment() {
+    private fun updateDefaultPigment() {
         PigmentWallpaperCenter.default(
             Pigment.valueOf(
                 0xFF00B78D.toInt(),
