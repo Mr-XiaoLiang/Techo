@@ -229,6 +229,8 @@ class CodeSelectionView @JvmOverloads constructor(
         codeResultList.clear()
         codeBounds.clear()
         cornerPoints.clear()
+        // drawable的数据清理一下，避免出现上一次的位置闪现
+        boundsDrawable.clearBoundsList()
         doAsync {
             val boundsList = ArrayList<Rect>(list.size)
             val pointList = ArrayList<Point>(list.size * 4)
@@ -381,6 +383,10 @@ class CodeSelectionView @JvmOverloads constructor(
             rectList.addAll(list)
             buildPath()
             invalidateSelf()
+        }
+
+        fun clearBoundsList() {
+            rectList.clear()
         }
 
         private fun buildPath() {
