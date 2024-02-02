@@ -3,13 +3,22 @@ package com.lollipop.qr.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PixelFormat
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Size
 import android.view.MotionEvent
 import android.view.View.OnClickListener
-import android.widget.ImageView.ScaleType.*
+import android.widget.ImageView.ScaleType.CENTER_CROP
+import android.widget.ImageView.ScaleType.FIT_CENTER
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatImageView
 import com.lollipop.base.util.ListenerManager
@@ -216,7 +225,10 @@ class CodeSelectionView @JvmOverloads constructor(
         val weight = scale.weight
         val offsetX = scale.offsetX
         val offsetY = scale.offsetY
-
+        // 先清理
+        codeResultList.clear()
+        codeBounds.clear()
+        cornerPoints.clear()
         doAsync {
             val boundsList = ArrayList<Rect>(list.size)
             val pointList = ArrayList<Point>(list.size * 4)
@@ -229,10 +241,6 @@ class CodeSelectionView @JvmOverloads constructor(
             }
             val contentBounds = scale.contentBounds()
             onUI {
-                codeResultList.clear()
-                codeBounds.clear()
-                cornerPoints.clear()
-
                 codeResultList.addAll(list)
                 codeBounds.addAll(boundsList)
                 cornerPoints.addAll(pointList)
@@ -455,6 +463,9 @@ class CodeSelectionView @JvmOverloads constructor(
         }
 
         override fun draw(canvas: Canvas) {
+            if (rectList.isEmpty()) {
+                return
+            }
             if (boundsPath.isEmpty) {
                 return
             }

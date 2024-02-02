@@ -10,7 +10,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewManager
 import android.widget.FrameLayout
-import androidx.camera.core.*
+import android.widget.Toast
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
@@ -130,22 +140,34 @@ class CameraBarcodeReader(
         val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
-
+        val rotation = view.display?.rotation ?: 0
+        // 按照注释，如果不设置，那么就默认是display的角度，所以我们不设置
+        // If not set, the target rotation will default to the value of Display.getRotation()
+        // of the default display at the time the use case is created.
+        // The use case is fully created once it has been attached to a camera.
+        // ImageCapture.Builder().setTargetRotation(rotation)
+        val resolutionStrategy = ResolutionStrategy(
+            // 角度关联一下，如果是旋转了，那么就要设置为横屏的尺寸，否则设置为竖屏的尺寸
+            if (rotation == 0 || rotation == 180) {
+                Size(720, 1280)
+            } else {
+                Size(1280, 720)
+            },
+            ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+        )
         // ImageCapture
         imageCapture = ImageCapture.Builder()
-            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY).apply {
-                view.display?.let { display ->
-                    setTargetRotation(display.rotation)
-                }
-            }
-            .setTargetResolution(Size(1280, 720))
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .setResolutionSelector(
+                ResolutionSelector.Builder().setResolutionStrategy(resolutionStrategy).build()
+            )
             .build()
         cameraProvider.unbindAll()
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
             imageCapture,
-            buildImageAnalysis(),
+            buildImageAnalysis(resolutionStrategy),
             preview
         )
         camera?.cameraControl?.enableTorch(torch)
@@ -209,11 +231,13 @@ class CameraBarcodeReader(
         return floatArrayOf(view.width * 0.5F, view.height * 0.5F)
     }
 
-    private fun buildImageAnalysis(): ImageAnalysis {
+    private fun buildImageAnalysis(strategy: ResolutionStrategy): ImageAnalysis {
         val imageAnalysis = ImageAnalysis.Builder()
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
             // 保持一定的分辨率，避免过高分辨率造成的解析压力，过低的分辨率无法分析
-            .setTargetResolution(Size(1280, 720))
+            .setResolutionSelector(
+                ResolutionSelector.Builder().setResolutionStrategy(strategy).build()
+            )
             // 只取最后一帧
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
