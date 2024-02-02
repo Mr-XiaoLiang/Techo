@@ -321,7 +321,7 @@ class GuideHelper(private val option: Option) : GuideManager,
                     return provider
                 }
             } else {
-                val provider = globalProviderList[index].newInstance()
+                val provider = globalProviderList[index].getDeclaredConstructor().newInstance()
                 defaultProviderList.add(provider)
                 if (provider.support(step)) {
                     return provider

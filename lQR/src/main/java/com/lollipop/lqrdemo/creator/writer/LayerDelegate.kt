@@ -34,7 +34,7 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
             return
         }
         // 如果没有缓存，那么创建新的实例
-        val newInstance = clazz.newInstance()
+        val newInstance = clazz.getDeclaredConstructor().newInstance()
         bindInstance(newInstance)
         // 并且放入缓存
         cache.put(key, newInstance)
@@ -51,7 +51,7 @@ class LayerDelegate<T : QrWriterLayer>(val def: Class<out T>) : QrWriterLayer.Ca
         if (d != null) {
             return d
         }
-        val n = def.newInstance()
+        val n = def.getDeclaredConstructor().newInstance()
         bindInstance(n)
         defaultLayer = n
         return n

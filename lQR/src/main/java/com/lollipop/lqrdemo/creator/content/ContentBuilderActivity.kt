@@ -126,7 +126,7 @@ class ContentBuilderActivity : ColorModeActivity() {
         }
 
         override fun createFragment(position: Int): Fragment {
-            return data[position].fragment.newInstance()
+            return data[position].fragment.getDeclaredConstructor().newInstance()
         }
 
     }

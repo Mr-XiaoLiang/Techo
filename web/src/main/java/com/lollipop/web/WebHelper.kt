@@ -128,24 +128,24 @@ class WebHelper(
             iWeb.addBridgeRoot(it)
         }
         if (urlCompletion == null) {
-            urlCompletion = globeUrlCompletion.newInstance()
+            urlCompletion = globeUrlCompletion.getDeclaredConstructor().newInstance()
         }
         if (searchEngine != null) {
-            searchEngine = globeSearchEngine.newInstance()
+            searchEngine = globeSearchEngine.getDeclaredConstructor().newInstance()
         }
         return this
     }
 
     private fun initGlobeBridge() {
         globeBridgeRoot.forEach {
-            addBridgeRoot(it.newInstance())
+            addBridgeRoot(it.getDeclaredConstructor().newInstance())
         }
         globeBridge.forEach { entry ->
             val key = entry.key
             this.bridgeRootList.forEach { root ->
                 if (root.name == key) {
                     entry.value.forEach { bridge ->
-                        root.addBridge(bridge.newInstance())
+                        root.addBridge(bridge.getDeclaredConstructor().newInstance())
                     }
                 }
             }

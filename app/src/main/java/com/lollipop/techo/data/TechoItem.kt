@@ -292,13 +292,13 @@ sealed class TechoItem(val itemType: TechoItemType) : JsonInfo {
 
 inline fun <reified T : TechoItem> T.clone(): T {
     val from = this
-    val target = T::class.java.newInstance()
+    val target = T::class.java.getDeclaredConstructor().newInstance()
     return from.copyTo(target)
 }
 
 inline fun <reified T : TechoItem> TechoItem.convertTo(): T {
     val from = this
-    val target = T::class.java.newInstance()
+    val target = T::class.java.getDeclaredConstructor().newInstance()
     return from.copyTo(target)
 }
 

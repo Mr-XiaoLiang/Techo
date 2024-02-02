@@ -77,7 +77,7 @@ class SingleFragmentActivity : BaseActivity() {
         val arguments = intent.getBundleExtra(PARAMS_FRAGMENT_ARGUMENTS)
         try {
             val fragmentClass = Class.forName(fragmentName)
-            val fragment = fragmentClass.newInstance()
+            val fragment = fragmentClass.getDeclaredConstructor().newInstance()
             if (fragment !is Fragment) {
                 finish()
                 return

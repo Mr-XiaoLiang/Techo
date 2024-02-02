@@ -16,7 +16,7 @@ class BoomFlow(private val manager: BigBoomManager) {
     }
 
     fun use(e: PresetExplosive): BoomFlow {
-        return use(e.clazz.newInstance())
+        return use(e.clazz.getDeclaredConstructor().newInstance())
     }
 
     fun putFuel(any: Any): BoomFlow {

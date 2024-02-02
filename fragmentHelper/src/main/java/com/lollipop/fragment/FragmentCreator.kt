@@ -9,7 +9,7 @@ internal class FragmentCreator {
     private val createdCallback = ListenerManager<FragmentCreatedCallback>()
 
     fun create(fragmentInfo: FragmentInfo, arguments: Bundle?): Fragment {
-        val newInstance = fragmentInfo.fragment.newInstance()
+        val newInstance = fragmentInfo.fragment.getDeclaredConstructor().newInstance()
         val newArguments = Bundle()
         arguments?.let {
             newArguments.putAll(it)

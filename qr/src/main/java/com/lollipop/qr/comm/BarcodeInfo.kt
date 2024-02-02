@@ -54,7 +54,7 @@ sealed class BarcodeInfo {
             val jsonObject = JSONObject(json)
             if (jsonObject.has(INFO_NAME)) {
                 val name = jsonObject.optString(INFO_NAME)
-                val instance = Class.forName(name).newInstance()
+                val instance = Class.forName(name).getDeclaredConstructor().newInstance()
                 if (instance is BarcodeInfo) {
                     instance.resume(jsonObject)
                     return instance
