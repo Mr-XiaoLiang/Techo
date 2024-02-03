@@ -86,7 +86,7 @@ abstract class HeaderActivity : BaseActivity() {
         viewBinding.headerBackground.onClick {
             changeBlurState()
         }
-        loadHeader(false)
+        loadHeader()
         hideLoading()
     }
 
@@ -114,14 +114,14 @@ abstract class HeaderActivity : BaseActivity() {
         super.onResume()
         if (isBlurHeader != AppUtil.isBlurHeader) {
             isBlurHeader = AppUtil.isBlurHeader
-            loadHeader(true)
+            loadHeader()
         }
     }
 
     private fun changeBlurState() {
         isBlurHeader = !isBlurHeader
         AppUtil.changeBlurHeader(this, isBlurHeader)
-        loadHeader(true)
+        loadHeader()
     }
 
     protected fun hideLoading() {

@@ -19,7 +19,7 @@
             android:id="@+id/previewView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
+            android:paddingHorizontal="22dp"
             android:paddingVertical="48dp"
             android:text="@string/app_name" />
     </androidx.core.widget.NestedScrollView>
@@ -31,8 +31,8 @@
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:contentDescription="@string/description_back"
-        android:scaleType="centerInside"
-        android:background="#f00"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_baseline_arrow_back_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -317,9 +317,9 @@
 
                 <FrameLayout
                     android:id="@+id/donePanel"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
 
                     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                         android:id="@+id/doneBtn"

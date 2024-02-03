@@ -17,6 +17,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.slider.Slider
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.changeAlpha
+import com.lollipop.base.util.dp2px
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.fixInsetsByMargin
@@ -34,6 +35,7 @@ import com.lollipop.techo.data.FontStyle
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.databinding.FragmentRichTextOptionBinding
 import com.lollipop.techo.databinding.ItemColorHistroyBinding
+import com.lollipop.techo.drawable.MosaicDrawable
 import com.lollipop.techo.edit.impl.textOption.FrameManager
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.TextSelectedHelper
@@ -184,6 +186,9 @@ class RichTextOptionFragment : PageFragment(),
             layoutManager = LinearLayoutManager(context)
             adapter = colorHistoryAdapter
         }
+//        val mosaicDrawable = MosaicDrawable()
+//        mosaicDrawable.setStep(5.dp2px)
+//        binding.previewView.background = mosaicDrawable
         initInsets()
     }
 
