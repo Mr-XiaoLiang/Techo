@@ -15,6 +15,7 @@ class TechoInfo : JsonInfo {
         private const val KEY_KEY_WORDS = "keyWords"
         private const val KEY_CREATE_TIME = "createTime"
         private const val KEY_UPDATE_TIME = "updateTime"
+        private const val KEY_THEME = "theme"
     }
 
     var id: Int = 0
@@ -24,6 +25,8 @@ class TechoInfo : JsonInfo {
     val keyWords: MutableList<String> = mutableListOf()
     var createTime: Long = 0
     var updateTime: Long = 0
+    var theme: TechoTheme = TechoTheme.DEFAULT
+
 
     override fun toJson(): JSONObject {
         return JSONObject().apply {
@@ -33,6 +36,7 @@ class TechoInfo : JsonInfo {
             put(KEY_KEY_WORDS, keyWords.mapToJson())
             put(KEY_CREATE_TIME, createTime)
             put(KEY_UPDATE_TIME, updateTime)
+            put(KEY_THEME, theme.key)
         }
     }
 
@@ -49,6 +53,7 @@ class TechoInfo : JsonInfo {
         }
         createTime = json.optLong(KEY_CREATE_TIME)
         updateTime = json.optLong(KEY_UPDATE_TIME)
+        theme = TechoTheme.find(json.optString(KEY_THEME))
     }
 
 }
