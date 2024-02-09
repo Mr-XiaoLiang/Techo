@@ -8,9 +8,73 @@ import android.graphics.Paint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.min
 
 object DotsCanvas {
+
+    /**
+     * 从文件读取，并且输出到文件
+     * @param srcFile 输入文件
+     * @param rowLength 每行数量
+     * @param outWidth 输出文件宽度，像素数量
+     * @param grayStyle 是否灰阶模式
+     * @param outDir 输出文件夹
+     * @return 生成的文件
+     */
+    suspend fun CoroutineScope.create(
+        srcFile: File,
+        rowLength: Int,
+        outWidth: Int,
+        grayStyle: Boolean = false,
+        outDir: File
+    ): Result<File> {
+        return withContext(Dispatchers.IO) {
+            createSync(srcFile, rowLength, outWidth, grayStyle, outDir)
+        }
+    }
+
+    /**
+     * 从文件读取，并且输出到文件
+     * @param srcFile 输入文件
+     * @param rowLength 每行数量
+     * @param outWidth 输出文件宽度，像素数量
+     * @param grayStyle 是否灰阶模式
+     * @param outDir 输出文件夹
+     * @return 生成的文件
+     */
+    private fun createSync(
+        srcFile: File,
+        rowLength: Int,
+        outWidth: Int,
+        grayStyle: Boolean = false,
+        outDir: File
+    ): Result<File> {
+        try {
+            val srcResult = DotsCanvasBitmapHelper.readSrcBitmap(srcFile, rowLength)
+            val srcBitmap = srcResult.getOrNull() ?: return Result.failure(
+                srcResult.exceptionOrNull()
+                    ?: IllegalArgumentException("src file is not a picture")
+            )
+            val outResult = draw(srcBitmap, rowLength, outWidth, grayStyle)
+            val outBitmap = outResult.getOrNull() ?: return Result.failure(
+                outResult.exceptionOrNull()
+                    ?: IllegalArgumentException("out picture error")
+            )
+            val fileName = System.currentTimeMillis().toString(16).uppercase()
+            val outFile = File(outDir, "$fileName.png")
+            if (!outDir.exists()) {
+                outDir.mkdirs()
+            }
+            val outputStream = FileOutputStream(outFile)
+            outBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            return Result.success(outFile)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            return Result.failure(e)
+        }
+    }
 
     suspend fun CoroutineScope.drawAsync(
         src: Bitmap,
