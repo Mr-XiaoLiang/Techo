@@ -12,7 +12,7 @@ sealed class TechoTheme(
 
         var DEFAULT: TechoTheme = LIGHT
 
-        val entries = arrayOf(
+        private val entries = arrayOf(
             LIGHT, DARK
         )
 
@@ -23,9 +23,13 @@ sealed class TechoTheme(
 
     protected val blendModeWrapper = BlendModeWrapper()
 
-    abstract fun getPigment(pigment: Pigment): Snapshot
+    fun getPigment(): Snapshot {
+        return getPigment(AppTheme.current)
+    }
 
-    object LIGHT : TechoTheme("light") {
+    protected abstract fun getPigment(pigment: Pigment): Snapshot
+
+    data object LIGHT : TechoTheme("light") {
         override fun getPigment(pigment: Pigment): Snapshot {
             val primary = blendModeWrapper.appPrimary.toArgb()
             return SimpleSnapshot(
@@ -37,7 +41,7 @@ sealed class TechoTheme(
 
     }
 
-    object DARK : TechoTheme("dark") {
+    data object DARK : TechoTheme("dark") {
 
         override fun getPigment(pigment: Pigment): Snapshot {
             val primary = blendModeWrapper.appPrimary.toArgb()
@@ -146,9 +150,9 @@ sealed class TechoTheme(
     }
 
     open class SimpleSnapshot(
-        val primary: Int,
-        val secondary: Int,
-        val blendMode: BlendMode
+        private val primary: Int,
+        private val secondary: Int,
+        private val blendMode: BlendMode
     ) : Snapshot {
         override val primaryColor: Int by lazy {
             blendMode.original(primary)
