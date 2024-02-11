@@ -2,11 +2,12 @@ package com.lollipop.techo.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,6 +21,7 @@ import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
+import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
@@ -52,6 +54,8 @@ abstract class HeaderActivity : BaseActivity() {
     protected open val optionsMenu = 0
 
     private var isBlurHeader = AppUtil.isBlurHeader
+
+    private var useCustomPigment = false
 
     private val log by lazyLogD()
 
@@ -88,22 +92,26 @@ abstract class HeaderActivity : BaseActivity() {
         }
         loadHeader()
         hideLoading()
+        setTitle("")
     }
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        viewBinding.backButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onPrimaryTitle)
-        viewBinding.backButtonBackground.setBackgroundColor(pigment.primaryColor)
-        viewBinding.contentLoadingView.setIndicatorColor(
-            pigment.primaryColor,
-            pigment.secondaryColor,
-            pigment.primaryVariant,
-            pigment.secondaryVariant
-        )
+        if (!useCustomPigment) {
+            viewBinding.headerBackgroundMask.isVisible = pigment.blendMode == BlendMode.Dark
+            viewBinding.contentLoadingView.setIndicatorColor(
+                pigment.primaryColor,
+                pigment.secondaryColor,
+                pigment.primaryVariant,
+                pigment.secondaryVariant
+            )
+            viewBinding.contentRoot.setBackgroundColor(pigment.backgroundColor)
+        }
     }
 
     override fun setTitle(title: CharSequence?) {
-        viewBinding.titleView.text = title ?: ""
+        viewBinding.titleView.isVisible = !TextUtils.isEmpty(title)
+        viewBinding.titleTextView.text = title ?: ""
     }
 
     protected fun showLoading() {
