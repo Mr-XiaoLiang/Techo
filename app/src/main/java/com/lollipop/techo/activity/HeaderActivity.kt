@@ -18,7 +18,6 @@ import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
-import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.pigment.BlendMode
@@ -43,7 +42,7 @@ abstract class HeaderActivity : BaseActivity() {
 
     }
 
-    private val viewBinding: ActivityHeaderBinding by lazyBind()
+    protected val scaffoldBinding: ActivityHeaderBinding by lazyBind()
 
     abstract val contentView: View
 
@@ -55,31 +54,29 @@ abstract class HeaderActivity : BaseActivity() {
 
     private var isBlurHeader = AppUtil.isBlurHeader
 
-    private var useCustomPigment = false
-
-    private val log by lazyLogD()
+    protected open val useCustomPigment = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(viewBinding.root)
+        setContentView(scaffoldBinding.root)
         WindowInsetsHelper.fitsSystemWindows(this)
-        viewBinding.contentRoot.addView(
+        scaffoldBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         floatingView?.let {
-            viewBinding.floatingRoot.addView(
+            scaffoldBinding.floatingRoot.addView(
                 it,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-        viewBinding.backButton.setOnClickListener {
+        scaffoldBinding.backButton.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        viewBinding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
-        viewBinding.contentScrollView.fixInsetsByMargin(
+        scaffoldBinding.appBar.fixInsetsByMargin(WindowInsetsEdge.HEADER)
+        scaffoldBinding.contentScrollView.fixInsetsByMargin(
             WindowInsetsEdge(
                 WindowInsetsEdgeStrategy.ACCUMULATE,
                 WindowInsetsEdgeStrategy.ACCUMULATE,
@@ -87,7 +84,7 @@ abstract class HeaderActivity : BaseActivity() {
                 WindowInsetsEdgeStrategy.ORIGINAL
             )
         )
-        viewBinding.headerBackground.onClick {
+        scaffoldBinding.headerBackground.onClick {
             changeBlurState()
         }
         loadHeader()
@@ -98,24 +95,24 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         if (!useCustomPigment) {
-            viewBinding.headerBackgroundMask.isVisible = pigment.blendMode == BlendMode.Dark
-            viewBinding.contentLoadingView.setIndicatorColor(
+            scaffoldBinding.headerBackgroundMask.isVisible = pigment.blendMode == BlendMode.Dark
+            scaffoldBinding.contentLoadingView.setIndicatorColor(
                 pigment.primaryColor,
                 pigment.secondaryColor,
                 pigment.primaryVariant,
                 pigment.secondaryVariant
             )
-            viewBinding.contentRoot.setBackgroundColor(pigment.backgroundColor)
+            scaffoldBinding.contentRoot.setBackgroundColor(pigment.backgroundColor)
         }
     }
 
     override fun setTitle(title: CharSequence?) {
-        viewBinding.titleView.isVisible = !TextUtils.isEmpty(title)
-        viewBinding.titleTextView.text = title ?: ""
+        scaffoldBinding.titleView.isVisible = !TextUtils.isEmpty(title)
+        scaffoldBinding.titleTextView.text = title ?: ""
     }
 
     protected fun showLoading() {
-        viewBinding.contentLoadingView.show()
+        scaffoldBinding.contentLoadingView.show()
     }
 
     override fun onResume() {
@@ -133,7 +130,7 @@ abstract class HeaderActivity : BaseActivity() {
     }
 
     protected fun hideLoading() {
-        viewBinding.contentLoadingView.hide()
+        scaffoldBinding.contentLoadingView.hide()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -162,14 +159,14 @@ abstract class HeaderActivity : BaseActivity() {
     }
 
     private fun onUrlLoaded(url: String) {
-        var builder = Glide.with(viewBinding.headerBackground)
+        var builder = Glide.with(scaffoldBinding.headerBackground)
             .asBitmap()
             .load(url)
             .transition(GenericTransitionOptions.with(AlphaAnimator()))
         if (isBlurHeader) {
             builder = builder.apply(RequestOptions().transform(BlurTransformation.create()))
         }
-        builder.into(viewBinding.headerBackground)
+        builder.into(scaffoldBinding.headerBackground)
     }
 
     fun resultOk(callback: (Intent) -> Unit) {
