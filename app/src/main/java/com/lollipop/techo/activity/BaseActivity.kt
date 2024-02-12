@@ -11,6 +11,7 @@ import com.lollipop.pigment.PigmentPage
 import com.lollipop.pigment.PigmentProvider
 import com.lollipop.pigment.PigmentProviderHelper
 import com.lollipop.techo.LApplication
+import com.lollipop.techo.data.AppTheme
 import com.lollipop.techo.fragment.BaseFragment
 
 abstract class BaseActivity : AppCompatActivity(), PigmentPage, PigmentProvider,
@@ -42,9 +43,9 @@ abstract class BaseActivity : AppCompatActivity(), PigmentPage, PigmentProvider,
         pigmentProviderHelperInner.onDecorationChanged(pigment)
     }
 
-    override val currentPigment: Pigment?
+    override val currentPigment: Pigment
         get() {
-            return pigmentProviderHelper.currentPigment
+            return pigmentProviderHelper.currentPigment ?: AppTheme.current
         }
 
     private fun updateStatusBar() {
