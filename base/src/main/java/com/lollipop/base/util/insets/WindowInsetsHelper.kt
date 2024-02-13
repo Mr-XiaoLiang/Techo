@@ -1,6 +1,7 @@
 package com.lollipop.base.util.insets
 
 import android.app.Activity
+import android.app.Dialog
 import android.graphics.Color
 import android.view.View
 import android.view.Window
@@ -216,4 +217,20 @@ private fun View.setWindowInsetsHelper(
 
 fun View.cleanWindowInsetHelper() {
     setOnApplyWindowInsetsListener(null)
+}
+
+/**
+ * 为Activity增加系统窗口的Flag设置
+ */
+fun Activity.fitsSystemWindows() {
+    WindowInsetsHelper.fitsSystemWindows(this)
+}
+
+/**
+ * 为Dialog增加系统窗口的Flag设置
+ */
+fun Dialog.fitsSystemWindows() {
+    this.window?.let {
+        WindowInsetsHelper.fitsSystemWindows(it)
+    }
 }
