@@ -17,7 +17,8 @@ import com.lollipop.techo.fragment.BaseFragment
 abstract class BaseActivity : AppCompatActivity(), PigmentPage, PigmentProvider,
     BaseFragment.OnBackPressedCallback {
 
-    private var isDarkMode = false
+    protected var isDarkMode = false
+        private set
 
     private val pigmentProviderHelperInner = PigmentProviderHelper()
 

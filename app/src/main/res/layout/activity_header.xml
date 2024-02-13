@@ -119,7 +119,9 @@
                     app:indicatorColor="@color/brand_4"
                     app:indicatorSize="24dp"
                     app:minHideDelay="300"
-                    app:showDelay="300" />
+                    app:showDelay="300"
+                    tools:background="#3f00"
+                    tools:visibility="visible" />
 
             </com.lollipop.clip.RoundClipLayout>
         </com.lollipop.vertical_page.VerticalPageLayout>

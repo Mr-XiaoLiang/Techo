@@ -126,7 +126,7 @@ sealed class BlendMode {
         return limit(color, 0.5F, 0.2F, 0.6F, 0.2F)
     }
 
-    object Light : BlendMode() {
+    data object Light : BlendMode() {
 
         override val extreme: Int = Color.WHITE
         override val extremeReversal: Int = Color.BLACK
@@ -153,7 +153,7 @@ sealed class BlendMode {
 
     }
 
-    object Dark : BlendMode() {
+    data object Dark : BlendMode() {
 
         override val extreme: Int = Color.BLACK
         override val extremeReversal: Int = Color.WHITE

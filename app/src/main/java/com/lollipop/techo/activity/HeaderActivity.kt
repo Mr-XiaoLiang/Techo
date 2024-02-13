@@ -18,9 +18,9 @@ import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
 import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
-import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
@@ -55,6 +55,8 @@ abstract class HeaderActivity : BaseActivity() {
     private var isBlurHeader = AppUtil.isBlurHeader
 
     protected open val useCustomPigment = false
+
+    private val log by lazyLogD()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,8 +96,9 @@ abstract class HeaderActivity : BaseActivity() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
+        log("onDecorationChanged: $pigment")
         if (!useCustomPigment) {
-            scaffoldBinding.headerBackgroundMask.isVisible = pigment.blendMode == BlendMode.Dark
+            scaffoldBinding.headerBackgroundMask.isVisible = isDarkMode
             scaffoldBinding.contentLoadingView.setIndicatorColor(
                 pigment.primaryColor,
                 pigment.secondaryColor,
@@ -103,6 +106,7 @@ abstract class HeaderActivity : BaseActivity() {
                 pigment.secondaryVariant
             )
             scaffoldBinding.contentRoot.setBackgroundColor(pigment.backgroundColor)
+//            Toast.makeText(this, "Dark mode = ${pigment.backgroundColor.toString(16)}", Toast.LENGTH_SHORT).show()
         }
     }
 
