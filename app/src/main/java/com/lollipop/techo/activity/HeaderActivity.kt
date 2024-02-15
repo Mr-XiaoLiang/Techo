@@ -1,7 +1,10 @@
 package com.lollipop.techo.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
@@ -10,7 +13,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.ViewPropertyTransition
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -26,6 +33,9 @@ import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.BlurTransformation
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 /**
  * 带有头部View的Activity
@@ -39,6 +49,47 @@ abstract class HeaderActivity : BaseActivity() {
          * 每次启动都保持不变吧
          */
         private var headerImageUrl = ""
+
+        private fun getLocalImageName(): String {
+            val day = 1000L * 60 * 60 * 24
+            return (System.currentTimeMillis() / day).toString(16)
+        }
+
+        private fun getLocalImageFile(context: Context): WallpaperFile {
+            val dir = File(context.filesDir, "wallpaper")
+            dir.mkdirs()
+            return WallpaperFile(File(dir, getLocalImageName()))
+        }
+
+        private fun saveLocalImage(context: Context, bitmap: Bitmap) {
+            doAsync {
+                val file = getLocalImageFile(context)
+                val outputStream = FileOutputStream(file.file)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 80, outputStream)
+                } else {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream)
+                }
+            }
+        }
+
+        private fun saveLocalImage(
+            wallpaperFile: WallpaperFile,
+            sourceFile: File,
+            complete: () -> Unit
+        ) {
+            doAsync {
+                val destFile = wallpaperFile.file
+                FileInputStream(sourceFile).use { input ->
+                    FileOutputStream(destFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                onUI {
+                    complete()
+                }
+            }
+        }
 
     }
 
@@ -148,29 +199,72 @@ abstract class HeaderActivity : BaseActivity() {
     private fun loadHeader() {
         val imageUrl = headerImageUrl
         if (imageUrl.isNotEmpty()) {
-            onUrlLoaded(imageUrl)
-        } else {
-            doAsync {
-                val imageInfo = RequestService.getHeaderImageInfo()
-                if (imageInfo.url.isNotEmpty()) {
-                    headerImageUrl = imageInfo.fullUrl
-                    onUI {
-                        onUrlLoaded(headerImageUrl)
-                    }
-                }
+            loadWallpaper(imageUrl)
+            return
+        }
+        val wallpaperFile = getLocalImageFile(this)
+        if (wallpaperFile.isExists) {
+            val localUrl = wallpaperFile.path
+            headerImageUrl = localUrl
+            loadWallpaper(imageUrl)
+            return
+        }
+        doAsync {
+            val imageInfo = RequestService.getHeaderImageInfo()
+            if (imageInfo.url.isNotEmpty()) {
+                headerImageUrl = imageInfo.fullUrl
+                loadAndCacheWallpaper(headerImageUrl)
             }
         }
     }
 
-    private fun onUrlLoaded(url: String) {
+    private fun loadWallpaper(url: String) {
         var builder = Glide.with(scaffoldBinding.headerBackground)
-            .asBitmap()
             .load(url)
             .transition(GenericTransitionOptions.with(AlphaAnimator()))
         if (isBlurHeader) {
             builder = builder.apply(RequestOptions().transform(BlurTransformation.create()))
         }
         builder.into(scaffoldBinding.headerBackground)
+    }
+
+    private fun loadAndCacheWallpaper(url: String) {
+        val wallpaperFile = getLocalImageFile(this)
+        Glide.with(this)
+            .downloadOnly()
+            .load(url)
+            .listener(object : RequestListener<File> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<File>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    log("loadAndCacheWallpaper: failed, ${e?.message}")
+                    e?.printStackTrace()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: File?,
+                    model: Any?,
+                    target: Target<File>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    resource?.let {
+                        if (it.exists()) {
+                            saveLocalImage(wallpaperFile, resource) {
+                                headerImageUrl = wallpaperFile.path
+                                loadWallpaper(headerImageUrl)
+                            }
+                        }
+                    }
+                    return false
+                }
+
+            })
+            .preload()
     }
 
     fun resultOk(callback: (Intent) -> Unit) {
@@ -187,6 +281,19 @@ abstract class HeaderActivity : BaseActivity() {
             view.alpha = 0F
             view.animate()?.alphaBy(1F)?.start()
         }
+    }
+
+    private class WallpaperFile(val file: File) {
+        val isExists: Boolean
+            get() {
+                return file.exists()
+            }
+
+        val path: String
+            get() {
+                return file.path
+            }
+
     }
 
 }
