@@ -51,8 +51,8 @@ class MainActivity : HeaderActivity(),
         LoadMoreHelper.bind(viewBinding.techoListView, ::onLoadMore)
     }
 
-    private val editPageLauncher = registerResult(TechoEditActivity.LAUNCHER) { newId ->
-        if (newId != TechoEditActivity.NO_ID) {
+    private val editPageLauncher = registerResult(TechoDetailActivity.LAUNCHER) { newId ->
+        if (newId != TechoDetailActivity.NO_ID) {
             mode.onNewInsert(newId)
         }
     }

@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
-import com.lollipop.techo.activity.TechoDetailActivity
 import com.lollipop.techo.data.TechoInfo
 import com.lollipop.techo.databinding.ItemHomeTechoBinding
 import com.lollipop.techo.util.FontHelper

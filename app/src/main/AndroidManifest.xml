@@ -40,9 +40,6 @@
             android:exported="false"
             android:theme="@style/DialogActivity" />
         <activity
-            android:name=".activity.TechoEditActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.TechoDetailActivity"
             android:exported="false" />
         <activity

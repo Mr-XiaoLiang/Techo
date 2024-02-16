@@ -1,6 +1,9 @@
 package com.lollipop.techo.data
 
+import android.content.res.ColorStateList
 import android.graphics.Color
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
@@ -18,6 +21,14 @@ sealed class TechoTheme(
 
         fun find(key: String): TechoTheme {
             return entries.find { it.key == key } ?: DEFAULT
+        }
+
+        fun valueOf(pigment: Pigment): Snapshot {
+            return SimpleSnapshot(
+                pigment.primaryColor,
+                pigment.secondaryColor,
+                pigment.blendMode
+            )
         }
     }
 
@@ -147,6 +158,17 @@ sealed class TechoTheme(
          * 极致色彩为背景时的内容颜色
          */
         val onExtremeBody: Int
+
+        fun tint(fab: FloatingActionButton) {
+            fab.backgroundTintList = ColorStateList.valueOf(secondaryColor)
+            fab.imageTintList = ColorStateList.valueOf(onSecondaryBody)
+        }
+
+        fun tint(fab: ExtendedFloatingActionButton) {
+            fab.backgroundTintList = ColorStateList.valueOf(secondaryColor)
+            fab.iconTint = ColorStateList.valueOf(onSecondaryBody)
+            fab.setTextColor(onSecondaryBody)
+        }
     }
 
     open class SimpleSnapshot(
