@@ -1,12 +1,14 @@
 package com.lollipop.techo.list.detail
 
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lollipop.base.list.TouchableHolder
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
+import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.databinding.ItemEditGroupBinding
 
 /**
@@ -48,6 +50,10 @@ open class EditHolder<T : ViewBinding>(
             onOptionButtonClick()
         }
         optionBinding.itemContentGroup.addView(binding.content.root)
+    }
+
+    @CallSuper
+    open fun updateDecoration(snapshot: TechoTheme.Snapshot) {
     }
 
     fun setOnItemOptionButtonClickListener(listener: OnItemOptionButtonClickListener) {

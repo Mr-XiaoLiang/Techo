@@ -3,7 +3,6 @@ package com.lollipop.techo.list.detail
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.lollipop.pigment.Pigment
 import com.lollipop.techo.data.AppTheme
 import com.lollipop.techo.data.TechoItem
 import com.lollipop.techo.data.TechoItemType
@@ -79,11 +78,14 @@ class DetailListAdapter(
         }
         if (holder is EditHolder<*>) {
             holder.onEditModeChange(isInEdit)
+            holder.updateDecoration(itemPigment)
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun onDecorationChanged(techoTheme: TechoTheme.Snapshot) {
         this.itemPigment = techoTheme
+        notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
