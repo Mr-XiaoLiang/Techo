@@ -1,17 +1,14 @@
 package com.lollipop.techo.list.detail
 
 import android.content.Context
-import android.graphics.Outline
-import android.view.View
 import android.view.ViewGroup
-import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
-import com.lollipop.base.util.dp2px
 import com.lollipop.gallery.Photo
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.databinding.ItemPhotoBinding
-import java.util.*
+import java.util.LinkedList
 
 /**
  * @author lollipop
@@ -65,17 +62,12 @@ class PhotoInfoHolder(
         binding.content.photoGridLayout.layoutStyle = info.style
     }
 
-    private class RoundOutline(private val round: Float) : ViewOutlineProvider() {
-        override fun getOutline(view: View?, outline: Outline?) {
-            view ?: return
-            outline ?: return
-            outline.setRoundRect(
-                view.paddingLeft,
-                view.paddingTop,
-                view.width - view.paddingRight,
-                view.height - view.paddingBottom,
-                round
-            )
+    override fun updateDecoration(snapshot: TechoTheme.Snapshot) {
+        super.updateDecoration(snapshot)
+        binding.content.photoGridLayout.alpha = if (snapshot.isDarkMode) {
+            0.5F
+        } else {
+            1F
         }
     }
 

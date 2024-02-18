@@ -1,5 +1,6 @@
 package com.lollipop.techo.list.detail
 
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.core.view.isInvisible
@@ -54,6 +55,13 @@ open class EditHolder<T : ViewBinding>(
 
     @CallSuper
     open fun updateDecoration(snapshot: TechoTheme.Snapshot) {
+        optionBinding.root.setBackgroundColor(snapshot.backgroundColor)
+        optionBinding.moreOptionView.imageTintList = ColorStateList.valueOf(
+            snapshot.onBackgroundBody
+        )
+        optionBinding.dragHandlerView.imageTintList = ColorStateList.valueOf(
+            snapshot.onBackgroundBody
+        )
     }
 
     fun setOnItemOptionButtonClickListener(listener: OnItemOptionButtonClickListener) {

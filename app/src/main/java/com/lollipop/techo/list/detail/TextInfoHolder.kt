@@ -1,9 +1,11 @@
 package com.lollipop.techo.list.detail
 
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
+import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.databinding.ItemTextBinding
 import com.lollipop.techo.util.RichTextHelper
 
@@ -46,6 +48,13 @@ class TextInfoHolder(
         changedStyle(checkBox = true, number = false)
         binding.content.checkBox.isChecked = info.isChecked
         updateContent(info)
+    }
+
+    override fun updateDecoration(snapshot: TechoTheme.Snapshot) {
+        super.updateDecoration(snapshot)
+        binding.content.checkBox.tint(ColorStateList.valueOf(snapshot.onBackgroundTitle))
+        binding.content.numberView.setTextColor(snapshot.onBackgroundTitle)
+        binding.content.textView.setTextColor(snapshot.onBackgroundTitle)
     }
 
     private fun updateContent(info: TechoItem) {

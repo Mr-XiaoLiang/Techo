@@ -85,6 +85,8 @@ sealed class TechoTheme(
     }
 
     interface Snapshot {
+        val isDarkMode: Boolean
+
         val primaryColor: Int
 
         val secondaryColor: Int
@@ -176,6 +178,11 @@ sealed class TechoTheme(
         private val secondary: Int,
         private val blendMode: BlendMode
     ) : Snapshot {
+        override val isDarkMode: Boolean
+            get() {
+                return blendMode == BlendMode.Dark
+            }
+
         override val primaryColor: Int by lazy {
             blendMode.original(primary)
         }
