@@ -7,20 +7,32 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
 
-sealed class TechoTheme(
+abstract class TechoTheme(
     val key: String,
 ) {
 
     companion object {
 
-        var DEFAULT: TechoTheme = LIGHT
+        var DEFAULT: Base = Base.LIGHT
 
-        private val entries = arrayOf(
-            LIGHT, DARK
-        )
+        private val entries = HashMap<String, TechoTheme>()
+
+        fun findBase(key: String): Base? {
+            if (key == Base.LIGHT.key) {
+                return Base.LIGHT
+            }
+            if (key == Base.DARK.key) {
+                return Base.DARK
+            }
+            return null
+        }
 
         fun find(key: String): TechoTheme {
-            return entries.find { it.key == key } ?: DEFAULT
+            val base = findBase(key)
+            if (base != null) {
+                return base
+            }
+            return entries[key] ?: DEFAULT
         }
 
         fun valueOf(pigment: Pigment): Snapshot {
@@ -30,6 +42,22 @@ sealed class TechoTheme(
                 pigment.blendMode
             )
         }
+
+        fun putTheme(theme: TechoTheme) {
+            if (theme is Base) {
+                return
+            }
+            entries[theme.key] = theme
+        }
+
+        fun parse(json: String): Result<Custom> {
+            val customResult = CustomTechoTheme.parse(json)
+            customResult.getOrNull()?.let {
+                putTheme(it)
+            }
+            return customResult
+        }
+
     }
 
     protected val blendModeWrapper = BlendModeWrapper()
@@ -40,27 +68,120 @@ sealed class TechoTheme(
 
     protected abstract fun getPigment(pigment: Pigment): Snapshot
 
-    data object LIGHT : TechoTheme("light") {
-        override fun getPigment(pigment: Pigment): Snapshot {
-            val primary = blendModeWrapper.appPrimary.toArgb()
-            return SimpleSnapshot(
-                primary,
-                blendModeWrapper.appSecondary?.toArgb() ?: primary,
-                BlendMode.Light
-            )
+    sealed class Base(key: String) : TechoTheme(key) {
+
+        abstract val isDarkMode: Boolean
+
+        data object LIGHT : Base("light") {
+            override val isDarkMode: Boolean = false
+
+            override fun getPigment(pigment: Pigment): Snapshot {
+                val primary = blendModeWrapper.appPrimary.toArgb()
+                return SimpleSnapshot(
+                    primary,
+                    blendModeWrapper.appSecondary?.toArgb() ?: primary,
+                    BlendMode.Light
+                )
+            }
+
         }
 
+        data object DARK : Base("dark") {
+            override val isDarkMode: Boolean = true
+            override fun getPigment(pigment: Pigment): Snapshot {
+                val primary = blendModeWrapper.appPrimary.toArgb()
+                return SimpleSnapshot(
+                    primary,
+                    blendModeWrapper.appSecondary?.toArgb() ?: primary,
+                    BlendMode.Dark
+                )
+            }
+
+        }
     }
 
-    data object DARK : TechoTheme("dark") {
+    class Custom(key: String, private val profile: Profile) : TechoTheme(key) {
 
         override fun getPigment(pigment: Pigment): Snapshot {
-            val primary = blendModeWrapper.appPrimary.toArgb()
-            return SimpleSnapshot(
-                primary,
-                blendModeWrapper.appSecondary?.toArgb() ?: primary,
-                BlendMode.Dark
-            )
+            return CustomSnapshot(profile, profile.base.getPigment(pigment))
+        }
+
+        interface Profile {
+            val base: Base
+
+            val primaryColor: Int?
+
+            val secondaryColor: Int?
+
+            /**
+             * 主题色变体
+             * 一般表示比主题色更深或者更浅的颜色，
+             * 用于表达主题色，但是和主题色区分
+             */
+            val primaryVariant: Int?
+
+            /**
+             * 在主题色之上的内容的颜色
+             */
+            val onPrimaryTitle: Int?
+
+            /**
+             * 在主题色之上的内容的颜色
+             */
+            val onPrimaryBody: Int?
+
+            /**
+             * 次要颜色的变体
+             * 一般是次要颜色的加深或是变浅
+             * 用于表达次要颜色的同时和次要颜色区分
+             */
+            val secondaryVariant: Int?
+
+            /**
+             * 在次要颜色之上的内容的颜色
+             */
+            val onSecondaryTitle: Int?
+
+            /**
+             * 在次要颜色之上的内容的颜色
+             */
+            val onSecondaryBody: Int?
+
+            /**
+             * 背景色
+             */
+            val backgroundColor: Int?
+
+            /**
+             * 背景色之上的标题
+             */
+            val onBackgroundTitle: Int?
+
+            /**
+             * 背景色之上的内容体
+             */
+            val onBackgroundBody: Int?
+
+            /**
+             * 模式所对应的极致的颜色
+             * 比如，在深色模式下，它会是黑色，浅色模式下，它会是白色
+             */
+            val extreme: Int?
+
+            /**
+             * 极致色彩的反转色
+             */
+            val extremeReversal: Int?
+
+            /**
+             * 极致色彩为背景时的标题颜色
+             */
+            val onExtremeTitle: Int?
+
+            /**
+             * 极致色彩为背景时的内容颜色
+             */
+            val onExtremeBody: Int?
         }
 
     }
@@ -286,6 +407,76 @@ sealed class TechoTheme(
         override val onExtremeBody: Int by lazy {
             blendMode.body(extreme)
         }
+    }
+
+    private class CustomSnapshot(
+        private val profile: Custom.Profile,
+        private val baseSnapshot: Snapshot
+    ) : Snapshot {
+        override val isDarkMode: Boolean
+            get() = profile.base.isDarkMode
+        override val primaryColor: Int
+            get() {
+                return profile.primaryColor ?: baseSnapshot.primaryColor
+            }
+        override val secondaryColor: Int
+            get() {
+                return profile.secondaryColor ?: baseSnapshot.secondaryColor
+            }
+        override val primaryVariant: Int
+            get() {
+                return profile.primaryVariant ?: baseSnapshot.primaryVariant
+            }
+        override val onPrimaryTitle: Int
+            get() {
+                return profile.onPrimaryTitle ?: baseSnapshot.onPrimaryTitle
+            }
+        override val onPrimaryBody: Int
+            get() {
+                return profile.onPrimaryBody ?: baseSnapshot.onPrimaryBody
+            }
+        override val secondaryVariant: Int
+            get() {
+                return profile.secondaryVariant ?: baseSnapshot.secondaryVariant
+            }
+        override val onSecondaryTitle: Int
+            get() {
+                return profile.onSecondaryTitle ?: baseSnapshot.onSecondaryTitle
+            }
+        override val onSecondaryBody: Int
+            get() {
+                return profile.onSecondaryBody ?: baseSnapshot.onSecondaryBody
+            }
+        override val backgroundColor: Int
+            get() {
+                return profile.backgroundColor ?: baseSnapshot.backgroundColor
+            }
+        override val onBackgroundTitle: Int
+            get() {
+                return profile.onBackgroundTitle ?: baseSnapshot.onBackgroundTitle
+            }
+        override val onBackgroundBody: Int
+            get() {
+                return profile.onBackgroundBody ?: baseSnapshot.onBackgroundBody
+            }
+        override val extreme: Int
+            get() {
+                return profile.extreme ?: baseSnapshot.extreme
+            }
+        override val extremeReversal: Int
+            get() {
+                return profile.extremeReversal ?: baseSnapshot.extremeReversal
+            }
+        override val onExtremeTitle: Int
+            get() {
+                return profile.onExtremeTitle ?: baseSnapshot.onExtremeTitle
+            }
+        override val onExtremeBody: Int
+            get() {
+                return profile.onExtremeBody ?: baseSnapshot.onExtremeBody
+            }
+
+
     }
 
 }

@@ -20,9 +20,9 @@ object AppTheme {
     fun updateDefaultTheme(context: Context?) {
         val pigment = defaultByMode(context)
         TechoTheme.DEFAULT = if (pigment.blendMode == BlendMode.Dark) {
-            TechoTheme.DARK
+            TechoTheme.Base.DARK
         } else {
-            TechoTheme.LIGHT
+            TechoTheme.Base.LIGHT
         }
         PigmentWallpaperCenter.default(pigment)
     }
