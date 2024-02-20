@@ -4,6 +4,7 @@ import android.app.Application
 import com.lollipop.pigment.PigmentActivityHelper
 import com.lollipop.pigment.PigmentWallpaperCenter
 import com.lollipop.techo.data.AppTheme
+import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.FontHelper
 
@@ -25,6 +26,9 @@ class LApplication : Application() {
         }
         PigmentWallpaperCenter.registerPigment(activityHelper)
         registerActivityLifecycleCallbacks(activityHelper)
+        TechoTheme.preloadProfile(this) {
+            // 加载完成
+        }
     }
 
     fun fetchPigment() {

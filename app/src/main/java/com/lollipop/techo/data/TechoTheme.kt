@@ -1,11 +1,17 @@
 package com.lollipop.techo.data
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.lollipop.base.util.TxtHelper
+import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.onUI
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
+import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 abstract class TechoTheme(
     val key: String,
@@ -15,7 +21,7 @@ abstract class TechoTheme(
 
         var DEFAULT: Base = Base.LIGHT
 
-        private val entries = HashMap<String, TechoTheme>()
+        private val entries = ConcurrentHashMap<String, TechoTheme>()
 
         fun findBase(key: String): Base? {
             if (key == Base.LIGHT.key) {
@@ -48,6 +54,26 @@ abstract class TechoTheme(
                 return
             }
             entries[theme.key] = theme
+        }
+
+        fun preloadProfile(context: Context, complete: () -> Unit) {
+            doAsync {
+                CustomTechoTheme.loadProfiles(context) { file ->
+                    parse(file)
+                }
+                onUI {
+                    complete()
+                }
+            }
+        }
+
+        fun parse(file: File): Result<Custom> {
+            try {
+                val content = TxtHelper.readFromFile(file)
+                return parse(content)
+            } catch (e: Throwable) {
+                return Result.failure(e)
+            }
         }
 
         fun parse(json: String): Result<Custom> {

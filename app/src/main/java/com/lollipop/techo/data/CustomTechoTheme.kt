@@ -1,7 +1,9 @@
 package com.lollipop.techo.data
 
+import android.content.Context
 import android.graphics.Color
 import org.json.JSONObject
+import java.io.File
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -24,6 +26,32 @@ object CustomTechoTheme {
     private const val K_EXTREME_REVERSAL = "extremeReversal"
     private const val K_ON_EXTREME_TITLE = "onExtremeTitle"
     private const val K_ON_EXTREME_BODY = "onExtremeBody"
+
+    private const val DIR_PROFILE = "theme"
+
+    private fun getProfileDir(context: Context): File {
+        return File(context.filesDir, DIR_PROFILE)
+    }
+
+    private fun getProfileList(context: Context): Array<out File> {
+        val profileDir = getProfileDir(context)
+        return profileDir.listFiles() ?: emptyArray()
+    }
+
+    fun loadProfiles(context: Context, adapter: (File) -> Unit) {
+        try {
+            val list = getProfileList(context)
+            list.forEach {
+                try {
+                    adapter(it)
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
 
     /*
     {
