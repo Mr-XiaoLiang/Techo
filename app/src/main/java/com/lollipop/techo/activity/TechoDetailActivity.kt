@@ -35,7 +35,6 @@ import com.lollipop.techo.data.TechoItemType.Text
 import com.lollipop.techo.data.TechoItemType.Vcr
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoTheme
-import com.lollipop.techo.databinding.ActivityTechoEditBinding
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.edit.EditManager
 import com.lollipop.techo.fragment.RichTextOptionFragment
@@ -47,7 +46,7 @@ import org.json.JSONObject
 /**
  * 编辑 & 添加页
  */
-class TechoDetailActivity : HeaderActivity(),
+class TechoDetailActivity : BasicListActivity(),
     TechoMode.StateListener,
     EditHolder.OnItemOptionButtonClickListener {
 
@@ -83,14 +82,9 @@ class TechoDetailActivity : HeaderActivity(),
     override val optionsMenu: Int
         get() = R.menu.menu_edit
 
-    private val viewBinding: ActivityTechoEditBinding by lazyBind()
-
     private val floatingBinding: ActivityTechoEditFloatingBinding by lazyBind()
 
     override val useCustomPigment: Boolean = true
-
-    override val contentView: View
-        get() = viewBinding.root
 
     override val floatingView: View
         get() = floatingBinding.root
@@ -138,7 +132,7 @@ class TechoDetailActivity : HeaderActivity(),
     }
 
     private fun initContentView() {
-        viewBinding.contentListView.let { recyclerView ->
+        initRecyclerView { recyclerView ->
             recyclerView.layoutManager = LinearLayoutManager(
                 this, RecyclerView.VERTICAL, false
             )
@@ -292,7 +286,7 @@ class TechoDetailActivity : HeaderActivity(),
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(first: Int, second: Int, type: TechoMode.ChangedType) {
-        mode.onInfoChangedDefaultImpl(viewBinding.contentListView.adapter, first, second, type)
+        mode.onInfoChangedDefaultImpl(recyclerView.adapter, first, second, type)
     }
 
     override fun onDestroy() {
@@ -351,7 +345,7 @@ class TechoDetailActivity : HeaderActivity(),
 //                    viewBinding.contentListView.adapter?.notifyItemChanged(position)
 //                }
                 item.parse(JSONObject(result.info))
-                viewBinding.contentListView.adapter?.notifyItemChanged(position)
+                recyclerView.adapter?.notifyItemChanged(position)
             }
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -362,7 +356,7 @@ class TechoDetailActivity : HeaderActivity(),
         val adapterPosition = holder.adapterPosition
         val item = mode.itemList[adapterPosition]
         editManager.openEditPanel(adapterPosition, item) { index, _ ->
-            viewBinding.contentListView.adapter?.notifyItemChanged(index)
+            recyclerView.adapter?.notifyItemChanged(index)
         }
     }
 

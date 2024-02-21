@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.lollipop.base.list.LoadMoreHelper
 import com.lollipop.base.util.insets.WindowInsetsEdge
 import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
@@ -21,21 +19,15 @@ import com.lollipop.techo.data.TechoMode.ChangedType.Full
 import com.lollipop.techo.data.TechoMode.ChangedType.Insert
 import com.lollipop.techo.data.TechoMode.ChangedType.Modify
 import com.lollipop.techo.data.TechoMode.ChangedType.Move
-import com.lollipop.techo.databinding.ActivityMainBinding
 import com.lollipop.techo.databinding.ActivityMainFloatingBinding
 import com.lollipop.techo.list.home.HomeListAdapter
 
-class MainActivity : HeaderActivity(),
-    SwipeRefreshLayout.OnRefreshListener,
+class MainActivity : BasicListActivity(),
     TechoMode.StateListener {
 
-    private val viewBinding: ActivityMainBinding by lazyBind()
     private val floatingBinding: ActivityMainFloatingBinding by lazyBind()
 
     override val showBackArrow = false
-
-    override val contentView: View
-        get() = viewBinding.root
 
     override val floatingView: View
         get() = floatingBinding.root
@@ -45,10 +37,6 @@ class MainActivity : HeaderActivity(),
 
     private val mode by lazy {
         TechoMode.create(this).attach(this).buildListMode()
-    }
-
-    private val loadMoreHelper by lazy {
-        LoadMoreHelper.bind(viewBinding.techoListView, ::onLoadMore)
     }
 
     private val editPageLauncher = registerResult(TechoDetailActivity.LAUNCHER) { newId ->
@@ -63,15 +51,14 @@ class MainActivity : HeaderActivity(),
     }
 
     private fun initView() {
-        viewBinding.swipeRefreshLayout.setOnRefreshListener(this)
-        viewBinding.techoListView.layoutManager = LinearLayoutManager(
-            this, RecyclerView.VERTICAL, false
-        )
-        viewBinding.techoListView.adapter = HomeListAdapter(mode.info)
-
-        // 调用触发实例化
-        loadMoreHelper
-
+        initRecyclerView {
+            it.adapter = HomeListAdapter(mode.info)
+            it.layoutManager = LinearLayoutManager(
+                this, RecyclerView.VERTICAL, false
+            )
+        }
+        isEnableLoadMore(true)
+        isEnableRefresh(true)
         floatingBinding.newTechoBtn.onClick {
             editPageLauncher.launch(null)
 //            requestActivity<RecorderActivity> {
@@ -86,24 +73,23 @@ class MainActivity : HeaderActivity(),
         }
 
         floatingBinding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
-        viewBinding.root.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
     }
 
     override fun onLoadStart() {
-        if (viewBinding.swipeRefreshLayout.isRefreshing) {
+        if (isRefreshing) {
             return
         }
         showLoading()
     }
 
     override fun onLoadEnd() {
-        viewBinding.swipeRefreshLayout.isRefreshing = false
+        isRefreshing = false
         hideLoading()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onInfoChanged(start: Int, count: Int, type: TechoMode.ChangedType) {
-        val adapter = viewBinding.techoListView.adapter ?: return
+        val adapter = recyclerView.adapter ?: return
         when (type) {
             Full -> {
                 adapter.notifyDataSetChanged()
@@ -125,14 +111,14 @@ class MainActivity : HeaderActivity(),
                 adapter.notifyItemMoved(start, count)
             }
         }
-        loadMoreHelper.isLoading = false
+        isMoreLoading = false
     }
 
     override fun onRefresh() {
         mode.refresh()
     }
 
-    private fun onLoadMore() {
+    override fun onLoadMore() {
         mode.loadNext()
     }
 
