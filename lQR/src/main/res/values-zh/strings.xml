@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">lQR</string>
+    <string name="from_photo">从照片识别</string>
+    <string name="create_qr_code">生成二维码</string>
+    <string name="title_main">Lollipop QR</string>
+    <string name="copy">复制</string>
+    <string name="share">分享</string>
+    <string name="open">打开</string>
+    <string name="copied">已复制</string>
+    <string name="copied_wifi">密码已复制, %1$s</string>
+
+    <string name="code_calendar_event">日程</string>
+    <string name="code_contact">名片</string>
+    <string name="code_driver_license">驾照</string>
+    <string name="code_email">电子邮箱</string>
+    <string name="code_geo_point">地理位置</string>
+    <string name="code_isbn">书籍编号</string>
+    <string name="code_phone">联系电话</string>
+    <string name="code_product">商品编号</string>
+    <string name="code_sms">短信</string>
+    <string name="code_text">文本</string>
+    <string name="code_url">网址</string>
+    <string name="code_wifi">WiFi</string>
+    <string name="save">保存</string>
+
+    <string name="warning_qr_content_length">不建议二维码内容过长，建议在 %1$d 以内，当前为 %2$d</string>
+
+    <string name="tab_content">内容</string>
+    <string name="tab_position_detection">定位点</string>
+    <string name="tab_alignment">辅助点</string>
+    <string name="tab_data_point">数据点</string>
+    <string name="tab_background">背景</string>
+    <string name="tab_corner">角</string>
+    <string name="title_privacy_agreement">隐私协议</string>
+    <string name="hint_camera_permission">你还未授权使用摄像头的权限。\n我们无法通过摄像头获取图像信息来展示与解析。</string>
+    <string name="authorization">授权</string>
+
+    <string name="title_about">关于</string>
+    <string name="art_guidance">美术指导: Andrew</string>
+    <string name="developer">开发: Lollipop</string>
+    <string name="title_content_builder">内容生成</string>
+    <string name="refuse">拒绝协议</string>
+    <string name="agree">同意协议</string>
+    <string name="hint_input_value">…</string>
+
+    <string name="email_address">地址</string>
+    <string name="email_subject">标题</string>
+    <string name="email_message">内容</string>
+
+    <string name="phone_number">电话号码</string>
+    <string name="sms_message">短信内容</string>
+
+    <string name="contact_prefix_name">前缀</string>
+    <string name="contact_first_name">姓氏</string>
+    <string name="contact_middle_name">中间名</string>
+    <string name="contact_last_name">尾名</string>
+    <string name="contact_suffix_name">后缀</string>
+    <string name="contact_pronunciation_name">读音</string>
+
+    <string name="contact_organization">组织</string>
+
+    <string name="contact_title">标题</string>
+
+    <string name="contact_phone_1">电话 1</string>
+    <string name="contact_phone_2">电话 2</string>
+    <string name="contact_phone_3">电话 3</string>
+
+    <string name="contact_url_1">网址️ 1</string>
+    <string name="contact_url_2">网址️ 2</string>
+    <string name="contact_url_3">网址️ 3</string>
+
+    <string name="contact_email_1">邮箱 1</string>
+    <string name="contact_email_2">邮箱 2</string>
+    <string name="contact_email_3">邮箱 3</string>
+
+    <string name="contact_address_1">地址 1</string>
+    <string name="contact_address_2">地址 2</string>
+    <string name="contact_address_3">地址 3</string>
+
+    <string name="quick_scan">扫码</string>
+
+    <string name="wifi_ssid">名称(SSID)</string>
+    <string name="wifi_pwd">密码</string>
+    <string name="wifi_user">用户(可选)</string>
+    <string name="calendar_summary">总结</string>
+
+    <string name="content_builder_date">%1$s/%2$s/%3$s</string>
+    <string name="content_builder_time">%1$s:%2$s</string>
+    <string name="calendar_start_time">开始时间</string>
+    <string name="calendar_end_time">结束时间</string>
+    <string name="calendar_description">内容</string>
+    <string name="calendar_location">地址</string>
+    <string name="calendar_organizer">组织者</string>
+    <string name="calendar_status">状态</string>
+    <string name="geo_lat">纬度</string>
+    <string name="geo_lng">经度</string>
+    <string name="btn_content_builder">构建内容</string>
+    <string name="btn_content_done">完成</string>
+    <string name="toast_error_create_qr_bitmap">创建二维码图片失败</string>
+    <string name="toast_error_save_qr_bitmap">保存二维码图片失败</string>
+
+    <string name="message_qr_check_result_success">二维码检测成功，能够被准确识别</string>
+    <string name="message_qr_check_result_error">二维码检测失败，也许是二维码不容易识别，也许是检测过程中出错了</string>
+    <string name="message_qr_check_result_empty">需要先创建一个二维码才能开始检测</string>
+
+    <string name="known">知道了</string>
+    <string name="confirm">确定</string>
+    <string name="weight_mode">比例模式</string>
+    <string name="garbled">乱码?</string>
+
+    <string name="radius_none">无</string>
+
+    <string name="corner_left_top">左上角</string>
+    <string name="corner_left_bottom">左下角</string>
+    <string name="corner_right_top">右上角</string>
+    <string name="corner_right_bottom">右下角</string>
+    <string name="position_left_top">左上角</string>
+    <string name="position_right_top">右上角</string>
+    <string name="position_left_bottom">左下角</string>
+    <string name="size">尺寸</string>
+    <string name="corner">圆角</string>
+
+</resources>
