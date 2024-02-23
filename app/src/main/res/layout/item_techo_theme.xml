@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+    <com.lollipop.clip.RoundClipLayout
+        android:id="@+id/themeCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:radius="12dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/primaryCardView"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="6dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                tools:background="#3f00">
+
+                <TextView
+                    android:id="@+id/onPrimaryTitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    tools:text="@string/app_name" />
+
+                <TextView
+                    android:id="@+id/onPrimaryBodyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    tools:text="@string/app_name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/backgroundCardView"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="6dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/primaryCardView"
+                app:layout_constraintWidth_percent="0.5"
+                tools:background="#30f0">
+
+                <TextView
+                    android:id="@+id/onBackgroundTitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    tools:text="@string/app_name" />
+
+                <TextView
+                    android:id="@+id/onBackgroundBodyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    tools:text="@string/app_name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/secondaryCardView"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                tools:background="#300f">
+
+                <TextView
+                    android:id="@+id/onSecondaryTitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    tools:text="@string/app_name" />
+
+                <TextView
+                    android:id="@+id/onSecondaryBodyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    tools:text="@string/app_name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/extremeCardView"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/secondaryCardView"
+                app:layout_constraintWidth_percent="0.5"
+                tools:background="#3abc">
+
+                <TextView
+                    android:id="@+id/onExtremeTitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    tools:text="@string/app_name" />
+
+                <TextView
+                    android:id="@+id/onExtremeBodyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    tools:text="@string/app_name" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/optionPanelView"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:background="#A000"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <com.lollipop.clip.RoundClipLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:radius="21dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/deleteThemeButton"
+                        android:layout_width="72dp"
+                        android:layout_height="42dp"
+                        android:background="@color/warn_4"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_baseline_delete_24" />
+                </com.lollipop.clip.RoundClipLayout>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.lollipop.clip.RoundClipLayout>
+
+    <TextView
+        android:id="@+id/themeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        tools:text="@string/app_name" />
+
+</LinearLayout>
