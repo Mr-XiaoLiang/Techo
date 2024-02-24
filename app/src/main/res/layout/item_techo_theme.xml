@@ -35,14 +35,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textStyle="bold"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
                 <TextView
                     android:id="@+id/onPrimaryBodyView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
             </LinearLayout>
 
@@ -63,14 +63,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textStyle="bold"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
                 <TextView
                     android:id="@+id/onBackgroundBodyView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
             </LinearLayout>
 
@@ -91,14 +91,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textStyle="bold"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
                 <TextView
                     android:id="@+id/onSecondaryBodyView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
             </LinearLayout>
 
@@ -119,14 +119,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textStyle="bold"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
                 <TextView
                     android:id="@+id/onExtremeBodyView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    tools:text="@string/app_name" />
+                    android:text="@string/app_name" />
 
             </LinearLayout>
 
