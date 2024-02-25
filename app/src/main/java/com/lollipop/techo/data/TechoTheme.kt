@@ -23,6 +23,10 @@ abstract class TechoTheme(
 
         private val entries = ConcurrentHashMap<String, TechoTheme>()
 
+        fun getCustomThemeList(): List<TechoTheme> {
+            return entries.values.toList()
+        }
+
         fun findBase(key: String): Base? {
             if (key == Base.LIGHT.key) {
                 return Base.LIGHT
@@ -56,6 +60,10 @@ abstract class TechoTheme(
             entries[theme.key] = theme
         }
 
+        fun removeTheme(key: String) {
+            entries.remove(key)
+        }
+
         fun preloadProfile(context: Context, complete: () -> Unit) {
             doAsync {
                 CustomTechoTheme.loadProfiles(context) { file ->
@@ -70,14 +78,14 @@ abstract class TechoTheme(
         fun parse(file: File): Result<Custom> {
             try {
                 val content = TxtHelper.readFromFile(file)
-                return parse(content)
+                return parse(content, file)
             } catch (e: Throwable) {
                 return Result.failure(e)
             }
         }
 
-        fun parse(json: String): Result<Custom> {
-            val customResult = CustomTechoTheme.parse(json)
+        fun parse(json: String, file: File?): Result<Custom> {
+            val customResult = CustomTechoTheme.parse(json, file)
             customResult.getOrNull()?.let {
                 putTheme(it)
             }
@@ -126,7 +134,7 @@ abstract class TechoTheme(
         }
     }
 
-    class Custom(key: String, private val profile: Profile) : TechoTheme(key) {
+    class Custom(key: String, private val profile: Profile, val file: File?) : TechoTheme(key) {
 
         override fun getPigment(pigment: Pigment): Snapshot {
             return CustomSnapshot(profile, profile.base.getPigment(pigment))

@@ -3,10 +3,10 @@ package com.lollipop.techo.util.permission
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lollipop.techo.R
 import java.lang.ref.WeakReference
 
@@ -59,7 +59,7 @@ sealed class PermissionLauncher(
     }
 
     protected fun showRationale(activity: AppCompatActivity) {
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setMessage(rationaleMessage)
             .setPositiveButton(R.string.granted) { dialog, _ ->
                 dialog.dismiss()

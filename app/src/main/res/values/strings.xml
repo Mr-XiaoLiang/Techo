@@ -52,4 +52,9 @@
     <string name="recorder_error">录制失败</string>
 
     <string name="copied">已复制</string>
+
+    <string name="dialog_msg_remove_custom_theme">确定删除“%1$s”主题吗？\n删除的同时，也将会删除本地文件。</string>
+    <string name="dialog_positive_remove_custom_theme">删除</string>
+    <string name="dialog_negative_remove_custom_theme">保留</string>
+    <string name="toast_remove_custom_theme_refuse">这个主题不能被删除</string>
 </resources>

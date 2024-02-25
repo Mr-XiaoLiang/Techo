@@ -74,7 +74,7 @@ object CustomTechoTheme {
         "onExtremeBody": "#FFFFFFFF"
     }
     */
-    fun parse(json: String): Result<TechoTheme.Custom> {
+    fun parse(json: String, file: File?): Result<TechoTheme.Custom> {
         try {
             val obj = JSONObject(json)
             val key = obj.optString(K_KEY)
@@ -97,7 +97,7 @@ object CustomTechoTheme {
                     }
                 }
             }
-            return Result.success(TechoTheme.Custom(key, ThemeProfileByJson(baseTheme, map)))
+            return Result.success(TechoTheme.Custom(key, ThemeProfileByJson(baseTheme, map), file))
         } catch (e: Throwable) {
             e.printStackTrace()
             return Result.failure(e)
