@@ -2,6 +2,7 @@ package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -57,6 +58,13 @@ class TechoDetailActivity : BasicListActivity(),
         private const val RESULT_TECHO_ID = "RESULT_TECHO_ID"
 
         const val NO_ID = 0
+
+        fun start(context: Context, infoId: Int = 0, intentInit: (Intent) -> Unit = {}) {
+            val intent = Intent(context, TechoDetailActivity::class.java)
+            putParams(intent, infoId)
+            intentInit(intent)
+            context.startActivity(intent)
+        }
 
         fun putParams(intent: Intent, infoId: Int = 0): Intent {
             return intent.putExtra(PARAMETER_TECHO_ID, infoId)
@@ -121,6 +129,15 @@ class TechoDetailActivity : BasicListActivity(),
     }
 
     private var customPigment: TechoTheme? = null
+
+    private val themeSelectLauncher = registerResult(
+        TechoThemeSelectActivity.LAUNCHER
+    ) {
+        val theme = TechoTheme.findOrNull(it)
+        if (theme != null) {
+            useCustomPigment(theme)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -224,6 +241,7 @@ class TechoDetailActivity : BasicListActivity(),
     }
 
     private fun onCustomDecorationChanged(snapshot: TechoTheme.Snapshot) {
+        headerDarkMode(snapshot.isDarkMode)
         val fabCount = floatingBinding.floatingButtonPanel.childCount
         for (index in 0 until fabCount) {
             floatingBinding.floatingButtonPanel.getChildAt(index)?.let {
@@ -238,6 +256,7 @@ class TechoDetailActivity : BasicListActivity(),
                 }
             }
         }
+        scaffoldBinding.contentRoot.setBackgroundColor(snapshot.backgroundColor)
         contentAdapter.onDecorationChanged(snapshot)
     }
 
@@ -250,6 +269,11 @@ class TechoDetailActivity : BasicListActivity(),
                         onBackPressedDispatcher.onBackPressed()
                     }
                 }
+                return true
+            }
+
+            R.id.menuTheme -> {
+                themeSelectLauncher.launch(TechoThemeSelectActivity.LaunchInput(true))
                 return true
             }
         }

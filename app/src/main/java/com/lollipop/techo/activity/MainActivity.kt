@@ -2,6 +2,7 @@ package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -125,6 +126,15 @@ class MainActivity : BasicListActivity(),
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
         floatingBinding.newTechoBtn.tint(pigment)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuSettings -> {
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

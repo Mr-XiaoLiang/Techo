@@ -37,7 +37,7 @@ class TechoThemeSelectActivity : BasicListActivity() {
         private const val PARAMS_SELECT_MODE = "SELECT_MODE"
         private const val RESULT_THEME_KEY = "THEME_KEY"
 
-        val LAUNCHER: Class<out ActivityResultContract<Boolean?, String>> =
+        val LAUNCHER: Class<out ActivityResultContract<LaunchInput?, String>> =
             ResultContract::class.java
     }
 
@@ -68,6 +68,20 @@ class TechoThemeSelectActivity : BasicListActivity() {
         doAsync {
             val srcList = TechoTheme.getCustomThemeList()
             val themeList = ArrayList<ThemeInfo>()
+            themeList.add(
+                ThemeInfo(
+                    TechoTheme.Base.LIGHT.getPigment(),
+                    TechoTheme.Base.LIGHT.key,
+                    null
+                )
+            )
+            themeList.add(
+                ThemeInfo(
+                    TechoTheme.Base.DARK.getPigment(),
+                    TechoTheme.Base.DARK.key,
+                    null
+                )
+            )
             srcList.forEach {
                 themeList.add(
                     ThemeInfo(
@@ -340,13 +354,13 @@ class TechoThemeSelectActivity : BasicListActivity() {
 
     }
 
-    class ResultContract : ActivityLauncherHelper.Simple<Boolean?, String>() {
+    class ResultContract : ActivityLauncherHelper.Simple<LaunchInput?, String>() {
 
-        override val activityClass: Class<out Activity> = TechoDetailActivity::class.java
+        override val activityClass: Class<out Activity> = TechoThemeSelectActivity::class.java
 
-        override fun putParams(intent: Intent, input: Boolean?) {
+        override fun putParams(intent: Intent, input: LaunchInput?) {
             super.putParams(intent, input)
-            intent.putExtra(PARAMS_SELECT_MODE, input ?: true)
+            intent.putExtra(PARAMS_SELECT_MODE, input?.selectMode ?: true)
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): String {
@@ -358,5 +372,9 @@ class TechoThemeSelectActivity : BasicListActivity() {
         }
 
     }
+
+    class LaunchInput(
+        val selectMode: Boolean
+    )
 
 }

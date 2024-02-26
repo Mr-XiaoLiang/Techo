@@ -8,8 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
@@ -140,6 +142,10 @@ abstract class HeaderActivity : BaseActivity() {
         scaffoldBinding.headerBackground.onClick {
             changeBlurState()
         }
+        scaffoldBinding.optionButton.isVisible = optionsMenu != 0
+        scaffoldBinding.optionButton.onClick {
+            showOptionMenu(scaffoldBinding.optionButtonIcon)
+        }
         loadHeader()
         hideLoading()
         setTitle("")
@@ -149,7 +155,7 @@ abstract class HeaderActivity : BaseActivity() {
         super.onDecorationChanged(pigment)
         log("onDecorationChanged: $pigment")
         if (!useCustomPigment) {
-            scaffoldBinding.headerBackgroundMask.isVisible = isDarkMode
+            headerDarkMode(isDarkMode)
             scaffoldBinding.contentLoadingView.setIndicatorColor(
                 pigment.primaryColor,
                 pigment.secondaryColor,
@@ -159,6 +165,10 @@ abstract class HeaderActivity : BaseActivity() {
             scaffoldBinding.contentRoot.setBackgroundColor(pigment.backgroundColor)
 //            Toast.makeText(this, "Dark mode = ${pigment.backgroundColor.toString(16)}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    protected fun headerDarkMode(isDark: Boolean) {
+        scaffoldBinding.headerBackgroundMask.isVisible = isDark
     }
 
     override fun setTitle(title: CharSequence?) {
@@ -194,6 +204,20 @@ abstract class HeaderActivity : BaseActivity() {
             return true
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun showOptionMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        onCreateOptionsMenu(popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                if (item == null) {
+                    return false
+                }
+                return onOptionsItemSelected(item)
+            }
+        });
+        popupMenu.show()
     }
 
     private fun loadHeader() {

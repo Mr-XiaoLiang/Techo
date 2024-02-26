@@ -84,6 +84,42 @@
 
         </com.lollipop.widget.RoundBackgroundView>
 
+        <Space
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/optionButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <com.lollipop.widget.RoundBackgroundView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                app:color="#6000"
+                app:round_type="smaller"
+                app:round_weight="0.5">
+
+                <ImageView
+                    android:id="@+id/optionButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_back"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_baseline_more_vert_24"
+                    app:tint="@color/gray_0" />
+
+            </com.lollipop.widget.RoundBackgroundView>
+
+        </FrameLayout>
+
     </LinearLayout>
 
     <com.lollipop.vertical_page.VerticalPageScrollView

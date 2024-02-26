@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
 import com.lollipop.base.util.onClick
+import com.lollipop.techo.activity.TechoDetailActivity
 import com.lollipop.techo.data.TechoInfo
 import com.lollipop.techo.databinding.ItemHomeTechoBinding
 import com.lollipop.techo.util.FontHelper
 import com.lollipop.techo.util.RichTextHelper
 import com.lollipop.techo.util.setTypeface
-import java.util.*
+import java.util.Calendar
 
 class TechoHolder(
     private val binding: ItemHomeTechoBinding
@@ -38,9 +39,7 @@ class TechoHolder(
     }
 
     private fun onItemViewClick(context: Context) {
-        context.startActivity(Intent(context, TechoDetailActivity::class.java).apply {
-            TechoDetailActivity.putParams(this, techoId)
-        })
+        TechoDetailActivity.start(context, techoId)
     }
 
     fun bind(info: TechoInfo) {

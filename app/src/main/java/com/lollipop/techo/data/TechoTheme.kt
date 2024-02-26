@@ -38,11 +38,15 @@ abstract class TechoTheme(
         }
 
         fun find(key: String): TechoTheme {
+            return findOrNull(key) ?: DEFAULT
+        }
+
+        fun findOrNull(key: String): TechoTheme? {
             val base = findBase(key)
             if (base != null) {
                 return base
             }
-            return entries[key] ?: DEFAULT
+            return entries[key]
         }
 
         fun valueOf(pigment: Pigment): Snapshot {
