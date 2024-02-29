@@ -1,11 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    val localMavenPath: String by rootProject
     repositories {
         google()
         mavenCentral()
-        maven(localMavenPath)
+        mavenLocal()
     }
     dependencies {
         classpath(libs.gradle)
@@ -17,11 +16,9 @@ buildscript {
 }
 
 allprojects {
-    val localMavenPath: String by rootProject
     repositories {
         google()
         mavenCentral()
-        maven(localMavenPath)
     }
 }
 

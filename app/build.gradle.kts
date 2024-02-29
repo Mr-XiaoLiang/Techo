@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.swiperefreshlayout)
+
+    implementation(libs.bracketsCore)
+
     implementation(project(path = ":palette"))
     implementation(project(path = ":gallery"))
     implementation(project(path = ":maskGuide"))
