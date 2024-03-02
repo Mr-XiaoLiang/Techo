@@ -39,6 +39,7 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+# 项目来源于：https://github.com/Mr-XiaoLiang/Brackets
 bracketsCore = { module = "com.lollipoppp.brackets:core", version.ref = "bracketsCoreVersion" }
 
 [plugins]
