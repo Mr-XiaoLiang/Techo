@@ -46,6 +46,9 @@
             android:name=".activity.TechoDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.TechoEditActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>

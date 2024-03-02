@@ -7,22 +7,23 @@ import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentPage
 import com.lollipop.techo.R
 import com.lollipop.techo.data.AppTheme
+import com.lollipop.techo.data.TechoTheme
 
 open class BaseBottomSheetDialog(
     context: Context
-) : BottomSheetDialog(context, R.style.Theme_Techo_BottomSheetDialog), PigmentPage {
+) : BottomSheetDialog(context, R.style.Theme_Techo_BottomSheetDialog) {
 
     protected open val hideBackground = true
 
-    private var dialogPigment: Pigment? = null
+    protected var dialogTheme: TechoTheme.Snapshot? = null
+        private set
 
-    override val currentPigment: Pigment?
-        get() {
-            return dialogPigment
-        }
+    fun setTheme(pigment: Pigment) {
+        setTheme(TechoTheme.valueOf(pigment))
+    }
 
-    fun setPigment(pigment: Pigment) {
-        this.dialogPigment = pigment
+    fun setTheme(snapshot: TechoTheme.Snapshot) {
+        this.dialogTheme = snapshot
     }
 
     override fun onStart() {
@@ -35,25 +36,29 @@ open class BaseBottomSheetDialog(
                 }
             }
         }
-        updatePigment()
+        updateTheme()
     }
 
-    private fun updatePigment() {
-        var pigment = currentPigment
-        if (pigment == null) {
+    private fun updateTheme() {
+        var theme = dialogTheme
+        if (theme == null) {
             val c = context
             if (c is PigmentPage) {
-                pigment = c.currentPigment
+                val pigment = c.currentPigment
+                if (pigment != null) {
+                    theme = TechoTheme.valueOf(pigment)
+                }
             }
         }
-        if (pigment == null) {
-            pigment = AppTheme.current
+        if (theme == null) {
+            theme = TechoTheme.valueOf(AppTheme.current)
         }
-        onDecorationChanged(pigment)
+        dialogTheme = theme
+        onDecorationChanged(theme)
     }
 
-    override fun onDecorationChanged(pigment: Pigment) {
-        dialogPigment = pigment
+    protected open fun onDecorationChanged(snapshot: TechoTheme.Snapshot) {
+        // 这是为了兼容特殊快照主题的方法
     }
 
 }

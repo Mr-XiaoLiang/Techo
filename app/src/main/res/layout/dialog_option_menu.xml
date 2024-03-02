@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lollipop.clip.RoundClipLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:leftTop="20dp"
+    app:rightTop="20dp">
+
+    <LinearLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray_0"
+        android:orientation="vertical"
+        android:paddingBottom="52dp">
+
+        <View
+            android:id="@+id/sheetBar"
+            android:layout_width="52dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_bottom_sheet_bar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</com.lollipop.clip.RoundClipLayout>

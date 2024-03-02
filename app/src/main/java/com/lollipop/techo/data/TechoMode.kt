@@ -2,8 +2,6 @@ package com.lollipop.techo.data
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.ContextWrapper
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.list.OnItemMoveCallback
@@ -11,10 +9,10 @@ import com.lollipop.base.list.OnItemSwipeCallback
 import com.lollipop.base.util.doAsync
 import com.lollipop.base.util.onUI
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Collections
 
 sealed class TechoMode private constructor(
-    listener: StateListener,
+    listener: Any,
     lifecycle: Lifecycle?,
     context: Context,
 ) {
@@ -35,15 +33,19 @@ sealed class TechoMode private constructor(
                 ChangedType.Full -> {
                     adapter.notifyDataSetChanged()
                 }
+
                 ChangedType.Modify -> {
                     adapter.notifyItemRangeChanged(first, second)
                 }
+
                 ChangedType.Insert -> {
                     adapter.notifyItemRangeInserted(first, second)
                 }
+
                 ChangedType.Delete -> {
                     adapter.notifyItemRangeRemoved(first, second)
                 }
+
                 ChangedType.Move -> {
                     adapter.notifyItemMoved(first, second)
                     adapter.notifyItemChanged(first)
@@ -52,8 +54,16 @@ sealed class TechoMode private constructor(
             }
         }
 
-        fun create(context: Context): Builder {
-            return Builder(context)
+        fun edit(context: Context): TechoModeBuilder.EditBuilder {
+            return TechoModeBuilder.EditBuilder(context)
+        }
+
+        fun list(context: Context): TechoModeBuilder.ListBuilder {
+            return TechoModeBuilder.ListBuilder(context)
+        }
+
+        fun detail(context: Context): TechoModeBuilder.DetailBuilder {
+            return TechoModeBuilder.DetailBuilder(context)
         }
     }
 
@@ -75,88 +85,87 @@ sealed class TechoMode private constructor(
 
     protected fun loadStart() {
         if (isActive) {
-            listenerWrapper.get()?.onLoadStart()
+            optListener<LoadingStateListener>()?.onLoadStart()
         }
     }
 
     protected fun loadEnd() {
         if (isActive) {
-            listenerWrapper.get()?.onLoadEnd()
+            optListener<LoadingStateListener>()?.onLoadEnd()
         }
     }
 
     protected fun infoChanged(first: Int, second: Int, type: ChangedType) {
         if (isActive) {
-            listenerWrapper.get()?.onInfoChanged(first, second, type)
+            optListener<PartStateListener>()?.onInfoChanged(first, second, type)
         }
     }
 
-    class Builder(private val context: Context) {
-        private var listener: StateListener? = null
-        private var lifecycle: Lifecycle? = null
-
-        fun attach(listener: StateListener): Builder {
-            this.listener = listener
-            return this
+    protected fun infoChanged(info: TechoInfo) {
+        if (isActive) {
+            optListener<DetailStateListener>()?.onInfoChanged(info)
         }
-
-        fun bind(lifecycle: Lifecycle): Builder {
-            this.lifecycle = lifecycle
-            return this
-        }
-
-        fun buildDetailMode(): Detail {
-            val lis = listener ?: EmptyListener()
-            return Detail(lis, findLifecycle(), context)
-        }
-
-        fun buildEditMode(): Edit {
-            val lis = listener ?: EmptyListener()
-            return Edit(lis, findLifecycle(), context)
-        }
-
-        fun buildListMode(): List {
-            val lis = listener ?: EmptyListener()
-            return List(lis, findLifecycle(), context)
-        }
-
-        private fun findLifecycle(): Lifecycle? {
-            val l = lifecycle
-            if (l != null) {
-                return l
-            }
-            return findActivity()?.lifecycle
-        }
-
-        private fun findActivity(): AppCompatActivity? {
-            var c: Context? = context
-            do {
-                if (c is AppCompatActivity) {
-                    return c
-                }
-                if (c is ContextWrapper) {
-                    c = c.baseContext
-                } else {
-                    return null
-                }
-            } while (true)
-        }
-
-        private class EmptyListener : StateListener {
-            override fun onLoadStart() {
-            }
-
-            override fun onLoadEnd() {
-            }
-
-            override fun onInfoChanged(first: Int, second: Int, type: ChangedType) {
-            }
-        }
-
     }
 
-    class Edit(
-        listener: StateListener,
+    private inline fun <reified T> optListener(): T? {
+        val any = listenerWrapper.get() ?: return null
+        if (any is T) {
+            return any
+        }
+        return null
+    }
+
+    protected fun formatData(itemList: List<TechoItem>): IntArray {
+        var number = 1
+        var updateStart = -1
+        var updateEnd = -1
+        itemList.forEachIndexed { index, info ->
+            when (info) {
+                is TechoItem.Number -> {
+                    if (index < 0) {
+                        updateStart = index
+                    }
+                    if (updateEnd < index) {
+                        updateEnd = index
+                    }
+                    info.number = number
+                    number++
+                }
+
+                is TechoItem.Split -> {
+                    number = 1
+                }
+
+                is TechoItem.CheckBox -> {
+
+                }
+
+                is TechoItem.Photo -> {
+
+                }
+
+                is TechoItem.Text -> {
+
+                }
+
+                is TechoItem.Title -> {
+
+                }
+
+                is TechoItem.Recording -> {
+                    // TODO()
+                }
+
+                is TechoItem.Vcr -> {
+                    // TODO()
+                }
+            }
+        }
+        return intArrayOf(updateStart, updateEnd)
+    }
+
+    class EditMode(
+        listener: EditStateListener,
         lifecycle: Lifecycle?,
         context: Context
     ) : TechoMode(listener, lifecycle, context), OnItemMoveCallback, OnItemSwipeCallback {
@@ -301,45 +310,7 @@ sealed class TechoMode private constructor(
         }
 
         private fun formatData(): IntArray {
-            var number = 1
-            var updateStart = -1
-            var updateEnd = -1
-            itemList.forEachIndexed { index, info ->
-                when (info) {
-                    is TechoItem.Number -> {
-                        if (index < 0) {
-                            updateStart = index
-                        }
-                        if (updateEnd < index) {
-                            updateEnd = index
-                        }
-                        info.number = number
-                        number++
-                    }
-                    is TechoItem.Split -> {
-                        number = 1
-                    }
-                    is TechoItem.CheckBox -> {
-
-                    }
-                    is TechoItem.Photo -> {
-
-                    }
-                    is TechoItem.Text -> {
-
-                    }
-                    is TechoItem.Title -> {
-
-                    }
-                    is TechoItem.Recording -> {
-                        // TODO()
-                    }
-                    is TechoItem.Vcr -> {
-                        // TODO()
-                    }
-                }
-            }
-            return intArrayOf(updateStart, updateEnd)
+            return formatData(itemList)
         }
 
         /**
@@ -429,8 +400,8 @@ sealed class TechoMode private constructor(
 
     }
 
-    class Detail(
-        listener: StateListener,
+    class DetailMode(
+        listener: DetailStateListener,
         lifecycle: Lifecycle?,
         context: Context,
     ) : TechoMode(listener, lifecycle, context) {
@@ -445,7 +416,6 @@ sealed class TechoMode private constructor(
             info.flag = TechoFlag()
             info.title = ""
             info.items.clear()
-            initList()
         }
 
         /**
@@ -457,45 +427,7 @@ sealed class TechoMode private constructor(
         }
 
         private fun formatData(): IntArray {
-            var number = 1
-            var updateStart = -1
-            var updateEnd = -1
-            info.items.forEachIndexed { index, info ->
-                when (info) {
-                    is TechoItem.Number -> {
-                        if (index < 0) {
-                            updateStart = index
-                        }
-                        if (updateEnd < index) {
-                            updateEnd = index
-                        }
-                        info.number = number
-                        number++
-                    }
-                    is TechoItem.Split -> {
-                        number = 1
-                    }
-                    is TechoItem.CheckBox -> {
-
-                    }
-                    is TechoItem.Photo -> {
-
-                    }
-                    is TechoItem.Text -> {
-
-                    }
-                    is TechoItem.Title -> {
-
-                    }
-                    is TechoItem.Recording -> {
-                        // TODO()
-                    }
-                    is TechoItem.Vcr -> {
-                        // TODO()
-                    }
-                }
-            }
-            return intArrayOf(updateStart, updateEnd)
+            return formatData(info.items)
         }
 
         /**
@@ -509,7 +441,7 @@ sealed class TechoMode private constructor(
                 }
                 resetInfo()
                 onUI {
-                    infoChanged(0, info.items.size, ChangedType.Delete)
+                    infoChanged(info)
                     loadEnd()
                 }
             }
@@ -522,7 +454,7 @@ sealed class TechoMode private constructor(
             loadStart()
             if (info.id == NO_ID) {
                 resetInfo()
-                infoChanged(0, info.items.size, ChangedType.Full)
+                infoChanged(info)
                 loadEnd()
                 return
             }
@@ -536,25 +468,17 @@ sealed class TechoMode private constructor(
                 } else {
                     resetInfo()
                 }
-                initList()
                 formatData()
                 onUI {
-                    infoChanged(0, info.items.size, ChangedType.Full)
+                    infoChanged(info)
                     loadEnd()
                 }
             }
         }
-
-        private fun initList() {
-            if (info.items.isEmpty()) {
-                info.items.add(TechoItem.Text())
-            }
-        }
-
     }
 
-    class List(
-        listener: StateListener,
+    class ListMode(
+        listener: ListStateListener,
         lifecycle: Lifecycle?,
         context: Context
     ) : TechoMode(listener, lifecycle, context), OnItemSwipeCallback {
@@ -656,11 +580,24 @@ sealed class TechoMode private constructor(
 
     }
 
-    interface StateListener {
+    interface LoadingStateListener {
         fun onLoadStart()
         fun onLoadEnd()
-        fun onInfoChanged(first: Int, second: Int, type: ChangedType)
     }
+
+    interface PartStateListener {
+
+        fun onInfoChanged(first: Int, second: Int, type: ChangedType)
+
+    }
+
+    interface DetailStateListener : LoadingStateListener {
+        fun onInfoChanged(info: TechoInfo)
+    }
+
+    interface EditStateListener : LoadingStateListener, PartStateListener
+
+    interface ListStateListener : LoadingStateListener, PartStateListener
 
     enum class ChangedType {
         Full,

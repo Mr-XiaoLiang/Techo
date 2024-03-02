@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ import com.lollipop.base.util.onUI
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
+import com.lollipop.techo.dialog.OptionMenuDialog
 import com.lollipop.techo.util.AppUtil
 import com.lollipop.techo.util.BlurTransformation
 import java.io.File
@@ -103,7 +103,7 @@ abstract class HeaderActivity : BaseActivity() {
 
     protected open val showBackArrow = true
 
-    protected open val optionsMenu = 0
+    protected open val optionsMenu: Boolean = false
 
     private var isBlurHeader = AppUtil.isBlurHeader
 
@@ -142,9 +142,9 @@ abstract class HeaderActivity : BaseActivity() {
         scaffoldBinding.headerBackground.onClick {
             changeBlurState()
         }
-        scaffoldBinding.optionButton.isVisible = optionsMenu != 0
+        scaffoldBinding.optionButton.isVisible = optionsMenu
         scaffoldBinding.optionButton.onClick {
-            showOptionMenu(scaffoldBinding.optionButtonIcon)
+            showOptionMenu()
         }
         loadHeader()
         hideLoading()
@@ -180,6 +180,10 @@ abstract class HeaderActivity : BaseActivity() {
         scaffoldBinding.contentLoadingView.show()
     }
 
+    protected open fun updateOptionDialog(dialog: OptionMenuDialog) {
+        dialog.setTheme(currentPigment)
+    }
+
     override fun onResume() {
         super.onResume()
         if (isBlurHeader != AppUtil.isBlurHeader) {
@@ -198,26 +202,15 @@ abstract class HeaderActivity : BaseActivity() {
         scaffoldBinding.contentLoadingView.hide()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (optionsMenu != 0) {
-            menuInflater.inflate(optionsMenu, menu)
-            return true
-        }
-        return super.onCreateOptionsMenu(menu)
+    protected open fun OptionMenuDialog.OptionScope.onCreateOptionsMenu(dialog: OptionMenuDialog) {
     }
 
-    private fun showOptionMenu(view: View) {
-        val popupMenu = PopupMenu(this, view)
-        onCreateOptionsMenu(popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                if (item == null) {
-                    return false
-                }
-                return onOptionsItemSelected(item)
-            }
-        });
-        popupMenu.show()
+    private fun showOptionMenu() {
+        val optionMenuDialog = OptionMenuDialog(this) {
+            onCreateOptionsMenu(it)
+        }
+        updateOptionDialog(optionMenuDialog)
+        optionMenuDialog.show()
     }
 
     private fun loadHeader() {

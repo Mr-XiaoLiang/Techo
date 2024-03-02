@@ -2,8 +2,8 @@ package com.lollipop.techo.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.insets.WindowInsetsEdge
@@ -11,6 +11,8 @@ import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.registerResult
+import com.lollipop.brackets.core.Stateless
+import com.lollipop.brackets.core.TypedResponse
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
@@ -21,10 +23,12 @@ import com.lollipop.techo.data.TechoMode.ChangedType.Insert
 import com.lollipop.techo.data.TechoMode.ChangedType.Modify
 import com.lollipop.techo.data.TechoMode.ChangedType.Move
 import com.lollipop.techo.databinding.ActivityMainFloatingBinding
+import com.lollipop.techo.dialog.OptionMenuDialog
+import com.lollipop.techo.dialog.options.Item
 import com.lollipop.techo.list.home.HomeListAdapter
 
 class MainActivity : BasicListActivity(),
-    TechoMode.StateListener {
+    TechoMode.ListStateListener {
 
     private val floatingBinding: ActivityMainFloatingBinding by lazyBind()
 
@@ -33,11 +37,10 @@ class MainActivity : BasicListActivity(),
     override val floatingView: View
         get() = floatingBinding.root
 
-    override val optionsMenu: Int
-        get() = R.menu.menu_main
+    override val optionsMenu = true
 
     private val mode by lazy {
-        TechoMode.create(this).attach(this).buildListMode()
+        TechoMode.list(this).bind(this.lifecycle).attach(this).build()
     }
 
     private val editPageLauncher = registerResult(TechoDetailActivity.LAUNCHER) { newId ->
@@ -128,13 +131,13 @@ class MainActivity : BasicListActivity(),
         floatingBinding.newTechoBtn.tint(pigment)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuSettings -> {
-                return true
+    override fun OptionMenuDialog.OptionScope.onCreateOptionsMenu(dialog: OptionMenuDialog) {
+        Item {
+            title = Stateless(getString(R.string.settings))
+            onClick = TypedResponse {
+                Toast.makeText(this@MainActivity, "Setting", Toast.LENGTH_SHORT).show()
             }
         }
-        return super.onOptionsItemSelected(item)
     }
 
 }
