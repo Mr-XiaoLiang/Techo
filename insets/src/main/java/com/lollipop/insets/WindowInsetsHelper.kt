@@ -1,6 +1,7 @@
 package com.lollipop.insets
 
 import android.app.Activity
+import android.app.Application
 import android.app.Dialog
 import android.graphics.Color
 import android.view.View
@@ -24,6 +25,9 @@ class WindowInsetsHelper(
 ) : OnApplyWindowInsetsListener {
 
     companion object {
+        /**
+         * 通过枚举的类型来
+         */
         fun getInsetsValue(
             insets: WindowInsetsCompat,
             type: WindowInsetsType = WindowInsetsType.SYSTEM_BARS,
@@ -79,6 +83,10 @@ class WindowInsetsHelper(
             }
             WindowCompat.setDecorFitsSystemWindows(window, false)
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        }
+
+        fun registerAutoFix(application: Application, mode: WindowInsetsAutoFixMode) {
+            WindowInsetsAutoFixDelegate.init(application, mode)
         }
 
         fun setMargin(target: View, left: Int, top: Int, right: Int, bottom: Int) {
