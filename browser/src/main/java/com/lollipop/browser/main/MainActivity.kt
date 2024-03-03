@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lollipop.base.util.dp2px
-import com.lollipop.base.util.insets.*
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
@@ -16,7 +15,16 @@ import com.lollipop.browser.copyright.CopyrightIcons8Activity
 import com.lollipop.browser.databinding.ActivityMainBinding
 import com.lollipop.browser.web.WebPageFragment
 import com.lollipop.browser.web.WebStatusManager
-import com.lollipop.fragment.*
+import com.lollipop.fragment.FragmentCreatedCallback
+import com.lollipop.fragment.FragmentHelper
+import com.lollipop.fragment.FragmentInfo
+import com.lollipop.fragment.FragmentSwitcher
+import com.lollipop.fragment.SimpleFragmentInfo
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.WindowInsetsOperator
+import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.fixInsetsByListener
 import com.lollipop.web.search.SearchSuggestion
 import kotlin.math.max
 
@@ -33,7 +41,7 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         initBottomSheetPanel()
         initView()
         val switcher = FragmentHelper.with(this)
@@ -44,8 +52,8 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
 
     private fun initView() {
         binding.statusPanel.fixInsetsByListener(
-            WindowInsetsEdgeViewDelegate(
-                direction = WindowInsetsEdgeViewDelegate.Direction.TOP,
+            com.lollipop.insets.WindowInsetsEdgeViewDelegate(
+                direction = com.lollipop.insets.WindowInsetsEdgeViewDelegate.Direction.TOP,
                 minSize = 4.dp2px
             )
         )
@@ -73,10 +81,13 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
 
             val value = WindowInsetsHelper.getInsetsValue(
                 insets,
-                WindowInsetsType.MANDATORY_SYSTEM_GESTURES
+                com.lollipop.insets.WindowInsetsType.MANDATORY_SYSTEM_GESTURES
             )
             val peekHeight = max(value.bottom + minHeight - actionHeight, 0)
-            WindowInsetsHelper.setHeight(binding.navigationBarBackgroundView, peekHeight)
+            WindowInsetsHelper.setHeight(
+                binding.navigationBarBackgroundView,
+                peekHeight
+            )
             panelOperator.padding(
                 binding.navBottomSheetPanel,
                 bottom = panelOperator.basePadding.bottom + peekHeight

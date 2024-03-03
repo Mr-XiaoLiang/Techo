@@ -4,8 +4,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import com.lollipop.base.util.*
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByMargin
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tintByNotObvious
 import com.lollipop.techo.data.TechoItem

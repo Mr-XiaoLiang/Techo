@@ -10,10 +10,15 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.util.*
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.base.util.doAsync
+import com.lollipop.base.util.lazyBind
+import com.lollipop.base.util.onClick
+import com.lollipop.base.util.onUI
+import com.lollipop.base.util.setEmptyClick
+import com.lollipop.base.util.tryUI
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.recorder.RecorderHelper
 import com.lollipop.techo.R
 import com.lollipop.techo.activity.BaseActivity
@@ -79,7 +84,7 @@ class RecorderActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         backPressHandler.bindTo(this)
         binding.dialogRootView.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
         binding.backgroundView.onClick {
@@ -220,10 +225,12 @@ class RecorderActivity : BaseActivity() {
                     binding.recorderMicView.icon = progressDrawable
                     progressDrawable?.start()
                 }
+
                 isRunning() -> {
                     binding.recorderMicView.setText(R.string.stop)
                     binding.recorderMicView.setIconResource(R.drawable.ic_baseline_stop_24)
                 }
+
                 else -> {
                     binding.recorderMicView.setText(R.string.start)
                     binding.recorderMicView.setIconResource(R.drawable.ic_baseline_mic_24)

@@ -1,8 +1,8 @@
-package com.lollipop.base.util.insets
+package com.lollipop.insets
 
 import android.view.View
 import androidx.core.view.WindowInsetsCompat
-import com.lollipop.base.util.insets.WindowInsetsEdgeViewDelegate.Direction.*
+import com.lollipop.insets.WindowInsetsEdgeViewDelegate.Direction.*
 import kotlin.math.max
 
 class WindowInsetsEdgeViewDelegate(
@@ -13,7 +13,7 @@ class WindowInsetsEdgeViewDelegate(
 ) : WindowInsetsHelper.OnWindowInsetsChangedListener {
     override fun onWindowInsetsChanged(
         v: View,
-        option: WindowInsetsOperator,
+        operator: WindowInsetsOperator,
         insets: WindowInsetsCompat
     ): WindowInsetsCompat {
         val insetsValue = WindowInsetsHelper.getInsetsValue(insets, insetsType)

@@ -11,10 +11,10 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.annotation.CallSuper
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.WindowInsetsType
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.WindowInsetsType
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.databinding.DialogBaseBottomBinding

@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.registerResult

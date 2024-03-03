@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,8 +15,8 @@ import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.ActivityLauncherHelper
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.isCreated
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick

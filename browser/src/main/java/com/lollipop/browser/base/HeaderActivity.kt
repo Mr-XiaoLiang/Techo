@@ -7,13 +7,14 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsEdgeStrategy
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.browser.databinding.ActivityHeaderBinding
+import com.lollipop.insets.fitsSystemWindows
 
 abstract class HeaderActivity : AppCompatActivity() {
 
@@ -28,7 +29,7 @@ abstract class HeaderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         viewBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT,

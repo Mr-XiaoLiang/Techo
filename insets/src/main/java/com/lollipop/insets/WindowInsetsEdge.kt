@@ -1,4 +1,4 @@
-package com.lollipop.base.util.insets
+package com.lollipop.insets
 
 class WindowInsetsEdge(
     val left: WindowInsetsEdgeStrategy,

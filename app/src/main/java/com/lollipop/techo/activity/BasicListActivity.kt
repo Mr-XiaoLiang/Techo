@@ -5,8 +5,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lollipop.base.list.LoadMoreHelper
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.techo.databinding.ActivityBasicListBinding
 

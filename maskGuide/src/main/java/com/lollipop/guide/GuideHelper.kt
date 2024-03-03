@@ -15,9 +15,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.listener.BackPressListener
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.cleanWindowInsetHelper
-import com.lollipop.base.util.insets.fixInsetsByListener
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.cleanWindowInsetHelper
+import com.lollipop.insets.fixInsetsByListener
 import com.lollipop.guide.impl.DefaultGuideProvider
 import kotlin.math.abs
 

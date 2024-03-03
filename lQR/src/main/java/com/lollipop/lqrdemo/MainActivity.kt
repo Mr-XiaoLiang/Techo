@@ -11,9 +11,6 @@ import androidx.core.content.PermissionChecker
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
@@ -21,6 +18,9 @@ import com.lollipop.base.util.registerResult
 import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.lqrdemo.other.AppSettings
@@ -63,7 +63,7 @@ class MainActivity : ScanResultActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         resultBackPressHandler.bindTo(this)
         binding.contentPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()

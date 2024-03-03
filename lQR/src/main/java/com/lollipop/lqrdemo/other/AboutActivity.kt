@@ -5,17 +5,16 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.richtext.RichText
 import com.lollipop.base.util.versionName
+import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.databinding.ActivityAboutBinding
-import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentWallpaperCenter
 
 
 class AboutActivity : ColorModeActivity() {
@@ -25,7 +24,7 @@ class AboutActivity : ColorModeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.versionView.text = versionName()
         bindByBack(binding.backButton)

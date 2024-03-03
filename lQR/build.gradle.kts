@@ -60,4 +60,5 @@ dependencies {
     implementation(project(path = ":faceIcon"))
     implementation(project(path = ":palette"))
     implementation(project(path = ":fragmentHelper"))
+    implementation(project(path = ":insets"))
 }

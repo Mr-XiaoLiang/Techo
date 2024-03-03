@@ -9,10 +9,11 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
+import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityPhotoScanBinding
 import com.lollipop.pigment.Pigment
@@ -56,7 +57,7 @@ class PhotoScanActivity : ScanResultActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.progressIndicator.show()
         bindResult(barcodeReader)

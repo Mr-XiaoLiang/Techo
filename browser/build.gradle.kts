@@ -1,7 +1,7 @@
 plugins {
-    id( "com.android.application"      )
-    id( "org.jetbrains.kotlin.android" )
-    id( "kotlin-kapt"                  )
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -26,7 +26,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -44,19 +47,20 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx                         )
-    implementation(libs.androidx.appcompat                        )
-    implementation(libs.material                                  )
-    implementation(libs.androidx.constraintlayout                 )
-    implementation(libs.androidx.swiperefreshlayout.v120alpha01   )
-    implementation(libs.glide                                     )
-    implementation(project(path = ":base")                         )
-    implementation(project(path = ":web")                          )
-    implementation(project(path = ":maskGuide")                    )
-    implementation(project(path = ":clip")                         )
-    implementation(project(path = ":fragmentHelper")               )
-    implementation(project(path = ":colorRes")                     )
-    implementation(project(path = ":verticalPage")                 )
-    implementation(project(path = ":stitch")                       )
-    implementation(project(path = ":fileChooser")                  )
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout.v120alpha01)
+    implementation(libs.glide)
+    implementation(project(path = ":base"))
+    implementation(project(path = ":web"))
+    implementation(project(path = ":maskGuide"))
+    implementation(project(path = ":clip"))
+    implementation(project(path = ":fragmentHelper"))
+    implementation(project(path = ":colorRes"))
+    implementation(project(path = ":verticalPage"))
+    implementation(project(path = ":stitch"))
+    implementation(project(path = ":fileChooser"))
+    implementation(project(path = ":insets"))
 }

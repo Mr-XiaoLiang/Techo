@@ -1,4 +1,4 @@
-package com.lollipop.base.util.insets
+package com.lollipop.insets
 
 import android.view.View
 import androidx.core.view.WindowInsetsCompat

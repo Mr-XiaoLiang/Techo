@@ -1,4 +1,4 @@
-package com.lollipop.base.util.insets
+package com.lollipop.insets
 
 /**
  * 这是WindowInsetsCompat.Type的枚举抽象，以此来限制代码取值范围

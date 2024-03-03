@@ -10,13 +10,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ActivityLauncherHelper
-import com.lollipop.base.util.insets.MultipleInsetsDelegate
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.WindowInsetsType
-import com.lollipop.base.util.insets.fixInsetsByMultiple
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
+import com.lollipop.insets.MultipleInsetsDelegate
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.WindowInsetsType
+import com.lollipop.insets.fixInsetsByMultiple
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.creator.content.impl.CalendarEventContentBuilderPage
@@ -29,7 +29,6 @@ import com.lollipop.lqrdemo.creator.content.impl.WifiContentBuilderPage
 import com.lollipop.lqrdemo.databinding.ActivityContentBuilderBinding
 import com.lollipop.pigment.BlendMode
 import com.lollipop.pigment.Pigment
-import com.lollipop.pigment.PigmentTint
 
 class ContentBuilderActivity : ColorModeActivity() {
 

@@ -7,8 +7,8 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.lollipop.base.util.insets.WindowInsetsHelper
 import com.lollipop.base.util.lazyBind
+import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.techo.databinding.ActivitySingleFragmentBinding
 
 class SingleFragmentActivity : BaseActivity() {
@@ -64,7 +64,7 @@ class SingleFragmentActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         initFragment()
     }
 

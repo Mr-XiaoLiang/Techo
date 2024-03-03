@@ -15,9 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.doAsync
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
@@ -27,6 +24,9 @@ import com.lollipop.faceicon.FaceIcons
 import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.creator.QrContentInputPopupWindow
@@ -91,7 +91,7 @@ class CreatorActivity : ColorModeActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
         bindByBack(binding.backButton)
         binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.BOTTOM)

@@ -5,10 +5,10 @@ import android.util.Size
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lollipop.base.listener.BackPressHandler
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsEdgeStrategy
+import com.lollipop.insets.WindowInsetsHelper
+import com.lollipop.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick

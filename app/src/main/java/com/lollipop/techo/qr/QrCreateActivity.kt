@@ -6,8 +6,8 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.lollipop.base.util.*
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.fixInsetsByMargin
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByMargin
 import com.lollipop.qr.BarcodeFormat
 import com.lollipop.qr.BarcodeHelper
 import com.lollipop.techo.R

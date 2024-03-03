@@ -5,25 +5,20 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
 import androidx.core.widget.doAfterTextChanged
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.WindowInsetsType
-import com.lollipop.base.util.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.requestBoard
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsType
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.PigmentTheme
 import com.lollipop.lqrdemo.databinding.DialogInputBinding
 import com.lollipop.pigment.BlendMode
-import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.PigmentWallpaperCenter
 
 class QrContentInputPopupWindow(context: Context, private val option: Option) : Dialog(context) {

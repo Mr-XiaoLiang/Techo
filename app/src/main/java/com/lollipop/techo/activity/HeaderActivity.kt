@@ -7,10 +7,8 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
@@ -21,14 +19,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.ViewPropertyTransition
 import com.lollipop.base.util.doAsync
-import com.lollipop.base.util.insets.WindowInsetsEdge
-import com.lollipop.base.util.insets.WindowInsetsEdgeStrategy
-import com.lollipop.base.util.insets.WindowInsetsHelper
-import com.lollipop.base.util.insets.fixInsetsByMargin
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.lazyLogD
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsEdgeStrategy
+import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.fixInsetsByMargin
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.data.RequestService
 import com.lollipop.techo.databinding.ActivityHeaderBinding
@@ -114,7 +112,7 @@ abstract class HeaderActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(scaffoldBinding.root)
-        WindowInsetsHelper.fitsSystemWindows(this)
+        fitsSystemWindows()
         scaffoldBinding.contentRoot.addView(
             contentView,
             ViewGroup.LayoutParams.MATCH_PARENT,

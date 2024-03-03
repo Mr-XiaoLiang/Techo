@@ -70,6 +70,7 @@ dependencies {
     implementation(project(path = ":verticalPage"))
     implementation(project(path = ":widget"))
     implementation(project(path = ":pigment"))
+    implementation(project(path = ":insets"))
     // https://juejin.cn/post/7043616310369976328
     // https://developer.android.com/guide/topics/ui/drag-drop
 //    implementation "androidx.draganddrop:draganddrop:1.0.0-alpha02"

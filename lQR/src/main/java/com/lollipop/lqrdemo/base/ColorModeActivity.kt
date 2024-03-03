@@ -3,7 +3,7 @@ package com.lollipop.lqrdemo.base
 import android.content.res.Configuration
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.lollipop.base.util.insets.WindowInsetsHelper
+import com.lollipop.insets.WindowInsetsHelper
 import com.lollipop.base.util.isResumed
 import com.lollipop.lqrdemo.QrApplication
 import com.lollipop.pigment.BlendMode

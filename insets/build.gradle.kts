@@ -1,15 +1,16 @@
 plugins {
     id("com.android.library")
-    id("kotlin-android")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
+    namespace = "com.lollipop.insets"
     compileSdk = 34
-    namespace = "com.lollipop.guide"
-    defaultConfig {
-        minSdk = 26
 
+    defaultConfig {
+        minSdk = 21
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -29,17 +30,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
 }
 
 dependencies {
-    implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    // 用于处理BackPress
-    implementation(project(path = ":base"))
-    // 用于处理窗口缩进
-    implementation(project(path = ":insets"))
 }

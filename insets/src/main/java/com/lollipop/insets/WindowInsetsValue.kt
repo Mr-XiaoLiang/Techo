@@ -1,4 +1,4 @@
-package com.lollipop.base.util.insets
+package com.lollipop.insets
 
 import androidx.core.graphics.Insets
 import kotlin.math.max
