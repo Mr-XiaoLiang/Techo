@@ -64,7 +64,7 @@ class WindowInsetsOperator(
     /**
      * 缩进取值类型
      */
-    var insetsType = WindowInsetsType.SYSTEM_BARS
+    var insetsType: WindowInsetsType = WindowInsetsType.SystemBars
 
     /**
      * 以快照的形式记录当前Margin值，并且以此为基础

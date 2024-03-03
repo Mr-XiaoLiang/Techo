@@ -30,46 +30,9 @@ class WindowInsetsHelper(
          */
         fun getInsetsValue(
             insets: WindowInsetsCompat,
-            type: WindowInsetsType = WindowInsetsType.SYSTEM_BARS,
+            type: WindowInsetsType = WindowInsetsType.SystemBars,
         ): WindowInsetsValue {
-            val typeMask = when (type) {
-                WindowInsetsType.SYSTEM_BARS -> {
-                    WindowInsetsCompat.Type.systemBars()
-                }
-
-                WindowInsetsType.DISPLAY_CUTOUT -> {
-                    WindowInsetsCompat.Type.displayCutout()
-                }
-
-                WindowInsetsType.TAPPABLE_ELEMENT -> {
-                    WindowInsetsCompat.Type.tappableElement()
-                }
-
-                WindowInsetsType.MANDATORY_SYSTEM_GESTURES -> {
-                    WindowInsetsCompat.Type.mandatorySystemGestures()
-                }
-
-                WindowInsetsType.SYSTEM_GESTURES -> {
-                    WindowInsetsCompat.Type.systemGestures()
-                }
-
-                WindowInsetsType.IME -> {
-                    WindowInsetsCompat.Type.ime()
-                }
-
-                WindowInsetsType.CAPTION_BAR -> {
-                    WindowInsetsCompat.Type.captionBar()
-                }
-
-                WindowInsetsType.NAVIGATION_BARS -> {
-                    WindowInsetsCompat.Type.navigationBars()
-                }
-
-                WindowInsetsType.STATUS_BARS -> {
-                    WindowInsetsCompat.Type.systemBars()
-                }
-            }
-            return WindowInsetsValue(insets.getInsets(typeMask))
+            return WindowInsetsValue(insets.getInsets(type.typeMask()))
         }
 
         fun fitsSystemWindows(activity: Activity) {

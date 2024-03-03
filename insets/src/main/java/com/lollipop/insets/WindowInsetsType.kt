@@ -1,15 +1,24 @@
 package com.lollipop.insets
 
+import androidx.core.view.WindowInsetsCompat
+
 /**
  * 这是WindowInsetsCompat.Type的枚举抽象，以此来限制代码取值范围
  * 所有注释来源于WindowInsetsCompat，详情请参见WindowInsetsCompat.Type
  */
-enum class WindowInsetsType {
+sealed class WindowInsetsType {
+
+    abstract fun typeMask(): Int
+
     /**
      * @return All system bars. Includes {@link #statusBars()}, {@link #captionBar()} as well as
      * {@link #navigationBars()}, but not {@link #ime()}.
      */
-    SYSTEM_BARS,
+    data object SystemBars : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.systemBars()
+        }
+    }
 
     /**
      * Returns an insets type representing the area that used by {@link DisplayCutoutCompat}.
@@ -21,17 +30,29 @@ enum class WindowInsetsType {
      * @see DisplayCutoutCompat#getSafeInsetRight()
      * @see DisplayCutoutCompat#getSafeInsetBottom()
      */
-    DISPLAY_CUTOUT,
+    data object DisplayCutout : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.displayCutout()
+        }
+    }
 
     /**
      * @see #getTappableElementInsets
      */
-    TAPPABLE_ELEMENT,
+    data object TappableElement : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.tappableElement()
+        }
+    }
 
     /**
      * @see #getMandatorySystemGestureInsets
      */
-    MANDATORY_SYSTEM_GESTURES,
+    data object MandatorySystemGestures : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.mandatorySystemGestures()
+        }
+    }
 
     /**
      * Returns an insets type representing the system gesture insets.
@@ -50,25 +71,45 @@ enum class WindowInsetsType {
      *
      * @see #getSystemGestureInsets()
      */
-    SYSTEM_GESTURES,
+    data object SystemGestures : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.systemGestures()
+        }
+    }
 
     /**
      * @return An insets type representing the window of an {@link InputMethod}.
      */
-    IME,
+    data object Ime : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.ime()
+        }
+    }
 
     /**
      * @return An insets type representing the window of a caption bar.
      */
-    CAPTION_BAR,
+    data object CaptionBar : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.captionBar()
+        }
+    }
 
     /**
      * @return An insets type representing any system bars for navigation.
      */
-    NAVIGATION_BARS,
+    data object NavigationBars : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.navigationBars()
+        }
+    }
 
     /**
      * @return An insets type representing any system bars for displaying status.
      */
-    STATUS_BARS
+    data object StatusBars : WindowInsetsType() {
+        override fun typeMask(): Int {
+            return WindowInsetsCompat.Type.statusBars()
+        }
+    }
 }

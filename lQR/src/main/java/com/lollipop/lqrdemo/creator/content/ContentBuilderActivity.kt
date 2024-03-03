@@ -54,7 +54,7 @@ class ContentBuilderActivity : ColorModeActivity() {
             edge = WindowInsetsEdge.ALL,
             type = MultipleInsetsDelegate.ApplyType.PADDING,
             target = null,
-            WindowInsetsType.IME, WindowInsetsType.SYSTEM_BARS
+            WindowInsetsType.Ime, WindowInsetsType.SystemBars
         )
         bindByBack(binding.backButton)
         binding.saveButton.onClick {

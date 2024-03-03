@@ -44,7 +44,7 @@ abstract class BaseBottomDialog(context: Context) : BottomSheetDialog(context), 
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         binding.contentLayout.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
-            windowInsetsOperator.insetsType = WindowInsetsType.SYSTEM_GESTURES
+            windowInsetsOperator.insetsType = WindowInsetsType.SystemGestures
         }
         window?.let {
             WindowInsetsHelper.fitsSystemWindows(it)

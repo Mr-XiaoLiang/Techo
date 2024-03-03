@@ -9,7 +9,7 @@ class WindowInsetsEdgeViewDelegate(
     private val direction: Direction,
     private val minSize: Int = 0,
     private val baseValue: Int = 0,
-    private val insetsType: WindowInsetsType = WindowInsetsType.SYSTEM_BARS
+    private val insetsType: WindowInsetsType = WindowInsetsType.SystemBars
 ) : WindowInsetsHelper.OnWindowInsetsChangedListener {
     override fun onWindowInsetsChanged(
         v: View,

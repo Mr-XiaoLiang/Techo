@@ -48,7 +48,7 @@ class QrContentInputPopupWindow(context: Context, private val option: Option) : 
             it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         binding.inputContent.fixInsetsByPadding(WindowInsetsEdge.CONTENT).apply {
-            windowInsetsOperator.insetsType = WindowInsetsType.IME
+            windowInsetsOperator.insetsType = WindowInsetsType.Ime
         }
         binding.inputEditView.setText(option.preset)
         binding.inputEditView.doAfterTextChanged { text ->

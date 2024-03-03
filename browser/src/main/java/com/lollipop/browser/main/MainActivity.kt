@@ -23,6 +23,7 @@ import com.lollipop.fragment.SimpleFragmentInfo
 import com.lollipop.insets.WindowInsetsEdge
 import com.lollipop.insets.WindowInsetsHelper
 import com.lollipop.insets.WindowInsetsOperator
+import com.lollipop.insets.WindowInsetsType
 import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.insets.fixInsetsByListener
 import com.lollipop.web.search.SearchSuggestion
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity(), WebPageFragment.Callback, FragmentCrea
 
             val value = WindowInsetsHelper.getInsetsValue(
                 insets,
-                com.lollipop.insets.WindowInsetsType.MANDATORY_SYSTEM_GESTURES
+                WindowInsetsType.MandatorySystemGestures
             )
             val peekHeight = max(value.bottom + minHeight - actionHeight, 0)
             WindowInsetsHelper.setHeight(
