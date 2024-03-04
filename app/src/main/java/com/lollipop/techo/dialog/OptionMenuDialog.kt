@@ -3,7 +3,6 @@ package com.lollipop.techo.dialog
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.lazyBind
@@ -37,16 +36,13 @@ class OptionMenuDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         initRecyclerContainer(context)
     }
 
     private fun initRecyclerContainer(context: Context) {
-        val recyclerView = RecyclerView(context)
+        val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        recyclerView.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
         val adapter = RecyclerBracketsAdapter()
         adapterHandler = BracketsHandler(adapter)
         recyclerView.adapter = adapter
@@ -59,6 +55,7 @@ class OptionMenuDialog(
     override fun onDecorationChanged(snapshot: TechoTheme.Snapshot) {
         super.onDecorationChanged(snapshot)
         binding.contentPanel.setBackgroundColor(snapshot.backgroundColor)
+        binding.sheetBar.color = snapshot.primaryVariant
         // 更新主题
         adapter.notifyDataSetChanged()
     }

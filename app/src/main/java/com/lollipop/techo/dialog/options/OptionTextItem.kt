@@ -1,5 +1,6 @@
 package com.lollipop.techo.dialog.options
 
+import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.lollipop.base.util.onClick
@@ -23,6 +24,11 @@ class OptionTextItem(
             it.onClick {
                 protocol.onClick(tag)
             }
+            it.gravity = protocol.gravity
+        }
+        view.child<View>(R.id.dividerLine) {
+            it.setBackgroundColor(protocol.theme().onBackgroundBody)
+            it.alpha = 0.3F
         }
     }
 
@@ -31,6 +37,8 @@ class OptionTextItem(
 class OptionTextItemProtocol(
     theme: TypedProvider<TechoTheme.Snapshot>
 ) : OptionMenuDialog.OptionProtocol(theme) {
+
+    var gravity: Int = Gravity.CENTER
 
     var onClick: TypedResponse<String> = TypedResponse {}
 
@@ -42,4 +50,14 @@ inline fun OptionMenuDialog.OptionScope.Item(
     val protocol = OptionTextItemProtocol(themeProvider)
     builder(protocol)
     add(OptionTextItem(protocol))
+}
+
+inline fun OptionTextItemProtocol.ClickWithDismiss(
+    dialog: OptionMenuDialog,
+    crossinline impl: (String) -> Unit
+) {
+    onClick = TypedResponse {
+        dialog.dismiss()
+        impl(it)
+    }
 }

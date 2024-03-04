@@ -19,6 +19,7 @@ import com.lollipop.techo.data.TechoInfo
 import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.dialog.OptionMenuDialog
+import com.lollipop.techo.dialog.options.ClickWithDismiss
 import com.lollipop.techo.dialog.options.Item
 import com.lollipop.techo.list.detail.DetailListAdapter
 import com.lollipop.techo.list.detail.EditHolder
@@ -129,7 +130,7 @@ class TechoDetailActivity : BasicListActivity(),
     override fun OptionMenuDialog.OptionScope.onCreateOptionsMenu(dialog: OptionMenuDialog) {
         Item {
             title = Stateless(getString(R.string.edit))
-            onClick = TypedResponse {
+            ClickWithDismiss(dialog) {
                 editLauncher.launch(techoId)
             }
         }

@@ -39,6 +39,7 @@ import com.lollipop.techo.data.TechoMode
 import com.lollipop.techo.data.TechoTheme
 import com.lollipop.techo.databinding.ActivityTechoEditFloatingBinding
 import com.lollipop.techo.dialog.OptionMenuDialog
+import com.lollipop.techo.dialog.options.ClickWithDismiss
 import com.lollipop.techo.dialog.options.Item
 import com.lollipop.techo.edit.EditManager
 import com.lollipop.techo.fragment.RichTextOptionFragment
@@ -265,13 +266,13 @@ class TechoEditActivity : BasicListActivity(),
     override fun OptionMenuDialog.OptionScope.onCreateOptionsMenu(dialog: OptionMenuDialog) {
         Item {
             title = Stateless(getString(R.string.theme))
-            onClick = TypedResponse {
+            ClickWithDismiss(dialog) {
                 themeSelectLauncher.launch(TechoThemeSelectActivity.LaunchInput(true))
             }
         }
         Item {
             title = Stateless(getString(R.string.done))
-            onClick = TypedResponse {
+            ClickWithDismiss(dialog) {
                 mode.update {
                     if (isCreated()) {
                         resultOk { putResultTechoId(it, mode.infoId) }

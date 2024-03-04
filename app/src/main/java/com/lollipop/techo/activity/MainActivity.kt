@@ -6,13 +6,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lollipop.insets.WindowInsetsEdge
-import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.registerResult
 import com.lollipop.brackets.core.Stateless
 import com.lollipop.brackets.core.TypedResponse
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.pigment.Pigment
 import com.lollipop.pigment.tint
 import com.lollipop.techo.R
@@ -24,6 +24,7 @@ import com.lollipop.techo.data.TechoMode.ChangedType.Modify
 import com.lollipop.techo.data.TechoMode.ChangedType.Move
 import com.lollipop.techo.databinding.ActivityMainFloatingBinding
 import com.lollipop.techo.dialog.OptionMenuDialog
+import com.lollipop.techo.dialog.options.ClickWithDismiss
 import com.lollipop.techo.dialog.options.Item
 import com.lollipop.techo.list.home.HomeListAdapter
 
@@ -134,7 +135,7 @@ class MainActivity : BasicListActivity(),
     override fun OptionMenuDialog.OptionScope.onCreateOptionsMenu(dialog: OptionMenuDialog) {
         Item {
             title = Stateless(getString(R.string.settings))
-            onClick = TypedResponse {
+            ClickWithDismiss(dialog) {
                 Toast.makeText(this@MainActivity, "Setting", Toast.LENGTH_SHORT).show()
             }
         }

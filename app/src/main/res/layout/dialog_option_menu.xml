@@ -14,14 +14,16 @@
         android:orientation="vertical"
         android:paddingBottom="52dp">
 
-        <View
+        <com.lollipop.widget.RoundBackgroundView
             android:id="@+id/sheetBar"
             android:layout_width="52dp"
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_bottom_sheet_bar" />
+            app:round_type="smaller"
+            app:round_weight="0.5"
+            app:color="@color/gray_4"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

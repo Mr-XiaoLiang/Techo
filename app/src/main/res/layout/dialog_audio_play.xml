@@ -13,15 +13,18 @@
         android:background="@color/gray_0"
         android:paddingBottom="52dp">
 
-        <View
+        <com.lollipop.widget.RoundBackgroundView
             android:id="@+id/sheetBar"
             android:layout_width="52dp"
             android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_bottom_sheet_bar"
+            app:color="@color/gray_4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:round_type="smaller"
+            app:round_weight="0.5" />
 
         <TextView
             android:id="@+id/durationView"
@@ -41,6 +44,11 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            app:barCount="64"
             app:baseLineHeight="2dp"
             app:baseLineInterval="1dp"
             app:defaultColor="@color/gray_4"
@@ -48,12 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/durationView"
-            app:selectedColor="@color/brand_4"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingStart="10dp"
-            app:barCount="64"
-            android:paddingEnd="10dp"/>
+            app:selectedColor="@color/brand_4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
