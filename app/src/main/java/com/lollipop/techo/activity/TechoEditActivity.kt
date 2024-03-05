@@ -15,15 +15,14 @@ import com.lollipop.base.list.ItemTouchState
 import com.lollipop.base.list.attachTouchHelper
 import com.lollipop.base.listener.BackPressHandler
 import com.lollipop.base.util.ActivityLauncherHelper
-import com.lollipop.insets.WindowInsetsEdge
-import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.isCreated
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
 import com.lollipop.base.util.onUI
 import com.lollipop.base.util.registerResult
 import com.lollipop.brackets.core.Stateless
-import com.lollipop.brackets.core.TypedResponse
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.pigment.Pigment
 import com.lollipop.techo.R
 import com.lollipop.techo.data.TechoItem
