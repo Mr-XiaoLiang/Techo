@@ -5,6 +5,7 @@ import android.view.View
 import com.lollipop.web.bridge.Bridge
 import com.lollipop.web.bridge.BridgeAlias
 import com.lollipop.web.bridge.BridgeRoot
+import com.lollipop.web.bridge.DefaultBridgeRoot
 import com.lollipop.web.completion.UrlCompletion
 import com.lollipop.web.completion.UrlCompletionResult
 import com.lollipop.web.completion.impl.EmptyCompletion
@@ -137,6 +138,8 @@ class WebHelper(
     }
 
     private fun initGlobeBridge() {
+        // 添加默认的Bridge
+        addBridgeRoot(DefaultBridgeRoot())
         globeBridgeRoot.forEach {
             addBridgeRoot(it.getDeclaredConstructor().newInstance())
         }
