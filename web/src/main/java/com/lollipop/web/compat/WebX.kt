@@ -9,6 +9,13 @@ import androidx.webkit.WebViewFeature
 
 object WebX {
 
+    const val WEB_BRIDGE_NAME = "lWebBridge"
+
+    object Bridge {
+        const val DATA = "data"
+        const val CALLBACK = "callback"
+    }
+
     fun getEnginePackage(context: Context): PackageInfo? {
         return WebViewCompat.getCurrentWebViewPackage(context.applicationContext)
     }

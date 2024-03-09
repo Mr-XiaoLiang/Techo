@@ -14,16 +14,16 @@ open class BridgeAlias(private val alias: String, val base: Bridge) : Bridge {
             return alias
         }
 
-    override fun invoke(host: WebHost, web: IWeb, params: Array<String>) {
+    override fun invoke(host: WebHost, web: IWeb, payload: BridgePayload) {
         if (base is AliasBridge) {
-            base.invokeAlias(host, web, alias, params)
+            base.invokeAlias(host, web, alias, payload)
         } else {
-            base.invoke(host, web, params)
+            base.invoke(host, web, payload)
         }
     }
 
     interface AliasBridge {
-        fun invokeAlias(host: WebHost, web: IWeb, alias: String, params: Array<String>)
+        fun invokeAlias(host: WebHost, web: IWeb, alias: String, payload: BridgePayload)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.lollipop.web
 
 import android.view.View
+import android.webkit.ValueCallback
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.listener.*
 
@@ -29,6 +30,8 @@ interface IWeb {
     fun setCustomViewListener(listener: CustomViewListener?)
 
     fun setDownloadListener(listener: DownloadListener?)
+
+    fun evaluateJavascript(script: String, resultCallback: ValueCallback<String?>?)
 
     val canGoBack: Boolean
 

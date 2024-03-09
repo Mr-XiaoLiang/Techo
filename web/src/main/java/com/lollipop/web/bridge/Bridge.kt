@@ -18,11 +18,11 @@ interface Bridge {
      * 接口的实现方法
      * @param host 上下文信息
      * @param web Web容器的对象
-     * @param params 方法的参数
+     * @param payload 函数的请求参数，以及要求的回调地址
      *
      * 但是对于直接注册的JavascriptInterface而言，它是不一样的
      * 并不能直接使用addJavascriptInterface时期生效，他只是一个规范后的工具类
      */
-    fun invoke(host: WebHost, web: IWeb, params: Array<String>)
+    fun invoke(host: WebHost, web: IWeb, payload: BridgePayload)
 
 }

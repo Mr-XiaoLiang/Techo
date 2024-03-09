@@ -23,14 +23,14 @@ abstract class BridgeRoot : BridgeCluster() {
         iWebReference = WeakReference(iWeb)
     }
 
-    override fun intercept(host: WebHost, web: IWeb, params: Array<String>): String {
-        return ""
+    override fun intercept(host: WebHost, web: IWeb, payload: BridgePayload): BridgeIntercept {
+        return BridgeIntercept.Pass
     }
 
-    protected fun dispatch(bridgeName: String, params: Array<String>) {
+    protected fun dispatch(payload: BridgePayload) {
         val host = hostReference?.get() ?: EMPTY_HOST
         val iWeb = iWebReference?.get() ?: return
-        dispatch(host, iWeb, bridgeName, params)
+        invoke(host, iWeb, payload)
     }
 
     private class EmptyWebHost : WebHost

@@ -3,18 +3,33 @@ package com.lollipop.web.impl
 import android.annotation.SuppressLint
 import android.os.Build
 import android.view.View
+import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebView
 import com.lollipop.web.IWeb
 import com.lollipop.web.IWebConfig
-import com.lollipop.web.IWebConfig.CacheMode.*
-import com.lollipop.web.IWebConfig.ForceDark.*
-import com.lollipop.web.IWebConfig.MixedContentMode.*
+import com.lollipop.web.IWebConfig.CacheMode.CACHE_ELSE_NETWORK
+import com.lollipop.web.IWebConfig.CacheMode.CACHE_ONLY
+import com.lollipop.web.IWebConfig.CacheMode.DEFAULT
+import com.lollipop.web.IWebConfig.CacheMode.NO_CACHE
+import com.lollipop.web.IWebConfig.ForceDark.AUTO
+import com.lollipop.web.IWebConfig.ForceDark.OFF
+import com.lollipop.web.IWebConfig.ForceDark.ON
+import com.lollipop.web.IWebConfig.MixedContentMode.ALWAYS_ALLOW
+import com.lollipop.web.IWebConfig.MixedContentMode.COMPATIBILITY_MODE
+import com.lollipop.web.IWebConfig.MixedContentMode.NEVER_ALLOW
 import com.lollipop.web.WebHost
 import com.lollipop.web.bridge.BridgeRoot
 import com.lollipop.web.impl.default.WebChromeClientImpl
 import com.lollipop.web.impl.default.WebViewClientImpl
-import com.lollipop.web.listener.*
+import com.lollipop.web.listener.CustomViewListener
+import com.lollipop.web.listener.DownloadListener
+import com.lollipop.web.listener.GeolocationPermissionsListener
+import com.lollipop.web.listener.HintProvider
+import com.lollipop.web.listener.LogPrinter
+import com.lollipop.web.listener.ProgressListener
+import com.lollipop.web.listener.TitleListener
+import com.lollipop.web.listener.WindowListener
 
 class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
 
@@ -75,6 +90,10 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
         } else {
             webView.setDownloadListener(DownloadListenerWrapper(listener))
         }
+    }
+
+    override fun evaluateJavascript(script: String, resultCallback: ValueCallback<String?>?) {
+        webView.evaluateJavascript(script, resultCallback)
     }
 
     override val canGoBack: Boolean
@@ -141,12 +160,15 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
                 DEFAULT -> {
                     WebSettings.LOAD_DEFAULT
                 }
+
                 CACHE_ELSE_NETWORK -> {
                     WebSettings.LOAD_CACHE_ELSE_NETWORK
                 }
+
                 NO_CACHE -> {
                     WebSettings.LOAD_NO_CACHE
                 }
+
                 CACHE_ONLY -> {
                     WebSettings.LOAD_CACHE_ONLY
                 }
@@ -156,9 +178,11 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
                     OFF -> {
                         WebSettings.FORCE_DARK_OFF
                     }
+
                     AUTO -> {
                         WebSettings.FORCE_DARK_AUTO
                     }
+
                     ON -> {
                         WebSettings.FORCE_DARK_ON
                     }
@@ -168,9 +192,11 @@ class DefaultIWeb(override val host: WebHost, val webView: WebView) : IWeb {
                 NEVER_ALLOW -> {
                     WebSettings.MIXED_CONTENT_NEVER_ALLOW
                 }
+
                 ALWAYS_ALLOW -> {
                     WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                 }
+
                 COMPATIBILITY_MODE -> {
                     WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
                 }

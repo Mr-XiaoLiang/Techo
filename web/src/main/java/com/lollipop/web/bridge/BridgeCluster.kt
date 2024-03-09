@@ -10,15 +10,26 @@ abstract class BridgeCluster : Bridge {
 
     protected val bridgeList = ArrayList<Bridge>()
 
-    override fun invoke(host: WebHost, web: IWeb, params: Array<String>) {
-        val methodName = intercept(host, web, params)
-        dispatch(host, web, methodName, params)
+    override fun invoke(host: WebHost, web: IWeb, payload: BridgePayload) {
+        when (val intercept = intercept(host, web, payload)) {
+            is BridgeIntercept.Dispatch -> {
+                dispatch(host, web, intercept.newAction, payload)
+            }
+
+            BridgeIntercept.Pass -> {
+                dispatch(host, web, payload.action, payload)
+            }
+
+            BridgeIntercept.Rejected -> {
+                // 不做处理
+            }
+        }
     }
 
-    protected fun dispatch(host: WebHost, web: IWeb, name: String, params: Array<String>) {
+    protected fun dispatch(host: WebHost, web: IWeb, name: String, payload: BridgePayload) {
         bridgeList.forEach {
-            if (name.isEmpty() || it.name == name) {
-                it.invoke(host, web, params)
+            if (it.name == name) {
+                it.invoke(host, web, payload)
             }
         }
     }
@@ -27,7 +38,11 @@ abstract class BridgeCluster : Bridge {
      * 过滤Bridge
      * @return 返回的名称为指定响应的Bridge名称，如果找不到，那么将不会进行响应，如果返回为空，表示不做拦截
      */
-    protected abstract fun intercept(host: WebHost, web: IWeb, params: Array<String>): String
+    protected abstract fun intercept(
+        host: WebHost,
+        web: IWeb,
+        payload: BridgePayload
+    ): BridgeIntercept
 
     fun addBridge(bridge: Bridge) {
         this.bridgeList.add(bridge)
