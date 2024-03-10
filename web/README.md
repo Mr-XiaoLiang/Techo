@@ -115,3 +115,29 @@ function test() {
 
 ```
 
+
+## 基础API
+### getWebInsets
+获取应用的系统元素占用尺寸，用于沉浸式的UI交互。
+请求参数：无
+返回值：
+``` json
+{
+    "actionBarSize":0,
+    "leftEdge":0,
+    "topEdge":0,
+    "rightEdge":0,
+    "bottomEdge":0,
+}
+```
+| 参数 | 类型 | 说明 |
+| :-: | :-: | :-: |
+| actionBarSize | int | ActionBar的高度，它可能会是0，单位为px |
+| leftEdge | int | 左侧的系统占用尺寸，它一般会在横屏时不为0，单位为px |
+| topEdge | int | 顶部的系统占用尺寸，它一般表示状态栏的高度，或者异形屏幕的顶部高度，单位为px |
+| rightEdge | int | 右侧的系统占用尺寸，它一般会在横屏时不为0，单位为px |
+| bottomEdge | int | 底部的系统占用尺寸，它一般会在虚拟导航栏存在时不为0，单位为px |
+
+
+### fullScreen
+// TODO
