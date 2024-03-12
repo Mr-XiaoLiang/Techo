@@ -140,4 +140,19 @@ function test() {
 
 
 ### fullScreen
-// TODO
+用于设置状态栏与导航栏的状态。
+此功能的效果受到具体实现业务的影响。
+请求参数：
+``` json
+{
+    "fixStatusBar":0,
+    "fixNavigateBar":0
+}
+```
+
+| 参数 |   类型    |                           说明                            |
+| :-: |:-------:|:-------------------------------------------------------:|
+| fixStatusBar | boolean | 当设置为true时，表示网页希望自行处理状态栏与ActionBar的空间，这需要与getWebInsets配合 |
+| fixNavigateBar | boolean |   当设置为true时，表示网页希望自行处理导航栏（虚拟按键）的空间，这需要与getWebInsets配合   |
+
+返回值：无

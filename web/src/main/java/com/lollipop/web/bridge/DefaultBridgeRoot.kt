@@ -2,6 +2,8 @@ package com.lollipop.web.bridge
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
+import com.lollipop.web.bridge.impl.WebFullScreenBridgeImpl
+import com.lollipop.web.bridge.impl.WebInsetsBridgeImpl
 import com.lollipop.web.compat.WebX
 import org.json.JSONObject
 
@@ -12,6 +14,11 @@ class DefaultBridgeRoot : BridgeRoot() {
     }
 
     override val name: String = NAME
+
+    init {
+        addBridge(WebInsetsBridgeImpl())
+        addBridge(WebFullScreenBridgeImpl())
+    }
 
     @JavascriptInterface
     @Keep
