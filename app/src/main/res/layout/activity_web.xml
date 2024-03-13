@@ -87,7 +87,7 @@
                 android:maxLines="1"
                 android:paddingHorizontal="6dp"
                 android:textColor="@android:color/white"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="这是一段很长的标题模拟" />
 
