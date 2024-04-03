@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">app</string>
+    <string name="add_flag">添加标签</string>
+    <string name="hint_no_flag">你当前还没有任何打卡项\n快添加几个吧</string>
+</resources>
