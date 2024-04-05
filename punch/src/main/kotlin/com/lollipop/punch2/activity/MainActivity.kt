@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lollipop.insets.WindowInsetsEdge
@@ -18,6 +20,7 @@ import com.lollipop.punch2.data.FlagInfo
 import com.lollipop.punch2.databinding.ActivityMainBinding
 import com.lollipop.punch2.list.PunchStampHolder
 import com.lollipop.punch2.list.delegate.HomeListDelegate
+import com.lollipop.punch2.list.delegate.ModeState
 import com.lollipop.punch2.utils.ThemeHelper
 import com.lollipop.punch2.utils.bind
 import com.lollipop.punch2.utils.lazyBind
@@ -53,10 +56,15 @@ class MainActivity : AppCompatActivity(), HomeListDelegate.Callback {
             isAppearanceLightStatusBars = !isDark
             isAppearanceLightNavigationBars = !isDark
         }
+        binding.contentLoadingView.setIndicatorColor(
+            theme.primary.toArgb(),
+            theme.secondary.toArgb()
+        )
         if (isDark) {
             updateActionBarIcon(ColorStateList.valueOf(Color.WHITE))
             binding.dayView.setTextColor(Color.WHITE)
             binding.recyclerView.setBackgroundColor(Color.BLACK)
+
         } else {
             updateActionBarIcon(ColorStateList.valueOf(Color.BLACK))
             binding.dayView.setTextColor(Color.BLACK)
@@ -73,28 +81,40 @@ class MainActivity : AppCompatActivity(), HomeListDelegate.Callback {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onDelegateCallback(result: HomeListDelegate.OpResult) {
+    override fun onDelegateCallback(result: HomeListDelegate.OpResult, state: ModeState) {
         when (result) {
-            is HomeListDelegate.OpResult.Error -> {
-                val errorType = result.type
-                when (errorType) {
-                    HomeListDelegate.ErrorType.LIST_ALL -> TODO()
-                    HomeListDelegate.ErrorType.LIST_MORE -> TODO()
-                    HomeListDelegate.ErrorType.PUNCH -> TODO()
-                    HomeListDelegate.ErrorType.REMOVE -> TODO()
-                }
-            }
+            HomeListDelegate.OpResult.ContentList -> {
+                when (state) {
+                    ModeState.IDLE -> {
+                        adapter.notifyDataSetChanged()
+                        binding.contentLoadingView.hide()
+                    }
 
-            HomeListDelegate.OpResult.FullUpdate -> {
-                adapter.notifyDataSetChanged()
+                    ModeState.LOADING -> {
+                        binding.contentLoadingView.show()
+                    }
+
+                    ModeState.ERROR -> {
+                        binding.contentLoadingView.show()
+                    }
+                }
+                binding.emptyPanel.isVisible = delegate.data.isEmpty()
             }
 
             is HomeListDelegate.OpResult.ItemRemoved -> {
-                adapter.notifyItemRangeRemoved(result.position, adapter.itemCount)
-            }
+                when (state) {
+                    ModeState.IDLE -> {
+                        adapter.notifyItemRangeRemoved(result.position, adapter.itemCount)
+                    }
 
-            HomeListDelegate.OpResult.Loading -> {
-                // TODO
+                    ModeState.ERROR -> {
+                        adapter.notifyItemRangeChanged(result.position, adapter.itemCount)
+                    }
+
+                    ModeState.LOADING -> {
+                        // nothing
+                    }
+                }
             }
         }
     }

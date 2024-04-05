@@ -63,21 +63,23 @@ class HomeListDelegate(
             return
         }
         val info = data[index]
+        val op = OpResult.ItemRemoved(index, 1)
+        setResult(op, ModeState.LOADING)
         doAsync {
             val result = db.installPunch(info, year, month, day)
             invokeOnActive {
                 dataList.removeAt(index)
                 when (result) {
                     is DBHelper.BoolResult.Error -> {
-                        setResult(OpResult.Error(ErrorType.PUNCH))
+                        setResult(op, ModeState.ERROR)
                     }
 
                     DBHelper.BoolResult.FALSE -> {
-                        setResult(OpResult.Error(ErrorType.PUNCH))
+                        setResult(op, ModeState.ERROR)
                     }
 
                     DBHelper.BoolResult.TRUE -> {
-                        setResult(OpResult.ItemRemoved(index, 1))
+                        setResult(op, ModeState.IDLE)
                     }
                 }
             }
@@ -85,7 +87,7 @@ class HomeListDelegate(
     }
 
     private fun reloadAllFlags() {
-        startLoading()
+        startLoading(OpResult.ContentList)
         doAsync {
             val result = db.selectFlag(year, month, day)
             invokeOnActive {
@@ -93,42 +95,37 @@ class HomeListDelegate(
                     is DBHelper.ListResult.Error -> {
                         // 保证UI和数据是在同步处理的
                         dataList.clear()
-                        setResult(OpResult.Error(ErrorType.LIST_ALL))
+                        setResult(OpResult.ContentList, ModeState.ERROR)
                     }
 
                     is DBHelper.ListResult.Success -> {
                         dataList.clear()
                         dataList.addAll(result.data)
-                        setResult(OpResult.FullUpdate)
+                        setResult(OpResult.ContentList, ModeState.IDLE)
                     }
                 }
             }
         }
     }
 
-    private fun startLoading() {
-        setResult(OpResult.Loading)
+    private fun startLoading(op: OpResult) {
+        setResult(op, ModeState.LOADING)
     }
 
-    private fun setResult(result: OpResult) {
-        invokeOnActive {
-            callback.onDelegateCallback(result)
-        }
+    private fun setResult(result: OpResult, state: ModeState) {
+        putState(result, ModeState.LOADING)
+        callback.onDelegateCallback(result, state)
     }
 
     fun interface Callback {
-        fun onDelegateCallback(result: OpResult)
+        fun onDelegateCallback(result: OpResult, state: ModeState)
     }
 
-    sealed class OpResult {
+    sealed class OpResult : ModeOption {
 
-        data object Loading : OpResult()
-
-        data object FullUpdate : OpResult()
+        data object ContentList : OpResult()
 
         class ItemRemoved(val position: Int, val count: Int) : OpResult()
-
-        class Error(val type: ErrorType) : OpResult()
 
     }
 

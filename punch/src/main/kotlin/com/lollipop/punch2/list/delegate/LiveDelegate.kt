@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle.Event.ON_STOP
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.lollipop.punch2.utils.tryUI
+import java.util.concurrent.ConcurrentHashMap
 
 abstract class LiveDelegate {
 
@@ -27,8 +28,22 @@ abstract class LiveDelegate {
             return currentState.isAtLeast(Lifecycle.State.STARTED)
         }
 
+    protected val stateMap = ConcurrentHashMap<ModeOption, ModeState>()
+
     fun bind(lifecycle: Lifecycle) {
         lifecycle.addObserver(lifecycleEventListener)
+    }
+
+    protected fun putState(option: ModeOption, state: ModeState) {
+        this.stateMap[option] = state
+    }
+
+    fun getState(option: ModeOption): ModeState {
+        return stateMap[option] ?: defaultState(option)
+    }
+
+    protected open fun defaultState(option: ModeOption): ModeState {
+        return ModeState.IDLE
     }
 
     @CallSuper
