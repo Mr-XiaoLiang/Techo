@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.swiperefreshlayout.v120alpha01)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.glide)
     implementation(project(path = ":base"))
     implementation(project(path = ":web"))

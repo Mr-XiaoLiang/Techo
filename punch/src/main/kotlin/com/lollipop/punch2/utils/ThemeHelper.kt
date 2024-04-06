@@ -41,8 +41,26 @@ class ThemeHelper {
                 }
             }
 
+        private fun defaultTheme(context: Context): ColorScheme {
+            return if (isDark()) {
+                dynamicDarkColorScheme(context)
+            } else {
+                dynamicLightColorScheme(context)
+            }
+        }
+
         var currentTheme: ColorScheme? = null
             private set
+
+        fun getTheme(context: Context): ColorScheme {
+            val theme = currentTheme
+            if (theme != null) {
+                return theme
+            }
+            val defaultTheme = defaultTheme(context)
+            currentTheme = defaultTheme
+            return defaultTheme
+        }
 
         fun createWith(activity: ComponentActivity, callback: OnThemeChangeCallback): ThemeHelper {
             val helper = ThemeHelper()

@@ -9,6 +9,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LPunch">
         <activity
+            android:name=".activity.AddFlagActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_flag"
+            android:theme="@style/Theme.LPunch" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>

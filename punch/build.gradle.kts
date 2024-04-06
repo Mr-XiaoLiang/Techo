@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
+//    alias(libs.plugins.androidApplication)
     id("org.jetbrains.kotlin.android")
+//    alias(libs.plugins.jetbrainsKotlinAndroid)
 }
 
 android {
@@ -13,6 +15,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -34,6 +39,17 @@ android {
     viewBinding {
         enable = true
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
@@ -44,5 +60,17 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(project(":insets"))
     implementation(project(":clip"))
-    implementation(libs.androidx.material3.android)
+//    implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.runtime.livedata)
 }
