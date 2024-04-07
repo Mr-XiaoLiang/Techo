@@ -17,6 +17,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -88,8 +89,12 @@ class ThemeHelper {
 
     }
 
-    var theme: ColorScheme? = null
-        private set
+    val themeLive = MutableLiveData<ColorScheme>()
+
+    val theme: ColorScheme?
+        get() {
+            return themeLive.value
+        }
 
     private val drawable = BackgroundDrawable()
 
@@ -146,11 +151,11 @@ class ThemeHelper {
         } else {
             dynamicDarkColorScheme(context)
         }
-        theme = colorScheme
         currentTheme = colorScheme
         val themeColor = colorScheme.primary.toArgb()
         changeColor(buildHeaderColor(dark, themeColor))
         onThemeChangeCallback?.onThemeChanged(colorScheme, dark)
+        themeLive.postValue(colorScheme)
         if (drawable.callback != null) {
             animator.start()
         }
