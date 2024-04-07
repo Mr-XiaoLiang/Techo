@@ -5,12 +5,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.lollipop.insets.WindowInsetsHelper
 import com.lollipop.punch2.base.LComponentActivity
 import com.lollipop.punch2.ui.theme.TechoTheme
 
@@ -19,7 +20,7 @@ class AddFlagActivity : LComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val theme = themeLive.observeAsState()
+            val theme = liveTheme()
             TechoTheme(theme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
@@ -30,10 +31,20 @@ class AddFlagActivity : LComponentActivity() {
             }
         }
     }
+
+    override fun onThemeChanged(theme: ColorScheme, isDark: Boolean) {
+        super.onThemeChanged(theme, isDark)
+        WindowInsetsHelper.getController(this).apply {
+            isAppearanceLightStatusBars = !isDark
+            isAppearanceLightNavigationBars = !isDark
+        }
+    }
+
 }
 
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+private fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "Hello $name!",
         modifier = modifier
@@ -42,7 +53,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+private fun GreetingPreview() {
     TechoTheme {
         Greeting("Android")
     }
