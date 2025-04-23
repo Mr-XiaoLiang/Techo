@@ -26,6 +26,7 @@ import com.lollipop.pigment.Pigment
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 import java.nio.charset.Charset
+import androidx.core.net.toUri
 
 class BarcodeDetailDialog(
     context: Context,
@@ -194,7 +195,7 @@ class BarcodeDetailDialog(
     }
 
     private fun openByViewAction(raw: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(raw))
+        val intent = Intent(Intent.ACTION_VIEW, raw.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }

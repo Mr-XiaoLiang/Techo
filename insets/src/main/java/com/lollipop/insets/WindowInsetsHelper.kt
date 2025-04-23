@@ -193,6 +193,7 @@ fun View.cleanWindowInsetHelper() {
 /**
  * 为Activity增加系统窗口的Flag设置
  */
+@Deprecated("Deprecated in API level 30", ReplaceWith("enableEdgeToEdge()"))
 fun Activity.fitsSystemWindows() {
     WindowInsetsHelper.fitsSystemWindows(this)
 }

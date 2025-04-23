@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!--  见鬼，哪里来的网络权限，我们需要把他移除掉  -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove"/>
+    <!--  做个浏览器，预览二维码的页面  -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!--  见鬼，哪里来的特殊权限，我们需要把他移除掉  -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove"/>
 

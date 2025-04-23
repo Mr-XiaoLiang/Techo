@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import com.lollipop.insets.WindowInsetsEdge
 import com.lollipop.insets.WindowInsetsHelper
 import com.lollipop.insets.fixInsetsByPadding
@@ -23,8 +24,8 @@ class AboutActivity : ColorModeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.versionView.text = versionName()
         bindByBack(binding.backButton)

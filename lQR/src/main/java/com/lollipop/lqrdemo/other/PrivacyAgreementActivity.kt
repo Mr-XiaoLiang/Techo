@@ -6,18 +6,17 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.ActivityLauncherHelper
 import com.lollipop.base.util.bind
-import com.lollipop.insets.WindowInsetsEdge
-import com.lollipop.insets.WindowInsetsHelper
-import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
 import com.lollipop.base.util.onClick
-import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.databinding.ActivityPrivacyAgreementBinding
@@ -45,8 +44,8 @@ class PrivacyAgreementActivity : ColorModeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         bindByBack(binding.backButton)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)

@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.lollipop.insets.WindowInsetsEdge
@@ -56,8 +57,8 @@ class PhotoScanActivity : ScanResultActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.progressIndicator.show()
         bindResult(barcodeReader)

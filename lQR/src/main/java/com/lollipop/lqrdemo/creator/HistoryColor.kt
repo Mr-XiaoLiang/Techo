@@ -2,7 +2,6 @@ package com.lollipop.lqrdemo.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.util.LinkedList
 
 object HistoryColor {
 
@@ -11,7 +10,7 @@ object HistoryColor {
 
     private var sp: SharedPreferences? = null
     private const val HISTORY_MAX_COUNT = 9
-    private val historyColor = LinkedList<Int>()
+    private val historyColor = mutableListOf<Int>()
 
     fun init(context: Context) {
         val app = context.applicationContext
@@ -70,14 +69,14 @@ object HistoryColor {
                 // 不重复意味着需要插入，所以移除超过限制的颜色
                 while (historyColor.isNotEmpty() && historyColor.size >= HISTORY_MAX_COUNT) {
                     // 移除最后的
-                    historyColor.removeLast()
+                    historyColor.removeAt(historyColor.lastIndex)
                 }
                 // 添加到最前面
-                historyColor.addFirst(color)
+                historyColor.add(0, color)
             } else {
                 // 如果已经存在了，那么直接移除已经存在的，并且添加到最前面
                 historyColor.removeAt(index)
-                historyColor.addFirst(color)
+                historyColor.add(0, color)
             }
             // 保存一次
             sp?.edit()?.putString(KEY_COLORS, serialize())

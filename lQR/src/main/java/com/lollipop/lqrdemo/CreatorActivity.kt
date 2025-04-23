@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -90,8 +91,8 @@ class CreatorActivity : ColorModeActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        fitsSystemWindows()
         binding.root.fixInsetsByPadding(WindowInsetsEdge.HEADER)
         bindByBack(binding.backButton)
         binding.panelGroup.fixInsetsByPadding(WindowInsetsEdge.BOTTOM)

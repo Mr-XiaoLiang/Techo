@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Size
 import android.view.View
 import android.widget.ImageView
+import androidx.activity.enableEdgeToEdge
 import androidx.core.content.PermissionChecker
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -62,8 +63,8 @@ class MainActivity : ScanResultActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        fitsSystemWindows()
         resultBackPressHandler.bindTo(this)
         binding.contentPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()

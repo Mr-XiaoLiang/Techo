@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.lollipop.lqrdemo"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "liang.lollipop.lqrdemo"
         minSdk = 27
-        targetSdk = 34
-        versionCode = 2_07_04
-        versionName = "2.7.4"
+        targetSdk = 35
+        versionCode = 2_08_00
+        versionName = "2.8.0"
     }
 
     buildTypes {
@@ -24,7 +24,7 @@ android {
             )
         }
         debug {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -32,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         viewBinding = true
