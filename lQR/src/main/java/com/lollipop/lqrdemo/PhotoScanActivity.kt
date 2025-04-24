@@ -6,15 +6,13 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
-import com.lollipop.insets.WindowInsetsEdge
-import com.lollipop.insets.WindowInsetsHelper
-import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.base.util.lazyBind
-import com.lollipop.insets.fitsSystemWindows
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityPhotoScanBinding
 import com.lollipop.pigment.Pigment
@@ -57,14 +55,16 @@ class PhotoScanActivity : ScanResultActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(binding.root)
         binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
         binding.progressIndicator.show()
         bindResult(barcodeReader)
         bindSelectionView(binding.resultImageView, ImageView.ScaleType.FIT_CENTER)
         bindByBack(binding.backButton)
         loadData()
+    }
+
+    override fun createContentView(): View {
+        return binding.root
     }
 
     private fun loadData() {

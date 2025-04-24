@@ -63,12 +63,14 @@ class MainActivity : ScanResultActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(binding.root)
         resultBackPressHandler.bindTo(this)
         binding.contentPanel.fixInsetsByPadding(WindowInsetsEdge.ALL)
         initCamera()
         initView()
+    }
+
+    override fun createContentView(): View {
+        return binding.root
     }
 
     private fun initCamera() {

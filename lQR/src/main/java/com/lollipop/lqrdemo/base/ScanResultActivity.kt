@@ -2,8 +2,14 @@ package com.lollipop.lqrdemo.base
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.enableEdgeToEdge
+import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.BarcodeDetailDialog
+import com.lollipop.lqrdemo.databinding.ActivityScanResultBinding
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.reader.BarcodeReader
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
@@ -27,6 +33,21 @@ abstract class ScanResultActivity : ColorModeActivity(),
         get() {
             return intent.action == ACTION_SCAN
         }
+
+    private val basicBinding: ActivityScanResultBinding by lazyBind()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(basicBinding.root)
+        basicBinding.contentGroup.addView(
+            createContentView(),
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+    }
+
+    protected abstract fun createContentView(): View
 
     protected fun bindSelectionView(selectionView: CodeSelectionView, type: ImageView.ScaleType) {
         selectionView.addOnCodeSelectedListener(this)
