@@ -20,6 +20,18 @@ object FragmentHelper {
         return null
     }
 
+    inline fun <reified T : Any> findByParent(current: Fragment): T? {
+        var fragment = current.parentFragment
+        while (fragment != null) {
+            val target = check<T>(fragment)
+            if (target != null) {
+                return target
+            }
+            fragment = fragment.parentFragment
+        }
+        return null
+    }
+
 }
 
 inline fun <reified T : Any> Fragment.checkCallback(context: Context?): T? {
@@ -33,7 +45,9 @@ inline fun <reified T : Any> Fragment.checkCallback(
     context: Context?,
     callback: (T) -> Unit
 ) {
-    if (FragmentHelper.check(parentFragment, callback)) {
+    val target = FragmentHelper.findByParent<T>(this)
+    if (target != null) {
+        callback(target)
         return
     }
     if (FragmentHelper.check(getContext(), callback)) {

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/touchHoldView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/backgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8888" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/previewCard"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="16dp"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/infoCard"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.4">
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/infoCard"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="16dp"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/previewCard"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:leftTop="20dp"
+                app:rightTop="20dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/closeBtn"
+                        android:layout_width="48dp"
+                        android:layout_height="36dp"
+                        android:paddingVertical="6dp"
+                        android:src="@drawable/ic_baseline_close_24"
+                        app:tint="?attr/colorOnBackground" />
+
+                    <Space
+                        android:layout_width="0px"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <com.lollipop.clip.RoundClipLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="16dp"
+                        android:radius="20dp">
+
+                        <TextView
+                            android:id="@+id/charsetButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#3f00"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="@string/garbled"
+                            android:textColor="?attr/colorOnBackground"
+                            android:textSize="12sp" />
+                    </com.lollipop.clip.RoundClipLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/hintView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="4dp"
+                    android:textColor="?attr/colorOnBackground"
+                    android:textSize="16sp"
+                    tools:text="驾照" />
+
+                <TextView
+                    android:id="@+id/contentValueView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="26dp"
+                    android:textColor="?attr/colorOnBackground"
+                    android:textSize="14sp"
+                    tools:text="afgajsdgfajhsgdfjahsgfjashdgfaksjfghajsdfgajsafgajsdgfajhsgdfjahsgfjashdgfaksjfghajsdfgajs" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/shareButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/share"
+                        android:textColor="?attr/colorOnBackground"
+                        app:icon="@drawable/ic_baseline_share_24"
+                        app:iconGravity="textTop"
+                        app:iconTint="?attr/colorOnBackground" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/copyButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/copy"
+                        android:textColor="?attr/colorOnBackground"
+                        app:icon="@drawable/ic_baseline_content_copy_24"
+                        app:iconGravity="textTop"
+                        app:iconTint="?attr/colorOnBackground" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/openButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/open"
+                        android:textColor="?attr/colorOnBackground"
+                        app:icon="@drawable/ic_outline_arrow_circle_right_24"
+                        app:iconGravity="textTop"
+                        app:iconTint="?attr/colorOnBackground" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
