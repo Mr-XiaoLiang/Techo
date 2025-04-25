@@ -2,6 +2,8 @@ package com.lollipop.base.util
 
 import android.content.Context
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 
 object FragmentHelper {
 
@@ -32,6 +34,16 @@ object FragmentHelper {
         return null
     }
 
+    inline fun <reified T : Any> findByType(fragmentManager: FragmentManager): List<T> {
+        val list = ArrayList<T>()
+        fragmentManager.fragments.forEach { fragment ->
+            if (fragment is T) {
+                list.add(fragment)
+            }
+        }
+        return list
+    }
+
 }
 
 inline fun <reified T : Any> Fragment.checkCallback(context: Context?): T? {
@@ -56,4 +68,12 @@ inline fun <reified T : Any> Fragment.checkCallback(
     if (FragmentHelper.check(context, callback)) {
         return
     }
+}
+
+inline fun <reified T : Any> FragmentActivity.findFragmentByType(): List<T> {
+    return FragmentHelper.findByType(supportFragmentManager)
+}
+
+inline fun <reified T : Any> Fragment.findFragmentByType(): List<T> {
+    return FragmentHelper.findByType(childFragmentManager)
 }

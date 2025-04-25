@@ -6,8 +6,9 @@ import com.lollipop.qr.comm.BarcodeInfo
 
 abstract class BarcodeRouter<T : BarcodeInfo> {
 
-    open fun open(context: Context, barcodeInfo: T): Boolean {
+    open fun open(context: Context?, barcodeInfo: T): Boolean {
         try {
+            context ?: return false
             val intent = getIntent(context, barcodeInfo) ?: return false
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)

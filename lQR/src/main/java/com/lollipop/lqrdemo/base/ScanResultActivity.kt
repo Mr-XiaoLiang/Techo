@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import com.lollipop.base.util.findFragmentByType
 import com.lollipop.base.util.lazyBind
-import com.lollipop.lqrdemo.BarcodeDetailDialog
 import com.lollipop.lqrdemo.databinding.ActivityScanResultBinding
+import com.lollipop.lqrdemo.preview.BarcodePreviewFragment
 import com.lollipop.qr.comm.BarcodeWrapper
 import com.lollipop.qr.reader.BarcodeReader
 import com.lollipop.qr.reader.OnBarcodeScanResultListener
@@ -18,7 +19,7 @@ import com.lollipop.qr.view.CodeSelectionView
 abstract class ScanResultActivity : ColorModeActivity(),
     OnBarcodeScanResultListener,
     CodeSelectionView.OnCodeSelectedListener,
-    BarcodeDetailDialog.OpenBarcodeCallback {
+    BarcodePreviewFragment.OpenBarcodeCallback {
 
     companion object {
         const val ACTION_SCAN = "com.google.zxing.client.android.SCAN"
@@ -65,21 +66,17 @@ abstract class ScanResultActivity : ColorModeActivity(),
 
 
     override fun onCodeSelected(code: BarcodeWrapper) {
-        BarcodeDetailDialog.show(
-            this,
-            code,
-            if (fromExternal) {
-                this
-            } else {
-                null
-            }
-        )
+        findFragmentByType<BarcodePreviewFragment>().firstOrNull()?.show(code)
     }
 
-    override fun openBarcode(info: BarcodeWrapper) {
-        val formatName = info.describe.format.zxing.getOrNull()?.name ?: ""
-        result(info.info.rawValue, formatName)
-        finish()
+    override fun openBarcode(info: BarcodeWrapper): Boolean {
+        if (fromExternal) {
+            val formatName = info.describe.format.zxing.getOrNull()?.name ?: ""
+            result(info.info.rawValue, formatName)
+            finish()
+            return true
+        }
+        return false
     }
 
     protected fun result(resultValue: String, format: String) {
