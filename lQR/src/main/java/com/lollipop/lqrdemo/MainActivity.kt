@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Size
 import android.view.View
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.core.content.PermissionChecker
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,7 +19,6 @@ import com.lollipop.filechooser.FileChooseResult
 import com.lollipop.filechooser.FileChooser
 import com.lollipop.filechooser.FileMime
 import com.lollipop.insets.WindowInsetsEdge
-import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
@@ -82,7 +80,8 @@ class MainActivity : ScanResultActivity() {
     private fun initView() {
         bindByBack(binding.backButton)
         binding.menuButton.onClick {
-            binding.drawerLayout.open()
+//            binding.drawerLayout.open()
+            testShow()
         }
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 

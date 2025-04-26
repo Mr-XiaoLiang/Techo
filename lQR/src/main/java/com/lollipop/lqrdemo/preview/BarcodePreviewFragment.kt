@@ -1,12 +1,11 @@
 package com.lollipop.lqrdemo.preview
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +13,14 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lollipop.base.util.Clipboard
 import com.lollipop.base.util.ShareSheet
 import com.lollipop.base.util.changeAlpha
 import com.lollipop.base.util.checkCallback
 import com.lollipop.base.util.onClick
+import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentBarcodePreviewBinding
@@ -34,7 +36,6 @@ import com.lollipop.pigment.Pigment
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 import java.nio.charset.Charset
-import kotlin.math.abs
 
 class BarcodePreviewFragment : BaseFragment() {
 
@@ -43,7 +44,7 @@ class BarcodePreviewFragment : BaseFragment() {
     private var openCallback: OpenBarcodeCallback? = null
 
     private val barcodeInfoDelegate = BarcodeDelegate()
-
+    private val previewProvider = BarcodePreviewProvider()
     private var barcodeInfo: BarcodeWrapper? = null
 
     override fun onAttach(context: Context) {
@@ -66,7 +67,8 @@ class BarcodePreviewFragment : BaseFragment() {
         cardAnimationHelper = CardAnimationHelper(
             newBinding.backgroundView,
             newBinding.previewCard,
-            newBinding.infoCard
+            newBinding.infoCard,
+            ::onSheetHide
         )
         return newBinding.root
     }
@@ -76,7 +78,7 @@ class BarcodePreviewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         cardAnimationHelper?.preload()
         binding?.apply {
-            closeBtn.setOnClickListener { hide() }
+            touchHoldView.isVisible = false
             backgroundView.setOnClickListener { hide() }
             touchHoldView.setOnTouchListener { _, _ -> true }
 
@@ -103,6 +105,8 @@ class BarcodePreviewFragment : BaseFragment() {
                 }
                 hide()
             }
+            infoCard.fixInsetsByPadding(WindowInsetsEdge.BOTTOM)
+            cardGroup.fixInsetsByPadding(WindowInsetsEdge.ALL)
         }
 
         updateCharsetButton()
@@ -110,9 +114,22 @@ class BarcodePreviewFragment : BaseFragment() {
 
     fun show(barcode: BarcodeWrapper) {
         onBarcodeUpdate(barcode)
+        val hasPreview = previewProvider.hasPreview(barcode)
+        cardAnimationHelper?.previewVisibility = hasPreview
+        binding?.apply {
+            if (hasPreview) {
+                previewProvider.showPreview(barcode, previewCard)
+            } else {
+                previewProvider.clearPreview(previewCard)
+            }
+            touchHoldView.isVisible = true
+        }
+        cardAnimationHelper?.show()
+    }
+
+    fun testShow() {
         binding?.touchHoldView?.isVisible = true
         cardAnimationHelper?.show()
-        // TODO
     }
 
     private fun onBarcodeUpdate(barcode: BarcodeWrapper) {
@@ -127,10 +144,15 @@ class BarcodePreviewFragment : BaseFragment() {
         updateCharsetButton()
     }
 
+    private fun onSheetHide() {
+        binding?.apply {
+            previewProvider.clearPreview(previewCard)
+            touchHoldView.isVisible = false
+        }
+    }
+
     fun hide() {
-        binding?.touchHoldView?.isVisible = false
         cardAnimationHelper?.hide()
-        // TODO
     }
 
     private fun updateCharsetButton() {
@@ -246,7 +268,6 @@ class BarcodePreviewFragment : BaseFragment() {
         }
     }
 
-
     private fun openByViewAction(raw: String) {
         val intent = Intent(Intent.ACTION_VIEW, raw.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -261,7 +282,6 @@ class BarcodePreviewFragment : BaseFragment() {
             binding?.shareButton?.callOnClick()
         }
     }
-
 
     private fun getBarcodeType(info: BarcodeWrapper): Int {
         return when (info.info) {
@@ -304,87 +324,75 @@ class BarcodePreviewFragment : BaseFragment() {
     private class CardAnimationHelper(
         val backgroundView: View,
         val previewCard: View,
-        val infoCard: View
+        val infoCard: View,
+        val onSheetHideCallback: () -> Unit
     ) {
 
-        companion object {
-            private const val ANIMATION_DURATION = 300L
-            private const val PROGRESS_MIN = 0F
-            private const val PROGRESS_MAX = 1F
-            private const val PROGRESS_DELTA = PROGRESS_MAX - PROGRESS_MIN
-            private const val PROGRESS_CLOSE_THRESHOLD = PROGRESS_MIN + 0.01F
-            private const val PROGRESS_OPEN_THRESHOLD = PROGRESS_MAX - 0.01F
-        }
+        private val bottomSheetBehavior = BottomSheetBehavior.from<View>(infoCard)
 
-        private val valueAnimator = ValueAnimator()
-        private var animationProgress = PROGRESS_MIN
-
-        val isClosed: Boolean
-            get() {
-                return animationProgress <= PROGRESS_CLOSE_THRESHOLD
-            }
-        val isOpened: Boolean
-            get() {
-                return animationProgress >= PROGRESS_OPEN_THRESHOLD
-            }
+        var previewVisibility = true
 
         init {
-            valueAnimator.addUpdateListener(UpdateListener(::onAnimationUpdate))
-            valueAnimator.addListener(
-                StateListener(
-                    onStart = ::onAnimationStart,
-                    onEnd = ::onAnimationEnd
+            bottomSheetBehavior.addBottomSheetCallback(
+                BottomSheetCallback(
+                    ::onSheetHide,
+                    ::onSheetSlide
                 )
             )
         }
 
-        fun preload() {
-            backgroundView.isInvisible = true
-            previewCard.isInvisible = true
-            infoCard.isInvisible = true
-            backgroundView.post {
-                onAnimationUpdate(PROGRESS_MIN)
-                onAnimationEnd()
+        private fun onSheetHide(isHide: Boolean) {
+            if (isHide) {
+                onSheetHideCallback()
             }
+            backgroundView.isInvisible = isHide
+            previewCard.isInvisible = isHide && previewVisibility
         }
 
-        fun show() {
-            animationTo(PROGRESS_MAX)
-        }
-
-        fun hide() {
-            animationTo(PROGRESS_MIN)
-        }
-
-        private fun animationTo(target: Float) {
-            valueAnimator.cancel()
-            val duration = abs(animationProgress - target) / PROGRESS_DELTA * ANIMATION_DURATION
-            valueAnimator.duration = duration.toLong()
-            valueAnimator.setFloatValues(animationProgress, target)
-            valueAnimator.start()
+        private fun onSheetSlide(slideOffset: Float) {
+            if (slideOffset > 0) {
+                onAnimationUpdate(1F)
+            } else if (slideOffset < 0) {
+                onAnimationUpdate(slideOffset + 1)
+            }
         }
 
         private fun onAnimationUpdate(value: Float) {
-            animationProgress = value
             backgroundView.alpha = value
             previewCard.alpha = value
-            infoCard.alpha = value
-            val offsetProgress = (PROGRESS_MAX - value + PROGRESS_MIN) / PROGRESS_DELTA
-            infoCard.translationY = infoCard.height * offsetProgress
         }
 
-        private fun onAnimationStart() {
-            backgroundView.isVisible = true
-            previewCard.isVisible = true
-            infoCard.isVisible = true
+        fun preload() {
+            hide()
+            onSheetHide(true)
         }
 
-        private fun onAnimationEnd() {
-            if (isClosed) {
-                backgroundView.isInvisible = true
-                previewCard.isInvisible = true
-                infoCard.isInvisible = true
+        fun show() {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        fun hide() {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        private class BottomSheetCallback(
+            val onSheetHide: (Boolean) -> Unit,
+            val onSheetSlide: (Float) -> Unit
+        ) : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                Log.e("Lollipop", "onStateChanged.newState: $newState")
+                if (BottomSheetBehavior.STATE_HIDDEN == newState) {
+                    onSheetHide(true)
+                } else {
+                    onSheetHide(false)
+                }
             }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                Log.e("Lollipop", "onStateChanged.onSlide: $slideOffset")
+                onSheetSlide(slideOffset)
+            }
+
         }
 
     }
@@ -429,36 +437,6 @@ class BarcodePreviewFragment : BaseFragment() {
             return String(originBytes, c)
         }
 
-    }
-
-    private class UpdateListener(
-        private val onUpdate: (Float) -> Unit
-    ) : ValueAnimator.AnimatorUpdateListener {
-        override fun onAnimationUpdate(animation: ValueAnimator) {
-            val value = animation.animatedValue
-            if (value is Float) {
-                onUpdate(value)
-            }
-        }
-    }
-
-    private class StateListener(
-        private val onStart: () -> Unit,
-        private val onEnd: () -> Unit
-    ) : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator) {
-            onStart()
-        }
-
-        override fun onAnimationEnd(animation: Animator) {
-            onEnd()
-        }
-
-        override fun onAnimationCancel(animation: Animator) {
-        }
-
-        override fun onAnimationRepeat(animation: Animator) {
-        }
     }
 
     fun interface OpenBarcodeCallback {

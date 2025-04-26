@@ -17,7 +17,7 @@
 
         <com.lollipop.widget.RoundBackgroundView
             android:id="@+id/dialogTouchHolder"
-            android:layout_width="24dp"
+            android:layout_width="80dp"
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
