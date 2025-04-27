@@ -119,6 +119,9 @@ class BarcodePreviewFragment : BaseFragment() {
         binding?.apply {
             if (hasPreview) {
                 previewProvider.showPreview(barcode, previewCard)
+                currentPigment?.let {
+                    previewProvider.onDecorationChanged(it)
+                }
             } else {
                 previewProvider.clearPreview(previewCard)
             }
@@ -174,7 +177,7 @@ class BarcodePreviewFragment : BaseFragment() {
     }
 
     private fun updateInfoContent() {
-        binding?.contentValueView?.text = barcodeInfoDelegate.decodeValue
+        binding?.contentValueView?.text = barcodeInfoDelegate.displayValue
     }
 
     private fun showCharsetPopMenu() {
@@ -305,6 +308,7 @@ class BarcodePreviewFragment : BaseFragment() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
+        previewProvider.onDecorationChanged(pigment)
         binding?.apply {
             previewCard.setBackgroundColor(pigment.backgroundColor)
             infoCard.setBackgroundColor(pigment.backgroundColor)
@@ -346,7 +350,7 @@ class BarcodePreviewFragment : BaseFragment() {
                 onSheetHideCallback()
             }
             backgroundView.isInvisible = isHide
-            previewCard.isInvisible = isHide && previewVisibility
+            previewCard.isInvisible = isHide || !previewVisibility
         }
 
         private fun onSheetSlide(slideOffset: Float) {
@@ -359,7 +363,9 @@ class BarcodePreviewFragment : BaseFragment() {
 
         private fun onAnimationUpdate(value: Float) {
             backgroundView.alpha = value
-            previewCard.alpha = value
+            if (previewCard.isVisible) {
+                previewCard.alpha = value
+            }
         }
 
         fun preload() {
@@ -368,6 +374,8 @@ class BarcodePreviewFragment : BaseFragment() {
         }
 
         fun show() {
+            // 显示预览
+            previewCard.isInvisible = !previewVisibility
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 

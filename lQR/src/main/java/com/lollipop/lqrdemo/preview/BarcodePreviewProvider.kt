@@ -1,12 +1,15 @@
 package com.lollipop.lqrdemo.preview
 
 import android.view.ViewGroup
+import com.lollipop.pigment.Pigment
 import com.lollipop.qr.comm.BarcodeInfo
 import com.lollipop.qr.comm.BarcodeWrapper
 
 class BarcodePreviewProvider {
 
     private val renderers = mutableMapOf<Class<out BarcodeInfo>, BarcodePreviewRenderer>()
+
+    private var currentRenderer: BarcodePreviewRenderer? = null
 
     private fun getRenderer(barcode: BarcodeInfo): BarcodePreviewRenderer? {
         val clazz = barcode::class.java
@@ -28,6 +31,10 @@ class BarcodePreviewProvider {
         return renderer != null
     }
 
+    fun onDecorationChanged(pigment: Pigment) {
+        currentRenderer?.onDecorationChanged(pigment)
+    }
+
     fun showPreview(barcode: BarcodeWrapper, group: ViewGroup) {
         val renderer = getRenderer(barcode.info) ?: return
         val view = renderer.getView(group)
@@ -38,9 +45,11 @@ class BarcodePreviewProvider {
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         renderer.render(barcode)
+        currentRenderer = renderer
     }
 
     fun clearPreview(group: ViewGroup) {
+        currentRenderer = null
         group.removeAllViews()
     }
 
