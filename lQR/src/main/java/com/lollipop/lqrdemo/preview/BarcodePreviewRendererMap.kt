@@ -1,6 +1,7 @@
 package com.lollipop.lqrdemo.preview
 
 import com.lollipop.lqrdemo.preview.renderer.WebViewRenderer
+import com.lollipop.lqrdemo.preview.renderer.WifiViewRenderer
 import com.lollipop.qr.comm.BarcodeInfo
 
 object BarcodePreviewRendererMap {
@@ -8,6 +9,7 @@ object BarcodePreviewRendererMap {
     // TODO("需要填充实现类")
     private val rendererMap = arrayOf<RendererSymbol>(
         RendererSymbol(BarcodeInfo.Url::class.java, WebViewRenderer::class.java),
+        RendererSymbol(BarcodeInfo.Wifi::class.java, WifiViewRenderer::class.java),
     )
 
     fun findRenderer(barcode: BarcodeInfo): Class<out BarcodePreviewRenderer>? {
