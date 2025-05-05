@@ -1,5 +1,6 @@
 package com.lollipop.lqrdemo.preview
 
+import com.lollipop.lqrdemo.preview.renderer.ContactViewRenderer
 import com.lollipop.lqrdemo.preview.renderer.WebViewRenderer
 import com.lollipop.lqrdemo.preview.renderer.WifiViewRenderer
 import com.lollipop.qr.comm.BarcodeInfo
@@ -10,6 +11,9 @@ object BarcodePreviewRendererMap {
     private val rendererMap = arrayOf<RendererSymbol>(
         RendererSymbol(BarcodeInfo.Url::class.java, WebViewRenderer::class.java),
         RendererSymbol(BarcodeInfo.Wifi::class.java, WifiViewRenderer::class.java),
+        RendererSymbol(BarcodeInfo.Contact::class.java, ContactViewRenderer::class.java),
+        RendererSymbol(BarcodeInfo.Phone::class.java, ContactViewRenderer::class.java),
+        RendererSymbol(BarcodeInfo.Email::class.java, ContactViewRenderer::class.java),
     )
 
     fun findRenderer(barcode: BarcodeInfo): Class<out BarcodePreviewRenderer>? {
