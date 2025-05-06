@@ -90,7 +90,9 @@ class BarcodePreviewFragment : BaseFragment() {
             charsetButton.onClick {
                 showCharsetPopMenu()
             }
-
+            infoCard.onClick {
+                // 设置一个点击事件拦截
+            }
             copyButton.onClick {
                 context?.let {
                     Clipboard.copy(it, value = barcodeInfoDelegate.decodeValue)

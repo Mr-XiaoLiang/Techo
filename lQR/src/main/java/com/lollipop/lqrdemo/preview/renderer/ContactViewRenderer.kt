@@ -230,7 +230,7 @@ class ContactViewRenderer : BarcodePreviewRenderer {
             binding.contentInfoView.text = item.value
             pigment?.let {
                 binding.contentInfoView.setTextColor(it.onBackgroundTitle)
-                binding.copyButton.imageTintList = ColorStateList.valueOf(it.primaryVariant)
+                binding.copyButton.imageTintList = ColorStateList.valueOf(it.onBackgroundBody)
                 binding.contactTypeIcon.imageTintList = ColorStateList.valueOf(it.onBackgroundBody)
             }
         }
