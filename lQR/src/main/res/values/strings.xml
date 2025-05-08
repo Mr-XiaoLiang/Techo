@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">lQR</string>
-    <string name="from_photo">Recognition from photo</string>
-    <string name="create_qr_code">Generate QR code</string>
+    <string name="from_photo">Photo</string>
+    <string name="create_qr_code">Generate</string>
     <string name="title_main">Lollipop QR</string>
     <string name="copy">Copy</string>
     <string name="share">Share</string>

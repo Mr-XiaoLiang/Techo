@@ -182,8 +182,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/createBtn"
-            app:layout_constraintRight_toLeftOf="@id/createBtn"
+            app:layout_constraintBottom_toBottomOf="@id/floatingButton"
+            app:layout_constraintRight_toLeftOf="@id/floatingButton"
             app:leftBottom="16dp"
             app:leftTop="16dp"
             app:rightBottom="5dp"
@@ -220,6 +220,32 @@
                     android:textSize="16sp" />
 
             </LinearLayout>
+
+        </com.lollipop.clip.RoundClipLayout>
+
+        <com.lollipop.clip.RoundClipLayout
+            android:id="@+id/floatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:leftBottom="5dp"
+            android:layout_marginRight="8dp"
+            app:leftTop="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/createBtn"
+            app:layout_constraintRight_toLeftOf="@id/createBtn"
+            app:rightBottom="5dp"
+            app:rightTop="5dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/floatingButtonIcon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:background="?attr/colorSecondary"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:src="@drawable/ic_baseline_view_in_ar_24"
+                app:tint="?attr/colorOnSecondary" />
 
         </com.lollipop.clip.RoundClipLayout>
 

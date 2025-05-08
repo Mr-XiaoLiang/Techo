@@ -105,6 +105,10 @@ class MainActivity : ScanResultActivity() {
             fileChooser.launch().localOnly().type(FileMime.Image.ALL).start()
         }
 
+        binding.floatingButton.onClick {
+            // TODO
+        }
+
         binding.createBtn.onClick {
             startActivity(Intent(this, CreatorActivity::class.java))
 //            Toast.makeText(this, "在做了在做了", Toast.LENGTH_SHORT).show()
@@ -153,6 +157,8 @@ class MainActivity : ScanResultActivity() {
         binding.createBtnContent.setBackgroundColor(pigment.secondaryColor)
         binding.createBtnText.setTextColor(pigment.onSecondaryTitle)
         binding.createBtnIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
+        binding.floatingButtonIcon.imageTintList = ColorStateList.valueOf(pigment.onSecondaryTitle)
+        binding.floatingButtonIcon.setBackgroundColor(pigment.secondaryColor)
         binding.permissionBtnText.setBackgroundColor(pigment.secondaryColor)
         binding.permissionBtnText.setTextColor(pigment.onSecondaryTitle)
     }
