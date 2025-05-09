@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/title_permission"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="20sp"
+            app:fontFamily="@font/font_logo" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="16dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="?attr/colorOnBackground" />
+
+    </FrameLayout>
+
+    <com.lollipop.clip.RoundClipLayout
+        android:radius="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/floatingPermissionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp">
+
+            <ImageView
+                android:id="@+id/floatingPermissionStatusIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_baseline_done_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:tint="?attr/colorOnBackground" />
+
+            <TextView
+                android:id="@+id/floatingPermissionTitle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="@string/title_floating_permission"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/floatingPermissionStatusIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/floatingPermissionSummary"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_floating_permission"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/floatingPermissionTitle"
+                app:layout_constraintStart_toStartOf="@id/floatingPermissionTitle"
+                app:layout_constraintTop_toBottomOf="@id/floatingPermissionTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.lollipop.clip.RoundClipLayout>
+
+    <com.lollipop.clip.RoundClipLayout
+        android:radius="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/recordingPermissionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp">
+
+            <ImageView
+                android:id="@+id/recordingPermissionStatusIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_baseline_done_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:tint="?attr/colorOnBackground" />
+
+            <TextView
+                android:id="@+id/recordingPermissionTitle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="@string/title_recording_permission"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/recordingPermissionStatusIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/recordingPermissionSummary"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_recording_permission"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/recordingPermissionTitle"
+                app:layout_constraintStart_toStartOf="@id/recordingPermissionTitle"
+                app:layout_constraintTop_toBottomOf="@id/recordingPermissionTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.lollipop.clip.RoundClipLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
+
+</LinearLayout>

@@ -64,11 +64,6 @@ abstract class ScanResultActivity : ColorModeActivity(),
         this.intent = intent
     }
 
-    protected fun testShow() {
-        val fragments = findFragmentByType<BarcodePreviewFragment>()
-        fragments.firstOrNull()?.testShow()
-    }
-
     override fun onCodeSelected(code: BarcodeWrapper) {
         findFragmentByType<BarcodePreviewFragment>().firstOrNull()?.show(code)
     }

@@ -7,6 +7,8 @@
     <!--  见鬼，哪里来的特殊权限，我们需要把他移除掉  -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove"/>
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:name=".QrApplication"
         android:allowBackup="true"
@@ -22,6 +24,10 @@
             android:exported="false" />
         <activity
             android:name=".other.AboutActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
+        <activity
+            android:name=".floating.FloatingPermissionActivity"
             android:configChanges="uiMode"
             android:exported="false" />
         <activity

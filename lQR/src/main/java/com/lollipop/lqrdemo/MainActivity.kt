@@ -23,6 +23,8 @@ import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
 import com.lollipop.lqrdemo.other.AppSettings
+import com.lollipop.lqrdemo.floating.FloatingPermissionActivity
+import com.lollipop.lqrdemo.floating.FloatingScanHelper
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
@@ -80,8 +82,7 @@ class MainActivity : ScanResultActivity() {
     private fun initView() {
         bindByBack(binding.backButton)
         binding.menuButton.onClick {
-//            binding.drawerLayout.open()
-            testShow()
+            binding.drawerLayout.open()
         }
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
@@ -106,7 +107,7 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.floatingButton.onClick {
-            // TODO
+            FloatingScanHelper.start(this)
         }
 
         binding.createBtn.onClick {
