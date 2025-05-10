@@ -27,10 +27,6 @@
             android:configChanges="uiMode"
             android:exported="false" />
         <activity
-            android:name=".floating.FloatingPermissionActivity"
-            android:configChanges="uiMode"
-            android:exported="false" />
-        <activity
             android:name=".other.PrivacyAgreementActivity"
             android:configChanges="uiMode"
             android:exported="false" />

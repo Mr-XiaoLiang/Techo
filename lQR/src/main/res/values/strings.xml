@@ -123,6 +123,5 @@
     <string name="summary_floating_permission">用于在屏幕上显示悬浮按钮</string>
     <string name="title_recording_permission">屏幕录制权限</string>
     <string name="summary_recording_permission">用于获取屏幕上的二维码内容</string>
-    <string name="title_permission">权限申请</string>
 
 </resources>
