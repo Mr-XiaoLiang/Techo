@@ -22,9 +22,9 @@ import com.lollipop.insets.WindowInsetsEdge
 import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityMainBinding
-import com.lollipop.lqrdemo.other.AppSettings
-import com.lollipop.lqrdemo.floating.FloatingPermissionActivity
 import com.lollipop.lqrdemo.floating.FloatingScanHelper
+import com.lollipop.lqrdemo.floating.MediaProjectionHelper
+import com.lollipop.lqrdemo.other.AppSettings
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
 import com.lollipop.qr.BarcodeHelper
@@ -60,6 +60,8 @@ class MainActivity : ScanResultActivity() {
             finish()
         }
     }
+
+    private val floatingScanHelper = FloatingScanHelper.register(this, ::onFloatingScanLaunchResult)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +109,7 @@ class MainActivity : ScanResultActivity() {
         }
 
         binding.floatingButton.onClick {
-            FloatingScanHelper.start(this)
+            floatingScanHelper.start()
         }
 
         binding.createBtn.onClick {
@@ -239,6 +241,24 @@ class MainActivity : ScanResultActivity() {
         closeDrawer()
         if (!AppSettings.default.isAgreePrivacyAgreement) {
             privacyAgreementLauncher.launch(null)
+        }
+    }
+
+    private fun onFloatingScanLaunchResult(
+        result: MediaProjectionHelper.LaunchResult
+    ) {
+        when (result) {
+            MediaProjectionHelper.LaunchResult.Cancel -> {
+                // TODO()
+            }
+
+            MediaProjectionHelper.LaunchResult.Failed -> {
+                // TODO()
+            }
+
+            MediaProjectionHelper.LaunchResult.Success -> {
+                // TODO()
+            }
         }
     }
 
