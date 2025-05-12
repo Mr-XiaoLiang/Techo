@@ -126,5 +126,7 @@
     <string name="dialog_agree">同意</string>
     <string name="dialog_refuse">拒绝</string>
 
+    <string name="notification_content_scan">全局二维码扫描服务正在运行</string>
+    <string name="notification_channel_scan">全局扫描服务</string>
 
 </resources>
