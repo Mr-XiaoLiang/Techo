@@ -4,8 +4,10 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.graphics.PixelFormat
 import android.hardware.display.VirtualDisplay
@@ -18,6 +20,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import com.lollipop.lqrdemo.R
 
 class MediaProjectionService : Service() {
@@ -38,6 +41,10 @@ class MediaProjectionService : Service() {
             )
         }
 
+        fun sendScreenshotBroadcast(context: Context) {
+            context.sendBroadcast(Intent(ACTION_SCREENSHOT).setPackage(context.packageName))
+        }
+
         private fun createScreenshotDelegate(
             context: Context,
             manager: MediaProjectionManager?,
@@ -47,7 +54,6 @@ class MediaProjectionService : Service() {
             val mp = mpResult.getMediaProjection(manager) ?: return null
             return ScreenshotDelegate(context, mp)
         }
-
     }
 
     private var screenshotDelegate: ScreenshotDelegate? = null
@@ -63,17 +69,32 @@ class MediaProjectionService : Service() {
         }
     }
 
+    private fun registerScreenshotReceiver(receiver: BroadcastReceiver) {
+        ContextCompat.registerReceiver(
+            this,
+            receiver,
+            IntentFilter(ACTION_SCREENSHOT),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         tryDo("onStartCommand") {
             val key = intent?.getIntExtra(PARAMS_RESULT_KEY, 0) ?: 0
             val mpResult = MediaProjectionHelper.findResult(key)
             if (mpResult != null) {
-                screenshotDelegate?.release()
+                screenshotDelegate?.let {
+                    unregisterReceiver(it.receiver)
+                    it.release()
+                }
                 screenshotDelegate = createScreenshotDelegate(
                     this,
                     mediaProjectionManager,
                     mpResult
                 )
+                screenshotDelegate?.let {
+                    registerScreenshotReceiver(it.receiver)
+                }
             }
         }
         if (screenshotDelegate != null) {
@@ -132,8 +153,14 @@ class MediaProjectionService : Service() {
         var isAvailable = false
             private set
 
+        val receiver = ScreenshotReceiver(::notifyScreenshot)
+
         init {
             createImageReaderVirtualDisplay()
+        }
+
+        private fun notifyScreenshot() {
+            // TODO
         }
 
         private fun getDisplayMetrics(): DisplayMetrics? {
@@ -181,7 +208,6 @@ class MediaProjectionService : Service() {
                     null,
                     null
                 )
-            // TODO
         }
 
         fun release() {
@@ -201,6 +227,19 @@ class MediaProjectionService : Service() {
         override fun onStop() {
             super.onStop()
             // TODO
+        }
+
+    }
+
+    private class ScreenshotReceiver(
+        private val notifyScreenshot: () -> Unit
+    ) : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent ?: return
+            if (intent.action == ACTION_SCREENSHOT) {
+                notifyScreenshot()
+            }
         }
 
     }
