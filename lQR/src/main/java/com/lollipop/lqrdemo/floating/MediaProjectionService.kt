@@ -13,7 +13,6 @@ import android.graphics.PixelFormat
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.media.projection.MediaProjection
-import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.IBinder
 import android.util.DisplayMetrics
@@ -21,7 +20,10 @@ import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.R
+import com.lollipop.qr.comm.ImageToBitmap
+import java.util.concurrent.Executors
 
 class MediaProjectionService : Service() {
 
@@ -45,15 +47,6 @@ class MediaProjectionService : Service() {
             context.sendBroadcast(Intent(ACTION_SCREENSHOT).setPackage(context.packageName))
         }
 
-        private fun createScreenshotDelegate(
-            context: Context,
-            manager: MediaProjectionManager?,
-            mpResult: MediaProjectionHelper.MPResult
-        ): ScreenshotDelegate? {
-            manager ?: return null
-            val mp = mpResult.getMediaProjection(manager) ?: return null
-            return ScreenshotDelegate(context, mp)
-        }
     }
 
     private var screenshotDelegate: ScreenshotDelegate? = null
@@ -78,6 +71,18 @@ class MediaProjectionService : Service() {
         )
     }
 
+    private fun createScreenshotDelegate(
+        mpResult: MediaProjectionHelper.MPResult
+    ): ScreenshotDelegate? {
+        val manager = mediaProjectionManager ?: return null
+        val mp = mpResult.getMediaProjection(manager) ?: return null
+        return ScreenshotDelegate(this, mp, ::onScreenshot)
+    }
+
+    private fun onScreenshot(result: ScreenshotResult) {
+        // TODO
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         tryDo("onStartCommand") {
             val key = intent?.getIntExtra(PARAMS_RESULT_KEY, 0) ?: 0
@@ -88,8 +93,6 @@ class MediaProjectionService : Service() {
                     it.release()
                 }
                 screenshotDelegate = createScreenshotDelegate(
-                    this,
-                    mediaProjectionManager,
                     mpResult
                 )
                 screenshotDelegate?.let {
@@ -143,8 +146,9 @@ class MediaProjectionService : Service() {
     }
 
     private class ScreenshotDelegate(
-        val context: Context,
-        val mediaProjection: MediaProjection
+        private val context: Context,
+        private val mediaProjection: MediaProjection,
+        private val onScreenshotResult: (ScreenshotResult) -> Unit
     ) : MediaProjection.Callback() {
 
         private var imageReader: ImageReader? = null
@@ -155,11 +159,52 @@ class MediaProjectionService : Service() {
 
         val receiver = ScreenshotReceiver(::notifyScreenshot)
 
+        private val executor by lazy {
+            Executors.newSingleThreadExecutor()
+        }
+
         init {
             createImageReaderVirtualDisplay()
         }
 
         private fun notifyScreenshot() {
+            val reader = imageReader
+            if (!isAvailable || reader == null) {
+                onScreenshotResult(ScreenshotResult.NoAvailable)
+                return
+            }
+            executor.execute {
+                try {
+                    val result = screenshot(reader)
+                    onUI {
+                        onScreenshotResult(result)
+                    }
+                } catch (e: Throwable) {
+                    onUI {
+                        onScreenshotResult(ScreenshotResult.Failure(e))
+                    }
+                }
+            }
+        }
+
+        private fun screenshot(reader: ImageReader): ScreenshotResult {
+            val latestImage = reader.acquireLatestImage()
+            if (latestImage == null) {
+                return ScreenshotResult.NoAvailable
+            }
+            val result = ImageToBitmap.parse(latestImage)
+            if (result.isSuccess) {
+                val bitmap = result.getOrNull()
+                // 保存
+                TODO("需要保存")
+            } else {
+                val error = result.exceptionOrNull()
+                if (error != null) {
+                    return ScreenshotResult.Failure(error)
+                } else {
+                    return ScreenshotResult.UnknownError
+                }
+            }
             // TODO
         }
 
@@ -211,6 +256,10 @@ class MediaProjectionService : Service() {
         }
 
         fun release() {
+            executor.shutdown()
+            mediaProjection.unregisterCallback(this)
+            virtualDisplayImageReader?.release()
+            virtualDisplayImageReader = null
             // TODO
         }
 
