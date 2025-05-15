@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
+import android.graphics.Bitmap
 import android.graphics.PixelFormat
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
@@ -19,10 +20,13 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.R
 import com.lollipop.qr.comm.ImageToBitmap
+import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.Executors
 
 class MediaProjectionService : Service() {
@@ -80,7 +84,27 @@ class MediaProjectionService : Service() {
     }
 
     private fun onScreenshot(result: ScreenshotResult) {
-        // TODO
+        when (result) {
+            is ScreenshotResult.Success -> {
+                // TODO()
+                Toast.makeText(this, result.url, Toast.LENGTH_SHORT).show()
+            }
+
+            is ScreenshotResult.Failure -> {
+                // TODO()
+                Toast.makeText(this, result.error.message, Toast.LENGTH_SHORT).show()
+            }
+
+            ScreenshotResult.NoAvailable -> {
+                // TODO()
+                Toast.makeText(this, "NoAvailable", Toast.LENGTH_SHORT).show()
+            }
+
+            ScreenshotResult.UnknownError -> {
+                // TODO()
+                Toast.makeText(this, "UnknownError", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -196,16 +220,36 @@ class MediaProjectionService : Service() {
             if (result.isSuccess) {
                 val bitmap = result.getOrNull()
                 // 保存
-                TODO("需要保存")
-            } else {
-                val error = result.exceptionOrNull()
-                if (error != null) {
-                    return ScreenshotResult.Failure(error)
-                } else {
+                if (bitmap == null) {
                     return ScreenshotResult.UnknownError
                 }
+                val file = saveBitmap(bitmap)
+                return ScreenshotResult.Success(file.path)
+            } else {
+                val error = result.exceptionOrNull()
+                return if (error != null) {
+                    ScreenshotResult.Failure(error)
+                } else {
+                    ScreenshotResult.UnknownError
+                }
             }
-            // TODO
+        }
+
+        private fun saveBitmap(bitmap: Bitmap): File {
+            val file = File(context.cacheDir, "screenshot.png")
+            if (file.exists()) {
+                file.delete()
+            }
+            val fos = FileOutputStream(file)
+            try {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                fos.flush()
+            } catch (e: Throwable) {
+                Log.e("Lollipop", "MediaProjectionService.ScreenshotDelegate.saveBitmap.ERROR", e)
+            } finally {
+                fos.close()
+            }
+            return file
         }
 
         private fun getDisplayMetrics(): DisplayMetrics? {
@@ -260,22 +304,18 @@ class MediaProjectionService : Service() {
             mediaProjection.unregisterCallback(this)
             virtualDisplayImageReader?.release()
             virtualDisplayImageReader = null
-            // TODO
         }
 
         override fun onCapturedContentResize(width: Int, height: Int) {
             super.onCapturedContentResize(width, height)
-            // TODO
         }
 
         override fun onCapturedContentVisibilityChanged(isVisible: Boolean) {
             super.onCapturedContentVisibilityChanged(isVisible)
-            // TODO
         }
 
         override fun onStop() {
             super.onStop()
-            // TODO
         }
 
     }
