@@ -85,6 +85,7 @@ class MediaProjectionService : Service() {
     }
 
     private fun onScreenshot(result: ScreenshotResult) {
+        Log.d("MediaProjectionService", "onScreenshot: $result")
         when (result) {
             is ScreenshotResult.Success -> {
                 // TODO()
