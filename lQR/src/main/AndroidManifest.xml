@@ -77,7 +77,7 @@
         <service
             android:name=".floating.MediaProjectionService"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:foregroundServiceType="mediaProjection"
             android:icon="@drawable/ic_lqr_24dp" />
 

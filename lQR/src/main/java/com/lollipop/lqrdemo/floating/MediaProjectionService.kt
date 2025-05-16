@@ -22,6 +22,7 @@ import android.view.Display
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.lollipop.base.util.delay
 import com.lollipop.base.util.onUI
 import com.lollipop.lqrdemo.R
 import com.lollipop.qr.comm.ImageToBitmap
@@ -40,7 +41,7 @@ class MediaProjectionService : Service() {
         private const val NOTIFICATION_ID_MEDIA_PROJECTION = 2333
 
         fun start(context: Context, resultKey: Int) {
-            context.startForegroundService(
+            context.startService(
                 Intent(context, MediaProjectionService::class.java).apply {
                     putExtra(PARAMS_RESULT_KEY, resultKey)
                 }
@@ -108,6 +109,7 @@ class MediaProjectionService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        sendForegroundNotification()
         tryDo("onStartCommand") {
             val key = intent?.getIntExtra(PARAMS_RESULT_KEY, 0) ?: 0
             val mpResult = MediaProjectionHelper.findResult(key)
@@ -125,8 +127,11 @@ class MediaProjectionService : Service() {
             }
         }
         if (screenshotDelegate != null) {
-            sendForegroundNotification()
             MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.RUNNING
+            delay(10000) {
+                Toast.makeText(this, "sendScreenshotBroadcast", Toast.LENGTH_SHORT).show()
+                sendScreenshotBroadcast(this)
+            }
         } else {
             MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.STOPPED
             stopSelf()
