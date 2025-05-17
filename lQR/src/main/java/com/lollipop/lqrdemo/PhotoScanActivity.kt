@@ -26,13 +26,17 @@ class PhotoScanActivity : ScanResultActivity() {
 
         const val REQUEST_CODE_SCAN = 5018
 
-        fun start(context: Context, photo: Uri) {
-            context.startActivity(Intent(context, PhotoScanActivity::class.java).apply {
+        fun getIntent(context: Context, photo: Uri): Intent {
+            return Intent(context, PhotoScanActivity::class.java).apply {
                 data = photo
                 if (context !is Activity) {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
-            })
+            }
+        }
+
+        fun start(context: Context, photo: Uri) {
+            context.startActivity(getIntent(context, photo))
         }
 
         fun startForResult(activity: Activity, photo: Uri) {
