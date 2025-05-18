@@ -17,7 +17,7 @@
 package com.google.android.renderscript
 
 import android.graphics.Bitmap
-import java.lang.IllegalArgumentException
+import androidx.core.graphics.createBitmap
 
 // This string is used for error messages.
 private const val externalName = "RenderScript Toolkit"
@@ -1498,7 +1498,11 @@ internal fun validateBitmap(
 }
 
 internal fun createCompatibleBitmap(inputBitmap: Bitmap) =
-    Bitmap.createBitmap(inputBitmap.width, inputBitmap.height, inputBitmap.config)
+    createBitmap(
+        inputBitmap.width,
+        inputBitmap.height,
+        inputBitmap.config ?: Bitmap.Config.ARGB_8888
+    )
 
 internal fun validateHistogramDotCoefficients(
     coefficients: FloatArray?,

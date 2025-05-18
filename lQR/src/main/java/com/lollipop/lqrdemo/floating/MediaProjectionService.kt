@@ -1,5 +1,7 @@
 package com.lollipop.lqrdemo.floating
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
+import android.graphics.drawable.Icon
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.media.projection.MediaProjection
@@ -30,7 +33,10 @@ class MediaProjectionService : Service() {
     companion object {
 
         private const val PARAMS_RESULT_KEY = "ResultKey"
-        private const val ACTION_SCREENSHOT = "ActionScreenshot"
+        private const val ACTION_SCREENSHOT = "lollipop.lqr.ActionScreenshot"
+        private const val ACTION_STOP = "lollipop.lqr.ActionStop"
+
+        private const val REQUEST_CODE_STOP_SERVICE = 666
 
         fun start(context: Context, resultKey: Int) {
             context.startService(
@@ -44,11 +50,20 @@ class MediaProjectionService : Service() {
             context.sendBroadcast(Intent(ACTION_SCREENSHOT).setPackage(context.packageName))
         }
 
+        fun createStopBroadcast(context: Context): Intent {
+            return Intent(ACTION_STOP).setPackage(context.packageName)
+        }
+
     }
 
     private var screenshotDelegate: ScreenshotDelegate? = null
     private val mediaProjectionManager by lazy {
         MediaProjectionHelper.getManager(this)
+    }
+
+    private val stopServiceReceiver = StopReceiver {
+        NotificationHelper.removeForegroundNotification(this)
+        stopSelf()
     }
 
     private fun tryDo(name: String, block: () -> Unit) {
@@ -80,7 +95,8 @@ class MediaProjectionService : Service() {
         Log.d("MediaProjectionService", "onScreenshot: $result")
         when (result) {
             is ScreenshotResult.Success -> {
-                FloatingScanHelper.startScanResult(this, result.url)
+                val scanResult = FloatingScanHelper.startScanResult(this, result.url)
+                Log.d("MediaProjectionService", "startScanResult: $scanResult")
             }
 
             is ScreenshotResult.Failure -> {
@@ -100,8 +116,39 @@ class MediaProjectionService : Service() {
         }
     }
 
+    private fun sendForegroundNotification() {
+        NotificationHelper.sendForegroundNotification(this) {
+            it.addAction(
+                Notification.Action.Builder(
+                    Icon.createWithResource(
+                        this,
+                        com.lollipop.lqrdemo.R.drawable.ic_lqr_24dp
+                    ),
+                    getString(
+                        com.lollipop.lqrdemo.R.string.notification_action_stop_floating
+                    ),
+                    PendingIntent.getBroadcast(
+                        this, REQUEST_CODE_STOP_SERVICE,
+                        createStopBroadcast(this),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                ).build()
+            )
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        ContextCompat.registerReceiver(
+            this,
+            stopServiceReceiver,
+            IntentFilter(ACTION_STOP),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        NotificationHelper.sendForegroundNotification(this)
+        sendForegroundNotification()
         tryDo("onStartCommand") {
             val key = intent?.getIntExtra(PARAMS_RESULT_KEY, 0) ?: 0
             val mpResult = MediaProjectionHelper.findResult(key)
@@ -120,7 +167,7 @@ class MediaProjectionService : Service() {
         }
         if (screenshotDelegate != null) {
             MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.RUNNING
-            delay(10000) {
+            delay(15000) {
                 Toast.makeText(this, "sendScreenshotBroadcast", Toast.LENGTH_SHORT).show()
                 sendScreenshotBroadcast(this)
             }
@@ -195,8 +242,12 @@ class MediaProjectionService : Service() {
                 if (bitmap == null) {
                     return ScreenshotResult.UnknownError
                 }
-                val file = saveBitmap(bitmap)
-                return ScreenshotResult.Success(file.path)
+                if (bitmap is Bitmap) {
+                    val file = saveBitmap(bitmap)
+                    return ScreenshotResult.Success(file.path)
+                } else {
+                    return ScreenshotResult.UnknownError
+                }
             } else {
                 val error = result.exceptionOrNull()
                 return if (error != null) {
@@ -300,6 +351,19 @@ class MediaProjectionService : Service() {
             intent ?: return
             if (intent.action == ACTION_SCREENSHOT) {
                 notifyScreenshot()
+            }
+        }
+
+    }
+
+    private class StopReceiver(
+        private val notifyStop: () -> Unit
+    ) : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent ?: return
+            if (intent.action == ACTION_STOP) {
+                notifyStop()
             }
         }
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 36
     namespace = "com.google.android.renderscript"
     defaultConfig {
         minSdk = 26
@@ -36,9 +36,11 @@ android {
     }
     externalNativeBuild {
         cmake {
+//            cppFlags("-std=c++17")
             path(file("src/main/cpp/CMakeLists.txt"))
         }
     }
+    ndkVersion = "28.1.13356709"
 
 }
 

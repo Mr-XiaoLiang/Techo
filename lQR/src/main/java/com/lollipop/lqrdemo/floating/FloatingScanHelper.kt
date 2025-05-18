@@ -139,10 +139,29 @@ class FloatingScanHelper(
     }
 
     sealed class ScanResultLaunchResult {
-        object Success : ScanResultLaunchResult()
-        object PathEmpty : ScanResultLaunchResult()
-        object ManagerNotFound : ScanResultLaunchResult()
-        class Failed(val error: Throwable) : ScanResultLaunchResult()
+        object Success : ScanResultLaunchResult() {
+            override fun toString(): String {
+                return "ScanResultLaunchResult.Success"
+            }
+        }
+
+        object PathEmpty : ScanResultLaunchResult() {
+            override fun toString(): String {
+                return "ScanResultLaunchResult.PathEmpty"
+            }
+        }
+
+        object ManagerNotFound : ScanResultLaunchResult() {
+            override fun toString(): String {
+                return "ScanResultLaunchResult.ManagerNotFound"
+            }
+        }
+
+        class Failed(val error: Throwable) : ScanResultLaunchResult() {
+            override fun toString(): String {
+                return "ScanResultLaunchResult.Failed(error=$error)"
+            }
+        }
     }
 
 }

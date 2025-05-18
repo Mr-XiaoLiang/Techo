@@ -43,6 +43,14 @@ object NotificationHelper {
         manager.createNotificationChannels(channelList)
     }
 
+    fun removeForegroundNotification(context: Context) {
+        getNotificationManager(context)?.cancel(NOTIFICATION_ID_MEDIA_PROJECTION)
+    }
+
+    fun removeFullScreenNotification(context: Context) {
+        getNotificationManager(context)?.cancel(NOTIFICATION_ID_FULL_SCREEN)
+    }
+
     private fun getNotificationManager(context: Context): NotificationManager? {
         val manager = context.getSystemService(NotificationManager::class.java)
         if (manager == null) {
@@ -70,7 +78,7 @@ object NotificationHelper {
                 context,
                 REQUEST_CODE_FULL_SCREEN,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_IMMUTABLE
             )
 
             val notificationBuilder = NotificationCompat.Builder(context, channel.id)
@@ -91,14 +99,17 @@ object NotificationHelper {
     }
 
 
-    fun sendForegroundNotification(context: Service) {
+    fun sendForegroundNotification(
+        context: Service,
+        contentBuilder: (Notification.Builder) -> Unit
+    ) {
         try {
             getNotificationManager(context) ?: return
             val notificationBuilder = Notification.Builder(context, Channel.SCAN_FLOATING.id)
                 .setSmallIcon(R.drawable.ic_lqr_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.notification_content_scan_floating))
-
+            contentBuilder(notificationBuilder)
             val notification = notificationBuilder.build()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 context.startForeground(

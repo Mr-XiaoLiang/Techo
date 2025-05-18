@@ -133,4 +133,6 @@
     <string name="notification_content_scan_result">扫描结果展示</string>
     <string name="notification_channel_scan_result">扫描结果</string>
 
+    <string name="notification_action_stop_floating">停止</string>
+
 </resources>
