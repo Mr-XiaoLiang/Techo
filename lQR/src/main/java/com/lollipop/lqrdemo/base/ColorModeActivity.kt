@@ -23,7 +23,7 @@ open class ColorModeActivity : AppCompatActivity(), PigmentPage, PigmentProvider
 
     override fun onStart() {
         super.onStart()
-        updateStatusBar()
+        updateStatusBar(isDarkMode)
     }
 
     protected fun bindByBack(vararg view: View) {
@@ -36,7 +36,7 @@ open class ColorModeActivity : AppCompatActivity(), PigmentPage, PigmentProvider
 
     override fun onDecorationChanged(pigment: Pigment) {
         isDarkMode = pigment.blendMode == BlendMode.Dark
-        updateStatusBar()
+        updateStatusBar(isDarkMode)
         pigmentProviderHelperInner.onDecorationChanged(pigment)
     }
 
@@ -45,8 +45,8 @@ open class ColorModeActivity : AppCompatActivity(), PigmentPage, PigmentProvider
             return pigmentProviderHelper.currentPigment
         }
 
-    private fun updateStatusBar() {
-        WindowInsetsHelper.getController(this).isAppearanceLightStatusBars = !isDarkMode
+    protected open fun updateStatusBar(isDark: Boolean) {
+        WindowInsetsHelper.getController(this).isAppearanceLightStatusBars = !isDark
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

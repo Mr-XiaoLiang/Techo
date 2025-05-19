@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     android:orientation="vertical"
     tools:context=".PhotoScanActivity">
 
@@ -18,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/title_main"
-            android:textColor="?attr/colorOnBackground"
+            android:textColor="#DDD"
             android:textSize="20sp"
             app:fontFamily="@font/font_logo" />
 
@@ -30,13 +31,17 @@
             android:layout_marginStart="16dp"
             android:padding="12dp"
             android:src="@drawable/ic_baseline_arrow_back_24"
-            app:tint="?attr/colorOnBackground" />
+            app:tint="#DDD" />
 
     </FrameLayout>
 
-    <FrameLayout
+    <com.lollipop.clip.RoundClipLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:radius="20dp">
 
         <com.lollipop.qr.view.CodeSelectionView
             android:id="@+id/resultImageView"
@@ -49,7 +54,8 @@
             app:codeNavigationIconSize="36dp"
             app:codeNavigationIconTint="@color/brand_4"
             app:codeSpaceWeight="0.5"
-            app:codeStrokeWidth="4dp" />
+            app:codeStrokeWidth="4dp"
+            tools:background="#f00" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressIndicator"
@@ -62,6 +68,6 @@
             app:minHideDelay="500"
             app:showDelay="500" />
 
-    </FrameLayout>
+    </com.lollipop.clip.RoundClipLayout>
 
 </LinearLayout>

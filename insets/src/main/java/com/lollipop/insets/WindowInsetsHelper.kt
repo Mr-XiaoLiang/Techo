@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -195,7 +197,12 @@ fun View.cleanWindowInsetHelper() {
  */
 @Deprecated("Deprecated in API level 30", ReplaceWith("enableEdgeToEdge()"))
 fun Activity.fitsSystemWindows() {
-    WindowInsetsHelper.fitsSystemWindows(this)
+    val activity = this
+    if (activity is ComponentActivity) {
+        activity.enableEdgeToEdge()
+    } else {
+        WindowInsetsHelper.fitsSystemWindows(activity)
+    }
 }
 
 /**

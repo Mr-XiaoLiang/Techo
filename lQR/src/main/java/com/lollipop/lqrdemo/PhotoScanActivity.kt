@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.lollipop.base.util.lazyBind
 import com.lollipop.insets.WindowInsetsEdge
+import com.lollipop.insets.WindowInsetsHelper
 import com.lollipop.insets.fixInsetsByPadding
 import com.lollipop.lqrdemo.base.ScanResultActivity
 import com.lollipop.lqrdemo.databinding.ActivityPhotoScanBinding
@@ -102,12 +103,13 @@ class PhotoScanActivity : ScanResultActivity() {
 
     override fun onDecorationChanged(pigment: Pigment) {
         super.onDecorationChanged(pigment)
-        binding.root.setBackgroundColor(pigment.backgroundColor)
-        binding.backButton.imageTintList = ColorStateList.valueOf(pigment.onBackgroundTitle)
-        binding.titleView.setTextColor(pigment.onBackgroundTitle)
         binding.resultImageView.color = pigment.primaryColor
         binding.resultImageView.tintNavigateIcon(ColorStateList.valueOf(pigment.primaryColor))
         binding.progressIndicator.setIndicatorColor(pigment.primaryColor, pigment.secondaryColor)
+    }
+
+    override fun updateStatusBar(isDark: Boolean) {
+        super.updateStatusBar(true)
     }
 
 }
