@@ -45,6 +45,9 @@ abstract class FloatingDragListener() : View.OnTouchListener {
 
     abstract fun onMove(offsetX: Int, offsetY: Int)
 
+    protected open fun onTouchDown() {}
+    protected open fun onTouchUp() {}
+
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         v ?: return false
         event ?: return false
@@ -61,6 +64,7 @@ abstract class FloatingDragListener() : View.OnTouchListener {
                 lastTouchY = event.activeY()
                 touchDownX = lastTouchX
                 touchDownY = lastTouchY
+                onTouchDown()
                 Log.d(
                     "FloatingDragListener",
                     "DOWN: [$touchDownX, $touchDownY] ==> [${event.x}, ${event.y}]"
@@ -93,6 +97,7 @@ abstract class FloatingDragListener() : View.OnTouchListener {
                 if (!dragEnable) {
                     return false
                 }
+                onTouchUp()
                 dragEnable = false
                 val x = event.activeX()
                 val y = event.activeY()
@@ -109,6 +114,9 @@ abstract class FloatingDragListener() : View.OnTouchListener {
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                if (dragEnable) {
+                    onTouchUp()
+                }
                 dragEnable = false
             }
         }

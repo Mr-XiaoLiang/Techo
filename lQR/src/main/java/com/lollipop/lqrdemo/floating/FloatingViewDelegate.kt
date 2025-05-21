@@ -10,44 +10,81 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewManager
 import android.view.WindowManager
+import androidx.core.view.isVisible
+import com.lollipop.lqrdemo.floating.view.FloatingView
+import com.lollipop.lqrdemo.floating.view.FloatingViewBerth
+import com.lollipop.lqrdemo.floating.view.FloatingViewConfig
+import com.lollipop.lqrdemo.floating.view.FloatingViewFactory
+import com.lollipop.lqrdemo.floating.view.FloatingViewState
 
 class FloatingViewDelegate {
 
+    private var floatingViewFactory: FloatingViewFactory? = null
     private var floatingView: FloatingView? = null
     private var currentView: View? = null
 
-    fun attach(floatingView: FloatingView) {
-        this.floatingView = floatingView
+    private var config = FloatingViewConfig()
+
+    fun attach(factory: FloatingViewFactory, config: FloatingViewConfig) {
+        this.floatingViewFactory = factory
+        this.config = config
     }
 
     fun detach() {
         clear()
-        floatingView = null
+        floatingViewFactory = null
     }
 
-    fun show(context: Context, config: Config) {
-        // TODO
+    fun show(context: Context) {
+        if (floatingView != null && currentView != null) {
+            currentView?.isVisible = true
+            return
+        }
+        if (config.widthDp == 0 || config.heightDp == 0) {
+            return
+        }
+        val factory = floatingViewFactory ?: return
+        val newView = factory.create()
+        floatingView = newView
+        val view = newView.createView(
+            context,
+            config.widthDp,
+            config.heightDp,
+            config.berthWeight
+        )
+        attachToWindow(view)
     }
 
     fun hide() {
-        // TODO
+        currentView?.isVisible = false
+    }
+
+    fun remove() {
+        clear()
     }
 
     private fun clear() {
-        // TODO
+        floatingView = null
+        currentView?.let {
+            removeView(it)
+        }
+        currentView = null
     }
 
-    private fun attachToWindow(view: View, config: Config) {
-        val context = view.context
+    private fun removeView(view: View) {
         try {
-            view.parent?.let {
-                if (it is ViewManager) {
-                    it.removeView(view)
-                }
+            val parent = view.parent
+            if (parent is ViewManager) {
+                parent.removeView(view)
             }
         } catch (e: Throwable) {
-            Log.e("FloatingViewDelegate", "attachToWindow.clear", e)
+            Log.e("FloatingViewDelegate", "removeView", e)
         }
+    }
+
+    private fun attachToWindow(view: View) {
+        val context = view.context
+        removeView(view)
         addAlertView(context, view) { wm, v, params ->
             params.x = 0
             params.y = 0
@@ -57,12 +94,16 @@ class FloatingViewDelegate {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             )
-            v.setOnTouchListener(ViewDragDelegate(view, wm, ::onBerthChanged))
+            v.setOnTouchListener(ViewDragDelegate(view, wm, ::onBerthChanged, ::onStateChanged))
         }
     }
 
-    private fun onBerthChanged(berth: Berth) {
+    private fun onBerthChanged(berth: FloatingViewBerth) {
         floatingView?.onBerthChanged(berth)
+    }
+
+    private fun onStateChanged(state: FloatingViewState) {
+        floatingView?.onStateChanged(state)
     }
 
     private fun buildFlags(vararg flags: Int): Int {
@@ -85,8 +126,8 @@ class FloatingViewDelegate {
         ) as? WindowManager
         if (windowManager != null) {
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = layoutParamsSize(context, config.widthDp)
+            layoutParams.height = layoutParamsSize(context, config.heightDp)
             layoutParams.format = PixelFormat.TRANSPARENT;
             builder(windowManager, view, layoutParams)
             windowManager.addView(view, layoutParams);
@@ -94,7 +135,10 @@ class FloatingViewDelegate {
         return layoutParams
     }
 
-    private fun convertDpToPx(context: Context, dp: Int): Int {
+    private fun layoutParamsSize(context: Context, dp: Int): Int {
+        if (dp < 0) {
+            return dp
+        }
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp.toFloat(),
@@ -102,39 +146,27 @@ class FloatingViewDelegate {
         ).toInt()
     }
 
-    interface FloatingView {
-
-        fun createView(context: Context, widthDp: Int, heightDp: Int, berthWeight: Float): View
-
-        fun onBerthChanged(berth: Berth)
-
-    }
-
-    enum class Berth {
-
-        LEFT, RIGHT, NONE
-
-    }
-
-    enum class State {
-
-        IDLE, DRAGGING,
-
-    }
-
-    class Config(
-        val widthDp: Int = 0,
-        val heightDp: Int = 0,
-        val berthWeight: Float = 0.5f
-    )
-
     private class ViewDragDelegate(
         private val view: View,
         private val wm: WindowManager,
-        private val onBerthChanged: (Berth) -> Unit
+        private val onBerthChanged: (FloatingViewBerth) -> Unit,
+        private val onStateChanged: (FloatingViewState) -> Unit
     ) : FloatingDragListener() {
 
-        private var berth = Berth.NONE
+        private var berth = FloatingViewBerth.NONE
+        private var state = FloatingViewState.IDLE
+
+        override fun onTouchDown() {
+            super.onTouchDown()
+            state = FloatingViewState.DRAGGING
+            onStateChanged(state)
+        }
+
+        override fun onTouchUp() {
+            super.onTouchUp()
+            state = FloatingViewState.IDLE
+            onStateChanged(state)
+        }
 
         override fun onMove(offsetX: Int, offsetY: Int) {
             val layoutParams = view.layoutParams
@@ -166,11 +198,11 @@ class FloatingViewDelegate {
         private fun checkBerth(x: Int, minX: Int, maxX: Int) {
             val oldBerth = berth
             berth = if (x == minX) {
-                Berth.LEFT
+                FloatingViewBerth.LEFT
             } else if (x == maxX) {
-                Berth.RIGHT
+                FloatingViewBerth.RIGHT
             } else {
-                Berth.NONE
+                FloatingViewBerth.NONE
             }
             if (berth != oldBerth) {
                 onBerthChanged(berth)

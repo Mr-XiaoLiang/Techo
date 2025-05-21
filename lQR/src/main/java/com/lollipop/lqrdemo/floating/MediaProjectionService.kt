@@ -3,10 +3,8 @@ package com.lollipop.lqrdemo.floating
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
 import android.graphics.drawable.Icon
@@ -20,7 +18,6 @@ import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.lollipop.base.util.delay
 import com.lollipop.base.util.onUI
 import com.lollipop.qr.comm.ImageToBitmap
@@ -33,8 +30,6 @@ class MediaProjectionService : Service() {
     companion object {
 
         private const val PARAMS_RESULT_KEY = "ResultKey"
-        private const val ACTION_SCREENSHOT = "lollipop.lqr.ActionScreenshot"
-        private const val ACTION_STOP = "lollipop.lqr.ActionStop"
 
         private const val REQUEST_CODE_STOP_SERVICE = 666
 
@@ -47,11 +42,11 @@ class MediaProjectionService : Service() {
         }
 
         fun sendScreenshotBroadcast(context: Context) {
-            context.sendBroadcast(Intent(ACTION_SCREENSHOT).setPackage(context.packageName))
+            ServiceActionBroadcast.sendScreenshot(context)
         }
 
         fun createStopBroadcast(context: Context): Intent {
-            return Intent(ACTION_STOP).setPackage(context.packageName)
+            return ServiceActionBroadcast.getIntent(context, ServiceActionBroadcast.ACTION_STOP)
         }
 
     }
@@ -61,9 +56,21 @@ class MediaProjectionService : Service() {
         MediaProjectionHelper.getManager(this)
     }
 
-    private val stopServiceReceiver = StopReceiver {
-        NotificationHelper.removeForegroundNotification(this)
-        stopSelf()
+    private val floatingViewDelegate = FloatingViewDelegate()
+
+    private val serviceReceiver by lazy {
+        ServiceActionBroadcast.receiver()
+            .stop {
+                NotificationHelper.removeForegroundNotification(this)
+                stopSelf()
+            }
+            .showActionButton {
+                floatingViewDelegate.show(it)
+            }
+            .hideActionButton {
+                floatingViewDelegate.hide()
+            }
+            .build()
     }
 
     private fun tryDo(name: String, block: () -> Unit) {
@@ -72,15 +79,6 @@ class MediaProjectionService : Service() {
         } catch (e: Throwable) {
             Log.e("MediaProjectionService", "${name}.ERROR", e)
         }
-    }
-
-    private fun registerScreenshotReceiver(receiver: BroadcastReceiver) {
-        ContextCompat.registerReceiver(
-            this,
-            receiver,
-            IntentFilter(ACTION_SCREENSHOT),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
     }
 
     private fun createScreenshotDelegate(
@@ -139,12 +137,8 @@ class MediaProjectionService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        ContextCompat.registerReceiver(
-            this,
-            stopServiceReceiver,
-            IntentFilter(ACTION_STOP),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
+        serviceReceiver.attach(this)
+        floatingViewDelegate.attach(FloatingActionButton.Factory, FloatingActionButton.CONFIG)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -154,15 +148,11 @@ class MediaProjectionService : Service() {
             val mpResult = MediaProjectionHelper.findResult(key)
             if (mpResult != null) {
                 screenshotDelegate?.let {
-                    unregisterReceiver(it.receiver)
+                    it.receiver.detach(this)
                     it.release()
                 }
-                screenshotDelegate = createScreenshotDelegate(
-                    mpResult
-                )
-                screenshotDelegate?.let {
-                    registerScreenshotReceiver(it.receiver)
-                }
+                screenshotDelegate = createScreenshotDelegate(mpResult)
+                screenshotDelegate?.receiver?.attach(this)
             }
         }
         if (screenshotDelegate != null) {
@@ -185,6 +175,8 @@ class MediaProjectionService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        serviceReceiver.detach(this)
+        floatingViewDelegate.detach()
         MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.STOPPED
     }
 
@@ -200,7 +192,7 @@ class MediaProjectionService : Service() {
         var isAvailable = false
             private set
 
-        val receiver = ScreenshotReceiver(::notifyScreenshot)
+        val receiver = ServiceActionBroadcast.receiver().screenshot { notifyScreenshot() }.build()
 
         private val executor by lazy {
             Executors.newSingleThreadExecutor()
@@ -343,30 +335,5 @@ class MediaProjectionService : Service() {
 
     }
 
-    private class ScreenshotReceiver(
-        private val notifyScreenshot: () -> Unit
-    ) : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            intent ?: return
-            if (intent.action == ACTION_SCREENSHOT) {
-                notifyScreenshot()
-            }
-        }
-
-    }
-
-    private class StopReceiver(
-        private val notifyStop: () -> Unit
-    ) : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            intent ?: return
-            if (intent.action == ACTION_STOP) {
-                notifyStop()
-            }
-        }
-
-    }
 
 }
