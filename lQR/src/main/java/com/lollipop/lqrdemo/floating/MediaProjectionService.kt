@@ -31,7 +31,7 @@ class MediaProjectionService : Service() {
 
         private const val PARAMS_RESULT_KEY = "ResultKey"
 
-        private const val REQUEST_CODE_STOP_SERVICE = 666
+        private const val REQUEST_CODE_SERVICE_ACTION = 666
 
         fun start(context: Context, resultKey: Int) {
             context.startService(
@@ -43,10 +43,6 @@ class MediaProjectionService : Service() {
 
         fun sendScreenshotBroadcast(context: Context) {
             ServiceActionBroadcast.sendScreenshot(context)
-        }
-
-        fun createStopBroadcast(context: Context): Intent {
-            return ServiceActionBroadcast.getIntent(context, ServiceActionBroadcast.ACTION_STOP)
         }
 
     }
@@ -115,24 +111,51 @@ class MediaProjectionService : Service() {
     }
 
     private fun sendForegroundNotification() {
-        NotificationHelper.sendForegroundNotification(this) {
-            it.addAction(
-                Notification.Action.Builder(
-                    Icon.createWithResource(
-                        this,
-                        com.lollipop.lqrdemo.R.drawable.ic_lqr_24dp
-                    ),
-                    getString(
-                        com.lollipop.lqrdemo.R.string.notification_action_stop_floating
-                    ),
-                    PendingIntent.getBroadcast(
-                        this, REQUEST_CODE_STOP_SERVICE,
-                        createStopBroadcast(this),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                ).build()
+        NotificationHelper.sendForegroundNotification(this) { builder ->
+            addAction(
+                builder,
+                com.lollipop.lqrdemo.R.drawable.ic_lqr_24dp,
+                com.lollipop.lqrdemo.R.string.notification_action_stop_floating,
+                ServiceActionBroadcast.ACTION_STOP
             )
+            if (floatingViewDelegate.isVisible) {
+                // 可见的时候就隐藏
+                addAction(
+                    builder,
+                    0,
+                    com.lollipop.lqrdemo.R.string.notification_action_hide_floating,
+                    ServiceActionBroadcast.ACTION_HIDE_ACTION_BUTTON
+                )
+            } else {
+                // 隐藏的时候就显示
+                addAction(
+                    builder,
+                    0,
+                    com.lollipop.lqrdemo.R.string.notification_action_show_floating,
+                    ServiceActionBroadcast.ACTION_SHOW_ACTION_BUTTON
+                )
+            }
         }
+    }
+
+    private fun addAction(builder: Notification.Builder, icon: Int, label: Int, action: String) {
+        val context = this@MediaProjectionService
+        builder.addAction(
+            Notification.Action.Builder(
+                if (icon == 0) {
+                    null
+                } else {
+                    Icon.createWithResource(context, icon)
+                },
+                getString(label),
+                PendingIntent.getBroadcast(
+                    context,
+                    REQUEST_CODE_SERVICE_ACTION,
+                    ServiceActionBroadcast.getIntent(context, action),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            ).build()
+        )
     }
 
     override fun onCreate() {

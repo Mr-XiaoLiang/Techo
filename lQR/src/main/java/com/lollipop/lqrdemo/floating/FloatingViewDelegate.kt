@@ -25,6 +25,11 @@ class FloatingViewDelegate {
 
     private var config = FloatingViewConfig()
 
+    val isVisible: Boolean
+        get() {
+            return currentView?.isVisible == true
+        }
+
     fun attach(factory: FloatingViewFactory, config: FloatingViewConfig) {
         this.floatingViewFactory = factory
         this.config = config

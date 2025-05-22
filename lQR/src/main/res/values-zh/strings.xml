@@ -134,5 +134,7 @@
     <string name="notification_channel_scan_result">扫描结果</string>
 
     <string name="notification_action_stop_floating">停止</string>
+    <string name="notification_action_show_floating">显示按钮</string>
+    <string name="notification_action_hide_floating">隐藏按钮</string>
 
 </resources>
