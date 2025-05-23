@@ -16,6 +16,9 @@ class FloatingActionButton : FloatingView {
 
     companion object {
         val CONFIG = FloatingViewConfig()
+
+        private const val DELAY_AUTO_HIDE = 3000L
+
     }
 
     private var binding: FloatingScanButtonBinding? = null
@@ -23,6 +26,8 @@ class FloatingActionButton : FloatingView {
     private var currentState = FloatingViewState.IDLE
     private var currentBerth = FloatingViewBerth.NONE
     private var lastChangeTime = 0L
+
+    private val autoHideTask = Runnable { updateViewState() }
 
     override fun createView(
         context: Context,
@@ -65,7 +70,16 @@ class FloatingActionButton : FloatingView {
     }
 
     private fun isIdle(): Boolean {
-        return currentState == FloatingViewState.IDLE && now() - lastChangeTime > 500
+        return (currentState == FloatingViewState.IDLE) && (now() - lastChangeTime > DELAY_AUTO_HIDE)
+    }
+
+    private fun postAutoHide() {
+        binding?.root?.let {
+            it.removeCallbacks(autoHideTask)
+            if (currentState == FloatingViewState.IDLE) {
+                it.postDelayed(autoHideTask, DELAY_AUTO_HIDE)
+            }
+        }
     }
 
     private fun dp2px(context: Context, dp: Int): Int {
@@ -80,12 +94,14 @@ class FloatingActionButton : FloatingView {
         rememberViewStateChanged()
         currentBerth = berth
         updateViewState()
+        postAutoHide()
     }
 
     override fun onStateChanged(state: FloatingViewState) {
         rememberViewStateChanged()
         currentState = state
         updateViewState()
+        postAutoHide()
     }
 
     private fun updateViewState() {
