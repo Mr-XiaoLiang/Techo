@@ -11,7 +11,7 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
@@ -23,7 +23,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Techo">
+        android:theme="@style/Theme.Techo"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".creator.content.ContentBuilderActivity"
             android:configChanges="uiMode"
@@ -43,7 +44,8 @@
         <activity
             android:name=".PhotoScanActivity"
             android:configChanges="uiMode"
-            android:exported="false" />
+            android:enabled="true"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"

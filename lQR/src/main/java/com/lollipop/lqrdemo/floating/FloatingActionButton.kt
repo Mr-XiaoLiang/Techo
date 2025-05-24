@@ -6,16 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lollipop.lqrdemo.databinding.FloatingScanButtonBinding
+import com.lollipop.lqrdemo.floating.view.FloatingActionInvokeCallback
 import com.lollipop.lqrdemo.floating.view.FloatingView
 import com.lollipop.lqrdemo.floating.view.FloatingViewBerth
-import com.lollipop.lqrdemo.floating.view.FloatingViewConfig
 import com.lollipop.lqrdemo.floating.view.FloatingViewFactory
 import com.lollipop.lqrdemo.floating.view.FloatingViewState
 
-class FloatingActionButton : FloatingView {
+class FloatingActionButton(
+    private val invokeCallback: FloatingActionInvokeCallback
+) : FloatingView {
 
     companion object {
-        val CONFIG = FloatingViewConfig()
+
+        var fabSizeDp = 48
 
         private const val DELAY_AUTO_HIDE = 3000L
 
@@ -39,6 +42,11 @@ class FloatingActionButton : FloatingView {
         if (oldView == null) {
             val newView = FloatingScanButtonBinding.inflate(LayoutInflater.from(context))
             this.binding = newView
+            newView.root.setOnClickListener { v ->
+                v?.let {
+                    invokeCallback.invoke(it.context)
+                }
+            }
             initView(newView, widthDp, heightDp, berthWeight)
             return newView.root
         }
@@ -114,8 +122,8 @@ class FloatingActionButton : FloatingView {
     }
 
     object Factory : FloatingViewFactory {
-        override fun create(): FloatingView {
-            return FloatingActionButton()
+        override fun create(callback: FloatingActionInvokeCallback): FloatingView {
+            return FloatingActionButton(callback)
         }
     }
 

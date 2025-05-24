@@ -71,27 +71,35 @@ object NotificationHelper {
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-            val notificationManager =
-                getNotificationManager(context) ?: return FullScreenResult.ManagerNotFound
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                val notificationManager =
+                    getNotificationManager(context) ?: return FullScreenResult.ManagerNotFound
 
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                context,
-                REQUEST_CODE_FULL_SCREEN,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
+                val fullScreenPendingIntent = PendingIntent.getActivity(
+                    context,
+                    REQUEST_CODE_FULL_SCREEN,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
 
-            val notificationBuilder = NotificationCompat.Builder(context, channel.id)
-                .setSmallIcon(R.drawable.ic_lqr_24dp)
-                .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(contentText))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setCategory(Notification.CATEGORY_CALL)
-                .setOngoing(true)
-                .setFullScreenIntent(fullScreenPendingIntent, true)
+                val notificationBuilder = NotificationCompat.Builder(context, channel.id)
+                    .setSmallIcon(R.drawable.ic_lqr_24dp)
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentText(context.getString(contentText))
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(Notification.CATEGORY_CALL)
+                    .setOngoing(true)
+                    .setFullScreenIntent(fullScreenPendingIntent, true)
 
-            notificationManager.notify(NOTIFICATION_ID_FULL_SCREEN, notificationBuilder.build())
+                notificationManager.notify(NOTIFICATION_ID_FULL_SCREEN, notificationBuilder.build())
 
+                try {
+                    context.startActivity(intent)
+                } catch (e: Throwable) {
+                }
+            } else {
+                context.startActivity(intent)
+            }
             return FullScreenResult.Success
         } catch (e: Throwable) {
             return FullScreenResult.Failed(e)

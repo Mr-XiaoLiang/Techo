@@ -1,4 +1,4 @@
-package com.lollipop.lqrdemo.floating
+package com.lollipop.lqrdemo.floating.view
 
 import android.util.Log
 import android.view.HapticFeedbackConstants

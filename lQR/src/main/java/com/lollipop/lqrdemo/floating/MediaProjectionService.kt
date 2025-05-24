@@ -18,8 +18,9 @@ import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import android.widget.Toast
-import com.lollipop.base.util.delay
 import com.lollipop.base.util.onUI
+import com.lollipop.lqrdemo.floating.view.FloatingActionInvokeCallback
+import com.lollipop.lqrdemo.floating.view.FloatingViewConfig
 import com.lollipop.qr.comm.ImageToBitmap
 import java.io.File
 import java.io.FileOutputStream
@@ -87,6 +88,7 @@ class MediaProjectionService : Service() {
 
     private fun onScreenshot(result: ScreenshotResult) {
         Log.d("MediaProjectionService", "onScreenshot: $result")
+        floatingViewDelegate.closeAvoidance()
         when (result) {
             is ScreenshotResult.Success -> {
                 val scanResult = FloatingScanHelper.startScanResult(this, result.url)
@@ -161,7 +163,17 @@ class MediaProjectionService : Service() {
     override fun onCreate() {
         super.onCreate()
         serviceReceiver.attach(this)
-        floatingViewDelegate.attach(FloatingActionButton.Factory, FloatingActionButton.CONFIG)
+        floatingViewDelegate.attach(
+            FloatingActionButton.Factory,
+            config = FloatingViewConfig(
+                widthDp = FloatingActionButton.fabSizeDp,
+                heightDp = FloatingActionButton.fabSizeDp,
+            )
+        )
+        floatingViewDelegate.viewInvokeCallback = FloatingActionInvokeCallback { c ->
+            floatingViewDelegate.enableAvoidance()
+            ServiceActionBroadcast.sendScreenshot(c)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -180,10 +192,7 @@ class MediaProjectionService : Service() {
         }
         if (screenshotDelegate != null) {
             MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.RUNNING
-            delay(15000) {
-                Toast.makeText(this, "sendScreenshotBroadcast", Toast.LENGTH_SHORT).show()
-                sendScreenshotBroadcast(this)
-            }
+            floatingViewDelegate.show(this)
         } else {
             MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.STOPPED
             stopSelf()
@@ -274,7 +283,8 @@ class MediaProjectionService : Service() {
         }
 
         private fun saveBitmap(bitmap: Bitmap): File {
-            val file = File(context.cacheDir, "screenshot.png")
+            val timestamp = System.currentTimeMillis().toString(16)
+            val file = File(context.cacheDir, "screenshot${timestamp}.png")
             if (file.exists()) {
                 file.delete()
             }

@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewManager
 import android.view.WindowManager
 import androidx.core.view.isVisible
+import com.lollipop.lqrdemo.floating.view.FloatingActionInvokeCallback
+import com.lollipop.lqrdemo.floating.view.FloatingDragListener
 import com.lollipop.lqrdemo.floating.view.FloatingView
 import com.lollipop.lqrdemo.floating.view.FloatingViewBerth
 import com.lollipop.lqrdemo.floating.view.FloatingViewConfig
@@ -25,10 +27,24 @@ class FloatingViewDelegate {
 
     private var config = FloatingViewConfig()
 
+    var viewState: State = State.NONE
+        private set
+
+    var tempState: State = State.NONE
+        private set
+
     val isVisible: Boolean
         get() {
             return currentView?.isVisible == true
         }
+
+    var viewInvokeCallback: FloatingActionInvokeCallback? = null
+
+    private val fabInvokeCallbackDelegate = object : FloatingActionInvokeCallback {
+        override fun invoke(context: Context) {
+            onFabInvoke(context)
+        }
+    }
 
     fun attach(factory: FloatingViewFactory, config: FloatingViewConfig) {
         this.floatingViewFactory = factory
@@ -42,14 +58,14 @@ class FloatingViewDelegate {
 
     fun show(context: Context) {
         if (floatingView != null && currentView != null) {
-            currentView?.isVisible = true
+            viewState = State.SHOW
             return
         }
         if (config.widthDp == 0 || config.heightDp == 0) {
             return
         }
         val factory = floatingViewFactory ?: return
-        val newView = factory.create()
+        val newView = factory.create(fabInvokeCallbackDelegate)
         floatingView = newView
         val view = newView.createView(
             context,
@@ -58,14 +74,36 @@ class FloatingViewDelegate {
             config.berthWeight
         )
         attachToWindow(view)
+        currentView = view
+        viewState = State.SHOW
     }
 
     fun hide() {
-        currentView?.isVisible = false
+        viewState = State.HIDE
+        updateViewVisible()
+    }
+
+    fun enableAvoidance() {
+        tempState = State.HIDE
+        updateViewVisible()
+    }
+
+    fun closeAvoidance() {
+        tempState = State.SHOW
+        updateViewVisible()
     }
 
     fun remove() {
         clear()
+    }
+
+    private fun onFabInvoke(context: Context) {
+        viewInvokeCallback?.invoke(context)
+    }
+
+    private fun updateViewVisible() {
+        val isVisible = viewState == State.SHOW && tempState != State.HIDE
+        currentView?.isVisible = isVisible
     }
 
     private fun clear() {
@@ -74,6 +112,8 @@ class FloatingViewDelegate {
             removeView(it)
         }
         currentView = null
+        viewState = State.NONE
+        tempState = State.NONE
     }
 
     private fun removeView(view: View) {
@@ -224,6 +264,12 @@ class FloatingViewDelegate {
                 return Size(displayMetrics.widthPixels, displayMetrics.heightPixels)
             }
         }
+
+    }
+
+    enum class State {
+
+        HIDE, SHOW, NONE
 
     }
 

@@ -77,12 +77,13 @@ class FloatingScanHelper(
                 return ScanResultLaunchResult.PathEmpty
             }
             try {
+                val activityIntent = PhotoScanActivity.getIntent(
+                    context, Uri.fromFile(File(path)),
+                )
                 val fullScreenResult = NotificationHelper.startFullScreen(
                     context,
                     NotificationHelper.Channel.SCAN_RESULT,
-                    PhotoScanActivity.getIntent(
-                        context, Uri.fromFile(File(path)),
-                    ),
+                    activityIntent,
                     R.string.notification_content_scan_result
                 )
                 return when (fullScreenResult) {
