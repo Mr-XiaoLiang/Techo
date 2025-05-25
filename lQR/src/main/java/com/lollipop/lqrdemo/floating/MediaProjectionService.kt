@@ -19,6 +19,7 @@ import android.view.Display
 import android.view.WindowManager
 import android.widget.Toast
 import com.lollipop.base.util.onUI
+import com.lollipop.lqrdemo.R
 import com.lollipop.lqrdemo.floating.view.FloatingActionInvokeCallback
 import com.lollipop.lqrdemo.floating.view.FloatingViewConfig
 import com.lollipop.qr.comm.ImageToBitmap
@@ -96,18 +97,27 @@ class MediaProjectionService : Service() {
             }
 
             is ScreenshotResult.Failure -> {
-                // TODO()
-                Toast.makeText(this, result.error.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.toast_screenshot_result_failure, result.error.message),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             ScreenshotResult.NoAvailable -> {
-                // TODO()
-                Toast.makeText(this, "NoAvailable", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    R.string.toast_screenshot_result_no_available,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             ScreenshotResult.UnknownError -> {
-                // TODO()
-                Toast.makeText(this, "UnknownError", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    R.string.toast_screenshot_result_unknown_error,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -266,12 +276,8 @@ class MediaProjectionService : Service() {
                 if (bitmap == null) {
                     return ScreenshotResult.UnknownError
                 }
-                if (bitmap is Bitmap) {
-                    val file = saveBitmap(bitmap)
-                    return ScreenshotResult.Success(file.path)
-                } else {
-                    return ScreenshotResult.UnknownError
-                }
+                val file = saveBitmap(bitmap)
+                return ScreenshotResult.Success(file.path)
             } else {
                 val error = result.exceptionOrNull()
                 return if (error != null) {

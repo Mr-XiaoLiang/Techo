@@ -126,6 +126,9 @@
     <string name="dialog_agree">同意</string>
     <string name="dialog_refuse">拒绝</string>
 
+    <string name="dialog_title_notification_permission">通知权限</string>
+    <string name="dialog_summary_notification_permission_rejected">您未授予通知权限，请授权使用通知权限，否则可能错过部分通知。</string>
+
     <string name="notification_content_scan_floating">全局二维码扫描服务正在运行</string>
     <string name="notification_channel_scan_floating">全局扫描服务</string>
 
@@ -135,5 +138,9 @@
     <string name="notification_action_stop_floating">停止</string>
     <string name="notification_action_show_floating">显示按钮</string>
     <string name="notification_action_hide_floating">隐藏按钮</string>
+
+    <string name="toast_screenshot_result_failure">屏幕扫描出错，%1$s</string>
+    <string name="toast_screenshot_result_no_available">屏幕扫描未就绪</string>
+    <string name="toast_screenshot_result_unknown_error">屏幕扫描出现未知错误出错</string>
 
 </resources>

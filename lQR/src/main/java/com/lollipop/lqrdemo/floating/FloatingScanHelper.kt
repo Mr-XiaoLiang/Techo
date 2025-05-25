@@ -31,7 +31,12 @@ class FloatingScanHelper(
         }
 
         private fun noNotificationPermissionTips(context: Context) {
-            // TODO
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.dialog_title_notification_permission)
+                .setMessage(R.string.dialog_summary_floating_permission)
+                .setPositiveButton(R.string.known) { d, w ->
+                    d.dismiss()
+                }.show()
         }
 
         private fun requestFloatingPermission(context: Context) {
