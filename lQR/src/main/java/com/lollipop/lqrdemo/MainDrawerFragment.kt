@@ -11,12 +11,13 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lollipop.base.util.bind
+import com.lollipop.base.util.lazyBind
 import com.lollipop.insets.WindowInsetsEdge
 import com.lollipop.insets.fixInsetsByPadding
-import com.lollipop.base.util.lazyBind
 import com.lollipop.lqrdemo.base.BaseFragment
 import com.lollipop.lqrdemo.databinding.FragmentMainDrawerBinding
 import com.lollipop.lqrdemo.databinding.ItemMainDrawerBinding
+import com.lollipop.lqrdemo.floating.FloatingScanSettingsActivity
 import com.lollipop.lqrdemo.other.AboutActivity
 import com.lollipop.lqrdemo.other.PrivacyAgreementActivity
 import com.lollipop.pigment.Pigment
@@ -57,6 +58,11 @@ class MainDrawerFragment : BaseFragment() {
             Item(R.string.title_privacy_agreement) {
                 context?.let { c ->
                     startActivity(Intent(c, PrivacyAgreementActivity::class.java))
+                }
+            },
+            Item(R.string.title_floating_scan_settings) {
+                context?.let { c ->
+                    startActivity(Intent(c, FloatingScanSettingsActivity::class.java))
                 }
             },
             Item(R.string.title_about) {

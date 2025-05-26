@@ -5,12 +5,16 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.core.view.updateLayoutParams
 import com.lollipop.lqrdemo.databinding.FloatingScanButtonBinding
 import com.lollipop.lqrdemo.floating.view.FloatingActionInvokeCallback
 import com.lollipop.lqrdemo.floating.view.FloatingView
 import com.lollipop.lqrdemo.floating.view.FloatingViewBerth
 import com.lollipop.lqrdemo.floating.view.FloatingViewFactory
 import com.lollipop.lqrdemo.floating.view.FloatingViewState
+import com.lollipop.lqrdemo.other.AppSettings
+import kotlin.math.min
 
 class FloatingActionButton(
     private val invokeCallback: FloatingActionInvokeCallback
@@ -18,7 +22,18 @@ class FloatingActionButton(
 
     companion object {
 
-        var fabSizeDp = 48
+        fun getFabSizeDp(): Int {
+            val buttonSize = AppSettings.ui.floatingScanButtonSize
+            if (buttonSize < AppSettings.FLOATING_SCAN_BUTTON_SIZE_MIN) {
+                return AppSettings.FLOATING_SCAN_BUTTON_SIZE_MIN
+            }
+            if (buttonSize > AppSettings.FLOATING_SCAN_BUTTON_SIZE_MAX) {
+                return AppSettings.FLOATING_SCAN_BUTTON_SIZE_MAX
+            }
+            return buttonSize
+        }
+
+        private const val FAB_ICON_SIZE_MIN = 24
 
         private const val DELAY_AUTO_HIDE = 3000L
 
@@ -65,6 +80,15 @@ class FloatingActionButton(
         val context = root.context
         root.layoutParams =
             ViewGroup.LayoutParams(dp2px(context, widthDp), dp2px(context, heightDp))
+        view.fabIconView.updateLayoutParams<FrameLayout.LayoutParams> {
+            var iconSize = min(widthDp, heightDp) / 2
+            if (iconSize < FAB_ICON_SIZE_MIN) {
+                iconSize = FAB_ICON_SIZE_MIN
+            }
+            val iconSizePx = dp2px(context, iconSize)
+            width = iconSizePx
+            height = iconSizePx
+        }
         rememberViewStateChanged()
         updateViewState()
     }

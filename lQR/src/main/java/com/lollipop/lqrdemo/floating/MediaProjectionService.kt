@@ -173,11 +173,12 @@ class MediaProjectionService : Service() {
     override fun onCreate() {
         super.onCreate()
         serviceReceiver.attach(this)
+        val fabSizeDp = FloatingActionButton.getFabSizeDp()
         floatingViewDelegate.attach(
             FloatingActionButton.Factory,
             config = FloatingViewConfig(
-                widthDp = FloatingActionButton.fabSizeDp,
-                heightDp = FloatingActionButton.fabSizeDp,
+                widthDp = fabSizeDp,
+                heightDp = fabSizeDp,
             )
         )
         floatingViewDelegate.viewInvokeCallback = FloatingActionInvokeCallback { c ->

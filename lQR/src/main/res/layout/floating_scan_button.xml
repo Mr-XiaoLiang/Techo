@@ -8,6 +8,7 @@
     tools:layout_width="48dp">
 
     <ImageView
+        android:id="@+id/fabIconView"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center"

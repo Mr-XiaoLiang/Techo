@@ -34,6 +34,10 @@
             android:configChanges="uiMode"
             android:exported="false" />
         <activity
+            android:name=".floating.FloatingScanSettingsActivity"
+            android:configChanges="uiMode"
+            android:exported="false" />
+        <activity
             android:name=".other.PrivacyAgreementActivity"
             android:configChanges="uiMode"
             android:exported="false" />
