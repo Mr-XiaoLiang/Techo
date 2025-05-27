@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".other.AboutActivity">
+    tools:context=".floating.FloatingScanSettingsActivity">
 
     <FrameLayout
         android:id="@+id/actionBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/titleView"
@@ -36,13 +36,31 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:ignore="contentDescription">
 
         <LinearLayout
             android:id="@+id/contentGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="16dp">
+
+            <com.lollipop.clip.RoundClipLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:radius="16dp">
+
+                <TextView
+                    android:background="#F00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="12dp"
+                    android:text="显示屏幕扫描按钮" />
+
+            </com.lollipop.clip.RoundClipLayout>
 
         </LinearLayout>
 

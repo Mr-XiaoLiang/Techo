@@ -16,6 +16,7 @@ import com.lollipop.insets.fitsSystemWindows
 import com.lollipop.lqrdemo.base.ColorModeActivity
 import com.lollipop.lqrdemo.databinding.ActivityAboutBinding
 import com.lollipop.pigment.Pigment
+import androidx.core.net.toUri
 
 
 class AboutActivity : ColorModeActivity() {
@@ -26,7 +27,8 @@ class AboutActivity : ColorModeActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
-        binding.root.fixInsetsByPadding(WindowInsetsEdge.ALL)
+        binding.actionBar.fixInsetsByPadding(WindowInsetsEdge.HEADER)
+        binding.contentGroup.fixInsetsByPadding(WindowInsetsEdge.CONTENT)
         binding.versionView.text = versionName()
         bindByBack(binding.backButton)
 
@@ -55,7 +57,7 @@ class AboutActivity : ColorModeActivity() {
 
     private fun onLinkClick(link: String) {
         try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
+            startActivity(Intent(Intent.ACTION_VIEW, link.toUri()))
         } catch (e: Throwable) {
             e.printStackTrace()
         }

@@ -10,7 +10,7 @@
     <FrameLayout
         android:id="@+id/actionBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/titleView"
