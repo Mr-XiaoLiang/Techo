@@ -3,11 +3,16 @@ package com.lollipop.clip
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Shader
+import android.os.Build
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
+import androidx.core.graphics.withClip
 
 abstract class ClipLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -34,6 +39,17 @@ abstract class ClipLayout @JvmOverloads constructor(
             invalidate()
         }
 
+    var isOutlineMode = true
+        set(value) {
+            field = value
+            onOutlineModeChanged()
+            invalidateOutline()
+        }
+
+    private fun isOutlineEnabled(): Boolean {
+        return isOutlineMode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+    }
+
     init {
         attrs?.let { a ->
             val typeArray = context.obtainStyledAttributes(a, R.styleable.ClipLayout)
@@ -52,35 +68,73 @@ abstract class ClipLayout @JvmOverloads constructor(
             )
             typeArray.recycle()
         }
+        onOutlineModeChanged()
+    }
+
+    private fun onOutlineModeChanged() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && isOutlineMode) {
+            clipToOutline = true
+            outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(
+                    view: View?,
+                    outline: Outline?
+                ) {
+                    outline?.setPath(getOutlinePath())
+                }
+            }
+        } else {
+            clipToOutline = false
+            outlineProvider = null
+        }
     }
 
     fun setStrokeWidth(width: Int) {
         strokeWidth = width
         strokePaint.strokeWidth = width.toFloat()
         rebuildStrokePath()
-        invalidate()
+        if (isOutlineEnabled()) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     fun setStrokeColor(color: Int) {
         strokePaint.color = color
-        invalidate()
+        if (isOutlineEnabled()) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     fun setStrokeShader(shader: Shader?) {
         strokePaint.shader = shader
-        invalidate()
+        if (isOutlineEnabled()) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     protected fun rebuildStrokePath() {
         clipPathWithStroke.reset()
         rebuildClipPathWithStroke(clipPathWithStroke)
-        invalidate()
+        if (isOutlineEnabled()) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     protected fun rebuildDefaultPath() {
         clipPathNotStroke.reset()
         rebuildClipPathNotStroke(clipPathNotStroke)
-        invalidate()
+        if (isOutlineEnabled()) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     protected abstract fun rebuildClipPathWithStroke(path: Path)
@@ -92,27 +146,42 @@ abstract class ClipLayout @JvmOverloads constructor(
         rebuildDefaultPath()
     }
 
-    override fun draw(canvas: Canvas) {
-        val drawStroke = isStrokeEnable && strokeWidth > 0
-        val clipPath = if (drawStroke) {
+    private fun isDrawStroke(): Boolean {
+        return isStrokeEnable && strokeWidth > 0
+    }
+
+    private fun getOutlinePath(): Path {
+        return if (isDrawStroke()) {
             clipPathWithStroke
         } else {
             clipPathNotStroke
         }
+    }
+
+    override fun draw(canvas: Canvas) {
+        if (isOutlineEnabled()) {
+            super.draw(canvas)
+            return
+        }
+        val drawStroke = isDrawStroke()
+        val clipPath = getOutlinePath()
         if (clipPath.isEmpty) {
             super.draw(canvas)
             return
         }
-        val saveCount = canvas.save()
-        canvas.clipPath(clipPath)
-        super.draw(canvas)
-        canvas.restoreToCount(saveCount)
+        canvas.withClip(clipPath) {
+            super.draw(canvas)
+        }
         if (drawStroke) {
             canvas.drawPath(clipPath, strokePaint)
         }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
+        if (isOutlineEnabled()) {
+            super.dispatchDraw(canvas)
+            return
+        }
         val drawStroke = isStrokeEnable && strokeWidth > 0
         val clipPath = if (drawStroke) {
             clipPathWithStroke
@@ -123,10 +192,9 @@ abstract class ClipLayout @JvmOverloads constructor(
             super.dispatchDraw(canvas)
             return
         }
-        val saveCount = canvas.save()
-        canvas.clipPath(clipPath)
-        super.dispatchDraw(canvas)
-        canvas.restoreToCount(saveCount)
+        canvas.withClip(clipPath) {
+            super.dispatchDraw(canvas)
+        }
         if (drawStroke) {
             canvas.drawPath(clipPath, strokePaint)
         }

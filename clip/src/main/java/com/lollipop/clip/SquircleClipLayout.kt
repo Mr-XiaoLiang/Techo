@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import com.lollipop.clip.squircle.RectangleSquircle
 import com.lollipop.clip.squircle.SquircleCorner
+import androidx.core.content.withStyledAttributes
 
 /**
  * 超椭圆的剪裁工具类
@@ -19,38 +20,37 @@ class SquircleClipLayout @JvmOverloads constructor(
     private val rectangleSquircleStroke = RectangleSquircle()
 
     init {
-        attrs?.let { a ->
-            val typeArray = context.obtainStyledAttributes(a, R.styleable.SquircleClipLayout)
-            val defRadius = typeArray.getDimensionPixelSize(
+        context.withStyledAttributes(attrs, R.styleable.SquircleClipLayout) {
+            val defRadius = getDimensionPixelSize(
                 R.styleable.SquircleClipLayout_android_radius, 0
             )
-            val defWeight = typeArray.getFloat(
+            val defWeight = getFloat(
                 R.styleable.SquircleClipLayout_radiusWeight, 0.8F
             )
 
-            val leftTop = typeArray.getDimensionPixelSize(
+            val leftTop = getDimensionPixelSize(
                 R.styleable.SquircleClipLayout_leftTop, defRadius
             ).toFloat()
-            val rightTop = typeArray.getDimensionPixelSize(
+            val rightTop = getDimensionPixelSize(
                 R.styleable.SquircleClipLayout_rightTop, defRadius
             ).toFloat()
-            val rightBottom = typeArray.getDimensionPixelSize(
+            val rightBottom = getDimensionPixelSize(
                 R.styleable.SquircleClipLayout_rightBottom, defRadius
             ).toFloat()
-            val leftBottom = typeArray.getDimensionPixelSize(
+            val leftBottom = getDimensionPixelSize(
                 R.styleable.SquircleClipLayout_leftBottom, defRadius
             ).toFloat()
 
-            val leftTopWeight = typeArray.getFloat(
+            val leftTopWeight = getFloat(
                 R.styleable.SquircleClipLayout_leftTopWeight, defWeight
             )
-            val rightTopWeight = typeArray.getFloat(
+            val rightTopWeight = getFloat(
                 R.styleable.SquircleClipLayout_rightTopWeight, defWeight
             )
-            val rightBottomWeight = typeArray.getFloat(
+            val rightBottomWeight = getFloat(
                 R.styleable.SquircleClipLayout_rightBottomWeight, defWeight
             )
-            val leftBottomWeight = typeArray.getFloat(
+            val leftBottomWeight = getFloat(
                 R.styleable.SquircleClipLayout_leftBottomWeight, defWeight
             )
 
@@ -80,7 +80,6 @@ class SquircleClipLayout @JvmOverloads constructor(
                     outEdgeWeight = leftBottomWeight
                 )
             )
-            typeArray.recycle()
         }
     }
 

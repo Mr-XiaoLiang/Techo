@@ -3,6 +3,7 @@ package com.lollipop.clip
 import android.content.Context
 import android.graphics.Path
 import android.util.AttributeSet
+import androidx.core.content.withStyledAttributes
 
 class VectorClipLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -11,15 +12,13 @@ class VectorClipLayout @JvmOverloads constructor(
     private var vectorInfo: VectorHelper.VectorInfo? = null
 
     init {
-        attrs?.let { a ->
-            val typeArray = context.obtainStyledAttributes(a, R.styleable.VectorClipLayout)
-            val viewportWidth = typeArray.getInt(R.styleable.VectorClipLayout_viewportWidth, 0)
-            val viewportHeight = typeArray.getInt(R.styleable.VectorClipLayout_viewportHeight, 0)
-            val pathData = typeArray.getString(R.styleable.VectorClipLayout_pathData) ?: ""
+        context.withStyledAttributes(attrs, R.styleable.VectorClipLayout) {
+            val viewportWidth = getInt(R.styleable.VectorClipLayout_viewportWidth, 0)
+            val viewportHeight = getInt(R.styleable.VectorClipLayout_viewportHeight, 0)
+            val pathData = getString(R.styleable.VectorClipLayout_pathData) ?: ""
             if (viewportWidth > 0 && viewportHeight > 0 && pathData.isNotEmpty()) {
                 vectorInfo = VectorHelper.parse(viewportWidth, viewportHeight, pathData)
             }
-            typeArray.recycle()
         }
     }
 

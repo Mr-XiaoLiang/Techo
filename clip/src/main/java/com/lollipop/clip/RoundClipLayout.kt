@@ -1,10 +1,10 @@
 package com.lollipop.clip
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Path
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.widget.FrameLayout
+import androidx.core.content.withStyledAttributes
 
 class RoundClipLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -13,25 +13,23 @@ class RoundClipLayout @JvmOverloads constructor(
     private val radius = FloatArray(8)
 
     init {
-        attrs?.let { a ->
-            val typeArray = context.obtainStyledAttributes(a, R.styleable.RoundClipLayout)
-            val defRadius = typeArray.getDimensionPixelSize(
+        context.withStyledAttributes(attrs, R.styleable.RoundClipLayout) {
+            val defRadius = getDimensionPixelSize(
                 R.styleable.RoundClipLayout_android_radius, 0
             )
-            val leftTop = typeArray.getDimensionPixelSize(
+            val leftTop = getDimensionPixelSize(
                 R.styleable.RoundClipLayout_leftTop, defRadius
             ).toFloat()
-            val rightTop = typeArray.getDimensionPixelSize(
+            val rightTop = getDimensionPixelSize(
                 R.styleable.RoundClipLayout_rightTop, defRadius
             ).toFloat()
-            val rightBottom = typeArray.getDimensionPixelSize(
+            val rightBottom = getDimensionPixelSize(
                 R.styleable.RoundClipLayout_rightBottom, defRadius
             ).toFloat()
-            val leftBottom = typeArray.getDimensionPixelSize(
+            val leftBottom = getDimensionPixelSize(
                 R.styleable.RoundClipLayout_leftBottom, defRadius
             ).toFloat()
             setRadius(leftTop, rightTop, rightBottom, leftBottom)
-            typeArray.recycle()
         }
     }
 

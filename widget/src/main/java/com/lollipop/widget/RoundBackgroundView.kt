@@ -10,9 +10,11 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Shader
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.content.withStyledAttributes
 import com.lollipop.widget.RoundBackgroundView.RoundType.ABSOLUTE
 import com.lollipop.widget.RoundBackgroundView.RoundType.HEIGHT_WEIGHT
 import com.lollipop.widget.RoundBackgroundView.RoundType.OVAL
@@ -27,30 +29,35 @@ class RoundBackgroundView @JvmOverloads constructor(
     private val roundDrawable = RoundDrawable()
 
     init {
+        background?.let {
+            if (it is ColorDrawable) {
+                roundDrawable.color = it.color
+            }
+        }
         background = roundDrawable
-        attributeSet?.let {
-            val typeArray = context.obtainStyledAttributes(
-                attributeSet, R.styleable.RoundBackgroundView
-            )
-            val roundTypeValue = typeArray.getInteger(
+        context.withStyledAttributes(
+            attributeSet, R.styleable.RoundBackgroundView
+        ) {
+            val roundTypeValue = getInteger(
                 R.styleable.RoundBackgroundView_round_type,
                 SMALLER.ordinal
             )
-            val radiusValue = typeArray.getDimensionPixelSize(
+            val radiusValue = getDimensionPixelSize(
                 R.styleable.RoundBackgroundView_round_radius,
                 0
             )
-            val weightValue = typeArray.getFloat(
+            val weightValue = getFloat(
                 R.styleable.RoundBackgroundView_round_weight,
                 0F
             )
-            val colorValue = typeArray.getColor(R.styleable.RoundBackgroundView_color, Color.WHITE)
+            val colorValue = getColor(R.styleable.RoundBackgroundView_color, Color.WHITE)
 
-            val roundType = if (roundTypeValue >= 0 && roundTypeValue < RoundType.entries.size) {
-                RoundType.entries[roundTypeValue]
-            } else {
-                SMALLER
-            }
+            val roundType =
+                if (roundTypeValue >= 0 && roundTypeValue < RoundType.entries.size) {
+                    RoundType.entries[roundTypeValue]
+                } else {
+                    SMALLER
+                }
             val roundValue: Float = when (roundType) {
                 ABSOLUTE -> {
                     radiusValue.toFloat()
@@ -66,7 +73,6 @@ class RoundBackgroundView @JvmOverloads constructor(
             roundDrawable.value = roundValue
             roundDrawable.type = roundType
             roundDrawable.color = colorValue
-            typeArray.recycle()
         }
     }
 
