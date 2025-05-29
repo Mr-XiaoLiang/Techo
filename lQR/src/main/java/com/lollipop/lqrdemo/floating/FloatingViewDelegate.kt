@@ -40,10 +40,16 @@ class FloatingViewDelegate {
 
     var viewInvokeCallback: FloatingActionInvokeCallback? = null
 
+    var onViewChangedCallback: ViewChangedCallback? = null
+
     private val fabInvokeCallbackDelegate = object : FloatingActionInvokeCallback {
         override fun invoke(context: Context) {
             onFabInvoke(context)
         }
+    }
+
+    private fun onViewChanged() {
+        onViewChangedCallback?.onViewChanged(this)
     }
 
     fun attach(factory: FloatingViewFactory, config: FloatingViewConfig) {
@@ -59,6 +65,7 @@ class FloatingViewDelegate {
     fun show(context: Context) {
         if (floatingView != null && currentView != null) {
             viewState = State.SHOW
+            updateViewVisible()
             return
         }
         if (config.widthDp == 0 || config.heightDp == 0) {
@@ -76,6 +83,7 @@ class FloatingViewDelegate {
         attachToWindow(view)
         currentView = view
         viewState = State.SHOW
+        updateViewVisible()
     }
 
     fun hide() {
@@ -104,6 +112,7 @@ class FloatingViewDelegate {
     private fun updateViewVisible() {
         val isVisible = viewState == State.SHOW && tempState != State.HIDE
         currentView?.isVisible = isVisible
+        onViewChanged()
     }
 
     private fun clear() {
@@ -119,8 +128,19 @@ class FloatingViewDelegate {
     private fun removeView(view: View) {
         try {
             val parent = view.parent
-            if (parent is ViewManager) {
-                parent.removeView(view)
+            Log.e(
+                "FloatingViewDelegate",
+                "removeView, parent = $parent, ${RuntimeException().stackTraceToString()}"
+            )
+            try {
+                val windowManager = view.context.getSystemService(
+                    Context.WINDOW_SERVICE
+                ) as? WindowManager
+                windowManager?.removeView(view)
+            } catch (e: Throwable) {
+                if (parent is ViewManager) {
+                    parent.removeView(view)
+                }
             }
         } catch (e: Throwable) {
             Log.e("FloatingViewDelegate", "removeView", e)
@@ -271,6 +291,10 @@ class FloatingViewDelegate {
 
         HIDE, SHOW, NONE
 
+    }
+
+    fun interface ViewChangedCallback {
+        fun onViewChanged(delegate: FloatingViewDelegate)
     }
 
 }

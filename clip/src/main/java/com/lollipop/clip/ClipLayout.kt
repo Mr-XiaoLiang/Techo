@@ -79,7 +79,7 @@ abstract class ClipLayout @JvmOverloads constructor(
                     view: View?,
                     outline: Outline?
                 ) {
-                    outline?.setPath(getOutlinePath())
+                    outline?.setPath(clipPathNotStroke)
                 }
             }
         } else {
@@ -178,11 +178,14 @@ abstract class ClipLayout @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas) {
+        val drawStroke = isStrokeEnable && strokeWidth > 0
         if (isOutlineEnabled()) {
             super.dispatchDraw(canvas)
+            if (drawStroke) {
+                canvas.drawPath(clipPathWithStroke, strokePaint)
+            }
             return
         }
-        val drawStroke = isStrokeEnable && strokeWidth > 0
         val clipPath = if (drawStroke) {
             clipPathWithStroke
         } else {

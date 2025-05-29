@@ -37,6 +37,41 @@ class FloatingActionButton(
 
         private const val DELAY_AUTO_HIDE = 3000L
 
+        private fun dp2px(context: Context, dp: Int): Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp.toFloat(),
+                context.resources.displayMetrics
+            ).toInt()
+        }
+
+        fun update(binding: FloatingScanButtonBinding, widthDp: Int, heightDp: Int) {
+            val root = binding.root
+            val context = root.context
+            val layoutParams = root.layoutParams
+            val widthPx = dp2px(context, widthDp)
+            val heightPx = dp2px(context, heightDp)
+            if (layoutParams != null) {
+                layoutParams.width = widthPx
+                layoutParams.height = heightPx
+                root.layoutParams = layoutParams
+            } else {
+                root.layoutParams = ViewGroup.LayoutParams(
+                    widthPx, heightPx
+                )
+            }
+            binding.fabBackgroundView.value = min(widthPx, heightPx) * 0.25F
+            binding.fabIconView.updateLayoutParams<FrameLayout.LayoutParams> {
+                var iconSize = min(widthDp, heightDp) / 2
+                if (iconSize < FAB_ICON_SIZE_MIN) {
+                    iconSize = FAB_ICON_SIZE_MIN
+                }
+                val iconSizePx = dp2px(context, iconSize)
+                width = iconSizePx
+                height = iconSizePx
+            }
+        }
+
     }
 
     private var binding: FloatingScanButtonBinding? = null
@@ -76,19 +111,7 @@ class FloatingActionButton(
         berthWeight: Float
     ) {
         this.berthWeight = berthWeight
-        val root = view.root
-        val context = root.context
-        root.layoutParams =
-            ViewGroup.LayoutParams(dp2px(context, widthDp), dp2px(context, heightDp))
-        view.fabIconView.updateLayoutParams<FrameLayout.LayoutParams> {
-            var iconSize = min(widthDp, heightDp) / 2
-            if (iconSize < FAB_ICON_SIZE_MIN) {
-                iconSize = FAB_ICON_SIZE_MIN
-            }
-            val iconSizePx = dp2px(context, iconSize)
-            width = iconSizePx
-            height = iconSizePx
-        }
+        update(view, widthDp, heightDp)
         rememberViewStateChanged()
         updateViewState()
     }
@@ -112,14 +135,6 @@ class FloatingActionButton(
                 it.postDelayed(autoHideTask, DELAY_AUTO_HIDE)
             }
         }
-    }
-
-    private fun dp2px(context: Context, dp: Int): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp.toFloat(),
-            context.resources.displayMetrics
-        ).toInt()
     }
 
     override fun onBerthChanged(berth: FloatingViewBerth) {

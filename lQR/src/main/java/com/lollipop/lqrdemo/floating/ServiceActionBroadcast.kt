@@ -55,16 +55,23 @@ class ServiceActionBroadcast private constructor(
     }
 
     fun attach(context: Context) {
-        ContextCompat.registerReceiver(
-            context,
-            this,
-            intentFilter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
+        try {
+            ContextCompat.registerReceiver(
+                context,
+                this,
+                intentFilter,
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+        } catch (e: Throwable) {
+
+        }
     }
 
     fun detach(context: Context) {
-        context.unregisterReceiver(this)
+        try {
+            context.unregisterReceiver(this)
+        } catch (e: Throwable) {
+        }
     }
 
 

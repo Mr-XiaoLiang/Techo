@@ -199,12 +199,12 @@
                         android:layout_height="0px" />
 
                     <TextView
-                        android:maxLines="1"
-                        android:lines="1"
-                        android:ellipsize="end"
                         android:id="@+id/galleryBtnText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxLines="1"
                         android:text="@string/from_photo"
                         android:textColor="?attr/colorOnSecondary"
                         android:textSize="16sp" />
@@ -214,7 +214,7 @@
             </com.lollipop.clip.RoundClipLayout>
 
             <Space
-                android:layout_width="8dp"
+                android:layout_width="4dp"
                 android:layout_height="0px" />
 
             <com.lollipop.clip.RoundClipLayout
@@ -222,6 +222,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="4dp"
                 app:leftBottom="5dp"
                 app:leftTop="5dp"
                 app:rightBottom="5dp"
@@ -241,7 +242,7 @@
             </com.lollipop.clip.RoundClipLayout>
 
             <Space
-                android:layout_width="8dp"
+                android:layout_width="4dp"
                 android:layout_height="0px" />
 
             <com.lollipop.clip.RoundClipLayout
@@ -278,12 +279,12 @@
                         android:layout_height="0px" />
 
                     <TextView
-                        android:maxLines="1"
-                        android:lines="1"
-                        android:ellipsize="end"
                         android:id="@+id/createBtnText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxLines="1"
                         android:text="@string/create_qr_code"
                         android:textColor="?attr/colorOnSecondary"
                         android:textSize="16sp" />

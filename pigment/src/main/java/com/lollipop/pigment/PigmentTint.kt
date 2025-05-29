@@ -23,6 +23,19 @@ object PigmentTint {
         )
     }
 
+    fun getCheckStateList(check: Int, uncheck: Int): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                check,
+                uncheck
+            )
+        )
+    }
+
 }
 
 fun FloatingActionButton.tint(pigment: Pigment) {

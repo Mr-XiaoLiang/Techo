@@ -238,6 +238,7 @@ class MainActivity : ScanResultActivity() {
             this, android.Manifest.permission.CAMERA
         )
         binding.permissionView.isVisible = selfPermission != PermissionChecker.PERMISSION_GRANTED
+        binding.floatingButton.isVisible = AppSettings.ui.floatingScanButtonEnable
         closeDrawer()
         if (!AppSettings.default.isAgreePrivacyAgreement) {
             privacyAgreementLauncher.launch(null)

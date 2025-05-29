@@ -21,7 +21,7 @@ sealed class AppSettings private constructor(
 
         const val FLOATING_SCAN_BUTTON_SIZE_MIN = 32
         const val FLOATING_SCAN_BUTTON_SIZE_DEFAULT = 48
-        const val FLOATING_SCAN_BUTTON_SIZE_MAX = 64
+        const val FLOATING_SCAN_BUTTON_SIZE_MAX = 68
 
     }
 
@@ -38,6 +38,7 @@ sealed class AppSettings private constructor(
 
     class UI internal constructor(context: Context) : AppSettings(context, "UI") {
 
+        var floatingScanButtonEnable: Boolean by BooleanDelegate(true)
         var floatingScanButtonSize: Int by IntDelegate(FLOATING_SCAN_BUTTON_SIZE_DEFAULT)
 
     }

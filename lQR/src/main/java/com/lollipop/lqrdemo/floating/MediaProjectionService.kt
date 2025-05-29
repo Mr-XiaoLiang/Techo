@@ -54,21 +54,34 @@ class MediaProjectionService : Service() {
         MediaProjectionHelper.getManager(this)
     }
 
-    private val floatingViewDelegate = FloatingViewDelegate()
+    private val floatingViewDelegate = FloatingViewDelegate().apply {
+        onViewChangedCallback = FloatingViewDelegate.ViewChangedCallback {
+            sendForegroundNotification()
+        }
+    }
 
     private val serviceReceiver by lazy {
         ServiceActionBroadcast.receiver()
             .stop {
-                NotificationHelper.removeForegroundNotification(this)
-                stopSelf()
+                Log.i("MediaProjectionService", "ServiceActionBroadcast.STOP")
+                notifyStopSelf()
             }
             .showActionButton {
+                Log.i("MediaProjectionService", "ServiceActionBroadcast.SHOW_FAB")
                 floatingViewDelegate.show(it)
             }
             .hideActionButton {
+                Log.i("MediaProjectionService", "ServiceActionBroadcast.HIDE_FAB")
                 floatingViewDelegate.hide()
             }
             .build()
+    }
+
+    private fun notifyStopSelf() {
+        NotificationHelper.removeForegroundNotification(this)
+        floatingViewDelegate.detach()
+        detachReceiver()
+        stopSelf()
     }
 
     private fun tryDo(name: String, block: () -> Unit) {
@@ -218,9 +231,14 @@ class MediaProjectionService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        serviceReceiver.detach(this)
+        detachReceiver()
         floatingViewDelegate.detach()
         MediaProjectionHelper.serviceState = MediaProjectionHelper.ServiceState.STOPPED
+    }
+
+    private fun detachReceiver() {
+        serviceReceiver.detach(this)
+        screenshotDelegate?.receiver?.detach(this)
     }
 
     private class ScreenshotDelegate(
