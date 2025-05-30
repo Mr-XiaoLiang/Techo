@@ -120,32 +120,38 @@
     <string name="size">size</string>
     <string name="corner">Rounded corners</string>
 
-    <string name="title_floating_scan_settings">悬浮扫描设置</string>
+    <string name="title_floating_scan_settings">Floating Scan Settings</string>
 
-    <string name="dialog_title_floating_permission">悬浮窗权限</string>
-    <string name="dialog_summary_floating_permission">请授权使用悬浮窗权限。用于在屏幕上显示悬浮按钮。</string>
-    <string name="dialog_title_recording_permission">屏幕录制权限</string>
-    <string name="dialog_summary_recording_permission">请授权使用屏幕录制权限，用于获取屏幕上的二维码内容。</string>
-    <string name="dialog_agree">同意</string>
-    <string name="dialog_refuse">拒绝</string>
+    <string name="dialog_title_floating_permission">Floating Window Permission</string>
 
-    <string name="dialog_title_notification_permission">通知权限</string>
-    <string name="dialog_summary_notification_permission_rejected">您未授予通知权限，请授权使用通知权限，否则可能错过部分通知。</string>
+    <string name="dialog_summary_floating_permission">Please authorize the use of floating window permission. Used to display floating buttons on the screen. </string>
 
-    <string name="notification_content_scan_floating">全局二维码扫描服务正在运行</string>
-    <string name="notification_channel_scan_floating">全局扫描服务</string>
+    <string name="dialog_title_recording_permission">Screen Recording Permission</string>
 
-    <string name="notification_content_scan_result">扫描结果展示</string>
-    <string name="notification_channel_scan_result">扫描结果</string>
+    <string name="dialog_summary_recording_permission">Please authorize the use of screen recording permission to obtain the QR code content on the screen. </string>
 
-    <string name="notification_action_stop_floating">停止</string>
-    <string name="notification_action_show_floating">显示按钮</string>
-    <string name="notification_action_hide_floating">隐藏按钮</string>
+    <string name="dialog_agree">Agree</string>
 
-    <string name="toast_screenshot_result_failure">屏幕扫描出错，%1$s</string>
-    <string name="toast_screenshot_result_no_available">屏幕扫描未就绪</string>
-    <string name="toast_screenshot_result_unknown_error">屏幕扫描出现未知错误出错</string>
-    <string name="title_settings_fab_enable">显示屏幕扫描按钮</string>
-    <string name="title_settings_fab_size">悬浮按钮尺寸</string>
+    <string name="dialog_refuse">Reject</string>
+
+    <string name="dialog_title_notification_permission">Notification Permission</string>
+
+    <string name="dialog_summary_notification_permission_rejected">You have not granted notification permission, please authorize the use of notification permission, otherwise you may miss some notifications. </string>
+
+    <string name="notification_content_scan_floating">Global QR code scanning service is running</string>
+    <string name="notification_channel_scan_floating">Global scanning service</string>
+
+    <string name="notification_content_scan_result">Scan result display</string>
+    <string name="notification_channel_scan_result">Scan result</string>
+
+    <string name="notification_action_stop_floating">Stop</string>
+    <string name="notification_action_show_floating">Show button</string>
+    <string name="notification_action_hide_floating">Hide button</string>
+
+    <string name="toast_screenshot_result_failure">Screen scan error, %1$s</string>
+    <string name="toast_screenshot_result_no_available">Screen scan is not ready</string>
+    <string name="toast_screenshot_result_unknown_error">Screen scan has an unknown error</string>
+    <string name="title_settings_fab_enable">Show screen scan button</string>
+    <string name="title_settings_fab_size">Floating button size</string>
 
 </resources>
