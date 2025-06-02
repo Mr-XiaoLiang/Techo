@@ -144,6 +144,7 @@ class BarcodePreviewFragment : BaseFragment() {
         // 更新UI
         binding?.apply {
             hintView.setText(getBarcodeType(barcode))
+            barcodeTypeView.text = barcode.describe.format.name
         }
         updateInfoContent()
         updateCharsetButton()
@@ -324,6 +325,7 @@ class BarcodePreviewFragment : BaseFragment() {
             openButton.iconTint = ColorStateList.valueOf(pigment.onBackgroundTitle)
             charsetButton.setBackgroundColor(pigment.primaryColor.changeAlpha(0.25F))
             charsetButton.setTextColor(pigment.onBackgroundBody)
+            barcodeTypeView.setTextColor(pigment.onBackgroundBody)
         }
     }
 
