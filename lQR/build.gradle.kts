@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.lollipop.lqrdemo"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "liang.lollipop.lqrdemo"
         minSdk = 27
-        targetSdk = 35
-        versionCode = 2_08_00
-        versionName = "2.8.0"
+        targetSdk = 36
+        versionCode = 2_09_00
+        versionName = "2.9.0"
     }
 
     buildTypes {
